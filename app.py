@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech-Lead Israel — פורטל משרד החינוך</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #112240;
+    --navy-light: #1d3461;
+    --teal: #00c9a7;
+    --teal-dim: #00a887;
+    --amber: #f4a261;
+    --red: #e63946;
+    --green: #2ec4b6;
+    --text: #cdd6f4;
+    --text-dim: #7a8aaa;
+    --border: rgba(0,201,167,0.15);
+    --card: rgba(17,34,64,0.8);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,201,167,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,201,167,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== LAYOUT ===== */
+  .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 220px;
+    background: var(--navy-mid);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    position: fixed;
+    height: 100vh;
+    right: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    padding: 0 20px 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .logo-main {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--teal);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav-section { padding: 0 12px; margin-bottom: 8px; }
+  .nav-label {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: rgba(0,201,167,0.08); color: var(--text); }
+  .nav-item.active { background: rgba(0,201,167,0.12); color: var(--teal); }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-badge {
+    margin-right: auto;
+    background: var(--teal);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .user-avatar {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--teal), var(--navy-light));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .user-info { font-size: 12px; }
+  .user-name { font-weight: 600; color: var(--text); }
+  .user-role { color: var(--text-dim); font-size: 10px; }
+
+  /* ===== MAIN ===== */
+  .main {
+    flex: 1;
+    margin-right: 220px;
+    padding: 32px 36px;
+    max-width: calc(100vw - 220px);
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+  .page-title span { color: var(--teal); }
+  .topbar-actions { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--teal);
+    color: var(--navy);
+  }
+  .btn-primary:hover { background: var(--teal-dim); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* ===== SCREEN TABS ===== */
+  .screen-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab.active {
+    background: rgba(0,201,167,0.15);
+    color: var(--teal);
+    font-weight: 700;
+  }
+  .tab-num {
+    display: inline-block;
+    width: 18px; height: 18px;
+    background: var(--teal);
+    color: var(--navy);
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 18px;
+    text-align: center;
+    margin-left: 6px;
+  }
+  .tab.active .tab-num { background: var(--navy); color: var(--teal); }
+
+  /* ===== SCREEN CONTENT ===== */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== SCREEN 1: NATIONAL OVERVIEW ===== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 3px; height: 100%;
+  }
+  .kpi-card.teal::before { background: var(--teal); }
+  .kpi-card.amber::before { background: var(--amber); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.green::before { background: var(--green); }
+
+  .kpi-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .kpi-value {
+    font-size: 32px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-value.teal { color: var(--teal); }
+  .kpi-value.amber { color: var(--amber); }
+  .kpi-value.red { color: var(--red); }
+  .kpi-delta {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .kpi-delta.up { color: var(--green); }
+  .kpi-delta.down { color: var(--red); }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .panel-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .panel-action {
+    font-size: 11px;
+    color: var(--teal);
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Map placeholder */
+  .map-viz {
+    height: 220px;
+    background: var(--navy);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .map-dot {
+    position: absolute;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.6; }
+  }
+  .map-label {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  /* Urgency bars */
+  .urgency-list { display: flex; flex-direction: column; gap: 12px; }
+  .urgency-item { display: flex; align-items: center; gap: 12px; }
+  .urgency-name { font-size: 12px; width: 80px; color: var(--text); flex-shrink: 0; }
+  .urgency-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .urgency-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+  .urgency-score { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--text-dim); width: 30px; text-align: left; }
+
+  /* Funnel */
+  .funnel { display: flex; flex-direction: column; gap: 8px; }
+  .funnel-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .funnel-bar-wrap { flex: 1; }
+  .funnel-bar {
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    transition: width 1s ease;
+  }
+  .funnel-count { font-size: 13px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: #fff; width: 50px; text-align: left; }
+
+  /* ===== SCREEN 2: PLACEMENTS TABLE ===== */
+  .filters-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-dim);
+  }
+  .filter-chip.active { border-color: var(--teal); color: var(--teal); background: rgba(0,201,167,0.08); }
+  .filter-chip:hover { border-color: var(--teal); color: var(--teal); }
+
+  .search-box {
+    flex: 1;
+    max-width: 280px;
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 8px 14px 8px 36px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: var(--teal); }
+  .search-box input::placeholder { color: var(--text-dim); }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-dim); }
+
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    padding: 10px 14px;
+    text-align: right;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .data-table th:hover { color: var(--teal); }
+  .data-table th .sort-icon { margin-right: 4px; opacity: 0.5; }
+  .data-table td {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  .data-table tr:hover td { background: rgba(0,201,167,0.04); }
+
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .score-high { background: rgba(0,201,167,0.15); color: var(--teal); }
+  .score-mid { background: rgba(244,162,97,0.15); color: var(--amber); }
+  .score-low { background: rgba(230,57,70,0.15); color: var(--red); }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .status-pill::before { content: '●'; font-size: 8px; }
+  .status-active { background: rgba(0,201,167,0.1); color: var(--teal); }
+  .status-pending { background: rgba(244,162,97,0.1); color: var(--amber); }
+  .status-review { background: rgba(100,120,180,0.15); color: #7aa2f7; }
+
+  .star-row { display: flex; gap: 2px; }
+  .star { color: var(--teal); font-size: 13px; }
+  .star.empty { color: rgba(255,255,255,0.15); }
+
+  .action-btn {
+    padding: 5px 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-dim);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Heebo', sans-serif;
+  }
+  .action-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+  .candidate-cell { display: flex; align-items: center; gap: 10px; }
+  .cand-avatar {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .cand-name { font-weight: 600; font-size: 13px; }
+  .cand-unit { font-size: 10px; color: var(--text-dim); margin-top: 1px; }
+
+  .net-cost { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  .net-cost .amount { font-size: 14px; font-weight: 700; color: #fff; }
+  .net-cost .label { font-size: 10px; color: var(--text-dim); }
+
+  /* ===== SCREEN 3: SCHOOL NEEDS ===== */
+  .needs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .need-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .need-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .need-card.urgent { border-color: rgba(230,57,70,0.4); }
+  .need-card.urgent::after {
+    content: 'דחוף';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--red);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+  .need-school { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .need-city { font-size: 11px; color: var(--text-dim); margin-bottom: 12px; }
+  .need-subject {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(0,201,167,0.1);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--teal);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .need-urgency-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .need-urgency-fill { height: 100%; border-radius: 2px; }
+  .need-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); }
+  .need-match { color: var(--teal); font-weight: 600; }
+
+  /* ===== SCREEN 4: AI INSIGHTS ===== */
+  .insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+  }
+  .insight-icon { font-size: 28px; margin-bottom: 12px; }
+  .insight-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .insight-text { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+  .insight-highlight { color: var(--teal); font-weight: 700; }
+  .insight-alert { color: var(--amber); font-weight: 700; }
+
+  .ai-rec {
+    background: linear-gradient(135deg, rgba(0,201,167,0.08), rgba(0,201,167,0.02));
+    border: 1px solid rgba(0,201,167,0.25);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .ai-icon { font-size: 24px; flex-shrink: 0; }
+  .ai-rec-title { font-size: 13px; font-weight: 700; color: var(--teal); margin-bottom: 6px; }
+  .ai-rec-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+
+  /* ===== RETENTION GAUGE ===== */
+  .gauge-wrap { display: flex; gap: 20px; flex-wrap: wrap; }
+  .gauge {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+  .gauge-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+    position: relative;
+  }
+  .gauge-label { font-size: 11px; color: var(--text-dim); }
+
+  /* ===== ALERT BANNER ===== */
+  .alert-banner {
+    background: rgba(244,162,97,0.1);
+    border: 1px solid rgba(244,162,97,0.3);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+  .alert-text { color: var(--text); }
+  .alert-text strong { color: var(--amber); }
+  .alert-action { margin-right: auto; font-size: 12px; color: var(--amber); cursor: pointer; text-decoration: underline; white-space: nowrap; }
+
+  /* ===== PROGRESS RINGS (SVG) ===== */
+  .ring-container { position: relative; display: inline-block; }
+  .ring-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="logo">
+      <div class="logo-main">Tech-Lead<br>Israel</div>
+      <div class="logo-sub">Ministry Portal v2.1</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">ניהול</div>
+      <div class="nav-item active" onclick="showScreen('overview')">
+        <span class="icon">📊</span> סקירה לאומית
+      </div>
+      <div class="nav-item" onclick="showScreen('placements')">
+        <span class="icon">👤</span> מאגר מועמדים
+        <span class="nav-badge">47</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('needs')">
+        <span class="icon">🏫</span> צרכי בתי ספר
+        <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('insights')">
+        <span class="icon">🤖</span> תובנות AI
+      </div>
+    </div>
+
+    <div class="nav-section" style="margin-top:16px">
+      <div class="nav-label">דוחות</div>
+      <div class="nav-item"><span class="icon">📁</span> ייצוא נתונים</div>
+      <div class="nav-item"><span class="icon">⚙️</span> הגדרות מערכת</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">דכ</div>
+        <div class="user-info">
+          <div class="user-name">דנה כהן</div>
+          <div class="user-role">מנהלת מחוז תל אביב</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- SCREEN 1: NATIONAL OVERVIEW -->
+    <div id="screen-overview" class="screen active">
+      <div class="topbar">
+        <div>
+          <div class="page-title">סקירה <span>לאומית</span></div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px">עדכון אחרון: היום, 09:14</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" onclick="showScreen('needs')">📋 צרכים דחופים</button>
+          <button class="btn btn-primary">+ פתח מכרז חדש</button>
+        </div>
+      </div>
+
+      <div class="alert-banner">
+        <span class="alert-icon">⚠️</span>
+        <span class="alert-text"><strong>אנומליה תל-אביבית:</strong> 8 בתי ספר ללא מורה סייבר עקב יוקר מחיה. הבונוס הפעיל אינו מספיק.</span>
+        <span class="alert-action" onclick="showScreen('insights')">צפה בהמלצת AI ←</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card teal">
+          <div class="kpi-label">מועמדים פעילים</div>
+          <div class="kpi-value teal">247</div>
+          <div class="kpi-delta up">▲ +23 החודש</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">פלייסמנטים שנפתחו</div>
+          <div class="kpi-value amber">38</div>
+          <div class="kpi-delta">12 ממתינים לאישור</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">בתי ספר ללא כיסוי</div>
+          <div class="kpi-value red">19</div>
+          <div class="kpi-delta down">▲ +3 מהשבוע שעבר</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">שיעור השלמת 24 חודש</div>
+          <div class="kpi-value" style="color:var(--green)">84%</div>
+          <div class="kpi-delta up">▲ +6% מהמחזור הקודם</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">🗺️ מפת דחיפות גאוגרפית</div>
+            <div class="panel-action">מפה מלאה →</div>
+          </div>
+          <div class="map-viz">
+            <!-- Simulated map dots -->
+            <div class="map-dot" style="width:24px;height:24px;background:rgba(230,57,70,0.7);top:30%;right:45%;animation-delay:0s"></div>
+            <div class="map-dot" style="width:18px;height:18px;background:rgba(244,162,97,0.7);top:55%;right:30%;animation-delay:0.5s"></div>
+            <div class="map-dot" style="width:30px;height:30px;background:rgba(230,57,70,0.6);top:65%;right:55%;animation-delay:1s"></div>
+            <div class="map-dot" style="width:14px;height:14px;background:rgba(0,201,167,0.7);top:25%;right:25%;animation-delay:0.3s"></div>
+            <div class="map-dot" style="width:20px;height:20px;background:rgba(244,162,97,0.6);top:45%;right:60%;animation-delay:0.7s"></div>
+            <div class="map-dot" style="width:16px;height:16px;background:rgba(230,57,70,0.5);top:75%;right:40%;animation-delay:1.2s"></div>
+            <div class="map-dot" style="width:22px;height:22px;background:rgba(0,201,167,0.5);top:20%;right:65%;animation-delay:0.2s"></div>
+            <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:12px">
+              <span style="font-size:10px;color:var(--red)">● דחוף</span>
+              <span style="font-size:10px;color:var(--amber)">● בינוני</span>
+              <span style="font-size:10px;color:var(--teal)">● מכוסה</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">🔥 מדד דחיפות לפי אזור</div>
+            <div class="panel-action">כל האזורים →</div>
+          </div>
+          <div class="urgency-list">
+            <div class="urgency-item">
+              <div class="urgency-name">תל אביב</div>
+              <div class="urgency-bar-track"><div class="urgency-bar-fill" style="width:92%;background:var(--red)"></div></div>
+              <div class="urgency-score" style="color:var(--red)">92</div>
+            </div>
+            <div class="urgency-item">
+              <div class="urgency-name">דרום</div>
+              <div class="urgency-bar-track"><div class="urgency-bar-fill" style="width:87%;background:var(--red)"></div></div>
+              <div class="urgency-score" style="color:var(--red)">87</div>
+            </div>
+            <div class="urgency-item">
+              <div class="urgency-name">צפון</div>
+              <div class="urgency-bar-track"><div class="urgency-bar-fill" style="width:74%;background:var(--amber)"></div></div>
+              <div class="urgency-score" style="color:var(--amber)">74</div>
+            </div>
+            <div class="urgency-item">
+              <div class="urgency-name">ירושלים</div>
+              <div class="urgency-bar-track"><div class="urgency-bar-fill" style="width:61%;background:var(--amber)"></div></div>
+              <div class="urgency-score" style="color:var(--amber)">61</div>
+            </div>
+            <div class="urgency-item">
+              <div class="urgency-name">מרכז</div>
+              <div class="urgency-bar-track"><div class="urgency-bar-fill" style="width:38%;background:var(--teal)"></div></div>
+              <div class="urgency-score" style="color:var(--teal)">38</div>
+            </div>
+            <div class="urgency-item">
+              <div class="urgency-name">חיפה</div>
+              <div class="urgency-bar-track"><div class="urgency-bar-fill" style="width:29%;background:var(--teal)"></div></div>
+              <div class="urgency-score" style="color:var(--teal)">29</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">🎯 פאנל גיוס — מצב</div>
+            <div class="panel-action">דוח מלא →</div>
+          </div>
+          <div class="funnel">
+            <div class="funnel-step">
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:100%;background:rgba(0,201,167,0.5)">הגשות נכנסות</div>
+              </div>
+              <div class="funnel-count">312</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:79%;background:rgba(0,201,167,0.45)">עברו סינון ראשוני</div>
+              </div>
+              <div class="funnel-count">247</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:55%;background:rgba(0,201,167,0.4)">ראיון וידאו ELI5</div>
+              </div>
+              <div class="funnel-count">171</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:34%;background:rgba(0,201,167,0.35)">שידוך לבית ספר</div>
+              </div>
+              <div class="funnel-count">106</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:18%;background:var(--teal)">פעילים בהוראה</div>
+              </div>
+              <div class="funnel-count">57</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">💰 מצב תקציבי — מחזור נוכחי</div>
+            <div class="panel-action">פירוט גפ"ן →</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                <span style="color:var(--text-dim)">תקציב מדינה (50%)</span>
+                <span style="font-family:'IBM Plex Mono',monospace;color:#fff">₪2.4M / ₪3.0M</span>
+              </div>
+              <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+                <div style="width:80%;height:100%;background:var(--teal);border-radius:4px"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                <span style="color:var(--text-dim)">תקציב רשויות (25%)</span>
+                <span style="font-family:'IBM Plex Mono',monospace;color:#fff">₪0.9M / ₪1.5M</span>
+              </div>
+              <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+                <div style="width:60%;height:100%;background:var(--amber);border-radius:4px"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                <span style="color:var(--text-dim)">מימון חברות (25%)</span>
+                <span style="font-family:'IBM Plex Mono',monospace;color:#fff">₪1.1M / ₪1.5M</span>
+              </div>
+              <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+                <div style="width:73%;height:100%;background:var(--green);border-radius:4px"></div>
+              </div>
+            </div>
+            <div style="margin-top:8px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:12px;color:var(--text-dim)">נותר לניצול</span>
+              <span style="font-size:22px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--amber)">₪1.6M</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: PLACEMENTS TABLE -->
+    <div id="screen-placements" class="screen">
+      <div class="topbar">
+        <div>
+          <div class="page-title">מאגר <span>מועמדים</span></div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px">247 מועמדים פעילים | 38 שידוכים פתוחים</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost">📥 ייצוא Excel</button>
+          <button class="btn btn-primary">+ הוסף מועמד</button>
+        </div>
+      </div>
+
+      <div class="filters-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="חיפוש לפי שם, יחידה, מיקום...">
+        </div>
+        <div class="filter-chip active">הכל (247)</div>
+        <div class="filter-chip">זמינים עכשיו (89)</div>
+        <div class="filter-chip">סייבר</div>
+        <div class="filter-chip">פייתון</div>
+        <div class="filter-chip">פיזיקה</div>
+        <div class="filter-chip">פריפריה</div>
+        <div class="filter-chip">ציון &gt;85</div>
+        <div class="filter-chip">תקציב עד 5,000₪</div>
+      </div>
+
+      <div class="panel" style="padding:0;overflow:hidden">
+        <table class="data-table">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.02)">
+              <th><span class="sort-icon">⇅</span>מועמד</th>
+              <th><span class="sort-icon">⇅</span>תחום</th>
+              <th><span class="sort-icon">⇅</span>ישארות ↓</th>
+              <th><span class="sort-icon">⇅</span>ELI5</th>
+              <th><span class="sort-icon">⇅</span>עלות נטו</th>
+              <th><span class="sort-icon">⇅</span>ציון כולל</th>
+              <th><span class="sort-icon">⇅</span>סטטוס</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="candidate-cell">
+                  <div class="cand-avatar" style="background:linear-gradient(135deg,#00c9a7,#1d3461)">יכ</div>
+                  <div>
+                    <div class="cand-name">יובל כהן</div>
+                    <div class="cand-unit">8200 | מפקד צוות</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="background:rgba(0,201,167,0.1);color:var(--teal);padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600">סייבר</span></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--teal)"></div>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--teal)">91%</span>
+                </div>
+              </td>
+              <td>
+                <div class="star-row">
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+              </td>
+              <td>
+                <div class="net-cost">
+                  <div class="amount">3,800₪</div>
+                  <div class="label">לאחר סבסוד</div>
+                </div>
+              </td>
+              <td><div class="score-badge score-high">94</div></td>
+              <td><span class="status-pill status-active">זמין עכשיו</span></td>
+              <td><button class="action-btn" onclick="alert('פרופיל מועמד מלא')">פרופיל ←</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="candidate-cell">
+                  <div class="cand-avatar" style="background:linear-gradient(135deg,#f4a261,#1d3461)">מר</div>
+                  <div>
+                    <div class="cand-name">מיכל ראובן</div>
+                    <div class="cand-unit">תקשוב | ר"פ</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="background:rgba(122,162,247,0.1);color:#7aa2f7;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600">פייתון</span></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--amber)"></div>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--amber)">73%</span>
+                </div>
+              </td>
+              <td>
+                <div class="star-row">
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span>
+                </div>
+              </td>
+              <td>
+                <div class="net-cost">
+                  <div class="amount">4,200₪</div>
+                  <div class="label">לאחר סבסוד</div>
+                </div>
+              </td>
+              <td><div class="score-badge score-mid">81</div></td>
+              <td><span class="status-pill status-pending">ממתין לראיון</span></td>
+              <td><button class="action-btn">פרופיל ←</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="candidate-cell">
+                  <div class="cand-avatar" style="background:linear-gradient(135deg,#2ec4b6,#1d3461)">אד</div>
+                  <div>
+                    <div class="cand-name">אמיר דוד</div>
+                    <div class="cand-unit">משמר אווירי | טכנאי</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="background:rgba(255,200,100,0.1);color:#ffd166;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600">פיזיקה</span></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--teal)"></div>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--teal)">88%</span>
+                </div>
+              </td>
+              <td>
+                <div class="star-row">
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span><span class="star empty">★</span>
+                </div>
+              </td>
+              <td>
+                <div class="net-cost">
+                  <div class="amount">3,200₪</div>
+                  <div class="label">לאחר סבסוד</div>
+                </div>
+              </td>
+              <td><div class="score-badge score-mid">79</div></td>
+              <td><span class="status-pill status-review">בבדיקה</span></td>
+              <td><button class="action-btn">פרופיל ←</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="candidate-cell">
+                  <div class="cand-avatar" style="background:linear-gradient(135deg,#e63946,#1d3461)">נל</div>
+                  <div>
+                    <div class="cand-name">נועה לוי</div>
+                    <div class="cand-unit">מודיעין | אנליסטית</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="background:rgba(0,201,167,0.1);color:var(--teal);padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600">סייבר</span></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--teal)"></div>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--teal)">96%</span>
+                </div>
+              </td>
+              <td>
+                <div class="star-row">
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+              </td>
+              <td>
+                <div class="net-cost">
+                  <div class="amount">4,800₪</div>
+                  <div class="label">לאחר סבסוד</div>
+                </div>
+              </td>
+              <td><div class="score-badge score-high">97</div></td>
+              <td><span class="status-pill status-active">זמין עכשיו</span></td>
+              <td><button class="action-btn">פרופיל ←</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="candidate-cell">
+                  <div class="cand-avatar" style="background:linear-gradient(135deg,#7aa2f7,#1d3461)">רמ</div>
+                  <div>
+                    <div class="cand-name">רון מזרחי</div>
+                    <div class="cand-unit">חיל הים | תוכנה</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="background:rgba(122,162,247,0.1);color:#7aa2f7;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600">פייתון</span></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--red)">58%</span>
+                </div>
+              </td>
+              <td>
+                <div class="star-row">
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span>
+                </div>
+              </td>
+              <td>
+                <div class="net-cost">
+                  <div class="amount">5,100₪</div>
+                  <div class="label">לאחר סבסוד</div>
+                </div>
+              </td>
+              <td><div class="score-badge score-low">72</div></td>
+              <td><span class="status-pill status-review">בבדיקה</span></td>
+              <td><button class="action-btn">פרופיל ←</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text-dim)">מציג 5 מתוך 247 מועמדים</span>
+          <div style="display:flex;gap:8px">
+            <button class="action-btn">← הקודם</button>
+            <button class="action-btn" style="color:var(--teal);border-color:var(--teal)">1</button>
+            <button class="action-btn">2</button>
+            <button class="action-btn">3</button>
+            <button class="action-btn">הבא →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: SCHOOL NEEDS -->
+    <div id="screen-needs" class="screen">
+      <div class="topbar">
+        <div>
+          <div class="page-title">צרכי <span>בתי ספר</span></div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px">19 בתי ספר ללא כיסוי | 12 דחופים</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost">סנן לפי אזור</button>
+          <button class="btn btn-primary">🤖 שידוך אוטומטי AI</button>
+        </div>
+      </div>
+
+      <div class="filters-bar">
+        <div class="filter-chip active">כל הצרכים (19)</div>
+        <div class="filter-chip">דחוף (12)</div>
+        <div class="filter-chip">סייבר (8)</div>
+        <div class="filter-chip">פייתון (6)</div>
+        <div class="filter-chip">פריפריה (11)</div>
+        <div class="filter-chip">שיקום</div>
+      </div>
+
+      <div class="needs-grid">
+        <div class="need-card urgent">
+          <div class="need-school">אורט נתיבות</div>
+          <div class="need-city">📍 נתיבות, דרום</div>
+          <div class="need-subject">סייבר + Python</div>
+          <div class="need-urgency-bar"><div class="need-urgency-fill" style="width:95%;background:var(--red)"></div></div>
+          <div class="need-meta">
+            <span>⏱ מחכה 47 ימים</span>
+            <span class="need-match">3 מועמדים מתאימים</span>
+          </div>
+        </div>
+        <div class="need-card urgent">
+          <div class="need-school">מקיף ד' באר שבע</div>
+          <div class="need-city">📍 באר שבע, דרום</div>
+          <div class="need-subject">פיזיקה</div>
+          <div class="need-urgency-bar"><div class="need-urgency-fill" style="width:88%;background:var(--red)"></div></div>
+          <div class="need-meta">
+            <span>⏱ מחכה 31 ימים</span>
+            <span class="need-match">5 מועמדים מתאימים</span>
+          </div>
+        </div>
+        <div class="need-card urgent">
+          <div class="need-school">כפר מנחם טכנולוגי</div>
+          <div class="need-city">📍 כפר מנחם, שפלה</div>
+          <div class="need-subject">סייבר</div>
+          <div class="need-urgency-bar"><div class="need-urgency-fill" style="width:82%;background:var(--red)"></div></div>
+          <div class="need-meta">
+            <span>⏱ מחכה 28 ימים</span>
+            <span class="need-match">2 מועמדים מתאימים</span>
+          </div>
+        </div>
+        <div class="need-card">
+          <div class="need-school">גימנסיה הרצליה</div>
+          <div class="need-city">📍 תל אביב — אנומליה</div>
+          <div class="need-subject">Python + AI</div>
+          <div class="need-urgency-bar"><div class="need-urgency-fill" style="width:74%;background:var(--amber)"></div></div>
+          <div class="need-meta">
+            <span>⏱ מחכה 19 ימים</span>
+            <span style="color:var(--amber);font-weight:600">בונוס פעיל ↑</span>
+          </div>
+        </div>
+        <div class="need-card">
+          <div class="need-school">עמל חיפה</div>
+          <div class="need-city">📍 חיפה, צפון</div>
+          <div class="need-subject">פיזיקה + מתמטיקה</div>
+          <div class="need-urgency-bar"><div class="need-urgency-fill" style="width:61%;background:var(--amber)"></div></div>
+          <div class="need-meta">
+            <span>⏱ מחכה 14 ימים</span>
+            <span class="need-match">7 מועמדים מתאימים</span>
+          </div>
+        </div>
+        <div class="need-card">
+          <div class="need-school">אלרואי ירושלים</div>
+          <div class="need-city">📍 ירושלים, מרכז</div>
+          <div class="need-subject">סייבר</div>
+          <div class="need-urgency-bar"><div class="need-urgency-fill" style="width:45%;background:var(--teal)"></div></div>
+          <div class="need-meta">
+            <span>⏱ מחכה 8 ימים</span>
+            <span class="need-match">4 מועמדים מתאימים</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: AI INSIGHTS -->
+    <div id="screen-insights" class="screen">
+      <div class="topbar">
+        <div>
+          <div class="page-title">תובנות <span>AI</span></div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px">ניתוח מבוסס נתוני מחזור 2024–2025</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost">📊 הורד דוח מלא</button>
+        </div>
+      </div>
+
+      <div class="ai-rec">
+        <span class="ai-icon">🤖</span>
+        <div>
+          <div class="ai-rec-title">המלצת עדיפות — עכשיו</div>
+          <div class="ai-rec-text">
+            <strong style="color:#fff">נועה לוי</strong> היא ההתאמה הטובה ביותר לאורט נתיבות: ציון כולל 97, ישארות 96%, ועלות נטו של 4,800₪ בגדר התקציב הזמין. 
+            הבעיה: היא מועמדת לגימנסיה הרצליה במקביל. <span class="insight-alert">המלצה: שיחת קצין ב-72 שעות.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-card">
+          <div class="insight-icon">📉</div>
+          <div class="insight-title">אנומליה תל-אביבית — ניתוח</div>
+          <div class="insight-text">
+            <span class="insight-alert">8 מתוך 11</span> בתי ספר בתל אביב לא מצליחים לגייס בשל יוקר מחיה, למרות בונוס פעיל. המודל מזהה שהבונוס הנוכחי (<span class="insight-highlight">+800₪</span>) נמוך בכ-35% ממה שנדרש. המלצה: העלאה ל-<span class="insight-highlight">+1,300₪</span> עם מענק דיור חד-פעמי.
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🎯</div>
+          <div class="insight-title">ELI5 Score — תובנה</div>
+          <div class="insight-text">
+            מועמדים עם רקע מ-<span class="insight-highlight">8200</span> מדרגים גבוה ב-Talent Index אך ציון ה-ELI5 שלהם ממוצע <span class="insight-alert">68/100</span> — נמוך ב-22 נקודות ממועמדי חיל הקשר. הסיבה האפשרית: הרגל עבודה עם מומחים בלבד. המלצה: הוסף הכשרת פדגוגיה ממוקדת בשלב 0.
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🔄</div>
+          <div class="insight-title">Retention — גורם מסביר</div>
+          <div class="insight-text">
+            <span class="insight-highlight">מרחק מגורים</span> מסביר 41% מהוריאנס בשיעור הנשירה — גורם בודד החזק ביותר. מועמדים שגרים ב-&gt;45 דקות נסיעה נושרים בסיכוי <span class="insight-alert">3.2× גבוה יותר</span>. המלצה: הגדל משקל מרחק ב-Retention Score ל-18% (מ-12% כעת).
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">💼</div>
+          <div class="insight-title">חברות מאמצות — עומס</div>
+          <div class="insight-text">
+            <span class="insight-highlight">Check Point</span> ו-<span class="insight-highlight">Tower Semi</span> מחזיקות 60% מהמחויבויות למרות שהן 2 מתוך 11 חברות. 
+            <span class="insight-alert">סיכון ריכוזיות גבוה.</span> שלוש חברות אמרו "כן עקרונית" אך לא חתמו. המלצה: פגישת account management בשבוע הבא.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function showScreen(name) {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  // Show target
+  document.getElementById('screen-' + name).classList.add('active');
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = { overview: 0, placements: 1, needs: 2, insights: 3 };
+  document.querySelectorAll('.nav-item')[navMap[name]]?.classList.add('active');
+}
+</script>
+</body>
+</html>
