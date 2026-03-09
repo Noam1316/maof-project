@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מעוף – Marketplace לשידוך STEM | צבא · חינוך · הייטק</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2236;
+            --bg-card-hover: #1e2a42;
+            --gold: #f0c040;
+            --gold-light: #f5d060;
+            --teal: #2dd4bf;
+            --teal-dark: #14b8a6;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --purple: #a78bfa;
+            --pink: #f472b6;
+            --green: #34d399;
+            --red: #f87171;
+            --orange: #fb923c;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #1e293b;
+            --border-light: #334155;
+            --gradient-gold: linear-gradient(135deg, #f0c040, #f59e0b);
+            --gradient-teal: linear-gradient(135deg, #2dd4bf, #06b6d4);
+            --gradient-blue: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --gradient-hero: linear-gradient(135deg, #0a0e1a 0%, #1a1040 50%, #0a0e1a 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ─── Navbar ─── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .navbar.scrolled {
+            padding: 0.6rem 2rem;
+            background: rgba(10, 14, 26, 0.95);
+        }
+
+        .nav-logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-cta {
+            background: var(--gradient-gold);
+            color: #000 !important;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            -webkit-text-fill-color: #000;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            background: var(--gradient-hero);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(240, 192, 64, 0.08) 0%, transparent 70%);
+            top: 10%;
+            right: -10%;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(45, 212, 191, 0.06) 0%, transparent 70%);
+            bottom: 10%;
+            left: -5%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(240, 192, 64, 0.1);
+            border: 1px solid rgba(240, 192, 64, 0.3);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .highlight {
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-family: 'Heebo', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-gold {
+            background: var(--gradient-gold);
+            color: #000;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(240, 192, 64, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-teal {
+            background: var(--gradient-teal);
+            color: #000;
+        }
+
+        .btn-blue {
+            background: var(--gradient-blue);
+            color: #fff;
+        }
+
+        /* ─── Stats Bar ─── */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            padding: 3rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* ─── Sections ─── */
+        section {
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ─── How It Works ─── */
+        .how-it-works {
+            background: var(--bg-primary);
+        }
+
+        .flow-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .flow-node {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            text-align: center;
+            min-width: 200px;
+            transition: all 0.3s;
+        }
+
+        .flow-node:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+        }
+
+        .flow-node .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .flow-node h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .flow-node p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        /* ─── 3 Audiences ─── */
+        .audiences {
+            background: var(--bg-secondary);
+        }
+
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .audience-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .audience-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 4px;
+        }
+
+        .audience-card.soldier::before { background: var(--gradient-gold); }
+        .audience-card.school::before { background: var(--gradient-teal); }
+        .audience-card.company::before { background: var(--gradient-blue); }
+
+        .audience-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-light);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .audience-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .audience-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .audience-card .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .benefit-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .benefit-list li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .benefit-list li .check {
+            color: var(--green);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ─── Scoring Engine ─── */
+        .scoring-section {
+            background: var(--bg-primary);
+        }
+
+        .scoring-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .score-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .score-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+        }
+
+        .score-card .score-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .score-card .weight {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .score-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+        }
+
+        /* ─── Timeline ─── */
+        .timeline-section {
+            background: var(--bg-secondary);
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 45px;
+            right: 10%;
+            left: 10%;
+            height: 3px;
+            background: var(--border-light);
+        }
+
+        .timeline-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding: 0 1rem;
+        }
+
+        .timeline-dot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin: 0 auto 1.2rem;
+            position: relative;
+            z-index: 2;
+            font-weight: 700;
+        }
+
+        .timeline-step:nth-child(1) .timeline-dot { background: var(--gradient-gold); color: #000; }
+        .timeline-step:nth-child(2) .timeline-dot { background: var(--gradient-teal); color: #000; }
+        .timeline-step:nth-child(3) .timeline-dot { background: var(--gradient-blue); color: #fff; }
+
+        .timeline-step h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .timeline-step p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .timeline-detail {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-top: 1.2rem;
+            text-align: right;
+        }
+
+        .timeline-detail .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            font-size: 0.85rem;
+        }
+
+        .timeline-detail .detail-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .timeline-detail .detail-row span:last-child {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* ─── Registration ─── */
+        .register-section {
+            background: var(--bg-primary);
+        }
+
+        .register-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(240, 192, 64, 0.1);
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            direction: rtl;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .form-group select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: none;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .submit-btn.gold { background: var(--gradient-gold); color: #000; }
+        .submit-btn.teal { background: var(--gradient-teal); color: #000; }
+        .submit-btn.blue { background: var(--gradient-blue); color: #fff; }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        /* ─── FAQ ─── */
+        .faq-section {
+            background: var(--bg-secondary);
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            background: var(--bg-card);
+        }
+
+        .faq-question {
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .faq-question:hover {
+            color: var(--gold);
+        }
+
+        .faq-question .arrow {
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-question .arrow {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+        }
+
+        .faq-item.open .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            max-height: 300px;
+        }
+
+        /* ─── Footer ─── */
+        .footer {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        /* ─── Toast ─── */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--green);
+            color: #000;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            z-index: 9999;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 40px rgba(52, 211, 153, 0.3);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ─── Economics ─── */
+        .economics-section {
+            background: var(--bg-primary);
+            padding: 6rem 2rem;
+        }
+
+        .econ-block {
+            max-width: 950px;
+            margin: 0 auto 4rem;
+        }
+
+        .econ-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .econ-table-wrap {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .econ-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .econ-table thead {
+            background: var(--bg-card);
+        }
+
+        .econ-table th {
+            padding: 1rem 1.2rem;
+            text-align: right;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .econ-table td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .econ-table .muted {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .econ-table .salary {
+            font-weight: 700;
+            color: var(--teal);
+            white-space: nowrap;
+        }
+
+        .econ-table .salary.funded {
+            color: var(--green);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .econ-table .salary.total {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        .econ-table .highlight-row td {
+            background: rgba(45, 212, 191, 0.04);
+        }
+
+        .econ-table .total-row td {
+            background: rgba(240, 192, 64, 0.06);
+            border-top: 2px solid var(--gold);
+        }
+
+        /* Compare table */
+        .econ-table.compare th.compare-highlight,
+        .econ-table.compare td.compare-highlight {
+            background: rgba(240, 192, 64, 0.08);
+            color: var(--gold);
+        }
+
+        .econ-table.compare td.compare-highlight {
+            color: var(--text-primary);
+        }
+
+        /* Payer Grid */
+        .payer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .payer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .payer-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .payer-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .payer-card h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .payer-desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payer-items {
+            margin-bottom: 1.2rem;
+        }
+
+        .payer-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .payer-row span:first-child {
+            color: var(--text-secondary);
+        }
+
+        .payer-row .amount {
+            color: var(--teal);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .payer-note {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.8rem;
+            color: var(--green);
+        }
+
+        /* ─── Story ─── */
+        .story-section {
+            background: var(--bg-secondary);
+            padding: 6rem 2rem;
+        }
+
+        .story-card {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            position: relative;
+        }
+
+        .story-quote {
+            position: absolute;
+            top: -10px;
+            right: 30px;
+            font-size: 6rem;
+            color: var(--gold);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .story-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+        }
+
+        .story-content p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 1rem;
+            line-height: 1.9;
+        }
+
+        .story-highlight {
+            color: var(--text-primary) !important;
+            font-size: 1.15rem !important;
+            font-weight: 600;
+            border-right: 3px solid var(--gold);
+            padding-right: 1rem;
+            margin-top: 1.5rem !important;
+        }
+
+        .validation-note {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(251, 146, 60, 0.08);
+            border: 1px solid rgba(251, 146, 60, 0.25);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .note-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .note-content h4 {
+            color: var(--orange);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero-sub { font-size: 1.05rem; }
+            .audience-grid { grid-template-columns: 1fr; }
+            .scoring-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-bar { flex-direction: column; gap: 2rem; }
+            .nav-links { display: none; }
+            .timeline { flex-direction: column; gap: 2rem; }
+            .timeline::before { display: none; }
+            .form-row { grid-template-columns: 1fr; }
+            .flow-visual { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+            .register-tabs { flex-wrap: wrap; }
+            .payer-grid { grid-template-columns: 1fr; }
+            .econ-table { font-size: 0.85rem; }
+            .econ-table th, .econ-table td { padding: 0.6rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ─── Navbar ─── -->
+<nav class="navbar" id="navbar">
+    <div class="nav-logo">מעוף</div>
+    <ul class="nav-links">
+        <li><a href="#how">איך זה עובד</a></li>
+        <li><a href="#audiences">למי זה מתאים</a></li>
+        <li><a href="#story">הסיפור שלנו</a></li>
+        <li><a href="#scoring">מנוע השידוך</a></li>
+        <li><a href="#timeline">המסלול</a></li>
+        <li><a href="#economics">שכר ומימון</a></li>
+        <li><a href="#register" class="nav-cta">הרשמה</a></li>
+    </ul>
+</nav>
+
+<!-- ─── Hero ─── -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="pulse"></span>
+            הרשמה פתוחה למחזור הראשון
+        </div>
+        <h1>
+            המקום שבו <span class="highlight">צבא, חינוך והייטק</span><br>
+            נפגשים
+        </h1>
+        <p class="hero-sub">
+            מעוף מחברת בין חיילים משוחררים עם רקע טכנולוגי, בתי ספר שצריכים מורי STEM, וחברות הייטק שמחפשות כישרונות. פלטפורמה אחת. שלושה מרוויחים.
+        </p>
+        <div class="hero-buttons">
+            <a href="#register" class="btn btn-gold">🎖 אני חייל/ת משוחרר/ת</a>
+            <a href="#register" class="btn btn-teal">🏫 אני מנהל/ת בית ספר</a>
+            <a href="#register" class="btn btn-blue">🏢 אני חברת הייטק</a>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Stats Bar ─── -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">3,500+</div>
+        <div class="stat-label">מורי STEM חסרים בישראל</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">38%</div>
+        <div class="stat-label">ממפוטרי ההייטק – ג'וניורים</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">17.5K</div>
+        <div class="stat-label">ש"ח שכר עמית הוראה</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">65%</div>
+        <div class="stat-label">מבוגרי לוחמים להייטק – עובדים בתעשייה</div>
+    </div>
+</div>
+
+<!-- ─── How It Works ─── -->
+<section class="how-it-works" id="how">
+    <div class="container">
+        <div class="section-header">
+            <h2>⚡ איך זה עובד?</h2>
+            <p>מעוף היא פלטפורמת שידוך חכמה שמחברת בין שלושה צדדים באופן אוטומטי</p>
+        </div>
+
+        <div class="flow-visual">
+            <div class="flow-node">
+                <div class="icon">🎖</div>
+                <h3>חייל/ת נרשמ/ת</h3>
+                <p>פרופיל + רקע טכנולוגי</p>
+            </div>
+            <div class="flow-arrow">←</div>
+            <div class="flow-node" style="border-color: var(--gold);">
+                <div class="icon">🤖</div>
+                <h3>מנוע מעוף</h3>
+                <p>AI Scoring & Matching</p>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">
+                <div class="icon">🏫</div>
+                <h3>בית ספר</h3>
+                <p>שידוך תוך 48 שעות</p>
+            </div>
+            <div class="flow-arrow">+</div>
+            <div class="flow-node">
+                <div class="icon">🏢</div>
+                <h3>חברת הייטק</h3>
+                <p>Part-time מיום 1</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Audiences ─── -->
+<section class="audiences" id="audiences">
+    <div class="container">
+        <div class="section-header">
+            <h2>🎯 למי זה מתאים?</h2>
+            <p>שלושה צדדים, כל אחד מקבל ערך אחר</p>
+        </div>
+
+        <div class="audience-grid">
+            <!-- Soldier -->
+            <div class="audience-card soldier">
+                <div class="audience-icon">🎖</div>
+                <h3>חיילים משוחררים</h3>
+                <div class="subtitle">רקע IT / תקשוב / QA / רשתות</div>
+                <ul class="benefit-list">
+                    <li><span class="check">✓</span> שכר 12.5-16K ש"ח (הוראה + הייטק part-time)</li>
+                    <li><span class="check">✓</span> כניסה מובטחת לחברת הייטק אחרי שנתיים</li>
+                    <li><span class="check">✓</span> בניית Portfolio + הסמכות מקצועיות</li>
+                    <li><span class="check">✓</span> מנטור אישי מהתעשייה</li>
+                    <li><span class="check">✓</span> ללמד = ללמוד פי 10 יותר טוב</li>
+                </ul>
+                <a href="#register" class="btn btn-gold" onclick="switchTab('soldier')">הרשמה לעמיתים →</a>
+            </div>
+
+            <!-- School -->
+            <div class="audience-card school">
+                <div class="audience-icon">🏫</div>
+                <h3>בתי ספר</h3>
+                <div class="subtitle">חטיבות ביניים ותיכונים</div>
+                <ul class="benefit-list">
+                    <li><span class="check">✓</span> עמית STEM תוך 48 שעות</li>
+                    <li><span class="check">✓</span> 2-3 ימים בשבוע – גמיש</li>
+                    <li><span class="check">✓</span> ממומן מתקציב "עמיתי הוראה"</li>
+                    <li><span class="check">✓</span> תוכנית לימודים מובנית מוכנה</li>
+                    <li><span class="check">✓</span> דמות מעוררת השראה לתלמידים</li>
+                </ul>
+                <a href="#register" class="btn btn-teal" onclick="switchTab('school')">פרסום צורך →</a>
+            </div>
+
+            <!-- Company -->
+            <div class="audience-card company">
+                <div class="audience-icon">🏢</div>
+                <h3>חברות הייטק</h3>
+                <div class="subtitle">שותפות להשפעה</div>
+                <ul class="benefit-list">
+                    <li><span class="check">✓</span> הכירו את העובד הבא שלכם – שנתיים לפני הגיוס</li>
+                    <li><span class="check">✓</span> השפעה אמיתית: הלוגו שלכם על כיתת סייבר בפריפריה</li>
+                    <li><span class="check">✓</span> Pipeline אורגני של כישרונות – בלי headhunter</li>
+                    <li><span class="check">✓</span> גיוס ללא סיכון – שנתיים של הכרות אישית</li>
+                    <li><span class="check">✓</span> תרבות ארגונית: העובדים שלכם רואים חברה שעושה טוב</li>
+                </ul>
+                <a href="#register" class="btn btn-blue" onclick="switchTab('company')">הצטרפות כשותפה →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Story ─── -->
+<section class="story-section" id="story">
+    <div class="container">
+        <div class="story-card">
+            <div class="story-quote">"</div>
+            <div class="story-content">
+                <h2>למה הקמתי את מעוף</h2>
+                <p>
+                    אני חייל משוחרר מתקשוב. מנהל רשת וחמ"ליסט. כשהשתחררתי, היו לי יכולות טכניות אמיתיות – ניהול רשתות, הבנת מערכות, חשיבה תחת לחץ – אבל אף חברת הייטק לא ידעה לתרגם את זה לשפה שלה.
+                </p>
+                <p>
+                    ראיתי חברים, אנשי תקשוב ו-IT מעולים, נתקעים בלי מסלול ברור קדימה. ובמקביל, בתי ספר בפריפריה מחפשים בייאוש מישהו שילמד סייבר ורשתות.
+                </p>
+                <p>
+                    <strong>החיבור היה ברור:</strong> אנחנו יודעים את החומר. ילדים צריכים את הידע הזה. וחברות הייטק צריכות אנשים שמבינים אנשים, לא רק קוד.
+                </p>
+                <p class="story-highlight">
+                    מעוף נולדה מהמקום הזה – הפלטפורמה שהלוואי שהייתה קיימת כשאני השתחררתי.
+                </p>
+            </div>
+        </div>
+
+        <div class="validation-note">
+            <div class="note-icon">⚠️</div>
+            <div class="note-content">
+                <h4>שקיפות מלאה: ההכשרה עדיין בבחינה</h4>
+                <p>
+                    אנחנו בודקים כרגע את מודל ההכשרה המתאים ביותר למועמדים – כמה חודשים, אילו הסמכות, ומה הפדגוגיה הנכונה. המטרה: שהעמית יגיע לכיתה מוכן באמת, לא רק "אחרי קורס". אם יש לך רעיונות או ניסיון – <a href="#register" style="color: var(--gold);">דבר איתנו</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Scoring Engine ─── -->
+<section class="scoring-section" id="scoring">
+    <div class="container">
+        <div class="section-header">
+            <h2>🤖 מנוע השידוך החכם</h2>
+            <p>אלגוריתם AI שמשקלל 4 קטגוריות ומייצר שידוך מושלם</p>
+        </div>
+
+        <div class="scoring-grid">
+            <div class="score-card">
+                <div class="score-icon">🧠</div>
+                <h4>מדד המועמד</h4>
+                <div class="weight">25%</div>
+                <p>רקע טכנולוגי, מבחן STEM, יכולת פישוט (ELI5)</p>
+            </div>
+            <div class="score-card">
+                <div class="score-icon">💪</div>
+                <h4>מדד חוסן</h4>
+                <div class="weight">25%</div>
+                <p>מרחק מגורים, מצב משפחתי, היסטוריית שירות</p>
+            </div>
+            <div class="score-card">
+                <div class="score-icon">🔥</div>
+                <h4>מדד דחיפות</h4>
+                <div class="weight">25%</div>
+                <p>עדיפות פריפריה, אנומליה ת"א, מדד טיפוח</p>
+            </div>
+            <div class="score-card">
+                <div class="score-icon">🔗</div>
+                <h4>התאמה עסקית</h4>
+                <div class="weight">25%</div>
+                <p>Tech Stack Match לחברה + היתכנות תקציבית</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Timeline ─── -->
+<section class="timeline-section" id="timeline">
+    <div class="container">
+        <div class="section-header">
+            <h2>🚀 המסלול</h2>
+            <p>מהכשרה, דרך הוראה, ועד משרה מלאה בהייטק</p>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-step">
+                <div class="timeline-dot">1</div>
+                <h4>הכשרה</h4>
+                <p>3-6 חודשים</p>
+                <div class="timeline-detail">
+                    <div class="detail-row"><span>תוכן</span><span>פדגוגיה + השלמות טכניות</span></div>
+                    <div class="detail-row"><span>מימון</span><span>קרן לחיילים משוחררים</span></div>
+                    <div class="detail-row"><span>תוצר</span><span>הסמכות + כלים להוראה</span></div>
+                </div>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-dot">2</div>
+                <h4>הוראה + הייטק</h4>
+                <p>שנתיים</p>
+                <div class="timeline-detail">
+                    <div class="detail-row"><span>הוראה</span><span>2-3 ימים, עמית STEM</span></div>
+                    <div class="detail-row"><span>הייטק</span><span>2 ימים, Part-time בחברה</span></div>
+                    <div class="detail-row"><span>שכר כולל</span><span>~12,500-16,000 ש"ח</span></div>
+                </div>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-dot">3</div>
+                <h4>הייטק Full-Time</h4>
+                <p>שנתיים+</p>
+                <div class="timeline-detail">
+                    <div class="detail-row"><span>מעבר</span><span>Full-time בחברה המאמצת</span></div>
+                    <div class="detail-row"><span>רמה</span><span>Junior+ / Mid-level</span></div>
+                    <div class="detail-row"><span>שכר צפוי</span><span>18,000-24,000 ש"ח</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Economics ─── -->
+<section class="economics-section" id="economics">
+    <div class="container">
+        <div class="section-header">
+            <h2>💰 כמה מרוויחים ומי משלם</h2>
+            <p>שקיפות מלאה – הנה המספרים</p>
+        </div>
+
+        <!-- Salary Table -->
+        <div class="econ-block">
+            <h3 class="econ-title">📊 טבלת שכר לעמית – לפי שלב</h3>
+            <div class="econ-table-wrap">
+                <table class="econ-table">
+                    <thead>
+                        <tr>
+                            <th>שלב</th>
+                            <th>מקור הכנסה</th>
+                            <th>היקף</th>
+                            <th>שכר חודשי</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="2"><strong>הכשרה</strong><br><span class="muted">3-6 חודשים</span></td>
+                            <td>מלגת מחייה</td>
+                            <td>—</td>
+                            <td class="salary">~4,000 ש"ח</td>
+                        </tr>
+                        <tr>
+                            <td>שכר לימוד</td>
+                            <td>ממומן מלא</td>
+                            <td class="salary funded">קרן לחיילים משוחררים</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td rowspan="3"><strong>הוראה + הייטק</strong><br><span class="muted">שנתיים</span></td>
+                            <td>עמית הוראה STEM</td>
+                            <td>2-3 ימים/שבוע</td>
+                            <td class="salary">7,500-9,000 ש"ח</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>Part-time הייטק</td>
+                            <td>2 ימים/שבוע</td>
+                            <td class="salary">5,000-7,000 ש"ח</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>סה"כ</strong></td>
+                            <td>5 ימים/שבוע</td>
+                            <td class="salary total">12,500-16,000 ש"ח</td>
+                        </tr>
+                        <tr>
+                            <td><strong>הייטק Full-time</strong><br><span class="muted">שנה 3+</span></td>
+                            <td>משכורת מלאה</td>
+                            <td>5 ימים/שבוע</td>
+                            <td class="salary total">18,000-24,000 ש"ח</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Who Pays -->
+        <div class="econ-block">
+            <h3 class="econ-title">🤝 מי משלם מה?</h3>
+            <div class="payer-grid">
+                <div class="payer-card">
+                    <div class="payer-icon">🏛️</div>
+                    <h4>משרד החינוך</h4>
+                    <div class="payer-desc">משלם שכר עמית הוראה (משרה חלקית)</div>
+                    <div class="payer-items">
+                        <div class="payer-row">
+                            <span>שכר הוראה (50% משרה)</span>
+                            <span class="amount">7,500-9,000 ש"ח/חודש</span>
+                        </div>
+                        <div class="payer-row">
+                            <span>מסגרת</span>
+                            <span class="amount">תקציב "עמיתי הוראה" קיים</span>
+                        </div>
+                    </div>
+                    <div class="payer-note">✓ תקציב שכבר מאושר – לא צריך אישור חדש</div>
+                </div>
+
+                <div class="payer-card">
+                    <div class="payer-icon">🏢</div>
+                    <h4>חברת ההייטק</h4>
+                    <div class="payer-desc">משלמת על עבודת ה-Part-time</div>
+                    <div class="payer-items">
+                        <div class="payer-row">
+                            <span>שכר part-time</span>
+                            <span class="amount">5,000-7,000 ש"ח/חודש</span>
+                        </div>
+                        <div class="payer-row">
+                            <span>מנטור</span>
+                            <span class="amount">זמן עובד קיים (2 שעות/שבוע)</span>
+                        </div>
+                    </div>
+                    <div class="payer-note">✓ עלות נמוכה מגיוס ג'וניור רגיל</div>
+                </div>
+
+                <div class="payer-card">
+                    <div class="payer-icon">🎖️</div>
+                    <h4>קרן לחיילים משוחררים</h4>
+                    <div class="payer-desc">ממנת את שלב ההכשרה</div>
+                    <div class="payer-items">
+                        <div class="payer-row">
+                            <span>שכר לימוד</span>
+                            <span class="amount">מימון מלא</span>
+                        </div>
+                        <div class="payer-row">
+                            <span>מלגת מחייה</span>
+                            <span class="amount">~4,000 ש"ח/חודש</span>
+                        </div>
+                    </div>
+                    <div class="payer-note">✓ מסלול מוכר לחיילים משוחררים</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison -->
+        <div class="econ-block">
+            <h3 class="econ-title">⚖️ השוואה: מסלול מעוף מול חלופות</h3>
+            <div class="econ-table-wrap">
+                <table class="econ-table compare">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="compare-highlight">מסלול מעוף</th>
+                            <th>ישר להייטק (ג'וניור)</th>
+                            <th>הסבה רגילה</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>שכר בשנה 1-2</td>
+                            <td class="compare-highlight"><strong>12.5-16K</strong></td>
+                            <td>10-12K (אם מוצאים)</td>
+                            <td>0 (לומדים)</td>
+                        </tr>
+                        <tr>
+                            <td>ביטחון תעסוקתי</td>
+                            <td class="compare-highlight"><strong>גבוה – 2 מקורות</strong></td>
+                            <td>נמוך – 38% מפוטרים</td>
+                            <td>אפס</td>
+                        </tr>
+                        <tr>
+                            <td>ניסיון מקצועי</td>
+                            <td class="compare-highlight"><strong>הוראה + הייטק</strong></td>
+                            <td>הייטק בלבד</td>
+                            <td>אין</td>
+                        </tr>
+                        <tr>
+                            <td>רשת קשרים</td>
+                            <td class="compare-highlight"><strong>ביה"ס + חברה + קהילה</strong></td>
+                            <td>חברה בלבד</td>
+                            <td>עמיתים לקורס</td>
+                        </tr>
+                        <tr>
+                            <td>שכר בשנה 3+</td>
+                            <td class="compare-highlight"><strong>18-24K (מוכר בחברה)</strong></td>
+                            <td>20-25K</td>
+                            <td>10-15K</td>
+                        </tr>
+                        <tr>
+                            <td>השפעה חברתית</td>
+                            <td class="compare-highlight"><strong>✓ ילדים למדו ממך</strong></td>
+                            <td>✗</td>
+                            <td>✗</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Registration ─── -->
+<section class="register-section" id="register">
+    <div class="container">
+        <div class="section-header">
+            <h2>✍️ הרשמה</h2>
+            <p>בחרו את הקטגוריה שלכם והשאירו פרטים – נחזור אליכם תוך 48 שעות</p>
+        </div>
+
+        <div class="register-tabs">
+            <button class="tab-btn active" onclick="switchTab('soldier')">🎖 חייל/ת משוחרר/ת</button>
+            <button class="tab-btn" onclick="switchTab('school')">🏫 בית ספר</button>
+            <button class="tab-btn" onclick="switchTab('company')">🏢 חברת הייטק</button>
+        </div>
+
+        <!-- Soldier Form -->
+        <div class="form-container active" id="form-soldier">
+            <div class="form-card">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>שם מלא</label>
+                        <input type="text" placeholder="שם פרטי ומשפחה">
+                    </div>
+                    <div class="form-group">
+                        <label>טלפון</label>
+                        <input type="tel" placeholder="050-0000000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>אימייל</label>
+                    <input type="email" placeholder="your@email.com">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>תפקיד בצבא</label>
+                        <select>
+                            <option value="">בחר תפקיד</option>
+                            <option>תקשוב / IT</option>
+                            <option>בודק/ת תוכנה (QA)</option>
+                            <option>ניהול רשתות</option>
+                            <option>אנליסט/ית מודיעין</option>
+                            <option>לוט"ם / C4I</option>
+                            <option>ממר"ם / מצ"ח</option>
+                            <option>אחר (טכנולוגי)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>שנת שחרור</label>
+                        <select>
+                            <option value="">בחר שנה</option>
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                            <option>לפני 2022</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>אזור מגורים מועדף</label>
+                    <select>
+                        <option value="">בחר אזור</option>
+                        <option>דרום (באר שבע, נתיבות, אשדוד)</option>
+                        <option>צפון (חיפה, עכו, כרמיאל)</option>
+                        <option>מרכז (תל אביב, רמת גן)</option>
+                        <option>ירושלים והסביבה</option>
+                        <option>גמיש</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>למה אתה רוצה ללמד? (משפט אחד)</label>
+                    <textarea placeholder="ספר/י לנו בקצרה..."></textarea>
+                </div>
+                <button class="submit-btn gold" onclick="submitForm('soldier')">שליחת הרשמה 🎖</button>
+            </div>
+        </div>
+
+        <!-- School Form -->
+        <div class="form-container" id="form-school">
+            <div class="form-card">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>שם בית הספר</label>
+                        <input type="text" placeholder="שם מוסד החינוך">
+                    </div>
+                    <div class="form-group">
+                        <label>שם איש/ת קשר</label>
+                        <input type="text" placeholder="שם מנהל/ת או רכז/ת">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>טלפון</label>
+                        <input type="tel" placeholder="050-0000000">
+                    </div>
+                    <div class="form-group">
+                        <label>אימייל</label>
+                        <input type="email" placeholder="school@email.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>עיר / יישוב</label>
+                        <input type="text" placeholder="עיר">
+                    </div>
+                    <div class="form-group">
+                        <label>שלב חינוך</label>
+                        <select>
+                            <option value="">בחר</option>
+                            <option>חטיבת ביניים</option>
+                            <option>תיכון</option>
+                            <option>שילוב חטיבה + תיכון</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>מקצוע STEM נדרש</label>
+                    <select>
+                        <option value="">בחר מקצוע</option>
+                        <option>סייבר ואבטחת מידע</option>
+                        <option>מדעי המחשב / פייתון</option>
+                        <option>רשתות תקשורת</option>
+                        <option>רובוטיקה</option>
+                        <option>מתמטיקה</option>
+                        <option>פיזיקה</option>
+                        <option>אחר</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>היקף משרה רצוי</label>
+                    <select>
+                        <option value="">בחר היקף</option>
+                        <option>יום אחד בשבוע</option>
+                        <option>2 ימים בשבוע</option>
+                        <option>3 ימים בשבוע</option>
+                    </select>
+                </div>
+                <button class="submit-btn teal" onclick="submitForm('school')">פרסום צורך 🏫</button>
+            </div>
+        </div>
+
+        <!-- Company Form -->
+        <div class="form-container" id="form-company">
+            <div class="form-card">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>שם החברה</label>
+                        <input type="text" placeholder="שם חברת ההייטק">
+                    </div>
+                    <div class="form-group">
+                        <label>שם איש/ת קשר</label>
+                        <input type="text" placeholder="שם מלא">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>טלפון</label>
+                        <input type="tel" placeholder="050-0000000">
+                    </div>
+                    <div class="form-group">
+                        <label>אימייל</label>
+                        <input type="email" placeholder="hr@company.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>תחום טכנולוגי עיקרי</label>
+                    <select>
+                        <option value="">בחר תחום</option>
+                        <option>סייבר ואבטחת מידע</option>
+                        <option>פיתוח תוכנה</option>
+                        <option>DevOps / Cloud</option>
+                        <option>Data & AI</option>
+                        <option>QA / Testing</option>
+                        <option>אחר</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>מה מעניין אתכם?</label>
+                    <select>
+                        <option value="">בחר</option>
+                        <option>קליטת עמיתים ל-Part-time</option>
+                        <option>מנטורינג בלבד</option>
+                        <option>Pipeline לגיוס עתידי</option>
+                        <option>CSR + Branding בבתי ספר</option>
+                        <option>הכל</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>מספר עובדים בחברה</label>
+                    <select>
+                        <option value="">בחר</option>
+                        <option>1-50</option>
+                        <option>51-200</option>
+                        <option>201-1000</option>
+                        <option>1000+</option>
+                    </select>
+                </div>
+                <button class="submit-btn blue" onclick="submitForm('company')">הצטרפות כשותפה 🏢</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section class="faq-section" id="faq">
+    <div class="container">
+        <div class="section-header">
+            <h2>❓ שאלות נפוצות</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    צריך תעודת הוראה כדי להשתתף?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">לא. עמיתי הוראה במסגרת תוכנית משרד החינוך אינם נדרשים לתעודת הוראה. ההכשרה הפדגוגית שלנו מכינה אתכם לכיתה.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    כמה מרוויחים?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">שכר כולל של 12,500-16,000 ש"ח: כ-7,500-9,000 מהוראה במשרה חלקית (2-3 ימים) + כ-5,000-7,000 מעבודת Part-time בחברת הייטק (2 ימים).</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    מה קורה אחרי שנתיים?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">החברה שעבדת בה Part-time כבר מכירה אותך שנתיים. המעבר ל-Full-time הוא טבעי – בלי ראיונות, בלי headhunter, בלי התחלה מאפס.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    אני חברת הייטק – מה העלות?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">אפס בשלב הראשון. אתם מספקים Part-time + מנטור. בתמורה מקבלים pipeline של עובדים שאתם כבר מכירים, השפעה חברתית אמיתית, ו-branding בבתי ספר. עמלת השמה מופחתת רק כשהעמית עובר ל-Full-time.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    אני מנהל בית ספר – מי משלם על העמית?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">העמית ממומן מתקציב "עמיתי הוראה" של משרד החינוך – 100 משרות מלאות שכבר מאושרות, בדגש על מקצועות STEM ואזורי מחסור.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Footer ─── -->
+<footer class="footer">
+    <div class="footer-logo">מעוף</div>
+    <p>Marketplace לשידוך STEM | צבא · חינוך · הייטק</p>
+    <div class="footer-links">
+        <a href="#how">איך זה עובד</a>
+        <a href="#audiences">למי זה מתאים</a>
+        <a href="#register">הרשמה</a>
+        <a href="mailto:info@maof.co.il">צור קשר</a>
+    </div>
+    <p style="margin-top: 1.5rem; font-size: 0.8rem;">© 2025 מעוף – Tech-Lead Israel. כל הזכויות שמורות.</p>
+</footer>
+
+<!-- ─── Toast ─── -->
+<div class="toast" id="toast">✓ הפרטים נשלחו בהצלחה! נחזור אליך תוך 48 שעות</div>
+
+<script>
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Tab switching
+    function switchTab(type) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.form-container').forEach(form => form.classList.remove('active'));
+
+        const labels = { soldier: '🎖 חייל/ת משוחרר/ת', school: '🏫 בית ספר', company: '🏢 חברת הייטק' };
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if (btn.textContent.trim() === labels[type]?.trim()) btn.classList.add('active');
+        });
+
+        document.getElementById('form-' + type).classList.add('active');
+
+        // Scroll to register
+        document.getElementById('register').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Form submit
+    function submitForm(type) {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    // FAQ toggle
+    function toggleFaq(el) {
+        el.parentElement.classList.toggle('open');
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+</script>
+
+</body>
+</html>

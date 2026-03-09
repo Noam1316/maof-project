@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מעוף – One Pager עסקי</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 48px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        @media print {
+            body { background: white; }
+            .page {
+                padding: 24px 32px;
+                max-width: 100%;
+                font-size: 11px;
+            }
+            .page { page-break-inside: avoid; }
+            h1 { font-size: 22px !important; }
+            h2 { font-size: 14px !important; }
+            .header-strip { padding: 16px 24px !important; }
+            .section { padding: 12px 0 !important; }
+            .grid-2 { gap: 12px !important; }
+            .grid-3 { gap: 10px !important; }
+            .stat-box { padding: 10px !important; }
+        }
+
+        /* ─── Header ─── */
+        .header-strip {
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1040 60%, #0f172a 100%);
+            color: white;
+            padding: 28px 36px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .header-strip h1 {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #f0c040, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-strip .tagline {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .header-strip .contact {
+            text-align: left;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .header-strip .contact strong {
+            color: #f0c040;
+            font-size: 14px;
+        }
+
+        /* ─── Sections ─── */
+        .section {
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section:last-child { border-bottom: none; }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h2 .icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .icon-red { background: #fef2f2; }
+        .icon-green { background: #f0fdf4; }
+        .icon-blue { background: #eff6ff; }
+        .icon-purple { background: #faf5ff; }
+        .icon-orange { background: #fff7ed; }
+        .icon-teal { background: #f0fdfa; }
+
+        p, li {
+            font-size: 13.5px;
+            color: #475569;
+        }
+
+        /* ─── Stats Row ─── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 8px 0;
+        }
+
+        .stat-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-box .num {
+            font-size: 26px;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1.1;
+        }
+
+        .stat-box .num.red { color: #ef4444; }
+        .stat-box .num.blue { color: #3b82f6; }
+        .stat-box .num.green { color: #10b981; }
+        .stat-box .num.orange { color: #f59e0b; }
+
+        .stat-box .label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+        .stat-box .source {
+            font-size: 9px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        /* ─── Grids ─── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .card h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card p, .card li {
+            font-size: 12.5px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            padding: 3px 0;
+            padding-right: 16px;
+            position: relative;
+        }
+
+        .card ul li::before {
+            content: '✓';
+            position: absolute;
+            right: 0;
+            color: #10b981;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        /* ─── Flow diagram ─── */
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin: 12px 0;
+            flex-direction: row-reverse;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .flow-step .step-num {
+            font-size: 10px;
+            color: #f0c040;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .flow-step .step-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin: 2px 0;
+        }
+
+        .flow-step .step-desc {
+            font-size: 10.5px;
+            color: #94a3b8;
+        }
+
+        .flow-arrow {
+            font-size: 20px;
+            color: #f0c040;
+            padding: 0 4px;
+            transform: scaleX(-1);
+        }
+
+        /* ─── Revenue table ─── */
+        .rev-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 12.5px;
+        }
+
+        .rev-table th {
+            background: #0f172a;
+            color: white;
+            padding: 8px 12px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 11.5px;
+        }
+
+        .rev-table th:first-child { border-radius: 0 8px 0 0; }
+        .rev-table th:last-child { border-radius: 8px 0 0 0; }
+
+        .rev-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .rev-table tr:last-child td {
+            border-bottom: none;
+            font-weight: 700;
+            color: #0f172a;
+            background: #f0fdf4;
+        }
+
+        /* ─── Highlight box ─── */
+        .highlight-box {
+            background: linear-gradient(135deg, #0f172a, #1a1040);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .highlight-box .ask-title {
+            font-size: 11px;
+            color: #f0c040;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .highlight-box .ask-main {
+            font-size: 18px;
+            font-weight: 800;
+            margin: 4px 0;
+        }
+
+        .highlight-box .ask-sub {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .highlight-box .ask-amount {
+            text-align: left;
+        }
+
+        .highlight-box .amount-num {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #f0c040, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .highlight-box .amount-label {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        /* ─── Badge ─── */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-gold { background: #fef3c7; color: #92400e; }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 700px) {
+            .page { padding: 20px; }
+            .header-strip { flex-direction: column; text-align: center; gap: 12px; }
+            .header-strip .contact { text-align: center; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .flow { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+            .highlight-box { flex-direction: column; text-align: center; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <!-- HEADER -->
+        <div class="header-strip">
+            <div>
+                <h1>מעוף – Tech-Lead Israel</h1>
+                <div class="tagline">פלטפורמת AI לשידוך חיילים משוחררים ↔ הוראת STEM ↔ חברות הייטק</div>
+            </div>
+            <div class="contact">
+                <strong>נועם אוקון</strong><br>
+                מייסד ומנכ"ל<br>
+                noam@maof.tech<br>
+                מרץ 2026
+            </div>
+        </div>
+
+        <!-- PROBLEM -->
+        <div class="section">
+            <h2><span class="icon icon-red">🔴</span> הבעיה הכפולה – שני משברים, פתרון אחד</h2>
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="num red">12,000</div>
+                    <div class="label">מורים חסרים<br>במערכת החינוך</div>
+                    <div class="source">הסתדרות המורים, 2025</div>
+                </div>
+                <div class="stat-box">
+                    <div class="num red">55%</div>
+                    <div class="label">מהמנהלים לא הצליחו<br>לגייס מלוא צוות ההוראה</div>
+                    <div class="source">דו"ח OECD, אוקטובר 2025</div>
+                </div>
+                <div class="stat-box">
+                    <div class="num blue">15,000</div>
+                    <div class="label">מחפשי עבודה<br>בהייטק</div>
+                    <div class="source">Calcalist Tech, אפריל 2025</div>
+                </div>
+                <div class="stat-box">
+                    <div class="num orange">+112%</div>
+                    <div class="label">עלייה במחפשי<br>עבודה בהייטק</div>
+                    <div class="source">2019-2025</div>
+                </div>
+            </div>
+            <p style="margin-top:8px; font-size:13px; text-align:center; color:#64748b;">
+                <strong style="color:#ef4444;">בתי הספר</strong> זקוקים נואשות למורי STEM ·
+                <strong style="color:#3b82f6;">חיילים משוחררים</strong> מחפשים כניסה להייטק ·
+                <strong style="color:#f59e0b;">חברות הייטק</strong> רוצות ג'וניורים מוכשרים ומנוסים
+            </p>
+        </div>
+
+        <!-- SOLUTION -->
+        <div class="section">
+            <h2><span class="icon icon-green">💡</span> הפתרון – מודל Hybrid 2+2</h2>
+            <div class="flow">
+                <div class="flow-step">
+                    <div class="step-num">הכשרה</div>
+                    <div class="step-title">קורס AI/Cyber</div>
+                    <div class="step-desc">3-8 חודשים · Bootcamp</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-num">שנים 1-2 · היברידי</div>
+                    <div class="step-title">50% הוראה + 50% הייטק</div>
+                    <div class="step-desc">עמית הוראה + עובד חברה</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-num">שנה 3+</div>
+                    <div class="step-title">משרה מלאה בהייטק</div>
+                    <div class="step-desc">Junior-to-Mid מנוסה</div>
+                </div>
+            </div>
+            <p style="text-align:center; font-size:12.5px; color:#64748b; margin-top:4px;">
+                החייל מלמד STEM בתיכון 2-3 ימים/שבוע <strong style="color:#10b981;">(שכר ממשרד החינוך)</strong>
+                + עובד בחברת הייטק 2 ימים/שבוע <strong style="color:#3b82f6;">(שכר מהחברה)</strong>
+            </p>
+        </div>
+
+        <!-- WHY NOW -->
+        <div class="section">
+            <h2><span class="icon icon-orange">⚡</span> למה עכשיו – חלון הזדמנויות</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>✅ תוכנית "עמיתי הוראה" – הושקה</h3>
+                    <ul>
+                        <li>משרד החינוך אישר 100 משרות מלאות בחוזים אישיים</li>
+                        <li>בלי תעודת הוראה – מומחים מהתעשייה</li>
+                        <li>שכר: 15.5-17.5K ₪ למשרה מלאה</li>
+                        <li>דגש על STEM ופריפריה</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>✅ תוכנית "לוחמים להייטק" – פעילה</h3>
+                    <ul>
+                        <li>עתידים + משרד הביטחון + מפעל הפיס</li>
+                        <li>65% מהבוגרים עובדים בהייטק</li>
+                        <li>מימון 80% משכר הלימוד + מלגה</li>
+                        <li>שותפות עם צ'ק פוינט, רפאל, Radware</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="text-align:center; margin-top:10px; font-size:13px; font-weight:600; color:#0f172a;">
+                🎯 שתי התוכניות קיימות בנפרד – מעוף הוא הפלטפורמה שמחברת ביניהן
+            </p>
+        </div>
+
+        <!-- BUSINESS MODEL -->
+        <div class="section">
+            <h2><span class="icon icon-purple">💰</span> מודל הכנסות</h2>
+            <div class="grid-2">
+                <div>
+                    <table class="rev-table">
+                        <tr>
+                            <th>מקור הכנסה</th>
+                            <th>תזמון</th>
+                            <th>סכום</th>
+                        </tr>
+                        <tr>
+                            <td>דמי SaaS חודשיים</td>
+                            <td>מחודש 1</td>
+                            <td>1,500-3,000 ₪/חייל</td>
+                        </tr>
+                        <tr>
+                            <td>Success Fee השמה</td>
+                            <td>חודש 25</td>
+                            <td>25,000-35,000 ₪</td>
+                        </tr>
+                        <tr>
+                            <td>מענקי רשות החדשנות</td>
+                            <td>שנה 1</td>
+                            <td>200K-1M ₪</td>
+                        </tr>
+                        <tr>
+                            <td><strong>הכנסה צפויה (100 חיילים)</strong></td>
+                            <td><strong>שנה 2</strong></td>
+                            <td><strong>4.3-7.1M ₪</strong></td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <div class="card" style="height:100%;">
+                        <h3>📊 מי משלם מה (שנים 1-2)</h3>
+                        <ul>
+                            <li><strong>משרד החינוך / גפ"ן</strong> → שכר הוראה 50% (7-8K ₪)</li>
+                            <li><strong>חברת הייטק</strong> → שכר עבודה 50% (10-12K ₪)</li>
+                            <li><strong>חברת הייטק</strong> → דמי SaaS למעוף</li>
+                            <li><strong>מעוף</strong> → סינון, שידוך, ניהול, QA</li>
+                        </ul>
+                        <p style="margin-top:8px; font-size:12px;">
+                            <span class="badge badge-green">שכר כולל לחייל: 17-20K ₪</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TECHNOLOGY -->
+        <div class="section">
+            <h2><span class="icon icon-blue">🤖</span> הטכנולוגיה – Scoring Engine</h2>
+            <div class="grid-3" style="margin-top:4px;">
+                <div class="card" style="border-top: 3px solid #3b82f6;">
+                    <h3>🎯 Talent Index</h3>
+                    <p>רקע צבאי טכנולוגי + מבחן STEM מעשי + ציון פסיכומטרי</p>
+                </div>
+                <div class="card" style="border-top: 3px solid #10b981;">
+                    <h3>🧠 מבחן ELI5</h3>
+                    <p>ניתוח AI של יכולת פישוט מושגים מורכבים – קריטי להוראה וניהול צוות</p>
+                </div>
+                <div class="card" style="border-top: 3px solid #f59e0b;">
+                    <h3>🔗 Tech-Stack Match</h3>
+                    <p>שידוך אלגוריתמי: מקצוע נלמד ↔ צורכי חברה ↔ צורכי בית ספר</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VALUE PROP -->
+        <div class="section">
+            <h2><span class="icon icon-teal">🏆</span> ערך לכל צד</h2>
+            <div class="grid-3">
+                <div class="card" style="border-right: 3px solid #3b82f6;">
+                    <h3>🎖️ לחייל</h3>
+                    <ul>
+                        <li>שכר 17-20K ₪ מיום ראשון</li>
+                        <li>ניסיון כפול: הייטק + ניהול</li>
+                        <li>Seniority Leap – 2 שנים = 18 חודשי ניסיון</li>
+                        <li>משרה מלאה מובטחת בשנה 3</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-right: 3px solid #10b981;">
+                    <h3>🏫 לבית הספר</h3>
+                    <ul>
+                        <li>מורה STEM מהתעשייה</li>
+                        <li>ללא מכרז – דרך מסגרת גפ"ן/עמיתי הוראה</li>
+                        <li>מסונן ומאומת ע"י AI</li>
+                        <li>גמישות: 1-3 ימים בשבוע</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-right: 3px solid #f59e0b;">
+                    <h3>🏢 לחברת הייטק</h3>
+                    <ul>
+                        <li>עובד ב-50% משרה ב-10-12K ₪</li>
+                        <li>Trial period של שנתיים</li>
+                        <li>עובד עם Soft Skills מוכחים</li>
+                        <li>בלי Success Fee עד חודש 25</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASK -->
+        <div class="highlight-box">
+            <div>
+                <div class="ask-title">מה אנחנו מחפשים</div>
+                <div class="ask-main">שותפות אסטרטגית + מימון Seed</div>
+                <div class="ask-sub">פיילוט עם 10-20 חיילים · שותפות עם תוכניות קיימות · מענק רשות החדשנות</div>
+            </div>
+            <div class="ask-amount">
+                <div class="amount-num">200K ₪</div>
+                <div class="amount-label">מסלול תנופה – רשות החדשנות</div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

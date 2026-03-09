@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מעוף – תקציר בקשת מענק | מסלול תנופה – רשות החדשנות</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 48px 56px;
+            background: white;
+        }
+
+        @media print {
+            body { background: white; font-size: 12px; }
+            .page { padding: 32px 40px; max-width: 100%; }
+            .page-break { page-break-before: always; }
+            h1 { font-size: 20px !important; }
+            h2 { font-size: 15px !important; }
+            h3 { font-size: 13px !important; }
+        }
+
+        /* ─── Header ─── */
+        .doc-header {
+            text-align: center;
+            padding-bottom: 28px;
+            border-bottom: 3px solid #0f172a;
+            margin-bottom: 32px;
+        }
+
+        .doc-header .logo-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .doc-header .org-name {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .doc-header h1 {
+            font-size: 24px;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .doc-header .subtitle {
+            font-size: 16px;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .doc-header .track-info {
+            margin-top: 12px;
+            display: inline-block;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ─── Meta table ─── */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 28px;
+            font-size: 13px;
+        }
+
+        .meta-table td {
+            padding: 8px 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .meta-table td:first-child {
+            background: #f8fafc;
+            font-weight: 700;
+            color: #0f172a;
+            width: 160px;
+        }
+
+        /* ─── Sections ─── */
+        .section {
+            margin-bottom: 28px;
+        }
+
+        h2 {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h2 .sec-num {
+            background: #0f172a;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+            margin: 14px 0 6px 0;
+        }
+
+        p {
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        ul {
+            padding-right: 20px;
+            margin-bottom: 10px;
+        }
+
+        li {
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
+        strong { color: #0f172a; }
+
+        /* ─── Data tables ─── */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            background: #0f172a;
+            color: white;
+            padding: 10px 14px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .data-table tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .data-table tr.total td {
+            font-weight: 700;
+            color: #0f172a;
+            background: #f0fdf4;
+            border-top: 2px solid #0f172a;
+        }
+
+        /* ─── Highlight ─── */
+        .callout {
+            background: #eff6ff;
+            border-right: 4px solid #3b82f6;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 14px 0;
+            font-size: 13.5px;
+            color: #1e40af;
+        }
+
+        .callout-green {
+            background: #f0fdf4;
+            border-right-color: #10b981;
+            color: #065f46;
+        }
+
+        .callout-orange {
+            background: #fff7ed;
+            border-right-color: #f59e0b;
+            color: #92400e;
+        }
+
+        /* ─── Grid ─── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .card h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .card p, .card li {
+            font-size: 12.5px;
+        }
+
+        /* ─── Timeline ─── */
+        .timeline {
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 16px;
+            padding-right: 10px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -25px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3b82f6;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+
+        .timeline-item .period {
+            font-size: 12px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .timeline-item .title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .timeline-item .desc {
+            font-size: 12.5px;
+            color: #64748b;
+        }
+
+        /* ─── Footer ─── */
+        .doc-footer {
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 2px solid #0f172a;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 700px) {
+            .page { padding: 24px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .doc-header .logo-line { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <!-- HEADER -->
+        <div class="doc-header">
+            <div class="logo-line">
+                <div class="org-name">מעוף – Tech-Lead Israel בע"מ</div>
+                <div class="org-name">מרץ 2026</div>
+            </div>
+            <h1>בקשת מענק מחקר ופיתוח</h1>
+            <div class="subtitle">פלטפורמת AI לשידוך הון אנושי: חיילים משוחררים ↔ הוראת STEM ↔ הייטק</div>
+            <div class="track-info">מסלול תנופה – קרן ההזנק · חטיבת הזנק והון אנושי</div>
+        </div>
+
+        <!-- META -->
+        <table class="meta-table">
+            <tr><td>שם המיזם</td><td>מעוף – Tech-Lead Israel</td></tr>
+            <tr><td>שם המגיש</td><td>נועם אוקון</td></tr>
+            <tr><td>תחום</td><td>HRTech / EdTech / AI-based Decision Support System</td></tr>
+            <tr><td>תקציב מבוקש</td><td>200,000 ₪ (80% מתקציב מאושר של 250,000 ₪)</td></tr>
+            <tr><td>משך התוכנית</td><td>12 חודשים</td></tr>
+            <tr><td>שלב המיזם</td><td>Pre-Seed · הוכחת היתכנות טכנולוגית ועסקית</td></tr>
+        </table>
+
+        <!-- 1. EXECUTIVE SUMMARY -->
+        <div class="section">
+            <h2><span class="sec-num">1</span> תקציר מנהלים</h2>
+            <p>
+                מעוף היא פלטפורמת DSS (Decision Support System) מבוססת AI, המגשרת על שני פערים לאומיים בו-זמנית:
+                <strong>מחסור של 12,000 מורים</strong> במערכת החינוך (בדגש על STEM), ו<strong>כ-15,000 מחפשי עבודה</strong> בתעשיית ההייטק שמתקשים להשתלב.
+            </p>
+            <p>
+                הפלטפורמה מפעילה <strong>Scoring Engine</strong> מבוסס AI שמסנן, מדרג ומשבץ חיילים משוחררים עם רקע טכנולוגי לעבודה היברידית:
+                50% משרה כ<strong>עמית הוראה</strong> בבית ספר (STEM) + 50% משרה ב<strong>חברת הייטק</strong> – למשך שנתיים, עם מעבר למשרה מלאה בשנה השלישית.
+            </p>
+
+            <div class="callout">
+                <strong>חדשנות מרכזית:</strong> מעוף לא יוצר תוכנית הכשרה חדשה – הוא מחבר בין שתי תוכניות ממשלתיות קיימות
+                (עמיתי הוראה של משרד החינוך + לוחמים להייטק של עתידים/משרד הביטחון) דרך שכבת AI חכמה לשידוך ואופטימיזציה.
+            </div>
+        </div>
+
+        <!-- 2. PROBLEM -->
+        <div class="section">
+            <h2><span class="sec-num">2</span> הצורך / הבעיה</h2>
+
+            <h3>2.1 משבר מורי STEM</h3>
+            <p>
+                לפי דו"ח OECD (אוקטובר 2025), ישראל סובלת ממחסור חמור במורים מוכשרים, בדגש על מקצועות מדעים, מתמטיקה וטכנולוגיה.
+                55% ממנהלי בתי הספר דיווחו שלא הצליחו לגייס את מלוא צוותי ההוראה, ו-60% ציינו את המחסור במורים איכותיים כאתגר המשמעותי ביותר.
+            </p>
+            <p>
+                תוכנית "ישראל ריאלית" של שר החינוך מרחיבה את לימודי STEM – אך ללא מורים מתאימים, התוכנית לא תוכל להתממש.
+            </p>
+
+            <h3>2.2 פער ג'וניורים בהייטק</h3>
+            <p>
+                מספר מחפשי העבודה בהייטק עלה ב-112% מ-2019 (כ-7,000) ל-2025 (כ-15,000).
+                חברות דורשות ניסיון של 2+ שנים גם לתפקידי כניסה.
+                חיילים משוחררים מיחידות טכנולוגיות מתקשים להוכיח ניסיון מקצועי אזרחי.
+            </p>
+
+            <h3>2.3 למה הפתרונות הקיימים לא מספיקים</h3>
+            <table class="data-table">
+                <tr>
+                    <th>פתרון קיים</th>
+                    <th>מה הוא עושה</th>
+                    <th>מה חסר</th>
+                </tr>
+                <tr>
+                    <td>עמיתי הוראה (מה"ח)</td>
+                    <td>מעסיק מומחים בחוזים אישיים</td>
+                    <td>אין מנגנון גיוס אקטיבי, אין סינון AI, אין חיבור להייטק</td>
+                </tr>
+                <tr>
+                    <td>לוחמים להייטק (עתידים)</td>
+                    <td>מכשיר לוחמים לקריירת הייטק</td>
+                    <td>אין שלב "תרומה" חינוכית, אין חיבור לבתי ספר</td>
+                </tr>
+                <tr>
+                    <td>Bootcamps פרטיים</td>
+                    <td>הכשרה מקצועית</td>
+                    <td>אין השמה מובטחת, אין ניסיון מעשי, אין Soft Skills</td>
+                </tr>
+            </table>
+
+            <div class="callout-green callout">
+                <strong>הפער:</strong> אף גורם לא מחבר בין הכשרת חיילים, הוראת STEM, והשמה בהייטק – במודל מעגלי אחד עם שידוך AI.
+            </div>
+        </div>
+
+        <!-- 3. SOLUTION -->
+        <div class="section">
+            <h2><span class="sec-num">3</span> הפתרון הטכנולוגי</h2>
+
+            <h3>3.1 ארכיטקטורת המערכת</h3>
+            <p>
+                מעוף מפתחת <strong>Scoring Engine</strong> – מנוע דירוג וסינון מבוסס AI המעריך מועמדים (חיילים משוחררים) ב-4 וקטורים,
+                ומבצע שידוך אופטימלי בין שלושה צדדים: החייל, בית הספר, והחברה הקולטת.
+            </p>
+
+            <table class="data-table">
+                <tr>
+                    <th>וקטור (25% כל אחד)</th>
+                    <th>מרכיבים</th>
+                    <th>חדשנות טכנולוגית</th>
+                </tr>
+                <tr>
+                    <td><strong>Talent Index</strong></td>
+                    <td>רקע צבאי טכנולוגי, מבחן STEM מעשי</td>
+                    <td>ולידציה מול DB צבאי + NLP לניתוח תעודות</td>
+                </tr>
+                <tr>
+                    <td><strong>ELI5 Test</strong></td>
+                    <td>יכולת פישוט מושגים מורכבים</td>
+                    <td>ניתוח וידאו AI: שפת גוף, ביטחון, בהירות הסבר</td>
+                </tr>
+                <tr>
+                    <td><strong>Retention Score</strong></td>
+                    <td>מרחק מגורים, יציבות, היסטוריית שירות</td>
+                    <td>חיזוי AI של שימור עובד הוראה (churn prediction)</td>
+                </tr>
+                <tr>
+                    <td><strong>Match-Tech</strong></td>
+                    <td>התאמת Tech Stack לצורכי חברה + ביה"ס</td>
+                    <td>אלגוריתם שידוך תלת-צדדי (three-way matching)</td>
+                </tr>
+            </table>
+
+            <h3>3.2 הערך הטכנולוגי הייחודי</h3>
+            <ul>
+                <li><strong>Three-way matching algorithm</strong> – שידוך בו-זמני של 3 צדדים (מועמד, בית ספר, חברה) – אתגר NP-hard שנפתר בגישת AI/ML</li>
+                <li><strong>מבחן ELI5 אוטומטי</strong> – ניתוח וידאו של יכולת הוראה שלא קיים בשוק</li>
+                <li><strong>Retention prediction</strong> – חיזוי שימור מורים, בעיה קריטית שעולה מיליארדים למדינה</li>
+            </ul>
+        </div>
+
+        <!-- 4. MARKET -->
+        <div class="section page-break">
+            <h2><span class="sec-num">4</span> שוק וגודל הזדמנות</h2>
+
+            <table class="data-table">
+                <tr>
+                    <th>מדד</th>
+                    <th>נתון</th>
+                    <th>מקור</th>
+                </tr>
+                <tr>
+                    <td>TAM – מורים חסרים</td>
+                    <td>12,000 משרות</td>
+                    <td>הסתדרות המורים, 2025</td>
+                </tr>
+                <tr>
+                    <td>SAM – מורי STEM חסרים</td>
+                    <td>~3,500 משרות</td>
+                    <td>הערכה: 30% מהמחסור</td>
+                </tr>
+                <tr>
+                    <td>SOM – יעד שנה 1-2</td>
+                    <td>100-200 שיבוצים</td>
+                    <td>פיילוט ראשוני</td>
+                </tr>
+                <tr>
+                    <td>חיילים משוחררים בשנה</td>
+                    <td>~25,000</td>
+                    <td>צה"ל</td>
+                </tr>
+                <tr>
+                    <td>בוגרי Bootcamp בשנה</td>
+                    <td>~3,000-5,000</td>
+                    <td>הערכת שוק</td>
+                </tr>
+                <tr>
+                    <td>Revenue potential (100 שיבוצים)</td>
+                    <td>4.3-7.1M ₪/שנה</td>
+                    <td>SaaS + Success Fee</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 5. BUSINESS MODEL -->
+        <div class="section">
+            <h2><span class="sec-num">5</span> מודל עסקי</h2>
+
+            <h3>5.1 מקורות הכנסה</h3>
+            <table class="data-table">
+                <tr>
+                    <th>מקור</th>
+                    <th>מתי</th>
+                    <th>סכום</th>
+                    <th>משלם</th>
+                </tr>
+                <tr>
+                    <td>דמי SaaS – ניהול ובקרת איכות</td>
+                    <td>חודשי (מחודש 1)</td>
+                    <td>1,500-3,000 ₪/חייל</td>
+                    <td>חברת הייטק</td>
+                </tr>
+                <tr>
+                    <td>Success Fee – השמה לתפקיד מלא</td>
+                    <td>חד-פעמי (חודש 25)</td>
+                    <td>25,000-35,000 ₪</td>
+                    <td>חברת הייטק</td>
+                </tr>
+                <tr>
+                    <td>דמי ניהול SaaS למשרד החינוך</td>
+                    <td>חודשי</td>
+                    <td>לפי היקף</td>
+                    <td>משרד החינוך</td>
+                </tr>
+            </table>
+
+            <h3>5.2 מבנה שכר החייל (שנים 1-2)</h3>
+            <div class="grid-2">
+                <div class="card">
+                    <h4>משרד החינוך / גפ"ן (50% משרה)</h4>
+                    <p>שכר עמית הוראה: <strong>7,000-8,000 ₪</strong> ברוטו</p>
+                    <p>מסגרת: תוכנית "עמיתי הוראה" בחוזה אישי</p>
+                </div>
+                <div class="card">
+                    <h4>חברת הייטק מאמצת (50% משרה)</h4>
+                    <p>שכר עובד חלקי: <strong>10,000-12,000 ₪</strong> ברוטו</p>
+                    <p>מסגרת: חוזה העסקה רגיל</p>
+                </div>
+            </div>
+            <div class="callout-green callout" style="margin-top:12px;">
+                <strong>סה"כ שכר לחייל: 17,000-20,000 ₪ ברוטו</strong> – תחרותי ביחס לשכר ג'וניור ממוצע (7,500-10,000 ₪), ומבוסס על תקציבים קיימים.
+            </div>
+        </div>
+
+        <!-- 6. WORK PLAN -->
+        <div class="section">
+            <h2><span class="sec-num">6</span> תוכנית עבודה ל-12 חודשים</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="period">חודשים 1-3</div>
+                    <div class="title">PoC ידני + עיצוב אלגוריתם</div>
+                    <div class="desc">
+                        שיבוץ ידני של 5-10 חיילים בבתי ספר + חברות.
+                        עיצוב מתמטי של Scoring Engine.
+                        פגישות עם עתידים, משרד החינוך, 2-3 חברות הייטק.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="period">חודשים 4-6</div>
+                    <div class="title">פיתוח MVP – Scoring Engine v1</div>
+                    <div class="desc">
+                        בניית אלגוריתם Talent Index + Match-Tech.
+                        ממשק ניהול בסיסי (Dashboard).
+                        פיילוט עם 20 חיילים ב-5 בתי ספר.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="period">חודשים 7-9</div>
+                    <div class="title">ELI5 Test + Retention Model</div>
+                    <div class="desc">
+                        פיתוח מודול ניתוח וידאו (ELI5).
+                        מודל חיזוי שימור (Retention Score).
+                        הרחבה ל-50 חיילים ב-15 בתי ספר.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="period">חודשים 10-12</div>
+                    <div class="title">אופטימיזציה + הכנה ל-Scale</div>
+                    <div class="desc">
+                        שיפור אלגוריתם three-way matching.
+                        דשבורד לכל 3 הצדדים.
+                        גיוס Seed / הגשה למסלול הון אנושי (עד 1M ₪).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. BUDGET -->
+        <div class="section">
+            <h2><span class="sec-num">7</span> תקציב מבוקש</h2>
+
+            <table class="data-table">
+                <tr>
+                    <th>סעיף</th>
+                    <th>פירוט</th>
+                    <th>סכום (₪)</th>
+                </tr>
+                <tr>
+                    <td>שכר מפתח ראשי</td>
+                    <td>Full-stack + AI/ML · 12 חודשים</td>
+                    <td>96,000</td>
+                </tr>
+                <tr>
+                    <td>שכר מייסד (חלקי)</td>
+                    <td>ניהול פרויקט + BD · 12 חודשים</td>
+                    <td>48,000</td>
+                </tr>
+                <tr>
+                    <td>תשתיות ענן</td>
+                    <td>AWS/GCP · Compute + Storage + AI APIs</td>
+                    <td>36,000</td>
+                </tr>
+                <tr>
+                    <td>כלי AI ו-APIs</td>
+                    <td>OpenAI/Claude API · Video Analysis</td>
+                    <td>24,000</td>
+                </tr>
+                <tr>
+                    <td>UX/UI Design</td>
+                    <td>עיצוב דשבורד ופורטלים</td>
+                    <td>18,000</td>
+                </tr>
+                <tr>
+                    <td>משפטי + רגולציה</td>
+                    <td>חוזים, GDPR, הגנת פרטיות</td>
+                    <td>12,000</td>
+                </tr>
+                <tr>
+                    <td>שיווק + BD</td>
+                    <td>כנסים, נסיעות, חומרי שיווק</td>
+                    <td>16,000</td>
+                </tr>
+                <tr class="total">
+                    <td>סה"כ</td>
+                    <td></td>
+                    <td>250,000</td>
+                </tr>
+            </table>
+
+            <div class="callout-orange callout">
+                <strong>מענק מבוקש:</strong> 200,000 ₪ (80% מהתקציב) · <strong>השקעה עצמית:</strong> 50,000 ₪ (20%)
+            </div>
+        </div>
+
+        <!-- 8. COMPETITIVE ADVANTAGE -->
+        <div class="section">
+            <h2><span class="sec-num">8</span> יתרון תחרותי ומחסומי כניסה</h2>
+
+            <ul>
+                <li><strong>Network Effects תלת-צדדי:</strong> ככל שיש יותר חיילים – יותר בתי ספר מצטרפים – יותר חברות רוצות להשתתף. אפקט רשת שמתחזק עם הזמן.</li>
+                <li><strong>מונופול על Data:</strong> כל שיבוץ מייצר דאטה על התאמה (חייל↔בי"ס↔חברה) שמשפרת את האלגוריתם – יתרון מצטבר שלא ניתן לשכפול.</li>
+                <li><strong>שותפויות ממשלתיות:</strong> עבודה בתוך מסגרת "עמיתי הוראה" יוצרת חסם רגולטורי למתחרים.</li>
+                <li><strong>מבחן ELI5 ייחודי:</strong> אין מוצר דומה בשוק – ניתוח AI של יכולת הוראה מוידאו.</li>
+            </ul>
+        </div>
+
+        <!-- 9. TEAM -->
+        <div class="section">
+            <h2><span class="sec-num">9</span> הצוות</h2>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h4>נועם אוקון – מייסד ומנכ"ל</h4>
+                    <ul style="list-style:none; padding:0;">
+                        <li>• רקע מבצעי-טכנולוגי בצה"ל</li>
+                        <li>• ניהול רשת + חמ"ליסט</li>
+                        <li>• הכשרה ב-AI & Data Science</li>
+                        <li>• הבנה עמוקה של קהל היעד (חיילים משוחררים)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>יועצים ושותפים פוטנציאליים</h4>
+                    <ul style="list-style:none; padding:0;">
+                        <li>• עתידים – שותף אסטרטגי (בדיונים)</li>
+                        <li>• משרד החינוך – מנגנון עמיתי הוראה</li>
+                        <li>• האגף לחיילים משוחררים – צינור מועמדים</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. MILESTONES -->
+        <div class="section">
+            <h2><span class="sec-num">10</span> אבני דרך להצלחה</h2>
+
+            <table class="data-table">
+                <tr>
+                    <th>אבן דרך</th>
+                    <th>מדד הצלחה</th>
+                    <th>תזמון</th>
+                </tr>
+                <tr>
+                    <td>PoC ידני</td>
+                    <td>5+ חיילים שובצו בהצלחה</td>
+                    <td>חודש 3</td>
+                </tr>
+                <tr>
+                    <td>Scoring Engine v1</td>
+                    <td>אלגוריתם פעיל עם דיוק > 70%</td>
+                    <td>חודש 6</td>
+                </tr>
+                <tr>
+                    <td>פיילוט מורחב</td>
+                    <td>20+ חיילים, 5+ בתי ספר, 3+ חברות</td>
+                    <td>חודש 9</td>
+                </tr>
+                <tr>
+                    <td>Revenue ראשון</td>
+                    <td>2+ חברות משלמות SaaS</td>
+                    <td>חודש 10</td>
+                </tr>
+                <tr>
+                    <td>הכנה ל-Scale</td>
+                    <td>50+ חיילים, הגשה למסלול הון אנושי</td>
+                    <td>חודש 12</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="doc-footer">
+            <p>מסמך זה הוכן כתקציר לבקשת מענק מסלול תנופה – רשות החדשנות · חטיבת הזנק והון אנושי</p>
+            <p>מעוף – Tech-Lead Israel · מרץ 2026 · כל הזכויות שמורות</p>
+        </div>
+
+    </div>
+</body>
+</html>
