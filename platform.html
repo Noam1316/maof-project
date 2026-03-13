@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מעוף — Platform | Tech-Lead Israel</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0f14;--surface:#141720;--card:#1a1e2e;--card2:#1f2438;
+  --gold:#f5c842;--gold-dim:#c9a030;--teal:#00d4aa;--teal-dim:#00a887;
+  --amber:#f4a261;--red:#ff5c6a;--blue:#7aa2f7;--green:#73daca;--purple:#a78bfa;
+  --text:#e2e8f0;--text-dim:#6b7a99;
+  --border:rgba(245,200,66,0.12);--border2:rgba(255,255,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(245,200,66,0.05) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 10% 80%,rgba(0,212,170,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* ── ENTRY SCREEN ─── */
+.entry{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;position:relative;z-index:1;padding:20px;text-align:center;}
+.entry-logo{font-size:48px;font-weight:900;background:linear-gradient(135deg,var(--gold),#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.entry-sub{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--text-dim);margin-bottom:8px;}
+.entry-desc{font-size:15px;color:var(--text-dim);max-width:500px;margin-bottom:48px;line-height:1.7;}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:780px;width:100%;}
+.role-card{
+  background:var(--card);border:1px solid var(--border2);border-radius:16px;
+  padding:36px 28px;cursor:pointer;transition:all 0.3s;text-align:center;
+}
+.role-card:hover{border-color:rgba(245,200,66,0.4);transform:translateY(-4px);box-shadow:0 12px 40px rgba(245,200,66,0.08);}
+.role-icon{font-size:48px;margin-bottom:16px;display:block;}
+.role-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px;}
+.role-subtitle{font-size:12.5px;color:var(--text-dim);line-height:1.5;}
+.entry-footer{margin-top:48px;font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;}
+
+/* ── APP LAYOUT ─── */
+.app{display:none;min-height:100vh;position:relative;z-index:1;}
+.app.active{display:flex;}
+
+/* ── SIDEBAR ─── */
+.sidebar{width:230px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:fixed;height:100vh;right:0;z-index:100;transition:transform 0.3s;}
+.logo-wrap{padding:0 20px 20px;border-bottom:1px solid var(--border2);margin-bottom:16px;}
+.logo-badge{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#0d0f14;font-size:8px;font-weight:900;padding:2px 8px;border-radius:4px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.logo-name{font-size:18px;font-weight:900;color:#fff;line-height:1.1;}
+.logo-name span{color:var(--gold);}
+.logo-sub{font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:3px;}
+.nav-section{padding:0 12px;margin-bottom:4px;}
+.nav-label{font-size:8px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;padding:0 8px;margin-bottom:4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:13px;color:var(--text-dim);margin-bottom:2px;}
+.nav-item:hover{background:rgba(245,200,66,0.07);color:var(--text);}
+.nav-item.active{background:rgba(245,200,66,0.12);color:var(--gold);}
+.nav-item .icon{font-size:15px;width:20px;text-align:center;}
+.nav-back{margin-top:auto;padding:14px 20px;border-top:1px solid var(--border2);}
+.nav-back .nav-item{color:var(--red);font-size:12px;}
+.nav-back .nav-item:hover{background:rgba(255,92,106,0.1);}
+.sidebar-profile{padding:14px 20px;border-top:1px solid var(--border2);}
+.profile-row{display:flex;align-items:center;gap:10px;}
+.profile-avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#c9a030);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#0d0f14;flex-shrink:0;}
+.profile-name{font-size:12px;font-weight:700;color:#fff;}
+.profile-unit{font-size:9px;color:var(--text-dim);margin-top:1px;}
+
+/* ── MAIN ─── */
+.main{flex:1;margin-right:230px;padding:28px 32px;min-height:100vh;}
+.screen{display:none;animation:fadeUp 0.3s ease;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── TOP BAR ─── */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+.topbar h1{font-size:22px;font-weight:900;}
+.topbar h1 span{color:var(--gold);}
+.role-badge{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--gold);background:rgba(245,200,66,0.1);padding:4px 12px;border-radius:20px;border:1px solid var(--border);}
+
+/* ── KPI CARDS ─── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:18px 20px;border-bottom:3px solid var(--gold);transition:transform 0.2s;}
+.kpi:hover{transform:translateY(-2px);}
+.kpi.teal{border-bottom-color:var(--teal);}
+.kpi.amber{border-bottom-color:var(--amber);}
+.kpi.blue{border-bottom-color:var(--blue);}
+.kpi.red{border-bottom-color:var(--red);}
+.kpi.green{border-bottom-color:var(--green);}
+.kpi.purple{border-bottom-color:var(--purple);}
+.kpi-label{font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.kpi-num{font-size:28px;font-weight:900;line-height:1;}
+.kpi-sub{font-size:10px;color:var(--text-dim);margin-top:4px;}
+
+/* ── PANELS ─── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.panel{background:var(--card);border:1px solid var(--border2);border-radius:14px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;}
+.panel-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.panel-body{padding:16px 18px;}
+.panel-badge{font-size:9px;background:rgba(245,200,66,0.15);color:var(--gold);padding:2px 8px;border-radius:10px;font-family:'IBM Plex Mono',monospace;}
+
+/* ── LIST ITEMS ─── */
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border2);transition:background 0.2s;}
+.list-item:last-child{border-bottom:none;}
+.list-item:hover{background:rgba(245,200,66,0.03);border-radius:8px;padding:12px 8px;margin:0 -8px;}
+.list-name{font-size:13px;font-weight:600;}
+.list-meta{font-size:10px;color:var(--text-dim);margin-top:2px;}
+.list-score{font-size:18px;font-weight:900;font-family:'IBM Plex Mono',monospace;}
+.list-score.gold{color:var(--gold);}
+.list-score.teal{color:var(--teal);}
+
+/* ── TAGS ─── */
+.tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:6px;font-weight:600;margin-left:4px;}
+.tag-red{background:rgba(255,92,106,0.15);color:var(--red);}
+.tag-gold{background:rgba(245,200,66,0.15);color:var(--gold);}
+.tag-teal{background:rgba(0,212,170,0.15);color:var(--teal);}
+.tag-blue{background:rgba(122,162,247,0.15);color:var(--blue);}
+.tag-green{background:rgba(115,218,202,0.15);color:var(--green);}
+.tag-purple{background:rgba(167,139,250,0.15);color:var(--purple);}
+
+/* ── BUTTONS ─── */
+.btn{padding:8px 18px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;font-family:'Heebo',sans-serif;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#0d0f14;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,200,66,0.3);}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-dim);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-teal{background:linear-gradient(135deg,var(--teal),var(--teal-dim));color:#0d0f14;}
+.btn-sm{padding:6px 12px;font-size:11px;}
+
+/* ── TABLE ─── */
+.data-tbl{width:100%;border-collapse:collapse;font-size:12.5px;}
+.data-tbl th{background:var(--surface);color:var(--text-dim);padding:10px 14px;text-align:right;font-size:10px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);}
+.data-tbl td{padding:12px 14px;border-bottom:1px solid var(--border2);color:var(--text);vertical-align:middle;}
+.data-tbl tr:hover td{background:rgba(245,200,66,0.03);}
+
+/* ── FORMS ─── */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;}
+.form-input{width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:13px;font-family:'Heebo',sans-serif;outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:var(--gold);}
+select.form-input{cursor:pointer;appearance:none;}
+textarea.form-input{min-height:80px;resize:vertical;}
+
+/* ── SLIDER ─── */
+.slider-wrap{margin-bottom:16px;}
+.slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.slider-label{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;}
+.slider-val{font-size:14px;font-weight:700;color:var(--gold);font-family:'IBM Plex Mono',monospace;}
+input[type=range]{width:100%;height:6px;-webkit-appearance:none;background:var(--surface);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid var(--bg);}
+
+/* ── PROGRESS BAR ─── */
+.progress{height:8px;background:var(--surface);border-radius:4px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.5s ease;}
+.progress-fill.gold{background:linear-gradient(90deg,var(--gold),var(--gold-dim));}
+.progress-fill.teal{background:linear-gradient(90deg,var(--teal),var(--teal-dim));}
+.progress-fill.blue{background:var(--blue);}
+.progress-fill.green{background:var(--green);}
+
+/* ── TIMELINE ─── */
+.timeline{display:flex;align-items:stretch;gap:0;margin:20px 0;flex-direction:row-reverse;}
+.tl-step{flex:1;text-align:center;padding:20px 16px;background:var(--card);border:1px solid var(--border2);position:relative;}
+.tl-step:first-child{border-radius:0 14px 14px 0;}
+.tl-step:last-child{border-radius:14px 0 0 14px;}
+.tl-step.current{border-color:var(--gold);background:rgba(245,200,66,0.06);}
+.tl-num{font-size:9px;color:var(--gold);font-family:'IBM Plex Mono',monospace;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.tl-title{font-size:14px;font-weight:800;margin:6px 0 4px;}
+.tl-desc{font-size:11px;color:var(--text-dim);line-height:1.5;}
+
+/* ── ALERT BANNER ─── */
+.alert{padding:12px 18px;border-radius:12px;font-size:12px;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.alert-gold{background:rgba(245,200,66,0.1);border:1px solid var(--border);color:var(--gold);}
+.alert-red{background:rgba(255,92,106,0.08);border:1px solid rgba(255,92,106,0.2);color:var(--red);}
+.alert-teal{background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);color:var(--teal);}
+
+/* ── RESULT BOX ─── */
+.result-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;}
+.result-num{font-size:36px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--gold);}
+.result-label{font-size:11px;color:var(--text-dim);margin-top:4px;}
+.result-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.result-mini{background:var(--card);border-radius:10px;padding:12px;text-align:center;}
+.result-mini .num{font-size:20px;font-weight:900;font-family:'IBM Plex Mono',monospace;}
+.result-mini .lbl{font-size:9px;color:var(--text-dim);margin-top:2px;}
+
+/* ── CHIP ─── */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.chip{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);color:var(--text-dim);cursor:pointer;transition:all 0.2s;}
+.chip:hover,.chip.active{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,0.1);}
+
+/* ── FUNDING BAR ─── */
+.fund-bar{display:flex;height:28px;border-radius:8px;overflow:hidden;margin:10px 0;}
+.fund-seg{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0d0f14;}
+
+/* ── MOBILE ─── */
+.mobile-btn{display:none;position:fixed;top:12px;right:12px;z-index:200;background:var(--gold);color:#0d0f14;border:none;border-radius:10px;padding:8px 12px;font-size:18px;cursor:pointer;}
+@media(max-width:768px){
+  .entry-logo{font-size:32px;}
+  .role-grid{grid-template-columns:1fr;max-width:340px;}
+  .sidebar{transform:translateX(100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-right:0;padding:16px;}
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .timeline{flex-direction:column;}
+  .mobile-btn{display:block;}
+  .topbar h1{font-size:17px;}
+}
+
+/* ── TOAST NOTIFICATIONS ── */
+.toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{padding:14px 28px;border-radius:12px;font-size:13px;font-weight:600;font-family:'Heebo',sans-serif;display:flex;align-items:center;gap:10px;pointer-events:auto;animation:toastSlideIn 0.4s ease,toastSlideOut 0.4s ease 2.6s forwards;box-shadow:0 8px 32px rgba(0,0,0,0.4);backdrop-filter:blur(12px);}
+.toast-success{background:rgba(0,212,170,0.15);border:1px solid var(--teal);color:var(--teal);}
+.toast-info{background:rgba(122,162,247,0.15);border:1px solid var(--blue);color:var(--blue);}
+.toast-warning{background:rgba(244,162,97,0.15);border:1px solid var(--amber);color:var(--amber);}
+.toast-error{background:rgba(255,92,106,0.15);border:1px solid var(--red);color:var(--red);}
+@keyframes toastSlideIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toastSlideOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-20px);}}
+
+/* ── BAR CHART ── */
+.bar-chart{display:flex;align-items:flex-end;gap:16px;height:140px;padding:8px 0;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.bar{width:100%;border-radius:6px 6px 0 0;transition:height 1s cubic-bezier(0.4,0,0.2,1);min-height:0;}
+.bar-label{font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-align:center;line-height:1.3;}
+.bar-value{font-size:13px;font-weight:900;font-family:'IBM Plex Mono',monospace;}
+
+/* ── DONUT CHART ── */
+.donut-wrap{display:flex;align-items:center;gap:24px;justify-content:center;}
+.donut{width:120px;height:120px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;}
+.donut-hole{width:76px;height:76px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;flex-direction:column;position:absolute;}
+.donut-num{font-size:22px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--gold);}
+.donut-lbl{font-size:8px;color:var(--text-dim);}
+.donut-legend{display:flex;flex-direction:column;gap:8px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-dim);}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+
+/* ── COMPARE BARS ── */
+.compare-bars{display:flex;flex-direction:column;gap:14px;}
+.compare-row{display:flex;align-items:center;gap:12px;}
+.compare-label{font-size:11px;color:var(--text-dim);width:80px;text-align:left;flex-shrink:0;}
+.compare-track{flex:1;height:28px;background:var(--surface);border-radius:8px;overflow:hidden;position:relative;}
+.compare-fill{height:100%;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0d0f14;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);}
+
+</style>
+</head>
+<body>
+
+<!-- ████ TOAST CONTAINER ████ -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- ████ MOBILE MENU BTN ████ -->
+<button class="mobile-btn" onclick="document.querySelector('.sidebar')?.classList.toggle('open')">☰</button>
+
+<!-- ████████████████████████████████████████████████████████████
+     ENTRY SCREEN – בחירת תפקיד
+     ████████████████████████████████████████████████████████████ -->
+<div id="entry" class="entry">
+  <div class="entry-logo">מעוף</div>
+  <div class="entry-sub">Tech-Lead Israel · Platform</div>
+  <p class="entry-desc">פלטפורמת AI לשידוך חיילים משוחררים ↔ הוראת STEM ↔ חברות הייטק<br>בחר את התפקיד שלך כדי להיכנס למערכת</p>
+  <div class="role-grid">
+    <div class="role-card" onclick="selectRole('soldier')">
+      <span class="role-icon">🎖️</span>
+      <div class="role-title">חייל/ת משוחרר/ת</div>
+      <div class="role-subtitle">צפייה במסלול האישי, בתי ספר מתאימים, חברות מאמצות וסימולטור שכר</div>
+    </div>
+    <div class="role-card" onclick="selectRole('school')">
+      <span class="role-icon">🏫</span>
+      <div class="role-title">בית ספר / משרד החינוך</div>
+      <div class="role-subtitle">ניהול שיבוצים, מועמדים, תקציב גפ"ן והגשת צורך במורי STEM</div>
+    </div>
+    <div class="role-card" onclick="selectRole('company')">
+      <span class="role-icon">🏢</span>
+      <div class="role-title">חברה מאמצת</div>
+      <div class="role-subtitle">ניהול מועמדים, עובדים נוכחיים, תוכנית מעבר ומחשבון ROI</div>
+    </div>
+  </div>
+  <div class="entry-footer">מעוף © 2026 · מערכת DSS מבוססת AI · גרסת Demo</div>
+</div>
+
+<!-- ████████████████████████████████████████████████████████████
+     SOLDIER APP – דשבורד חייל
+     ████████████████████████████████████████████████████████████ -->
+<div id="app-soldier" class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-badge">PLATFORM</div>
+      <div class="logo-name"><span>מעוף</span> · חייל</div>
+      <div class="logo-sub">Tech-Lead Israel</div>
+    </div>
+    <nav class="nav-section">
+      <div class="nav-label">המסע שלי</div>
+      <div class="nav-item active" onclick="show('soldier','dashboard')"><span class="icon">🏠</span>לוח בקרה</div>
+      <div class="nav-item" onclick="show('soldier','schools')"><span class="icon">🏫</span>בתי ספר מתאימים</div>
+      <div class="nav-item" onclick="show('soldier','companies')"><span class="icon">🏢</span>חברות מאמצות</div>
+      <div class="nav-item" onclick="show('soldier','simulator')"><span class="icon">💰</span>סימולטור שכר</div>
+      <div class="nav-item" onclick="show('soldier','journey')"><span class="icon">🗺️</span>מסלול 2+2</div>
+      <div class="nav-item" onclick="show('soldier','profile')"><span class="icon">👤</span>הפרופיל שלי</div>
+      <div class="nav-item" onclick="window.open('eli5-test.html','_blank')"><span class="icon">🧠</span>מבחן ELI5</div>
+    </nav>
+    <div class="nav-back"><div class="nav-item" onclick="backToEntry()"><span class="icon">↩</span>חזרה לבחירת תפקיד</div></div>
+    <div class="sidebar-profile">
+      <div class="profile-row">
+        <div class="profile-avatar">יכ</div>
+        <div><div class="profile-name">יונתן כהן</div><div class="profile-unit">יח' 8153 · סייבר</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- ── SOLDIER: DASHBOARD ── -->
+    <div id="s-dashboard" class="screen active">
+      <div class="topbar"><h1>שלום <span>יונתן</span> 👋</h1><span class="role-badge">חייל משוחרר</span></div>
+      <div class="alert alert-gold">⚡ 3 בתי ספר חדשים התאימו לפרופיל שלך השבוע · שני ציוני ההתאמה שלך: 🏫 <strong>91</strong> · 🏢 <strong>88</strong></div>
+      <div class="kpi-row" style="grid-template-columns:repeat(2,1fr);">
+        <div class="kpi" style="border-bottom-color:var(--teal);"><div class="kpi-label">ציון A · התאמה לבית ספר</div><div class="kpi-num" style="color:var(--teal);">91</div><div class="kpi-sub">School Match · כושר הוראה 35% · מקצוע 25% · שימור 25% · Impact 15%</div></div>
+        <div class="kpi" style="border-bottom-color:var(--blue);"><div class="kpi-label">ציון B · התאמה לחברה</div><div class="kpi-num" style="color:var(--blue);">88</div><div class="kpi-sub">Company Match · טכני 35% · צמיחה 25% · Soft Skills 25% · Cultural 15%</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">🏫 בתי ספר מומלצים</span><span class="panel-badge">TOP 3</span></div>
+          <div class="panel-body">
+            <div class="list-item"><div><div class="list-name">אורט נתיבות <span class="tag tag-red">דחוף</span></div><div class="list-meta">נגב · סייבר, AI · 12 ק"מ ממך</div></div><div class="list-score gold">94%</div></div>
+            <div class="list-item"><div><div class="list-name">תיכון כפר מנחם</div><div class="list-meta">דרום · סייבר · 25 ק"מ</div></div><div class="list-score gold">88%</div></div>
+            <div class="list-item"><div><div class="list-name">גימנסיה הרצליה <span class="tag tag-gold">ת"א</span></div><div class="list-meta">תל אביב · Python, AI · 45 ק"מ</div></div><div class="list-score gold">82%</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">🏢 חברות מאמצות</span><span class="panel-badge">TOP 3</span></div>
+          <div class="panel-body">
+            <div class="list-item"><div><div class="list-name">Mobileye</div><div class="list-meta">ירושלים · Security Researcher · Python, CV</div></div><div class="list-score teal">91%</div></div>
+            <div class="list-item"><div><div class="list-name">Check Point</div><div class="list-meta">תל אביב · Cyber Analyst · Linux, Python</div></div><div class="list-score teal">87%</div></div>
+            <div class="list-item"><div><div class="list-name">אלביט מערכות</div><div class="list-meta">חיפה · ML Engineer · Python, ML</div></div><div class="list-score teal">83%</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">🏫 ציון A – התאמה לבית ספר</span><span class="panel-badge">School Match</span></div>
+          <div class="panel-body">
+            <div class="bar-chart">
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--teal);">90</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--teal),var(--teal-dim));" data-height="90%"></div>
+                <div class="bar-label">כושר<br>הוראה</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--green);">94</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--green),#4cb89e);" data-height="94%"></div>
+                <div class="bar-label">התאמה<br>מקצועית</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--amber);">91</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--amber),#d48a4e);" data-height="91%"></div>
+                <div class="bar-label">שימור<br>Retention</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--gold);">85</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--gold),var(--gold-dim));" data-height="85%"></div>
+                <div class="bar-label">Impact<br>פריפריה</div>
+              </div>
+            </div>
+            <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text-dim);">ציון A משוקלל: <strong style="color:var(--teal);font-size:14px;">91</strong> / 100 <span style="color:var(--green);font-size:10px;margin-right:6px;">↑ +4</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">🏢 ציון B – התאמה לחברה</span><span class="panel-badge">Company Match</span></div>
+          <div class="panel-body">
+            <div class="bar-chart">
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--blue);">92</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--blue),#5b7fdb);" data-height="92%"></div>
+                <div class="bar-label">מיומנות<br>טכנית</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--purple);">85</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--purple),#8b6fdb);" data-height="85%"></div>
+                <div class="bar-label">פוטנציאל<br>צמיחה</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--teal);">88</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--teal),var(--teal-dim));" data-height="88%"></div>
+                <div class="bar-label">Soft<br>Skills</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value" style="color:var(--amber);">83</div>
+                <div class="bar" style="height:0%;background:linear-gradient(180deg,var(--amber),#d48a4e);" data-height="83%"></div>
+                <div class="bar-label">התאמה<br>תרבותית</div>
+              </div>
+            </div>
+            <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text-dim);">ציון B משוקלל: <strong style="color:var(--blue);font-size:14px;">88</strong> / 100 <span style="color:var(--green);font-size:10px;margin-right:6px;">↑ +2</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SOLDIER: SCHOOLS ── -->
+    <div id="s-schools" class="screen">
+      <div class="topbar"><h1>🏫 <span>בתי ספר</span> מתאימים</h1><span class="role-badge">6 תוצאות</span></div>
+      <div class="chips">
+        <span class="chip active">הכל (6)</span><span class="chip">דחוף (2)</span><span class="chip">פריפריה (3)</span><span class="chip">עד 30 ק"מ (4)</span>
+      </div>
+      <div class="grid-3" id="schools-grid">
+        <div class="panel"><div class="panel-head"><span class="panel-title">אורט נתיבות</span><span class="tag tag-red">דחוף</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">נגב · 12 ק"מ · עדיפות לאומית</div><div class="chips"><span class="tag tag-teal">סייבר</span><span class="tag tag-blue">AI</span></div><div style="margin-top:10px;"><span class="slider-label">התאמה:</span> <span style="color:var(--gold);font-weight:900;">94%</span></div><div class="progress"><div class="progress-fill gold" style="width:94%"></div></div><div style="margin-top:8px;font-size:11px;color:var(--text-dim);">שכר הוראה: 8,000 ₪/חודש (50%)</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">כפר מנחם טכנולוגי</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">דרום · 25 ק"מ</div><div class="chips"><span class="tag tag-teal">סייבר</span><span class="tag tag-purple">פיזיקה</span></div><div style="margin-top:10px;"><span class="slider-label">התאמה:</span> <span style="color:var(--gold);font-weight:900;">88%</span></div><div class="progress"><div class="progress-fill gold" style="width:88%"></div></div><div style="margin-top:8px;font-size:11px;color:var(--text-dim);">שכר הוראה: 7,750 ₪/חודש (50%)</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">גימנסיה הרצליה</span><span class="tag tag-gold">ת"א</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">תל אביב · 45 ק"מ · אנומליה</div><div class="chips"><span class="tag tag-blue">Python</span><span class="tag tag-blue">AI</span></div><div style="margin-top:10px;"><span class="slider-label">התאמה:</span> <span style="color:var(--gold);font-weight:900;">82%</span></div><div class="progress"><div class="progress-fill gold" style="width:82%"></div></div><div style="margin-top:8px;font-size:11px;color:var(--text-dim);">שכר הוראה: 7,500 ₪/חודש (50%)</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">אורט קריית שמונה</span><span class="tag tag-red">דחוף</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">צפון · 180 ק"מ · עדיפות לאומית</div><div class="chips"><span class="tag tag-teal">סייבר</span></div><div style="margin-top:10px;"><span class="slider-label">התאמה:</span> <span style="color:var(--gold);font-weight:900;">79%</span></div><div class="progress"><div class="progress-fill gold" style="width:79%"></div></div><div style="margin-top:8px;font-size:11px;color:var(--text-dim);">שכר הוראה: 8,000 ₪/חודש (50%) + מענק</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">מקיף ג' באר שבע</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">דרום · 8 ק"מ</div><div class="chips"><span class="tag tag-blue">Python</span><span class="tag tag-purple">מתמטיקה</span></div><div style="margin-top:10px;"><span class="slider-label">התאמה:</span> <span style="color:var(--gold);font-weight:900;">76%</span></div><div class="progress"><div class="progress-fill gold" style="width:76%"></div></div><div style="margin-top:8px;font-size:11px;color:var(--text-dim);">שכר הוראה: 7,500 ₪/חודש (50%)</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">עירוני א' חיפה</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">צפון · 120 ק"מ</div><div class="chips"><span class="tag tag-blue">AI</span><span class="tag tag-teal">סייבר</span></div><div style="margin-top:10px;"><span class="slider-label">התאמה:</span> <span style="color:var(--gold);font-weight:900;">74%</span></div><div class="progress"><div class="progress-fill gold" style="width:74%"></div></div><div style="margin-top:8px;font-size:11px;color:var(--text-dim);">שכר הוראה: 7,750 ₪/חודש (50%)</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── SOLDIER: COMPANIES ── -->
+    <div id="s-companies" class="screen">
+      <div class="topbar"><h1>🏢 <span>חברות</span> מאמצות</h1><span class="role-badge">5 חברות</span></div>
+      <div class="alert alert-teal">🔗 החברות הבאות מחפשות עובדים ב-50% משרה במקביל להוראת STEM</div>
+      <div class="grid-3">
+        <div class="panel"><div class="panel-head"><span class="panel-title">Mobileye</span><span class="tag tag-green">91% match</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:6px;">ירושלים · 250+ עובדים</div><div class="chips"><span class="tag tag-blue">Python</span><span class="tag tag-blue">CV</span><span class="tag tag-teal">Security</span></div><div style="margin-top:10px;font-size:12px;">תפקיד: <strong>Security Researcher</strong></div><div style="font-size:11px;color:var(--teal);margin-top:4px;">שכר 50%: 11,000 ₪/חודש</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px;">2 משרות פתוחות</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">Check Point</span><span class="tag tag-green">87% match</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:6px;">תל אביב · 5,000+ עובדים</div><div class="chips"><span class="tag tag-teal">Cyber</span><span class="tag tag-blue">Linux</span><span class="tag tag-blue">Python</span></div><div style="margin-top:10px;font-size:12px;">תפקיד: <strong>Cyber Analyst</strong></div><div style="font-size:11px;color:var(--teal);margin-top:4px;">שכר 50%: 10,500 ₪/חודש</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px;">3 משרות פתוחות</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">אלביט מערכות</span><span class="tag tag-green">83% match</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:6px;">חיפה · 18,000+ עובדים</div><div class="chips"><span class="tag tag-blue">ML</span><span class="tag tag-blue">Python</span><span class="tag tag-purple">C++</span></div><div style="margin-top:10px;font-size:12px;">תפקיד: <strong>ML Engineer</strong></div><div style="font-size:11px;color:var(--teal);margin-top:4px;">שכר 50%: 11,500 ₪/חודש</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px;">1 משרה פתוחה</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">רפאל</span><span class="tag tag-green">80% match</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:6px;">חיפה · 8,000+ עובדים</div><div class="chips"><span class="tag tag-teal">Cyber</span><span class="tag tag-purple">C++</span><span class="tag tag-blue">Linux</span></div><div style="margin-top:10px;font-size:12px;">תפקיד: <strong>SW Developer</strong></div><div style="font-size:11px;color:var(--teal);margin-top:4px;">שכר 50%: 10,000 ₪/חודש</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px;">4 משרות פתוחות</div></div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">Microsoft Israel</span><span class="tag tag-green">77% match</span></div><div class="panel-body"><div style="font-size:10px;color:var(--text-dim);margin-bottom:6px;">הרצליה · 3,000+ עובדים</div><div class="chips"><span class="tag tag-blue">Cloud</span><span class="tag tag-blue">AI</span><span class="tag tag-blue">Python</span></div><div style="margin-top:10px;font-size:12px;">תפקיד: <strong>Cloud Engineer</strong></div><div style="font-size:11px;color:var(--teal);margin-top:4px;">שכר 50%: 12,000 ₪/חודש</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px;">2 משרות פתוחות</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── SOLDIER: SALARY SIMULATOR ── -->
+    <div id="s-simulator" class="screen">
+      <div class="topbar"><h1>💰 <span>סימולטור</span> שכר</h1><span class="role-badge">Hybrid 2+2</span></div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">⚙️ פרמטרים</span></div>
+          <div class="panel-body">
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">שכר הוראה חודשי (50%)</span><span class="slider-val" id="v-teach">7,500</span></div><input type="range" min="7000" max="8000" value="7500" step="100" oninput="calcSim();" id="r-teach"></div>
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">שכר הייטק חודשי (50%)</span><span class="slider-val" id="v-tech">11,000</span></div><input type="range" min="10000" max="12000" value="11000" step="500" oninput="calcSim();" id="r-tech"></div>
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">סבסוד דיור (ת"א/ביקוש)</span><span class="slider-val" id="v-house">0</span></div><input type="range" min="0" max="2200" value="0" step="100" oninput="calcSim();" id="r-house"></div>
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">מענק חתימה (פריפריה)</span><span class="slider-val" id="v-bonus">0</span></div><input type="range" min="0" max="45000" value="0" step="5000" oninput="calcSim();" id="r-bonus"></div>
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">שכר משרה מלאה (שנה 3+)</span><span class="slider-val" id="v-full">20,000</span></div><input type="range" min="18000" max="24000" value="20000" step="1000" oninput="calcSim();" id="r-full"></div>
+          </div>
+        </div>
+        <div>
+          <div class="result-box" style="margin-bottom:14px;">
+            <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:1px;">שכר חודשי כולל · שנים 1-2</div>
+            <div class="result-num" id="sim-total">18,500</div>
+            <div class="result-label">₪ ברוטו לחודש</div>
+          </div>
+          <div class="result-row">
+            <div class="result-mini"><div class="num" style="color:var(--teal);" id="sim-annual">222,000</div><div class="lbl">₪ שנתי (שנים 1-2)</div></div>
+            <div class="result-mini"><div class="num" style="color:var(--amber);" id="sim-2year">444,000</div><div class="lbl">₪ סה"כ תחנה א'</div></div>
+          </div>
+          <div class="result-row" style="margin-top:12px;">
+            <div class="result-mini"><div class="num" style="color:var(--green);" id="sim-full-annual">240,000</div><div class="lbl">₪ שנתי (שנה 3+)</div></div>
+            <div class="result-mini"><div class="num" style="color:var(--gold);" id="sim-4year">924,000</div><div class="lbl">₪ סה"כ 4 שנים</div></div>
+          </div>
+          <div style="margin-top:16px;padding:14px;background:var(--card);border-radius:10px;font-size:12px;color:var(--text-dim);text-align:right;">
+            <div style="margin-bottom:4px;">📊 <strong style="color:var(--text);">לעומת כניסה ישירה להייטק:</strong></div>
+            <div>שכר ג'וניור ממוצע: <span style="color:var(--red);">7,500-10,000 ₪/חודש</span></div>
+            <div>שכר מעוף שנים 1-2: <span style="color:var(--green);" id="sim-compare">18,500 ₪/חודש</span></div>
+            <div style="margin-top:4px;color:var(--gold);font-weight:700;">יתרון מעוף: +85% שכר + ניסיון כפול + Seniority Leap</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SOLDIER: JOURNEY ── -->
+    <div id="s-journey" class="screen">
+      <div class="topbar"><h1>🗺️ <span>מסלול</span> 2+2</h1><span class="role-badge">Hybrid Journey</span></div>
+      <div class="timeline">
+        <div class="tl-step">
+          <div class="tl-num">שלב 0</div>
+          <div class="tl-title">הכשרה</div>
+          <div class="tl-desc">קורס AI / Cyber<br>3-8 חודשים · Bootcamp<br><span class="tag tag-teal" style="margin-top:4px;">בנאיה / עתידים</span></div>
+        </div>
+        <div class="tl-step current">
+          <div class="tl-num">שנים 1-2 · היברידי</div>
+          <div class="tl-title">50% הוראה + 50% הייטק</div>
+          <div class="tl-desc">עמית הוראה בתיכון<br>+ עובד בחברה מאמצת<br><strong style="color:var(--gold);">17,000-20,000 ₪</strong></div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-num">שנה 3+</div>
+          <div class="tl-title">משרה מלאה בהייטק</div>
+          <div class="tl-desc">מעבר אוטומטי לחברה<br>Junior-to-Mid מנוסה<br><strong style="color:var(--green);">18,000-24,000 ₪</strong></div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:20px;">
+        <div class="panel"><div class="panel-body" style="text-align:center;"><div style="font-size:28px;">📚</div><div style="font-size:14px;font-weight:800;margin:8px 0;">Seniority Leap</div><div style="font-size:12px;color:var(--text-dim);">2 שנות הוראה = 18 חודשי ניסיון מקצועי מוכר</div></div></div>
+        <div class="panel"><div class="panel-body" style="text-align:center;"><div style="font-size:28px;">💡</div><div style="font-size:14px;font-weight:800;margin:8px 0;">Soft Skills</div><div style="font-size:12px;color:var(--text-dim);">הדרכה, ניהול כיתה, הובלת פרויקטים, תקשורת בין-אישית</div></div></div>
+        <div class="panel"><div class="panel-body" style="text-align:center;"><div style="font-size:28px;">🎯</div><div style="font-size:14px;font-weight:800;margin:8px 0;">Impact</div><div style="font-size:12px;color:var(--text-dim);">~200 תלמידים ייחשפו ל-STEM דרך ההוראה שלך</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── SOLDIER: PROFILE ── -->
+    <div id="s-profile" class="screen">
+      <div class="topbar"><h1>👤 <span>הפרופיל</span> שלי</h1></div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><span class="panel-title">פרטים אישיים</span></div><div class="panel-body">
+          <div class="form-group"><label class="form-label">שם מלא</label><input class="form-input" value="יונתן כהן"></div>
+          <div class="form-group"><label class="form-label">יחידה צבאית</label><select class="form-input"><option>8153 – לוט"ם</option><option>8200 – מודיעין</option><option>C4I – תקשוב</option><option>חיל האוויר – טכני</option></select></div>
+          <div class="form-group"><label class="form-label">עיר מגורים</label><input class="form-input" value="באר שבע"></div>
+          <div class="form-group"><label class="form-label">מרחק מקסימלי</label><input class="form-input" type="number" value="30" style="width:100px;"> ק"מ</div>
+        </div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">התמחות ומקצועות</span></div><div class="panel-body">
+          <div class="form-group"><label class="form-label">מקצוע עיקרי</label><select class="form-input"><option>סייבר</option><option>Python & AI</option><option>פיזיקה</option><option>מתמטיקה</option><option>אלקטרוניקה</option></select></div>
+          <div class="form-group"><label class="form-label">Tech Stack</label><div class="chips"><span class="chip active">Python</span><span class="chip active">Linux</span><span class="chip active">Cyber</span><span class="chip">C++</span><span class="chip">Cloud</span><span class="chip">ML</span><span class="chip">Data</span><span class="chip">React</span></div></div>
+          <div style="margin-top:16px;"><button class="btn btn-gold">שמור שינויים</button></div>
+        </div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ████████████████████████████████████████████████████████████
+     SCHOOL APP – דשבורד בית ספר / משרד החינוך
+     ████████████████████████████████████████████████████████████ -->
+<div id="app-school" class="app">
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-badge">PLATFORM</div>
+      <div class="logo-name"><span>מעוף</span> · חינוך</div>
+      <div class="logo-sub">Tech-Lead Israel</div>
+    </div>
+    <nav class="nav-section">
+      <div class="nav-label">ניהול</div>
+      <div class="nav-item active" onclick="show('school','dashboard')"><span class="icon">📊</span>לוח בקרה</div>
+      <div class="nav-item" onclick="show('school','candidates')"><span class="icon">👤</span>מועמדים מתאימים</div>
+      <div class="nav-item" onclick="show('school','placements')"><span class="icon">📋</span>הצבות פעילות</div>
+      <div class="nav-item" onclick="show('school','budget')"><span class="icon">💳</span>תקציב</div>
+      <div class="nav-item" onclick="show('school','submit')"><span class="icon">📝</span>הגשת צורך</div>
+    </nav>
+    <div class="nav-back"><div class="nav-item" onclick="backToEntry()"><span class="icon">↩</span>חזרה לבחירת תפקיד</div></div>
+    <div class="sidebar-profile">
+      <div class="profile-row">
+        <div class="profile-avatar" style="background:linear-gradient(135deg,var(--teal),var(--teal-dim));">דל</div>
+        <div><div class="profile-name">דנה לוי</div><div class="profile-unit">מנהלת · אורט נתיבות</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- ── SCHOOL: DASHBOARD ── -->
+    <div id="sc-dashboard" class="screen active">
+      <div class="topbar"><h1>שלום <span>דנה</span> 👋</h1><span class="role-badge">מנהלת בית ספר</span></div>
+      <div class="alert alert-red">⚠️ 5 משרות STEM עדיין לא מאוישות · 2 מועמדים ממתינים לאישור</div>
+      <div class="kpi-row">
+        <div class="kpi teal"><div class="kpi-label">משרות מאוישות</div><div class="kpi-num">3/8</div><div class="kpi-sub">עמיתי הוראה פעילים</div></div>
+        <div class="kpi amber"><div class="kpi-label">ממתינים לאישור</div><div class="kpi-num">2</div><div class="kpi-sub">מועמדים בתהליך</div></div>
+        <div class="kpi green"><div class="kpi-label">ניצול תקציב</div><div class="kpi-num">62%</div><div class="kpi-sub">מתוך הקצאת גפ"ן</div></div>
+        <div class="kpi blue"><div class="kpi-label">ציון התאמה ממוצע</div><div class="kpi-num">89</div><div class="kpi-sub">של מועמדים משובצים</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">👤 מועמדים מובילים</span><span class="panel-badge">TOP 3</span></div>
+          <div class="panel-body">
+            <div class="list-item"><div><div class="list-name">יונתן כהן <span class="tag tag-teal">סייבר</span></div><div class="list-meta">יח' 8153 · באר שבע · Retention: 91%</div></div><div class="list-score gold">94%</div></div>
+            <div class="list-item"><div><div class="list-name">מיכל אברהם <span class="tag tag-blue">AI</span></div><div class="list-meta">C4I · אשדוד · Retention: 88%</div></div><div class="list-score gold">90%</div></div>
+            <div class="list-item"><div><div class="list-name">עומר דוד <span class="tag tag-purple">Python</span></div><div class="list-meta">חיל אוויר · ב"ש · Retention: 85%</div></div><div class="list-score gold">86%</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">📊 מפת דחיפות</span></div>
+          <div class="panel-body">
+            <div class="list-item"><div><div class="list-name" style="color:var(--red);">סייבר · כיתה י"א</div><div class="list-meta">0 מורים · 32 תלמידים ממתינים</div></div><span class="tag tag-red">קריטי</span></div>
+            <div class="list-item"><div><div class="list-name" style="color:var(--amber);">AI · כיתה י"ב</div><div class="list-meta">1 מורה חלקי · 28 תלמידים</div></div><span class="tag tag-gold">גבוה</span></div>
+            <div class="list-item"><div><div class="list-name">Python · כיתה י'</div><div class="list-meta">1 מורה · 24 תלמידים</div></div><span class="tag tag-blue">רגיל</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:0;">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">📊 ניצול תקציב גפ"ן</span></div>
+          <div class="panel-body">
+            <div class="donut-wrap">
+              <div class="donut" style="background:conic-gradient(var(--teal) 0% 62%, var(--surface) 62% 100%);">
+                <div class="donut-hole"><div class="donut-num">62%</div><div class="donut-lbl">ניצול</div></div>
+              </div>
+              <div class="donut-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:var(--teal);"></div>נוצל: 112,000 ₪</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--surface);border:1px solid var(--border2);"></div>יתרה: 68,000 ₪</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>סה"כ: 180,000 ₪</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">📉 איוש מקצועות STEM</span><span class="panel-badge">מצב נוכחי</span></div>
+          <div class="panel-body">
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:5px;"><span>סייבר</span><span class="tag tag-red">קריטי · 0/2</span></div>
+              <div class="progress" style="background:rgba(255,92,106,0.15);"><div class="progress-fill" style="width:5%;background:var(--red);height:100%;border-radius:4px;"></div></div>
+            </div>
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:5px;"><span>AI</span><span class="tag tag-gold">חלקי · 1/2</span></div>
+              <div class="progress" style="background:rgba(245,200,66,0.1);"><div class="progress-fill gold" style="width:50%"></div></div>
+            </div>
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:5px;"><span>Python</span><span class="tag tag-teal">מאויש · 1/1</span></div>
+              <div class="progress"><div class="progress-fill teal" style="width:100%"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:5px;"><span>פיזיקה</span><span class="tag tag-red">חסר · 0/1</span></div>
+              <div class="progress" style="background:rgba(255,92,106,0.15);"><div class="progress-fill" style="width:5%;background:var(--red);height:100%;border-radius:4px;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCHOOL: CANDIDATES ── -->
+    <div id="sc-candidates" class="screen">
+      <div class="topbar"><h1>👤 <span>מועמדים</span> מתאימים</h1><span class="role-badge">6 מועמדים</span></div>
+      <div class="chips"><span class="chip active">הכל (6)</span><span class="chip">סייבר (3)</span><span class="chip">AI (2)</span><span class="chip">Python (4)</span></div>
+      <div class="panel" style="margin-top:14px;">
+        <table class="data-tbl">
+          <thead><tr><th>מועמד</th><th>יחידה</th><th>מקצוע</th><th>כושר הוראה</th><th>התאמה מקצועית</th><th>שימור</th><th>Impact</th><th>School Match</th><th>פעולה</th></tr></thead>
+          <tbody>
+            <tr><td><strong>יונתן כהן</strong></td><td>8153</td><td><span class="tag tag-teal">סייבר</span></td><td>90</td><td>94</td><td>91</td><td>85</td><td style="color:var(--teal);font-weight:900;">91</td><td><button class="btn btn-teal btn-sm">אשר</button></td></tr>
+            <tr><td><strong>מיכל אברהם</strong></td><td>C4I</td><td><span class="tag tag-blue">AI</span></td><td>93</td><td>90</td><td>88</td><td>82</td><td style="color:var(--teal);font-weight:900;">89</td><td><button class="btn btn-teal btn-sm">אשר</button></td></tr>
+            <tr><td><strong>עומר דוד</strong></td><td>חיל אוויר</td><td><span class="tag tag-purple">Python</span></td><td>88</td><td>86</td><td>85</td><td>80</td><td style="color:var(--teal);font-weight:900;">86</td><td><button class="btn btn-teal btn-sm">אשר</button></td></tr>
+            <tr><td><strong>נועה שרון</strong></td><td>8200</td><td><span class="tag tag-teal">סייבר</span></td><td>78</td><td>88</td><td>72</td><td>90</td><td style="color:var(--amber);font-weight:900;">82</td><td><button class="btn btn-ghost btn-sm">בדיקה</button></td></tr>
+            <tr><td><strong>אלון בן-דוד</strong></td><td>תקשוב</td><td><span class="tag tag-blue">AI</span></td><td>85</td><td>80</td><td>90</td><td>75</td><td style="color:var(--amber);font-weight:900;">84</td><td><button class="btn btn-ghost btn-sm">בדיקה</button></td></tr>
+            <tr><td><strong>שירה לוי</strong></td><td>C4I</td><td><span class="tag tag-purple">Python</span></td><td>82</td><td>84</td><td>86</td><td>70</td><td style="color:var(--amber);font-weight:900;">81</td><td><button class="btn btn-ghost btn-sm">בדיקה</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── SCHOOL: PLACEMENTS ── -->
+    <div id="sc-placements" class="screen">
+      <div class="topbar"><h1>📋 <span>הצבות</span> פעילות</h1><span class="role-badge">3 עמיתים</span></div>
+      <div class="grid-3">
+        <div class="panel"><div class="panel-head"><span class="panel-title">רון אשכנזי</span><span class="tag tag-green">פעיל</span></div><div class="panel-body">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">מלמד: <strong style="color:var(--text);">סייבר</strong> · כיתה י"ב<br>חברה: <strong style="color:var(--teal);">Check Point</strong> · 50%<br>תחילת שיבוץ: ספטמבר 2025</div>
+          <div style="font-size:10px;margin-bottom:4px;">דירוג תלמידים: <span style="color:var(--gold);font-weight:700;">4.7/5</span></div>
+          <div class="progress"><div class="progress-fill teal" style="width:94%"></div></div>
+          <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">נוכחות: 94% · 8 חודשים בשיבוץ</div>
+        </div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">ליאת פרידמן</span><span class="tag tag-green">פעיל</span></div><div class="panel-body">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">מלמדת: <strong style="color:var(--text);">Python</strong> · כיתה י'<br>חברה: <strong style="color:var(--teal);">Mobileye</strong> · 50%<br>תחילת שיבוץ: ספטמבר 2025</div>
+          <div style="font-size:10px;margin-bottom:4px;">דירוג תלמידים: <span style="color:var(--gold);font-weight:700;">4.5/5</span></div>
+          <div class="progress"><div class="progress-fill teal" style="width:88%"></div></div>
+          <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">נוכחות: 88% · 8 חודשים בשיבוץ</div>
+        </div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">דני כהן</span><span class="tag tag-gold">חדש</span></div><div class="panel-body">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">מלמד: <strong style="color:var(--text);">AI</strong> · כיתה י"א<br>חברה: <strong style="color:var(--teal);">אלביט</strong> · 50%<br>תחילת שיבוץ: פברואר 2026</div>
+          <div style="font-size:10px;margin-bottom:4px;">דירוג תלמידים: <span style="color:var(--gold);font-weight:700;">-</span> (חדש)</div>
+          <div class="progress"><div class="progress-fill gold" style="width:100%"></div></div>
+          <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">נוכחות: 100% · חודש בשיבוץ</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ── SCHOOL: BUDGET ── -->
+    <div id="sc-budget" class="screen">
+      <div class="topbar"><h1>💳 <span>תקציב</span> גפ"ן</h1></div>
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kpi teal"><div class="kpi-label">הקצאה שנתית</div><div class="kpi-num">180K</div><div class="kpi-sub">₪ תקציב גפ"ן</div></div>
+        <div class="kpi green"><div class="kpi-label">נוצל</div><div class="kpi-num">112K</div><div class="kpi-sub">₪ (62%)</div></div>
+        <div class="kpi amber"><div class="kpi-label">יתרה</div><div class="kpi-num">68K</div><div class="kpi-sub">₪ לניצול</div></div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head"><span class="panel-title">📊 פירוט מימון לכל עמית הוראה</span></div>
+        <div class="panel-body">
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">מימון שכר עמית הוראה (50% משרה) – <strong style="color:var(--text);">100% מתקציב גפ"ן</strong></div>
+          <div class="fund-bar">
+            <div class="fund-seg" style="flex:100;background:var(--teal);">תקציב גפ"ן · 100%</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
+            <div style="text-align:center;padding:14px;background:var(--card);border-radius:10px;"><div style="font-size:22px;font-weight:900;color:var(--teal);">7,500</div><div style="font-size:10px;color:var(--text-dim);">₪/חודש · שכר הוראה 50%</div><div style="font-size:9px;color:var(--teal);margin-top:4px;">ממומן: תקציב גפ"ן</div></div>
+            <div style="text-align:center;padding:14px;background:var(--card);border-radius:10px;"><div style="font-size:22px;font-weight:900;color:var(--blue);">10,500</div><div style="font-size:10px;color:var(--text-dim);">₪/חודש · שכר הייטק 50%</div><div style="font-size:9px;color:var(--blue);margin-top:4px;">ממומן: חברה מאמצת (בנפרד)</div></div>
+          </div>
+          <div class="alert alert-teal" style="margin-top:16px;margin-bottom:0;">✅ <strong>עלות ישירה לבית הספר: 0 ₪</strong> · שכר ההוראה ממומן במלואו מתקציב גפ"ן · החברה משלמת בנפרד על ה-50% הייטק</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCHOOL: SUBMIT ── -->
+    <div id="sc-submit" class="screen">
+      <div class="topbar"><h1>📝 <span>הגשת</span> צורך חדש</h1></div>
+      <div class="panel" style="max-width:600px;">
+        <div class="panel-head"><span class="panel-title">בקשה למורה STEM</span></div>
+        <div class="panel-body">
+          <div class="form-group"><label class="form-label">מקצוע נדרש</label><select class="form-input"><option>סייבר</option><option>Python & תכנות</option><option>AI ובינה מלאכותית</option><option>פיזיקה</option><option>מתמטיקה</option><option>אלקטרוניקה</option></select></div>
+          <div class="form-group"><label class="form-label">שעות שבועיות</label><input class="form-input" type="number" value="10" min="4" max="20"></div>
+          <div class="form-group"><label class="form-label">רמת דחיפות</label><div class="chips"><span class="chip">רגיל</span><span class="chip active" style="border-color:var(--amber);color:var(--amber);">גבוה</span><span class="chip" style="border-color:var(--red);color:var(--red);">קריטי</span></div></div>
+          <div class="form-group"><label class="form-label">תאריך התחלה רצוי</label><input class="form-input" type="date" value="2026-09-01"></div>
+          <div class="form-group"><label class="form-label">מספר תלמידים</label><input class="form-input" type="number" value="30"></div>
+          <div class="form-group"><label class="form-label">הערות נוספות</label><textarea class="form-input" placeholder="תאר את הצורך הספציפי..."></textarea></div>
+          <button class="btn btn-gold" style="width:100%;padding:12px;">שלח בקשה</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ████████████████████████████████████████████████████████████
+     COMPANY APP – דשבורד חברה מאמצת
+     ████████████████████████████████████████████████████████████ -->
+<div id="app-company" class="app">
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-badge">PLATFORM</div>
+      <div class="logo-name"><span>מעוף</span> · חברה</div>
+      <div class="logo-sub">Tech-Lead Israel</div>
+    </div>
+    <nav class="nav-section">
+      <div class="nav-label">ניהול</div>
+      <div class="nav-item active" onclick="show('company','dashboard')"><span class="icon">📊</span>לוח בקרה</div>
+      <div class="nav-item" onclick="show('company','candidates')"><span class="icon">🎖️</span>מועמדים</div>
+      <div class="nav-item" onclick="show('company','employees')"><span class="icon">📋</span>עובדים נוכחיים</div>
+      <div class="nav-item" onclick="show('company','transition')"><span class="icon">🔄</span>תוכנית מעבר</div>
+      <div class="nav-item" onclick="show('company','roi')"><span class="icon">📈</span>מחשבון ROI</div>
+    </nav>
+    <div class="nav-back"><div class="nav-item" onclick="backToEntry()"><span class="icon">↩</span>חזרה לבחירת תפקיד</div></div>
+    <div class="sidebar-profile">
+      <div class="profile-row">
+        <div class="profile-avatar" style="background:linear-gradient(135deg,var(--blue),#5b7fdb);">CP</div>
+        <div><div class="profile-name">Check Point</div><div class="profile-unit">HR · Talent Acquisition</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- ── COMPANY: DASHBOARD ── -->
+    <div id="co-dashboard" class="screen active">
+      <div class="topbar"><h1>שלום <span>Check Point</span> 👋</h1><span class="role-badge">חברה מאמצת</span></div>
+      <div class="alert alert-teal">🎯 9 מועמדים חדשים התאימו ל-Tech Stack שלכם · 2 עובדים מתקרבים למעבר למשרה מלאה</div>
+      <div class="kpi-row">
+        <div class="kpi blue"><div class="kpi-label">עובדים פעילים</div><div class="kpi-num">3</div><div class="kpi-sub">50% משרה</div></div>
+        <div class="kpi green"><div class="kpi-label">Pipeline מועמדים</div><div class="kpi-num">9</div><div class="kpi-sub">ממתינים לשיבוץ</div></div>
+        <div class="kpi amber"><div class="kpi-label">עלות חודשית ממוצעת</div><div class="kpi-num">10.5K</div><div class="kpi-sub">₪ לעובד (50%)</div></div>
+        <div class="kpi teal"><div class="kpi-label">מעבר למשרה מלאה</div><div class="kpi-num">2</div><div class="kpi-sub">בעוד 4 חודשים</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">🎖️ מועמדים מובילים</span><span class="panel-badge">TOP 3</span></div>
+          <div class="panel-body">
+            <div class="list-item"><div><div class="list-name">יונתן כהן <span class="tag tag-teal">Cyber</span></div><div class="list-meta">8153 · Python, Linux · ציון: 91.3</div></div><div class="list-score teal">87%</div></div>
+            <div class="list-item"><div><div class="list-name">נועה שרון <span class="tag tag-teal">Cyber</span></div><div class="list-meta">8200 · Security · ציון: 85.5</div></div><div class="list-score teal">91%</div></div>
+            <div class="list-item"><div><div class="list-name">אלון בן-דוד <span class="tag tag-blue">Cloud</span></div><div class="list-meta">תקשוב · AWS, Python · ציון: 84.5</div></div><div class="list-score teal">79%</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">💰 סיכום פיננסי</span></div>
+          <div class="panel-body">
+            <div class="list-item"><div><div class="list-name">עלות שנתית (3 עובדים)</div></div><div style="font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--amber);">378K ₪</div></div>
+            <div class="list-item"><div><div class="list-name">VS גיוס 3 ג'וניורים ישירות</div></div><div style="font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--red);">576K ₪</div></div>
+            <div class="list-item"><div><div class="list-name" style="color:var(--green);">חיסכון שנתי</div></div><div style="font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--green);">198K ₪</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head"><span class="panel-title">📊 השוואת עלויות – מעוף vs גיוס ישיר</span></div>
+        <div class="panel-body">
+          <div class="compare-bars">
+            <div class="compare-row">
+              <div class="compare-label">מעוף (50%)</div>
+              <div class="compare-track"><div class="compare-fill" style="width:0%;background:linear-gradient(90deg,var(--teal),var(--teal-dim));" data-width="66%">378K ₪/שנה</div></div>
+            </div>
+            <div class="compare-row">
+              <div class="compare-label">גיוס ישיר</div>
+              <div class="compare-track"><div class="compare-fill" style="width:0%;background:linear-gradient(90deg,var(--red),#d44a56);" data-width="100%">576K ₪/שנה</div></div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:14px;font-size:14px;font-weight:800;color:var(--green);">💰 חיסכון: 198,000 ₪ בשנה (34%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMPANY: CANDIDATES ── -->
+    <div id="co-candidates" class="screen">
+      <div class="topbar"><h1>🎖️ <span>מועמדים</span></h1><span class="role-badge">9 מועמדים</span></div>
+      <div class="chips"><span class="chip active">הכל (9)</span><span class="chip">Cyber (4)</span><span class="chip">Python (3)</span><span class="chip">Cloud (2)</span></div>
+      <div class="panel" style="margin-top:14px;">
+        <table class="data-tbl">
+          <thead><tr><th>מועמד</th><th>יחידה</th><th>Tech Stack</th><th>מיומנות טכנית</th><th>פוטנציאל צמיחה</th><th>Soft Skills</th><th>Cultural Fit</th><th>Company Match</th><th>עלות 50%</th><th>פעולה</th></tr></thead>
+          <tbody>
+            <tr><td><strong>יונתן כהן</strong></td><td>8153</td><td><span class="tag tag-blue">Python</span><span class="tag tag-teal">Cyber</span></td><td>92</td><td>85</td><td>88</td><td>83</td><td style="color:var(--blue);font-weight:900;">88</td><td>10,500 ₪</td><td><button class="btn btn-teal btn-sm">גייס</button></td></tr>
+            <tr><td><strong>נועה שרון</strong></td><td>8200</td><td><span class="tag tag-teal">Cyber</span><span class="tag tag-blue">Linux</span></td><td>95</td><td>82</td><td>78</td><td>85</td><td style="color:var(--blue);font-weight:900;">87</td><td>11,000 ₪</td><td><button class="btn btn-teal btn-sm">גייס</button></td></tr>
+            <tr><td><strong>אלון בן-דוד</strong></td><td>תקשוב</td><td><span class="tag tag-blue">Cloud</span><span class="tag tag-blue">Python</span></td><td>80</td><td>88</td><td>85</td><td>82</td><td style="color:var(--blue);font-weight:900;">83</td><td>10,000 ₪</td><td><button class="btn btn-ghost btn-sm">פרופיל</button></td></tr>
+            <tr><td><strong>מיכל אברהם</strong></td><td>C4I</td><td><span class="tag tag-blue">AI</span><span class="tag tag-blue">ML</span></td><td>78</td><td>90</td><td>92</td><td>80</td><td style="color:var(--blue);font-weight:900;">85</td><td>11,500 ₪</td><td><button class="btn btn-ghost btn-sm">פרופיל</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── COMPANY: EMPLOYEES ── -->
+    <div id="co-employees" class="screen">
+      <div class="topbar"><h1>📋 <span>עובדים</span> נוכחיים (50%)</h1><span class="role-badge">3 עובדים</span></div>
+      <div class="grid-3">
+        <div class="panel"><div class="panel-head"><span class="panel-title">רון אשכנזי</span><span class="tag tag-green">פעיל</span></div><div class="panel-body">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">תפקיד: <strong style="color:var(--text);">Cyber Analyst</strong><br>מלמד: סייבר · אורט נתיבות<br>תחילה: ספטמבר 2024</div>
+          <div style="font-size:10px;margin-bottom:4px;">ביצועים: <span style="color:var(--teal);font-weight:700;">4.2/5</span></div>
+          <div class="progress"><div class="progress-fill teal" style="width:84%"></div></div>
+          <div style="font-size:10px;margin-top:4px;">מוכנות למשרה מלאה: <strong style="color:var(--green);">88%</strong></div>
+          <div style="font-size:9px;color:var(--amber);margin-top:4px;">⏰ מעבר למשרה מלאה בעוד 4 חודשים</div>
+        </div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">ליאת פרידמן</span><span class="tag tag-green">פעיל</span></div><div class="panel-body">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">תפקיד: <strong style="color:var(--text);">Python Developer</strong><br>מלמדת: Python · גימנסיה ת"א<br>תחילה: ספטמבר 2024</div>
+          <div style="font-size:10px;margin-bottom:4px;">ביצועים: <span style="color:var(--teal);font-weight:700;">4.5/5</span></div>
+          <div class="progress"><div class="progress-fill teal" style="width:90%"></div></div>
+          <div style="font-size:10px;margin-top:4px;">מוכנות למשרה מלאה: <strong style="color:var(--green);">92%</strong></div>
+          <div style="font-size:9px;color:var(--amber);margin-top:4px;">⏰ מעבר למשרה מלאה בעוד 4 חודשים</div>
+        </div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">דני כהן</span><span class="tag tag-gold">חדש</span></div><div class="panel-body">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">תפקיד: <strong style="color:var(--text);">Security Intern</strong><br>מלמד: AI · אורט נתיבות<br>תחילה: פברואר 2026</div>
+          <div style="font-size:10px;margin-bottom:4px;">ביצועים: <span style="color:var(--text-dim);">טרם הוערך</span></div>
+          <div class="progress"><div class="progress-fill gold" style="width:20%"></div></div>
+          <div style="font-size:10px;margin-top:4px;">מוכנות למשרה מלאה: <strong>15%</strong></div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:4px;">⏰ מעבר למשרה מלאה בעוד 22 חודשים</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ── COMPANY: TRANSITION ── -->
+    <div id="co-transition" class="screen">
+      <div class="topbar"><h1>🔄 <span>תוכנית</span> מעבר למשרה מלאה</h1></div>
+      <div class="alert alert-gold">📅 2 עובדים מסיימים את תחנה א' בספטמבר 2026 ועוברים למשרה מלאה</div>
+      <div class="panel" style="margin-bottom:20px;">
+        <table class="data-tbl">
+          <thead><tr><th>עובד</th><th>תפקיד נוכחי</th><th>שכר 50%</th><th>סיום תחנה א'</th><th>שכר משרה מלאה</th><th>Success Fee</th><th>מוכנות</th></tr></thead>
+          <tbody>
+            <tr><td><strong>רון אשכנזי</strong></td><td>Cyber Analyst</td><td>10,500 ₪</td><td style="color:var(--amber);">ספט' 2026</td><td style="color:var(--green);font-weight:700;">20,000 ₪</td><td>35,000 ₪</td><td><div class="progress" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill green" style="width:88%"></div></div> 88%</td></tr>
+            <tr><td><strong>ליאת פרידמן</strong></td><td>Python Dev</td><td>11,000 ₪</td><td style="color:var(--amber);">ספט' 2026</td><td style="color:var(--green);font-weight:700;">22,000 ₪</td><td>35,000 ₪</td><td><div class="progress" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill green" style="width:92%"></div></div> 92%</td></tr>
+            <tr><td><strong>דני כהן</strong></td><td>Security Intern</td><td>10,000 ₪</td><td>ינו' 2028</td><td style="color:var(--text-dim);">18,000-22,000 ₪</td><td>35,000 ₪</td><td><div class="progress" style="width:80px;display:inline-block;vertical-align:middle;"><div class="progress-fill gold" style="width:15%"></div></div> 15%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><span class="panel-title">💰 עלויות מעבר צפויות</span></div><div class="panel-body">
+          <div class="list-item"><div><div class="list-name">Success Fee (2 עובדים)</div></div><div style="font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--amber);">70,000 ₪</div></div>
+          <div class="list-item"><div><div class="list-name">שכר חודשי אחרי מעבר (ממוצע)</div></div><div style="font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--green);">21,000 ₪</div></div>
+          <div class="list-item"><div><div class="list-name">עלייה בשכר (מ-50% ל-100%)</div></div><div style="font-weight:900;font-family:'IBM Plex Mono',monospace;">+100%</div></div>
+        </div></div>
+        <div class="panel"><div class="panel-head"><span class="panel-title">🏆 ערך מוסף לעובדים שעוברים</span></div><div class="panel-body">
+          <div class="list-item"><div><div class="list-name">Seniority Leap</div><div class="list-meta">+18 חודשי ניסיון מוכר</div></div><span class="tag tag-gold">מנהיגות</span></div>
+          <div class="list-item"><div><div class="list-name">Soft Skills</div><div class="list-meta">ניהול כיתה, הדרכה, תקשורת</div></div><span class="tag tag-teal">ייחודי</span></div>
+          <div class="list-item"><div><div class="list-name">Trial Period</div><div class="list-meta">2 שנים בדקתם אותם בפועל</div></div><span class="tag tag-green">0 סיכון</span></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ── COMPANY: ROI CALCULATOR ── -->
+    <div id="co-roi" class="screen">
+      <div class="topbar"><h1>📈 <span>מחשבון</span> ROI</h1></div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">⚙️ פרמטרים</span></div>
+          <div class="panel-body">
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">מספר עובדי מעוף</span><span class="slider-val" id="v-roi-count">3</span></div><input type="range" min="1" max="12" value="3" step="1" oninput="calcROI();" id="r-roi-count"></div>
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">שכר 50% ממוצע</span><span class="slider-val" id="v-roi-salary">10,500</span></div><input type="range" min="10000" max="12000" value="10500" step="500" oninput="calcROI();" id="r-roi-salary"></div>
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">שכר ג'וניור ישיר (100%)</span><span class="slider-val" id="v-roi-junior">16,000</span></div><input type="range" min="12000" max="22000" value="16000" step="1000" oninput="calcROI();" id="r-roi-junior"></div>
+            <div class="slider-wrap"><div class="slider-header"><span class="slider-label">Success Fee לעובד</span><span class="slider-val" id="v-roi-fee">35,000</span></div><input type="range" min="25000" max="45000" value="35000" step="5000" oninput="calcROI();" id="r-roi-fee"></div>
+          </div>
+        </div>
+        <div>
+          <div class="result-box" style="margin-bottom:14px;">
+            <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:1px;">חיסכון שנתי</div>
+            <div class="result-num" id="roi-saving">198,000</div>
+            <div class="result-label">₪ בשנה</div>
+          </div>
+          <div class="result-row">
+            <div class="result-mini"><div class="num" style="color:var(--amber);" id="roi-maof-cost">378,000</div><div class="lbl">₪ עלות מעוף (שנתי)</div></div>
+            <div class="result-mini"><div class="num" style="color:var(--red);" id="roi-direct-cost">576,000</div><div class="lbl">₪ גיוס ישיר (שנתי)</div></div>
+          </div>
+          <div class="result-row" style="margin-top:12px;">
+            <div class="result-mini"><div class="num" style="color:var(--amber);" id="roi-fee-total">105,000</div><div class="lbl">₪ Success Fee (סה"כ)</div></div>
+            <div class="result-mini"><div class="num" style="color:var(--green);" id="roi-net-2y">291,000</div><div class="lbl">₪ חיסכון נטו 2 שנים</div></div>
+          </div>
+          <div style="margin-top:16px;padding:14px;background:var(--card);border-radius:10px;font-size:12px;color:var(--text-dim);text-align:right;">
+            <div style="margin-bottom:4px;">🏆 <strong style="color:var(--text);">מה מקבלים בנוסף:</strong></div>
+            <div>✓ Trial period של 2 שנים (אפס סיכון גיוס)</div>
+            <div>✓ עובד עם Soft Skills + ניסיון הדרכה</div>
+            <div>✓ Seniority Leap: +18 חודשי ניסיון מוכר</div>
+            <div>✓ Pipeline מובטח של טאלנטים</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ████ JAVASCRIPT ████ -->
+<script>
+let currentRole = null;
+const screenPrefix = { soldier:'s-', school:'sc-', company:'co-' };
+
+function selectRole(role) {
+  document.getElementById('entry').style.display = 'none';
+  document.getElementById('app-' + role).classList.add('active');
+  currentRole = role;
+  setTimeout(animateCharts, 300);
+}
+
+function backToEntry() {
+  document.querySelectorAll('.app').forEach(a => a.classList.remove('active'));
+  document.getElementById('entry').style.display = '';
+  currentRole = null;
+  document.querySelector('.sidebar')?.classList.remove('open');
+}
+
+function show(role, screen) {
+  const prefix = screenPrefix[role];
+  document.querySelectorAll('#app-' + role + ' .screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(prefix + screen).classList.add('active');
+  const navItems = document.querySelectorAll('#app-' + role + ' .nav-section .nav-item');
+  navItems.forEach(n => n.classList.remove('active'));
+  const screens = {
+    soldier: ['dashboard','schools','companies','simulator','journey','profile'],
+    school: ['dashboard','candidates','placements','budget','submit'],
+    company: ['dashboard','candidates','employees','transition','roi']
+  };
+  const idx = screens[role].indexOf(screen);
+  if (idx >= 0 && navItems[idx]) navItems[idx].classList.add('active');
+  document.querySelector('.sidebar')?.classList.remove('open');
+  if (screen === 'simulator') calcSim();
+  if (screen === 'roi') calcROI();
+  setTimeout(animateCharts, 100);
+}
+
+// ── SALARY SIMULATOR ──
+function calcSim() {
+  const teach = +document.getElementById('r-teach').value;
+  const tech  = +document.getElementById('r-tech').value;
+  const house = +document.getElementById('r-house').value;
+  const bonus = +document.getElementById('r-bonus').value;
+  const full  = +document.getElementById('r-full').value;
+  const monthly = teach + tech + house;
+  const annual = monthly * 12 + bonus;
+  const twoYear = annual * 2;
+  const fullAnnual = full * 12;
+  const fourYear = twoYear + fullAnnual * 2;
+  document.getElementById('v-teach').textContent = teach.toLocaleString();
+  document.getElementById('v-tech').textContent = tech.toLocaleString();
+  document.getElementById('v-house').textContent = house.toLocaleString();
+  document.getElementById('v-bonus').textContent = bonus.toLocaleString();
+  document.getElementById('v-full').textContent = full.toLocaleString();
+  document.getElementById('sim-total').textContent = monthly.toLocaleString();
+  document.getElementById('sim-annual').textContent = annual.toLocaleString();
+  document.getElementById('sim-2year').textContent = twoYear.toLocaleString();
+  document.getElementById('sim-full-annual').textContent = fullAnnual.toLocaleString();
+  document.getElementById('sim-4year').textContent = fourYear.toLocaleString();
+  document.getElementById('sim-compare').textContent = monthly.toLocaleString() + ' ₪/חודש';
+}
+
+// ── ROI CALCULATOR ──
+function calcROI() {
+  const count = +document.getElementById('r-roi-count').value;
+  const salary = +document.getElementById('r-roi-salary').value;
+  const junior = +document.getElementById('r-roi-junior').value;
+  const fee = +document.getElementById('r-roi-fee').value;
+  const maofAnnual = count * salary * 12;
+  const directAnnual = count * junior * 12;
+  const saving = directAnnual - maofAnnual;
+  const feeTotal = count * fee;
+  const net2y = saving * 2 - feeTotal;
+  document.getElementById('v-roi-count').textContent = count;
+  document.getElementById('v-roi-salary').textContent = salary.toLocaleString();
+  document.getElementById('v-roi-junior').textContent = junior.toLocaleString();
+  document.getElementById('v-roi-fee').textContent = fee.toLocaleString();
+  document.getElementById('roi-saving').textContent = saving.toLocaleString();
+  document.getElementById('roi-maof-cost').textContent = maofAnnual.toLocaleString();
+  document.getElementById('roi-direct-cost').textContent = directAnnual.toLocaleString();
+  document.getElementById('roi-fee-total').textContent = feeTotal.toLocaleString();
+  document.getElementById('roi-net-2y').textContent = net2y.toLocaleString();
+}
+
+// ── TOAST NOTIFICATIONS ──
+function showToast(msg, type) {
+  type = type || 'success';
+  var container = document.getElementById('toast-container');
+  var icons = {success:'✅', info:'ℹ️', warning:'⚠️', error:'❌'};
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.innerHTML = '<span>' + (icons[type]||'') + '</span><span>' + msg + '</span>';
+  container.appendChild(toast);
+  setTimeout(function(){ toast.remove(); }, 3200);
+}
+
+// ── BUTTON HANDLERS ──
+function approveCandidate(btn, name) {
+  btn.textContent = '✓ אושר';
+  btn.style.cssText = 'background:rgba(0,212,170,0.2);color:var(--teal);border:1px solid rgba(0,212,170,0.4);cursor:default;padding:6px 12px;font-size:11px;font-weight:700;border-radius:10px;font-family:Heebo,sans-serif;';
+  btn.onclick = null;
+  btn.disabled = true;
+  showToast('המועמד ' + name + ' אושר בהצלחה!', 'success');
+}
+
+function hireCandidate(btn, name) {
+  btn.textContent = '✓ נשלח';
+  btn.style.cssText = 'background:rgba(0,212,170,0.2);color:var(--teal);border:1px solid rgba(0,212,170,0.4);cursor:default;padding:6px 12px;font-size:11px;font-weight:700;border-radius:10px;font-family:Heebo,sans-serif;';
+  btn.onclick = null;
+  btn.disabled = true;
+  showToast('בקשת גיוס ל-' + name + ' נשלחה לצוות HR', 'success');
+}
+
+function viewProfile(name) {
+  showToast('טוען פרופיל מורחב של ' + name + '...', 'info');
+}
+
+// ── EVENT DELEGATION: SCHOOL CANDIDATES ──
+document.querySelector('#sc-candidates .data-tbl')?.addEventListener('click', function(e) {
+  var btn = e.target.closest('button');
+  if (!btn || btn.disabled) return;
+  var row = btn.closest('tr');
+  var name = row?.querySelector('td:first-child strong')?.textContent || '';
+  if (btn.textContent.trim() === 'אשר') approveCandidate(btn, name);
+  else if (btn.textContent.trim() === 'בדיקה') viewProfile(name);
+});
+
+// ── EVENT DELEGATION: COMPANY CANDIDATES ──
+document.querySelector('#co-candidates .data-tbl')?.addEventListener('click', function(e) {
+  var btn = e.target.closest('button');
+  if (!btn || btn.disabled) return;
+  var row = btn.closest('tr');
+  var name = row?.querySelector('td:first-child strong')?.textContent || '';
+  if (btn.textContent.trim() === 'גייס') hireCandidate(btn, name);
+  else if (btn.textContent.trim() === 'פרופיל') viewProfile(name);
+});
+
+// ── SUBMIT NEED FORM ──
+document.querySelector('#sc-submit .btn-gold')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  showToast('הבקשה נשלחה בהצלחה! תקבלי עדכון תוך 48 שעות', 'success');
+});
+
+// ── SAVE PROFILE ──
+document.querySelector('#s-profile .btn-gold')?.addEventListener('click', function() {
+  showToast('הפרופיל עודכן בהצלחה', 'success');
+});
+
+// ── ANIMATE CHARTS ──
+function animateCharts() {
+  document.querySelectorAll('.bar[data-height]').forEach(function(bar) {
+    bar.style.height = '0%';
+    setTimeout(function(){ bar.style.height = bar.dataset.height; }, 150);
+  });
+  document.querySelectorAll('.compare-fill[data-width]').forEach(function(fill) {
+    fill.style.width = '0%';
+    setTimeout(function(){ fill.style.width = fill.dataset.width; }, 150);
+  });
+}
+
+// ── CHIP FILTERS: SCHOOL CANDIDATES ──
+document.querySelector('#sc-candidates .chips')?.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('chip')) return;
+  this.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  e.target.classList.add('active');
+  var filter = e.target.textContent.trim();
+  document.querySelectorAll('#sc-candidates .data-tbl tbody tr').forEach(function(row) {
+    if (filter.startsWith('הכל')) { row.style.display = ''; return; }
+    var subject = filter.split(' ')[0];
+    var tags = row.querySelectorAll('.tag');
+    var match = Array.from(tags).some(function(t){ return t.textContent.includes(subject); });
+    row.style.display = match ? '' : 'none';
+  });
+});
+
+// ── CHIP FILTERS: SOLDIER SCHOOLS ──
+document.querySelector('#s-schools .chips')?.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('chip')) return;
+  this.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  e.target.classList.add('active');
+  var filter = e.target.textContent.trim();
+  document.querySelectorAll('#schools-grid > .panel').forEach(function(card) {
+    if (filter.startsWith('הכל')) { card.style.display = ''; return; }
+    var text = card.textContent;
+    if (filter.includes('דחוף')) { card.style.display = text.includes('דחוף') ? '' : 'none'; }
+    else if (filter.includes('פריפריה')) { card.style.display = (text.includes('עדיפות') || text.includes('צפון')) ? '' : 'none'; }
+    else if (filter.includes('30')) {
+      var m = text.match(/(\d+)\s*ק"מ/);
+      card.style.display = (m && parseInt(m[1]) <= 30) ? '' : 'none';
+    }
+  });
+});
+
+// ── CHIP FILTERS: COMPANY CANDIDATES ──
+document.querySelector('#co-candidates .chips')?.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('chip')) return;
+  this.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  e.target.classList.add('active');
+  var filter = e.target.textContent.trim();
+  document.querySelectorAll('#co-candidates .data-tbl tbody tr').forEach(function(row) {
+    if (filter.startsWith('הכל')) { row.style.display = ''; return; }
+    var subject = filter.split(' ')[0];
+    var tags = row.querySelectorAll('.tag');
+    var match = Array.from(tags).some(function(t){ return t.textContent.includes(subject); });
+    row.style.display = match ? '' : 'none';
+  });
+});
+
+// ── GENERAL CHIP TOGGLE (profile, forms) ──
+document.querySelectorAll('.chips').forEach(function(container) {
+  if (container.closest('#sc-candidates') || container.closest('#s-schools') || container.closest('#co-candidates')) return;
+  container.addEventListener('click', function(e) {
+    if (e.target.classList.contains('chip')) {
+      if (container.closest('.form-group') || container.closest('#sc-submit')) {
+        container.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+      }
+      e.target.classList.toggle('active');
+    }
+  });
+});
+
+// INIT
+calcSim();
+calcROI();
+setTimeout(animateCharts, 300);
+</script>
+</body>
+</html>

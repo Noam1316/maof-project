@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מעוף · מבחן ELI5</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface2: #334155;
+  --border: #475569;
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --teal: #14b8a6;
+  --blue: #3b82f6;
+  --orange: #f97316;
+  --red: #ef4444;
+  --green: #22c55e;
+  --purple: #a855f7;
+  --pink: #ec4899;
+  --yellow: #eab308;
+  --radius: 16px;
+  --shadow: 0 4px 24px rgba(0,0,0,.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Heebo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PROGRESS BAR TOP ── */
+.progress-bar-top {
+  position: fixed; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--surface2); z-index: 100;
+}
+.progress-bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--teal), var(--blue));
+  transition: width .6s ease; width: 0%;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.header-logo {
+  display: flex; align-items: center; gap: 12px;
+}
+.header-logo .icon { font-size: 28px; }
+.header-logo h1 { font-size: 20px; font-weight: 700; }
+.header-logo span { color: var(--text2); font-size: 14px; }
+.header-steps {
+  display: flex; gap: 8px; align-items: center;
+}
+.step-dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--surface2); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600; color: var(--text2);
+  transition: all .3s ease;
+}
+.step-dot.active {
+  background: var(--teal); border-color: var(--teal); color: #fff;
+  box-shadow: 0 0 16px rgba(20,184,166,.4);
+}
+.step-dot.done {
+  background: var(--green); border-color: var(--green); color: #fff;
+}
+.step-line {
+  width: 32px; height: 2px; background: var(--border);
+}
+.step-line.done { background: var(--green); }
+
+/* ── CONTAINER ── */
+.container {
+  max-width: 900px; margin: 0 auto; padding: 32px 24px;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; animation: fadeIn .5s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── WELCOME SCREEN ── */
+.welcome-hero {
+  text-align: center; padding: 48px 0 32px;
+}
+.welcome-hero .emoji { font-size: 72px; margin-bottom: 16px; }
+.welcome-hero h2 { font-size: 36px; font-weight: 900; margin-bottom: 8px; }
+.welcome-hero p { color: var(--text2); font-size: 18px; max-width: 600px; margin: 0 auto; }
+
+.rounds-preview {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin: 32px 0;
+}
+.round-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px; text-align: center;
+  transition: all .3s ease;
+}
+.round-card:hover {
+  border-color: var(--teal); transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+.round-card .round-icon { font-size: 40px; margin-bottom: 12px; }
+.round-card h3 { font-size: 18px; margin-bottom: 4px; }
+.round-card .round-time { color: var(--teal); font-weight: 600; font-size: 14px; }
+.round-card p { color: var(--text2); font-size: 13px; margin-top: 8px; }
+
+.topic-selector {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px; margin: 24px 0;
+}
+.topic-selector h3 { margin-bottom: 16px; font-size: 18px; }
+.topic-chips {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.topic-chip {
+  padding: 10px 20px; border-radius: 24px;
+  background: var(--surface2); border: 2px solid var(--border);
+  cursor: pointer; font-size: 14px; font-weight: 500;
+  transition: all .2s ease; color: var(--text);
+  font-family: 'Heebo', sans-serif;
+}
+.topic-chip:hover { border-color: var(--teal); }
+.topic-chip.selected {
+  background: rgba(20,184,166,.15); border-color: var(--teal); color: var(--teal);
+}
+
+.example-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin: 20px 0;
+  border-right: 4px solid var(--blue);
+}
+.example-box h4 { color: var(--blue); margin-bottom: 8px; }
+.example-box p { color: var(--text2); font-size: 14px; line-height: 1.7; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 14px 36px; border-radius: 12px; border: none;
+  font-family: 'Heebo', sans-serif; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all .2s ease; display: inline-flex;
+  align-items: center; gap: 8px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #fff; box-shadow: 0 4px 16px rgba(20,184,166,.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(20,184,166,.4); }
+.btn-secondary {
+  background: var(--surface2); color: var(--text); border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--teal); }
+.btn-danger {
+  background: rgba(239,68,68,.15); color: var(--red); border: 1px solid var(--red);
+}
+.btn-center { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+
+/* ── TIMER ── */
+.timer-bar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; position: sticky; top: 8px; z-index: 50;
+}
+.timer-display {
+  font-size: 32px; font-weight: 900; font-variant-numeric: tabular-nums;
+  color: var(--teal);
+}
+.timer-display.warning { color: var(--orange); }
+.timer-display.danger { color: var(--red); animation: pulse 1s infinite; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+.timer-progress {
+  flex: 1; height: 6px; background: var(--surface2);
+  border-radius: 3px; margin: 0 20px;
+}
+.timer-progress-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--blue));
+  transition: width 1s linear;
+}
+.timer-label { color: var(--text2); font-size: 14px; }
+
+/* ── ROUND 1: WRITING ── */
+.question-card {
+  background: linear-gradient(135deg, rgba(20,184,166,.1), rgba(59,130,246,.1));
+  border: 1px solid var(--teal);
+  border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+  text-align: center;
+}
+.question-card .q-label { color: var(--teal); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.question-card h3 { font-size: 24px; font-weight: 700; }
+.question-card .q-hint { color: var(--text2); font-size: 14px; margin-top: 8px; }
+
+.writing-area {
+  width: 100%; min-height: 250px; padding: 20px;
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-family: 'Heebo', sans-serif; font-size: 16px; line-height: 1.8;
+  resize: vertical; outline: none; transition: border-color .3s;
+}
+.writing-area:focus { border-color: var(--teal); }
+.writing-area::placeholder { color: var(--text2); }
+
+.writing-stats {
+  display: flex; gap: 24px; margin-top: 12px; color: var(--text2); font-size: 13px;
+}
+.writing-stats span { display: flex; align-items: center; gap: 4px; }
+
+/* ── ROUND 2: VIDEO ── */
+.video-container {
+  position: relative; background: #000; border-radius: var(--radius);
+  overflow: hidden; aspect-ratio: 16/9; margin-bottom: 20px;
+}
+.video-container video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.video-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.6); transition: opacity .3s;
+}
+.video-overlay.hidden { opacity: 0; pointer-events: none; }
+.video-overlay .emoji { font-size: 64px; margin-bottom: 16px; }
+.video-overlay p { color: #fff; font-size: 18px; }
+
+.recording-indicator {
+  position: absolute; top: 16px; right: 16px;
+  background: rgba(239,68,68,.9); color: #fff;
+  padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+  animation: recBlink 1.5s infinite;
+}
+.recording-indicator.hidden { display: none; }
+@keyframes recBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+.rec-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #fff;
+}
+
+.video-controls {
+  display: flex; gap: 12px; justify-content: center;
+}
+
+.video-tips {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin-top: 20px;
+}
+.video-tips h4 { color: var(--orange); margin-bottom: 10px; }
+.video-tips ul { list-style: none; }
+.video-tips li {
+  padding: 6px 0; color: var(--text2); font-size: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.video-tips li::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+/* ── ROUND 3: CHATBOT ── */
+.chat-container {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.chat-header {
+  background: var(--surface2); padding: 14px 20px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.chat-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.chat-header-info h4 { font-size: 15px; }
+.chat-header-info span { font-size: 12px; color: var(--green); }
+
+.chat-messages {
+  height: 380px; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  scroll-behavior: smooth;
+}
+.chat-msg {
+  max-width: 80%; padding: 12px 16px; border-radius: 16px;
+  font-size: 15px; line-height: 1.6; animation: msgIn .3s ease;
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px) scale(.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-msg.student {
+  background: var(--surface2); align-self: flex-start;
+  border-bottom-right-radius: 4px;
+}
+.chat-msg.user {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #fff; align-self: flex-end;
+  border-bottom-left-radius: 4px;
+}
+.chat-msg .msg-name {
+  font-size: 11px; font-weight: 600; margin-bottom: 4px;
+  opacity: .7;
+}
+.typing-indicator {
+  align-self: flex-start; padding: 12px 20px;
+  background: var(--surface2); border-radius: 16px;
+  display: none; gap: 4px; align-items: center;
+}
+.typing-indicator.active { display: flex; }
+.typing-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text2); animation: typingBounce 1.4s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+}
+
+.chat-input-bar {
+  display: flex; gap: 10px; padding: 16px 20px;
+  border-top: 1px solid var(--border); background: var(--surface);
+}
+.chat-input {
+  flex: 1; padding: 12px 16px; border-radius: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'Heebo', sans-serif; font-size: 15px;
+  outline: none;
+}
+.chat-input:focus { border-color: var(--teal); }
+.chat-send {
+  padding: 12px 20px; border-radius: 12px; border: none;
+  background: var(--teal); color: #fff; font-family: 'Heebo', sans-serif;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: all .2s;
+}
+.chat-send:hover { background: #0d9488; }
+
+/* ── RESULTS ── */
+.results-header {
+  text-align: center; padding: 32px 0;
+}
+.results-score-circle {
+  width: 160px; height: 160px; border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative;
+}
+.results-score-circle svg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.results-score-circle circle {
+  fill: none; stroke-width: 8;
+}
+.results-score-circle .bg-circle { stroke: var(--surface2); }
+.results-score-circle .score-circle {
+  stroke: var(--teal); stroke-linecap: round;
+  stroke-dasharray: 440; stroke-dashoffset: 440;
+  transition: stroke-dashoffset 2s ease;
+}
+.results-score-num { font-size: 48px; font-weight: 900; z-index: 1; }
+.results-score-label { font-size: 14px; color: var(--text2); z-index: 1; }
+
+.results-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  margin: 24px 0;
+}
+.result-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.result-card h4 { font-size: 14px; color: var(--text2); margin-bottom: 12px; }
+
+.metric-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.metric-label { width: 80px; font-size: 13px; color: var(--text2); flex-shrink: 0; }
+.metric-bar-bg {
+  flex: 1; height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden;
+}
+.metric-bar-fill {
+  height: 100%; border-radius: 5px; transition: width 1.5s ease;
+  width: 0%;
+}
+.metric-value { width: 40px; text-align: left; font-size: 14px; font-weight: 700; }
+
+.radar-container {
+  display: flex; justify-content: center; padding: 20px;
+}
+.radar-container svg { max-width: 280px; }
+
+.scoring-impact {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 20px 0;
+}
+.impact-card {
+  background: var(--surface); border-radius: var(--radius); padding: 20px;
+  text-align: center;
+}
+.impact-card.school { border: 2px solid var(--green); }
+.impact-card.company { border: 2px solid var(--blue); }
+.impact-card .impact-icon { font-size: 32px; margin-bottom: 8px; }
+.impact-card h4 { font-size: 14px; color: var(--text2); margin-bottom: 4px; }
+.impact-card .impact-score { font-size: 36px; font-weight: 900; }
+.impact-card .impact-label { font-size: 12px; color: var(--text2); }
+
+.tip-box {
+  background: linear-gradient(135deg, rgba(234,179,8,.1), rgba(249,115,22,.1));
+  border: 1px solid var(--yellow);
+  border-radius: var(--radius); padding: 20px; margin: 20px 0;
+}
+.tip-box h4 { color: var(--yellow); margin-bottom: 8px; }
+.tip-box ul { list-style: none; }
+.tip-box li { padding: 4px 0; font-size: 14px; color: var(--text2); }
+.tip-box li::before { content: '💡 '; }
+
+.round-breakdown {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin: 16px 0;
+}
+.round-breakdown h4 { margin-bottom: 16px; }
+.round-score-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.round-score-row:last-child { border-bottom: none; }
+.round-score-row .round-name { display: flex; align-items: center; gap: 8px; }
+.round-score-row .round-pts { font-size: 20px; font-weight: 700; }
+
+/* ── TOAST ── */
+.toast-container {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 999; display: flex; flex-direction: column; gap: 8px; align-items: center;
+}
+.toast {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 12px 24px; border-radius: 12px; font-size: 14px;
+  box-shadow: var(--shadow); animation: toastIn .3s ease;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.success { border-color: var(--green); }
+.toast.info { border-color: var(--blue); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .rounds-preview { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr; }
+  .scoring-impact { grid-template-columns: 1fr; }
+  .header { padding: 12px 16px; flex-direction: column; gap: 12px; }
+  .container { padding: 20px 16px; }
+  .welcome-hero h2 { font-size: 28px; }
+  .timer-bar { flex-wrap: wrap; gap: 8px; }
+  .timer-progress { order: 3; flex-basis: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-top">
+  <div class="progress-bar-fill" id="progressBar"></div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-logo">
+    <span class="icon">🧠</span>
+    <div>
+      <h1>מבחן ELI5</h1>
+      <span>מעוף · Explain Like I'm 5</span>
+    </div>
+  </div>
+  <div class="header-steps">
+    <div class="step-dot active" id="step0">0</div>
+    <div class="step-line" id="line01"></div>
+    <div class="step-dot" id="step1">1</div>
+    <div class="step-line" id="line12"></div>
+    <div class="step-dot" id="step2">2</div>
+    <div class="step-line" id="line23"></div>
+    <div class="step-dot" id="step3">3</div>
+    <div class="step-line" id="line34"></div>
+    <div class="step-dot" id="step4">✓</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ════════ SCREEN 0: WELCOME ════════ -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-hero">
+      <div class="emoji">🎯</div>
+      <h2>ברוכים הבאים למבחן ELI5</h2>
+      <p>המבחן בודק את היכולת שלך להסביר מושגים מורכבים בצורה פשוטה, ברורה ומעניינת – כמו שמסבירים לילד בן 5.</p>
+    </div>
+
+    <div class="rounds-preview">
+      <div class="round-card">
+        <div class="round-icon">✍️</div>
+        <h3>סבב 1 · כתיבה</h3>
+        <div class="round-time">⏱ 3 דקות</div>
+        <p>כתוב הסבר פשוט למושג טכני</p>
+      </div>
+      <div class="round-card">
+        <div class="round-icon">🎥</div>
+        <h3>סבב 2 · וידאו</h3>
+        <div class="round-time">⏱ 2 דקות</div>
+        <p>הסבר מוקלט למצלמה</p>
+      </div>
+      <div class="round-card">
+        <div class="round-icon">💬</div>
+        <h3>סבב 3 · צ'אט</h3>
+        <div class="round-time">⏱ 3 דקות</div>
+        <p>שאלות המשך מ"תלמיד" AI</p>
+      </div>
+    </div>
+
+    <div class="topic-selector">
+      <h3>📚 בחר תחום מומחיות</h3>
+      <div class="topic-chips">
+        <button class="topic-chip" data-topic="cyber" onclick="selectTopic(this)">🛡️ סייבר</button>
+        <button class="topic-chip" data-topic="python" onclick="selectTopic(this)">🐍 פייתון</button>
+        <button class="topic-chip" data-topic="physics" onclick="selectTopic(this)">⚛️ פיזיקה</button>
+        <button class="topic-chip" data-topic="math" onclick="selectTopic(this)">📐 מתמטיקה</button>
+        <button class="topic-chip" data-topic="ai" onclick="selectTopic(this)">🤖 בינה מלאכותית</button>
+        <button class="topic-chip" data-topic="data" onclick="selectTopic(this)">📊 מדעי נתונים</button>
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h4>💡 דוגמה להסבר ELI5 מוצלח</h4>
+      <p><strong>שאלה:</strong> "מה זה אלגוריתם?"</p>
+      <p><strong>תשובה:</strong> "דמיין שאתה רוצה להכין כריך. אלגוריתם זה כמו מתכון – רשימת צעדים מדויקת: 1) תיקח לחם, 2) תמרח חמאה, 3) תשים גבינה, 4) תסגור. המחשב גם עובד ככה – הוא צריך הוראות מדויקות צעד אחרי צעד כדי לעשות משהו."</p>
+    </div>
+
+    <div class="btn-center">
+      <button class="btn btn-primary" onclick="startTest()" id="startBtn" disabled>
+        🚀 התחל מבחן
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 1: WRITING ════════ -->
+  <div class="screen" id="screen-writing">
+    <div class="timer-bar">
+      <div class="timer-label">סבב 1 · כתיבה</div>
+      <div class="timer-progress">
+        <div class="timer-progress-fill" id="timer1Fill"></div>
+      </div>
+      <div class="timer-display" id="timer1">3:00</div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-label">השאלה שלך</div>
+      <h3 id="writingQuestion">Loading...</h3>
+      <div class="q-hint" id="writingHint">הסבר כאילו אתה מדבר עם מישהו שאין לו רקע טכני</div>
+    </div>
+
+    <textarea class="writing-area" id="writingArea" placeholder="התחל לכתוב את ההסבר שלך כאן..." oninput="updateWritingStats()"></textarea>
+
+    <div class="writing-stats">
+      <span>📝 מילים: <strong id="wordCount">0</strong></span>
+      <span>📏 תווים: <strong id="charCount">0</strong></span>
+      <span>📊 משפטים: <strong id="sentenceCount">0</strong></span>
+    </div>
+
+    <div class="btn-center">
+      <button class="btn btn-primary" onclick="finishRound1()">
+        המשך לסבב 2 →
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 2: VIDEO ════════ -->
+  <div class="screen" id="screen-video">
+    <div class="timer-bar">
+      <div class="timer-label">סבב 2 · וידאו</div>
+      <div class="timer-progress">
+        <div class="timer-progress-fill" id="timer2Fill"></div>
+      </div>
+      <div class="timer-display" id="timer2">2:00</div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-label">הסבר למצלמה</div>
+      <h3 id="videoQuestion">Loading...</h3>
+      <div class="q-hint">דמיין שמולך יושב תלמיד – דבר אליו ישירות</div>
+    </div>
+
+    <div class="video-container">
+      <video id="videoPreview" autoplay muted playsinline></video>
+      <div class="video-overlay" id="videoOverlay">
+        <div class="emoji">📹</div>
+        <p>לחץ "התחל הקלטה" כדי להפעיל מצלמה</p>
+      </div>
+      <div class="recording-indicator hidden" id="recIndicator">
+        <div class="rec-dot"></div>
+        מקליט
+      </div>
+    </div>
+
+    <div class="video-controls">
+      <button class="btn btn-primary" id="btnStartRec" onclick="startRecording()">
+        🔴 התחל הקלטה
+      </button>
+      <button class="btn btn-danger hidden" id="btnStopRec" onclick="stopRecording()">
+        ⏹ עצור הקלטה
+      </button>
+      <button class="btn btn-secondary hidden" id="btnSkipVideo" onclick="finishRound2()">
+        ⏭ דלג על וידאו
+      </button>
+    </div>
+
+    <div class="video-tips">
+      <h4>💡 טיפים להקלטה מוצלחת</h4>
+      <ul>
+        <li>הסתכל ישירות למצלמה – כאילו מדבר לתלמיד</li>
+        <li>השתמש בידיים ובהבעות פנים</li>
+        <li>דבר לאט וברור</li>
+        <li>תן דוגמאות מהחיים היומיומיים</li>
+        <li>חייך! אנרגיה חיובית עוזרת</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 3: CHAT ════════ -->
+  <div class="screen" id="screen-chat">
+    <div class="timer-bar">
+      <div class="timer-label">סבב 3 · צ'אט אינטראקטיבי</div>
+      <div class="timer-progress">
+        <div class="timer-progress-fill" id="timer3Fill"></div>
+      </div>
+      <div class="timer-display" id="timer3">3:00</div>
+    </div>
+
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="chat-avatar">👧</div>
+        <div class="chat-header-info">
+          <h4>נועה · תלמידה כיתה י'</h4>
+          <span>🟢 מקלידה...</span>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages will be added dynamically -->
+      </div>
+
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+
+      <div class="chat-input-bar">
+        <input class="chat-input" id="chatInput" placeholder="הקלד תשובה..." onkeypress="if(event.key==='Enter')sendChat()">
+        <button class="chat-send" onclick="sendChat()">שלח</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 4: RESULTS ════════ -->
+  <div class="screen" id="screen-results">
+    <div class="results-header">
+      <div class="results-score-circle">
+        <svg viewBox="0 0 160 160">
+          <circle class="bg-circle" cx="80" cy="80" r="70"></circle>
+          <circle class="score-circle" id="scoreCircle" cx="80" cy="80" r="70"></circle>
+        </svg>
+        <div class="results-score-num" id="totalScore">0</div>
+        <div class="results-score-label">ציון ELI5</div>
+      </div>
+      <h2>תוצאות המבחן</h2>
+      <p style="color: var(--text2);" id="scoreMessage">ההסברים שלך ברורים ומעניינים!</p>
+    </div>
+
+    <!-- Round Breakdown -->
+    <div class="round-breakdown">
+      <h4>📊 פירוט לפי סבב</h4>
+      <div class="round-score-row">
+        <div class="round-name">✍️ <span>סבב 1 · כתיבה</span></div>
+        <div class="round-pts" id="round1Score" style="color: var(--teal);">0</div>
+      </div>
+      <div class="round-score-row">
+        <div class="round-name">🎥 <span>סבב 2 · וידאו</span></div>
+        <div class="round-pts" id="round2Score" style="color: var(--blue);">0</div>
+      </div>
+      <div class="round-score-row">
+        <div class="round-name">💬 <span>סבב 3 · צ'אט</span></div>
+        <div class="round-pts" id="round3Score" style="color: var(--purple);">0</div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="results-grid">
+      <div class="result-card">
+        <h4>📊 5 מדדי ה-ELI5</h4>
+        <div class="metric-row">
+          <div class="metric-label">פשטות</div>
+          <div class="metric-bar-bg"><div class="metric-bar-fill" id="mSimplicity" style="background: var(--teal);"></div></div>
+          <div class="metric-value" id="vSimplicity">0%</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-label">דיוק</div>
+          <div class="metric-bar-bg"><div class="metric-bar-fill" id="mAccuracy" style="background: var(--blue);"></div></div>
+          <div class="metric-value" id="vAccuracy">0%</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-label">אנלוגיות</div>
+          <div class="metric-bar-bg"><div class="metric-bar-fill" id="mAnalogies" style="background: var(--purple);"></div></div>
+          <div class="metric-value" id="vAnalogies">0%</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-label">מעורבות</div>
+          <div class="metric-bar-bg"><div class="metric-bar-fill" id="mEngagement" style="background: var(--orange);"></div></div>
+          <div class="metric-value" id="vEngagement">0%</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-label">מבנה</div>
+          <div class="metric-bar-bg"><div class="metric-bar-fill" id="mStructure" style="background: var(--pink);"></div></div>
+          <div class="metric-value" id="vStructure">0%</div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h4>🕸️ גרף רדאר</h4>
+        <div class="radar-container">
+          <svg viewBox="0 0 300 300" id="radarChart">
+            <!-- Radar will be drawn by JS -->
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual Scoring Impact -->
+    <div class="scoring-impact">
+      <div class="impact-card school">
+        <div class="impact-icon">🏫</div>
+        <h4>תרומה לציון A</h4>
+        <div class="impact-score" id="impactSchool" style="color: var(--green);">0</div>
+        <div class="impact-label">School Match · כושר הוראה (35%)</div>
+      </div>
+      <div class="impact-card company">
+        <div class="impact-icon">🏢</div>
+        <h4>תרומה לציון B</h4>
+        <div class="impact-score" id="impactCompany" style="color: var(--blue);">0</div>
+        <div class="impact-label">Company Match · Soft Skills (25%)</div>
+      </div>
+    </div>
+
+    <div class="tip-box" id="tipsBox">
+      <h4>💡 טיפים לשיפור</h4>
+      <ul id="tipsList">
+      </ul>
+    </div>
+
+    <div class="btn-center">
+      <button class="btn btn-secondary" onclick="location.reload()">🔄 נסה שוב (תרגול)</button>
+      <button class="btn btn-primary" onclick="window.close()">✅ סיים</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA & STATE
+// ══════════════════════════════════════════
+const QUESTIONS = {
+  cyber: {
+    writing: { q: 'תסביר מה זה Firewall לילד בן 10', hint: 'השתמש באנלוגיה מהחיים – דלת, שומר, גדר...' },
+    video:   { q: 'מה זה פישינג (Phishing) ואיך נזהרים?', hint: 'תסביר כאילו אתה מזהיר חבר צעיר' },
+    chat:    { opening: 'היי! אני נועה מכיתה י\'. המורה אמרה שיש דבר שנקרא "סייבר" והוא קשור לאבטחה של מחשבים. מה זה בכלל אבטחת סייבר? 🤔' }
+  },
+  python: {
+    writing: { q: 'תסביר מה זה לולאת For כאילו זה משחק', hint: 'תחשוב על פעולות שחוזרות על עצמן' },
+    video:   { q: 'מה זה משתנה (Variable) בתכנות?', hint: 'השתמש בדוגמאות מוחשיות – קופסה, מגירה...' },
+    chat:    { opening: 'היי! המורה למדעי המחשב אמר שאנחנו צריכים ללמוד פייתון. זה שפה של נחשים? 😅 מה בכלל עושים עם זה?' }
+  },
+  physics: {
+    writing: { q: 'למה השמיים כחולים?', hint: 'הסבר בלי נוסחאות – פשוט וויזואלי' },
+    video:   { q: 'מה זה כוח הכבידה ולמה דברים נופלים?', hint: 'דמיין שאתה מסביר לילד בגן משחקים' },
+    chat:    { opening: 'שלום! למדנו היום על אנרגיה בשיעור פיזיקה ולא הבנתי כלום 😩 מה זה בכלל אנרגיה? אפשר לראות אותה?' }
+  },
+  math: {
+    writing: { q: 'מה זה משתנה? תסביר בלי מספרים', hint: 'השתמש בדוגמאות מהחיים היומיומיים' },
+    video:   { q: 'למה חשוב ללמוד מתמטיקה?', hint: 'תן דוגמאות רלוונטיות לנוער' },
+    chat:    { opening: 'היי, אני ממש לא מבינה מתמטיקה 😭 אבל כולם אומרים שזה חשוב. למה בכלל צריך את זה? מתי בחיים אני הולכת להשתמש בנוסחאות?' }
+  },
+  ai: {
+    writing: { q: 'מה זה בינה מלאכותית? תסביר לסבתא', hint: 'הימנע ממילים טכניות לגמרי' },
+    video:   { q: 'איך מחשב "לומד" – Machine Learning בפשטות', hint: 'השתמש בדוגמה של ילד שלומד' },
+    chat:    { opening: 'היי! אמא שלי אמרה ש-ChatGPT הולך להחליף את כל המורים. זה נכון?? 😱 מה זה בכלל בינה מלאכותית ואיך היא עובדת?' }
+  },
+  data: {
+    writing: { q: 'מה זה Big Data? תסביר עם דוגמה מהחיים', hint: 'תחשוב על סופרמרקט, ווייז, אינסטגרם...' },
+    video:   { q: 'מה ההבדל בין מידע לנתונים?', hint: 'השתמש בדוגמאות מוחשיות' },
+    chat:    { opening: 'היי! אני שומע כל הזמן על "דאטה" ו"ביג דאטה". מה זה? למה כולם ככה מתלהבים מזה? 🤷' }
+  }
+};
+
+const CHAT_RESPONSES = [
+  { trigger: null, responses: ['אממ... לא הבנתי. אפשר דוגמה? 🤔', 'מה זה אומר בעברית פשוטה?', 'רגע, קשה לי. אפשר להסביר אחרת?'] },
+  { trigger: 'analogy', responses: ['אהה! אז זה כמו {X}?', 'וואו, עכשיו זה הגיוני! אבל למה צריך את זה?', 'אוקיי הבנתי! ומה קורה אם...?'] },
+  { trigger: 'example', responses: ['מגניב! ואיפה אני רואה את זה ביומיום?', 'אז למשל בטלפון שלי זה גם עובד ככה?', 'סבבה! יש עוד דוגמאות?'] },
+  { trigger: 'followup', responses: ['ומה ההבדל בין זה ל...?', 'ואיך זה קשור למה שלמדנו קודם?', 'אבל למה שמישהו ירצה לעשות את זה?'] },
+  { trigger: 'deep', responses: ['רגע, זה נשמע מסובך... אפשר לפשט?', 'אני חושבת שהבנתי... אבל מה עם...?', 'וואלה מעניין! כאילו אני מתחילה להבין 💡'] },
+  { trigger: 'final', responses: ['תודה רבה!! עכשיו הבנתי הרבה יותר טוב! 😊', 'אתה מסביר מעולה! הלוואי שהמורה שלנו היה מסביר ככה 😄', 'סוף סוף מישהו הצליח להסביר לי! תודה! 🙏'] }
+];
+
+let state = {
+  topic: null,
+  currentScreen: 'welcome',
+  timer: null,
+  timeLeft: 0,
+  totalTime: 0,
+  round1Text: '',
+  round2Recorded: false,
+  chatHistory: [],
+  chatResponseIndex: 0,
+  mediaStream: null,
+  mediaRecorder: null
+};
+
+// ══════════════════════════════════════════
+//  NAVIGATION & FLOW
+// ══════════════════════════════════════════
+function selectTopic(el) {
+  document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.topic = el.dataset.topic;
+  document.getElementById('startBtn').disabled = false;
+}
+
+function goToScreen(screenId, stepNum) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screenId).classList.add('active');
+  state.currentScreen = screenId;
+
+  // Update steps
+  for (let i = 0; i <= 4; i++) {
+    const dot = document.getElementById('step' + i);
+    dot.classList.remove('active', 'done');
+    if (i < stepNum) dot.classList.add('done');
+    else if (i === stepNum) dot.classList.add('active');
+  }
+  ['line01','line12','line23','line34'].forEach((id, i) => {
+    const line = document.getElementById(id);
+    line.classList.toggle('done', i < stepNum);
+  });
+
+  // Update progress bar
+  document.getElementById('progressBar').style.width = (stepNum / 4 * 100) + '%';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════
+function startTimer(seconds, displayId, fillId, onComplete) {
+  clearInterval(state.timer);
+  state.timeLeft = seconds;
+  state.totalTime = seconds;
+  const display = document.getElementById(displayId);
+  const fill = document.getElementById(fillId);
+
+  updateTimerDisplay(display, fill);
+
+  state.timer = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay(display, fill);
+
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timer);
+      if (onComplete) onComplete();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(display, fill) {
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  display.textContent = m + ':' + String(s).padStart(2, '0');
+
+  const pct = ((state.totalTime - state.timeLeft) / state.totalTime) * 100;
+  fill.style.width = pct + '%';
+
+  display.classList.remove('warning', 'danger');
+  if (state.timeLeft <= 30 && state.timeLeft > 10) display.classList.add('warning');
+  else if (state.timeLeft <= 10) display.classList.add('danger');
+}
+
+// ══════════════════════════════════════════
+//  ROUND 1: WRITING
+// ══════════════════════════════════════════
+function startTest() {
+  if (!state.topic) return;
+
+  const q = QUESTIONS[state.topic];
+  document.getElementById('writingQuestion').textContent = q.writing.q;
+  document.getElementById('writingHint').textContent = q.writing.hint;
+  document.getElementById('videoQuestion').textContent = q.video.q;
+
+  goToScreen('writing', 1);
+  startTimer(180, 'timer1', 'timer1Fill', () => {
+    showToast('⏰ הזמן נגמר! עוברים לסבב הבא', 'info');
+    finishRound1();
+  });
+}
+
+function updateWritingStats() {
+  const text = document.getElementById('writingArea').value;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const chars = text.length;
+  const sentences = text.split(/[.!?。]/).filter(s => s.trim()).length;
+
+  document.getElementById('wordCount').textContent = words;
+  document.getElementById('charCount').textContent = chars;
+  document.getElementById('sentenceCount').textContent = sentences;
+}
+
+function finishRound1() {
+  clearInterval(state.timer);
+  state.round1Text = document.getElementById('writingArea').value;
+  showToast('✅ סבב 1 הושלם!', 'success');
+  goToScreen('video', 2);
+  // Don't auto-start timer for video – wait for recording start
+}
+
+// ══════════════════════════════════════════
+//  ROUND 2: VIDEO
+// ══════════════════════════════════════════
+async function startRecording() {
+  try {
+    state.mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: 1280, height: 720 },
+      audio: true
+    });
+
+    const video = document.getElementById('videoPreview');
+    video.srcObject = state.mediaStream;
+    document.getElementById('videoOverlay').classList.add('hidden');
+    document.getElementById('recIndicator').classList.remove('hidden');
+    document.getElementById('btnStartRec').classList.add('hidden');
+    document.getElementById('btnStopRec').classList.remove('hidden');
+
+    // Start MediaRecorder
+    state.mediaRecorder = new MediaRecorder(state.mediaStream);
+    const chunks = [];
+    state.mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    state.mediaRecorder.onstop = () => {
+      state.round2Recorded = true;
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      // In production, upload blob to server
+    };
+    state.mediaRecorder.start();
+
+    // Start timer
+    startTimer(120, 'timer2', 'timer2Fill', () => {
+      showToast('⏰ הזמן נגמר!', 'info');
+      stopRecording();
+    });
+
+    showToast('🔴 ההקלטה התחילה!', 'info');
+  } catch (err) {
+    showToast('⚠️ לא ניתן לגשת למצלמה – אפשר לדלג', 'info');
+    document.getElementById('btnSkipVideo').classList.remove('hidden');
+  }
+}
+
+function stopRecording() {
+  clearInterval(state.timer);
+  if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
+    state.mediaRecorder.stop();
+  }
+  if (state.mediaStream) {
+    state.mediaStream.getTracks().forEach(t => t.stop());
+  }
+  document.getElementById('recIndicator').classList.add('hidden');
+  showToast('✅ סבב 2 הושלם!', 'success');
+  setTimeout(() => finishRound2(), 800);
+}
+
+function finishRound2() {
+  clearInterval(state.timer);
+  if (state.mediaStream) {
+    state.mediaStream.getTracks().forEach(t => t.stop());
+  }
+  goToScreen('chat', 3);
+  startChatRound();
+}
+
+// ══════════════════════════════════════════
+//  ROUND 3: CHAT
+// ══════════════════════════════════════════
+function startChatRound() {
+  const q = QUESTIONS[state.topic];
+  const messages = document.getElementById('chatMessages');
+  messages.innerHTML = '';
+
+  // Opening message from "student"
+  setTimeout(() => {
+    addChatMessage('student', q.chat.opening);
+  }, 800);
+
+  startTimer(180, 'timer3', 'timer3Fill', () => {
+    showToast('⏰ הזמן נגמר! מחשב תוצאות...', 'info');
+    setTimeout(() => finishTest(), 1000);
+  });
+
+  state.chatResponseIndex = 0;
+}
+
+function addChatMessage(type, text) {
+  const messages = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + (type === 'student' ? 'student' : 'user');
+  const name = type === 'student' ? '👧 נועה' : '👨‍🏫 אתה';
+  div.innerHTML = '<div class="msg-name">' + name + '</div>' + text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  addChatMessage('user', text);
+  state.chatHistory.push(text);
+  input.value = '';
+
+  // Show typing indicator
+  const typing = document.getElementById('typingIndicator');
+  typing.classList.add('active');
+
+  // Simulate AI student response
+  const delay = 1200 + Math.random() * 1500;
+  setTimeout(() => {
+    typing.classList.remove('active');
+
+    state.chatResponseIndex++;
+    let responsePool;
+
+    if (state.chatResponseIndex >= 5) {
+      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'final').responses;
+    } else if (state.chatResponseIndex >= 3) {
+      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'deep').responses;
+    } else if (text.includes('דוגמ') || text.includes('למשל') || text.includes('כמו')) {
+      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'example').responses;
+    } else if (text.length > 80) {
+      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'analogy').responses;
+    } else {
+      responsePool = CHAT_RESPONSES.find(r => r.trigger === null).responses;
+    }
+
+    const response = responsePool[Math.floor(Math.random() * responsePool.length)];
+    addChatMessage('student', response);
+
+    if (state.chatResponseIndex >= 6) {
+      setTimeout(() => {
+        showToast('🎉 הצ\'אט הסתיים! מחשב תוצאות...', 'success');
+        setTimeout(() => finishTest(), 1500);
+      }, 1000);
+    }
+  }, delay);
+}
+
+// ══════════════════════════════════════════
+//  RESULTS & SCORING
+// ══════════════════════════════════════════
+function finishTest() {
+  clearInterval(state.timer);
+
+  // Calculate scores (simulated AI scoring)
+  const scores = calculateScores();
+
+  goToScreen('results', 4);
+  setTimeout(() => animateResults(scores), 500);
+}
+
+function calculateScores() {
+  const text = state.round1Text || '';
+  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const chatMsgs = state.chatHistory.length;
+  const hasVideo = state.round2Recorded;
+
+  // Simulate scoring based on actual input
+  let simplicity = Math.min(95, 50 + (wordCount > 20 ? 20 : 0) + (wordCount > 50 ? 10 : 0) + Math.random() * 15);
+  let accuracy = Math.min(95, 60 + (wordCount > 30 ? 15 : 0) + Math.random() * 20);
+  let analogies = Math.min(95, 40 + (text.includes('כמו') || text.includes('דמיין') ? 25 : 0) + (text.includes('דוגמ') ? 15 : 0) + Math.random() * 15);
+  let engagement = Math.min(95, 45 + (text.includes('?') ? 15 : 0) + (chatMsgs > 3 ? 15 : 0) + (hasVideo ? 10 : 0) + Math.random() * 10);
+  let structure = Math.min(95, 50 + (text.split(/[.!?]/).length > 3 ? 20 : 0) + (wordCount > 40 ? 10 : 0) + Math.random() * 15);
+
+  // Clamp to integers
+  simplicity = Math.round(simplicity);
+  accuracy = Math.round(accuracy);
+  analogies = Math.round(analogies);
+  engagement = Math.round(engagement);
+  structure = Math.round(structure);
+
+  // Total weighted score
+  const total = Math.round(
+    simplicity * 0.30 +
+    accuracy * 0.25 +
+    analogies * 0.20 +
+    engagement * 0.15 +
+    structure * 0.10
+  );
+
+  // Round scores
+  const round1 = Math.round(simplicity * 0.4 + accuracy * 0.3 + structure * 0.3);
+  const round2 = hasVideo ? Math.round(engagement * 0.5 + simplicity * 0.3 + analogies * 0.2) : Math.round(total * 0.5);
+  const round3 = Math.round(engagement * 0.3 + analogies * 0.3 + simplicity * 0.2 + accuracy * 0.2);
+
+  // Impact on Dual Scoring
+  const schoolImpact = Math.round(total * 0.35); // 35% of Score A
+  const companyImpact = Math.round(total * 0.25); // 25% of Score B
+
+  return { simplicity, accuracy, analogies, engagement, structure, total, round1, round2, round3, schoolImpact, companyImpact };
+}
+
+function animateResults(scores) {
+  // Animate total score circle
+  const circle = document.getElementById('scoreCircle');
+  const circumference = 2 * Math.PI * 70;
+  circle.style.strokeDasharray = circumference;
+  circle.style.strokeDashoffset = circumference - (scores.total / 100) * circumference;
+
+  // Animate total number
+  animateNumber('totalScore', scores.total, 2000);
+
+  // Set score message
+  const msg = document.getElementById('scoreMessage');
+  if (scores.total >= 85) msg.textContent = '🌟 מצוין! יש לך כישרון טבעי להוראה!';
+  else if (scores.total >= 70) msg.textContent = '👍 טוב מאוד! עם קצת תרגול תהיה מורה מעולה';
+  else if (scores.total >= 55) msg.textContent = '💪 בסיס טוב – יש מקום לשיפור';
+  else msg.textContent = '📚 צריך עוד תרגול – אל תוותר!';
+
+  // Round scores
+  animateNumber('round1Score', scores.round1, 1500);
+  animateNumber('round2Score', scores.round2, 1500);
+  animateNumber('round3Score', scores.round3, 1500);
+
+  // Metric bars
+  setTimeout(() => {
+    setMetric('Simplicity', scores.simplicity);
+    setMetric('Accuracy', scores.accuracy);
+    setMetric('Analogies', scores.analogies);
+    setMetric('Engagement', scores.engagement);
+    setMetric('Structure', scores.structure);
+  }, 500);
+
+  // Radar chart
+  setTimeout(() => drawRadar(scores), 800);
+
+  // Dual scoring impact
+  animateNumber('impactSchool', scores.schoolImpact, 1800);
+  animateNumber('impactCompany', scores.companyImpact, 1800);
+
+  // Tips
+  generateTips(scores);
+}
+
+function animateNumber(elId, target, duration) {
+  const el = document.getElementById(elId);
+  let start = 0;
+  const step = target / (duration / 16);
+  const anim = () => {
+    start += step;
+    if (start >= target) {
+      el.textContent = target;
+      return;
+    }
+    el.textContent = Math.round(start);
+    requestAnimationFrame(anim);
+  };
+  anim();
+}
+
+function setMetric(name, value) {
+  document.getElementById('m' + name).style.width = value + '%';
+  document.getElementById('v' + name).textContent = value + '%';
+}
+
+function drawRadar(scores) {
+  const svg = document.getElementById('radarChart');
+  const cx = 150, cy = 150, r = 110;
+  const labels = ['פשטות', 'דיוק', 'אנלוגיות', 'מעורבות', 'מבנה'];
+  const values = [scores.simplicity, scores.accuracy, scores.analogies, scores.engagement, scores.structure];
+  const colors = ['var(--teal)', 'var(--blue)', 'var(--purple)', 'var(--orange)', 'var(--pink)'];
+
+  let html = '';
+
+  // Draw grid circles
+  for (let i = 1; i <= 4; i++) {
+    const gr = r * i / 4;
+    html += `<circle cx="${cx}" cy="${cy}" r="${gr}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+  }
+
+  // Draw axes and labels
+  for (let i = 0; i < 5; i++) {
+    const angle = (Math.PI * 2 * i / 5) - Math.PI / 2;
+    const x = cx + Math.cos(angle) * r;
+    const y = cy + Math.sin(angle) * r;
+    html += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+
+    const lx = cx + Math.cos(angle) * (r + 20);
+    const ly = cy + Math.sin(angle) * (r + 20);
+    html += `<text x="${lx}" y="${ly}" fill="var(--text2)" font-size="12" text-anchor="middle" dominant-baseline="middle" font-family="Heebo">${labels[i]}</text>`;
+  }
+
+  // Draw data polygon
+  let points = '';
+  for (let i = 0; i < 5; i++) {
+    const angle = (Math.PI * 2 * i / 5) - Math.PI / 2;
+    const vr = r * values[i] / 100;
+    const x = cx + Math.cos(angle) * vr;
+    const y = cy + Math.sin(angle) * vr;
+    points += `${x},${y} `;
+
+    // Data point dot
+    html += `<circle cx="${x}" cy="${y}" r="5" fill="${colors[i]}" stroke="#fff" stroke-width="2"/>`;
+  }
+
+  html += `<polygon points="${points.trim()}" fill="rgba(20,184,166,0.15)" stroke="var(--teal)" stroke-width="2"/>`;
+
+  // Value labels on points
+  for (let i = 0; i < 5; i++) {
+    const angle = (Math.PI * 2 * i / 5) - Math.PI / 2;
+    const vr = r * values[i] / 100;
+    const x = cx + Math.cos(angle) * (vr + 16);
+    const y = cy + Math.sin(angle) * (vr + 16);
+    html += `<text x="${x}" y="${y}" fill="${colors[i]}" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="middle" font-family="Heebo">${values[i]}</text>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+function generateTips(scores) {
+  const tips = [];
+  const metrics = [
+    { name: 'פשטות', val: scores.simplicity, tip: 'נסה להשתמש במשפטים קצרים יותר ומילים יומיומיות' },
+    { name: 'דיוק', val: scores.accuracy, tip: 'ודא שההסבר מדויק מבחינה מדעית גם כשהוא פשוט' },
+    { name: 'אנלוגיות', val: scores.analogies, tip: 'הוסף יותר דימויים מהחיים – "זה כמו...", "דמיין ש..."' },
+    { name: 'מעורבות', val: scores.engagement, tip: 'שאל שאלות רטוריות, הוסף הומור או סיפור קצר' },
+    { name: 'מבנה', val: scores.structure, tip: 'התחל עם הרעיון הכללי, ואז צלול לפרטים בהדרגה' }
+  ];
+
+  // Sort by lowest score – show worst first
+  metrics.sort((a, b) => a.val - b.val);
+
+  // Show tips for the 3 weakest
+  for (let i = 0; i < Math.min(3, metrics.length); i++) {
+    if (metrics[i].val < 90) {
+      tips.push(metrics[i].name + ' (' + metrics[i].val + '%) – ' + metrics[i].tip);
+    }
+  }
+
+  if (tips.length === 0) tips.push('מצוין בכל הקטגוריות! המשך כך 🌟');
+
+  const list = document.getElementById('tipsList');
+  list.innerHTML = tips.map(t => '<li>' + t + '</li>').join('');
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// ══════════════════════════════════════════
+//  UTILITY
+// ══════════════════════════════════════════
+// Prevent hidden class utility
+document.querySelectorAll('.hidden').forEach(el => el.style.display = 'none');
+// Fix hidden class toggle
+const origToggle = DOMTokenList.prototype.toggle;
+const observer = new MutationObserver(mutations => {
+  mutations.forEach(m => {
+    if (m.attributeName === 'class') {
+      const el = m.target;
+      if (el.classList.contains('hidden')) el.style.display = 'none';
+      else if (el.dataset.showType) el.style.display = el.dataset.showType;
+      else el.style.display = '';
+    }
+  });
+});
+document.querySelectorAll('[class]').forEach(el => {
+  observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+});
+
+// Add hidden class utility
+HTMLElement.prototype._show = function(display = '') {
+  this.dataset.showType = display || '';
+  this.classList.remove('hidden');
+  this.style.display = display || '';
+};
+HTMLElement.prototype._hide = function() {
+  this.classList.add('hidden');
+  this.style.display = 'none';
+};
+
+// Override classList hidden behavior
+const btnStartRec = document.getElementById('btnStartRec');
+const btnStopRec = document.getElementById('btnStopRec');
+const btnSkipVideo = document.getElementById('btnSkipVideo');
+
+if (btnStopRec) btnStopRec.style.display = 'none';
+if (btnSkipVideo) btnSkipVideo.style.display = 'none';
+
+// Patch the hidden class for video buttons
+const origAdd = DOMTokenList.prototype.add;
+const origRemove = DOMTokenList.prototype.remove;
+
+DOMTokenList.prototype.add = function(...args) {
+  origAdd.apply(this, args);
+  if (args.includes('hidden')) this._element && (this._element.style.display = 'none');
+};
+DOMTokenList.prototype.remove = function(...args) {
+  origRemove.apply(this, args);
+  if (args.includes('hidden')) this._element && (this._element.style.display = '');
+};
+
+// Store element reference in classList
+document.querySelectorAll('*').forEach(el => {
+  el.classList._element = el;
+});
+
+</script>
+</body>
+</html>
