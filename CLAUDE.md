@@ -86,6 +86,11 @@ maof-project/
 ---
 
 ## הערות לפיתוח
-- השפה הראשית: עברית (RTL)
-- הפרויקט בשלבי פיתוח – יש מספר גרסאות פעילות לכל פורטל
-- המערכת כוללת אלגוריתם ניקוד מורכב שיש לממש כ-Scoring Engine
+
+IMPORTANT: Rules for working in this codebase:
+- Primary UI language: Hebrew (RTL). Always use `dir={dir}` from `useLanguage()`.
+- The active demo project is `signal-news-demo/` — see its own CLAUDE.md for technical details.
+- Portal directories (פורטל חיילים, פורטל חברות, פורטל משרד החינוך) are earlier prototypes — do not modify without explicit request.
+- The Scoring Engine described above is the business logic spec — implementation lives in `signal-news-demo/src/services/`.
+- No Anthropic API key available — all analysis must be keyword-based.
+- Deployment target: Vercel serverless. No native modules (no better-sqlite3, no sharp custom builds).
