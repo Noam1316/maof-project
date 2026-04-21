@@ -342,6 +342,34 @@
             color: #94a3b8;
         }
 
+        /* ─── Audience Tabs ─── */
+        .audience-tabs {
+            display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+        }
+        .aud-tab {
+            padding: 10px 22px; border-radius: 10px; border: 2px solid #e2e8f0;
+            background: white; cursor: pointer; font-family: 'Heebo', sans-serif;
+            font-size: 14px; font-weight: 600; color: #64748b;
+            transition: all .2s ease; display: flex; align-items: center; gap: 8px;
+        }
+        .aud-tab:hover { border-color: #3b82f6; color: #1e40af; }
+        .aud-tab.active { background: #0f172a; color: white; border-color: #0f172a; }
+        .aud-tab.active.company  { background: #1d4ed8; border-color: #1d4ed8; }
+        .aud-tab.active.education { background: #059669; border-color: #059669; }
+        .aud-tab.active.iia { background: #7c3aed; border-color: #7c3aed; }
+
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* ─── Audience-specific callout ─── */
+        .aud-banner {
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 20px;
+            font-size: 14px; font-weight: 600;
+        }
+        .aud-banner.company  { background: #eff6ff; border-right: 4px solid #3b82f6; color: #1e40af; }
+        .aud-banner.education { background: #f0fdf4; border-right: 4px solid #10b981; color: #065f46; }
+        .aud-banner.iia { background: #faf5ff; border-right: 4px solid #7c3aed; color: #5b21b6; }
+
         /* ─── Badge ─── */
         .badge {
             display: inline-block;
@@ -384,6 +412,140 @@
                 מרץ 2026
             </div>
         </div>
+
+        <!-- AUDIENCE TABS -->
+        <div class="audience-tabs">
+            <button class="aud-tab company active" onclick="switchTab('company')">🏢 חברות הייטק</button>
+            <button class="aud-tab education" onclick="switchTab('education')">🏫 משרד החינוך</button>
+            <button class="aud-tab iia" onclick="switchTab('iia')">🔬 רשות החדשנות (IIA)</button>
+        </div>
+
+        <!-- ══ TAB: COMPANY ══ -->
+        <div class="tab-pane active" id="tab-company">
+            <div class="aud-banner company">🏢 מותאם לחברות הייטק – מה מעוף נותן לכם</div>
+
+            <div class="section">
+                <h2><span class="icon icon-red">💸</span> הבעיה שלכם – עלויות גיוס שבורות</h2>
+                <div class="stats-row">
+                    <div class="stat-box"><div class="num red">43K ₪</div><div class="label">עמלת השמת ג'וניור</div><div class="source">ממוצע שוק</div></div>
+                    <div class="stat-box"><div class="num red">3 חודשים</div><div class="label">אחריות בלבד</div><div class="source">חברות HR רגילות</div></div>
+                    <div class="stat-box"><div class="num blue">2+ שנים</div><div class="label">דרישת ניסיון לג'וניור</div><div class="source">LinkedIn Jobs IL</div></div>
+                    <div class="stat-box"><div class="num orange">6 חודשים</div><div class="label">זמן עד תפוקה מלאה</div><div class="source">בממוצע לג'וניור</div></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="icon icon-green">✅</span> מה מעוף נותן לחברה שלכם</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">🎯 ניסיון מוכח לפני יום 1</div>
+                        <p>שנתיים הוראת STEM = <strong>18 חודשי ניסיון מקצועי מוכח</strong>: ניהול פרויקטים, הובלת קבוצות, עמידה בלחץ, תקשורת טכנית. כישורים שאף bootcamp לא מספק.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">💰 Trial Period ממומן</div>
+                        <p>50% משרה בשנתיים הראשונות = <strong>Trial Period של 24 חודשים</strong> לפני גיוס מלא. אתם משלמים רק 10,000-12,000 ₪/חודש ומקבלים עובד שכבר הוכיח את עצמו בשטח.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🤖 AI Matching מדויק</div>
+                        <p>Dual Scoring Engine מתאים מועמדים לפי Tech Stack, Growth Potential, Soft Skills, ו-Cultural Fit – לא קורות חיים בלבד. דיוק > 70% כבר ב-v1.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📊 אחריות של 24 חודשים</div>
+                        <p>לא 3 חודשים – <strong>24 חודשים של מעקב, ליווי, ו-Feedback Loop</strong>. אם יש בעיה, אנחנו יודעים לפני שהיא מתפוצצת.</p>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top:16px;">
+                    <div>
+                        <div class="ask-title">חיסכון לחברה לכל עובד מעוף</div>
+                        <div class="ask-main">~200,000 ₪</div>
+                        <div class="ask-sub">vs. גיוס רגיל (עמלה + הכשרה + סיכון נשירה)</div>
+                    </div>
+                    <div class="ask-amount">
+                        <div class="amount-num">35K ₪</div>
+                        <div class="amount-label">Success Fee בלבד – חודש 25</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="icon icon-blue">📋</span> מה נדרש מהחברה</h2>
+                <div class="grid-3">
+                    <div class="card"><div class="card-title">📝 LOI חתימה</div><p>מכתב כוונות (לא מחייב) – מספיק לשלב הפיילוט</p></div>
+                    <div class="card"><div class="card-title">👨‍💼 מנטור פנימי</div><p>עובד בכיר שמלווה את העובד 2 שעות בשבוע</p></div>
+                    <div class="card"><div class="card-title">💳 SaaS חודשי</div><p>1,500-3,000 ₪/חודש – פחות מקפה ליום לעובד</p></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="icon icon-teal">🚀</span> חברות מאמצות – שלב POC (ללא עלות)</h2>
+                <p style="margin-bottom:12px;">ב-3 החיילים הראשונים – <strong>אפס SaaS, אפס עמלה מראש</strong>. רק Success Fee בחודש 25 אם העובד ממשיך.</p>
+                <div style="text-align:center; margin-top:16px;">
+                    <a href="mailto:noam@maof.tech?subject=LOI - הצטרפות כחברה מאמצת&body=שלום נועם, אני מעוניין לדון בהצטרפות החברה שלנו לפיילוט מעוף." style="background:#1d4ed8;color:white;padding:12px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">📧 שלח מייל ראשוני</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ TAB: EDUCATION ══ -->
+        <div class="tab-pane" id="tab-education">
+            <div class="aud-banner education">🏫 מותאם למשרד החינוך ומנהלי בתי ספר</div>
+
+            <div class="section">
+                <h2><span class="icon icon-red">🚨</span> המשבר שאתם חיים – במספרים</h2>
+                <div class="stats-row">
+                    <div class="stat-box"><div class="num red">3,500</div><div class="label">מורי STEM חסרים</div><div class="source">הסתדרות המורים, 2025</div></div>
+                    <div class="stat-box"><div class="num red">20%</div><div class="label">נשירת מורים שנה 1</div><div class="source">מבקר המדינה</div></div>
+                    <div class="stat-box"><div class="num orange">55%</div><div class="label">מנהלים שלא מילאו צוות</div><div class="source">OECD, 2025</div></div>
+                    <div class="stat-box"><div class="num blue">77%</div><div class="label">ריכוז המחסור: מרכז</div><div class="source">משרד החינוך</div></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="icon icon-green">🎓</span> מה מעוף נותן לבית הספר שלכם</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">👨‍💻 מומחה STEM אמיתי בכיתה</div>
+                        <p>לא מורה מוסמך "על הנייר" – <strong>איש מקצוע שעשה את זה</strong>: כתב קוד, פתר בעיות אמיתיות, ניהל מערכות. שונה מכל מה שראיתם עד היום.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📍 Retention Score גבוה</div>
+                        <p>האלגוריתם משבץ רק מועמדים שצפויים <strong>להישאר 2 שנים</strong> – לפי מרחק מגורים, יציבות משפחתית, ומחויבות. לא שוב מורה שעוזב בסוף הסמסטר הראשון.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">💼 מסגרת קיימת – אפס בירוקרטיה חדשה</div>
+                        <p>מעוף פועל <strong>בתוך מסגרת עמיתי ההוראה הקיימת</strong> של משרד החינוך. אין מכרז חדש, אין אישורים מיוחדים – רק ממלאים מקום שכבר מאושר.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🌍 עדיפות לפריפריה</div>
+                        <p>האלגוריתם נותן <strong>בונוס פריפריה</strong> – בתי ספר בנגב, גליל, ופריפריה חברתית מקבלים עדיפות בשיבוץ. מי שצריך הכי הרבה, מקבל ראשון.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="icon icon-purple">📐</span> איך זה עובד בפועל עבורכם</h2>
+                <div class="flow" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <div class="flow-step" style="background:#f0fdf4;border:1px solid #10b981;border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:120px;"><div style="font-size:20px;margin-bottom:4px;">📋</div><div style="font-size:12px;font-weight:700;">מגדירים צורך</div><div style="font-size:11px;color:#64748b;">מקצוע + שעות + אזור</div></div>
+                    <div class="flow-arrow" style="font-size:20px;color:#10b981;">←</div>
+                    <div class="flow-step" style="background:#f0fdf4;border:1px solid #10b981;border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:120px;"><div style="font-size:20px;margin-bottom:4px;">🤖</div><div style="font-size:12px;font-weight:700;">AI מוצא התאמה</div><div style="font-size:11px;color:#64748b;">ציון A ≥ 70/100</div></div>
+                    <div class="flow-arrow" style="font-size:20px;color:#10b981;">←</div>
+                    <div class="flow-step" style="background:#f0fdf4;border:1px solid #10b981;border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:120px;"><div style="font-size:20px;margin-bottom:4px;">✅</div><div style="font-size:12px;font-weight:700;">מאשרים פרופיל</div><div style="font-size:11px;color:#64748b;">ראיון קצר + הסכמה</div></div>
+                    <div class="flow-arrow" style="font-size:20px;color:#10b981;">←</div>
+                    <div class="flow-step" style="background:#f0fdf4;border:1px solid #10b981;border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:120px;"><div style="font-size:20px;margin-bottom:4px;">📚</div><div style="font-size:12px;font-weight:700;">מורה בכיתה</div><div style="font-size:11px;color:#64748b;">50% משרה, 2 שנים</div></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="icon icon-teal">📬</span> מעוניינים להיות בית ספר פיילוט?</h2>
+                <p>3 בתי הספר הראשונים יקבלו שיבוץ <strong>ללא עלות ניהולית</strong> – רק תאמו פגישה.</p>
+                <div style="text-align:center;margin-top:16px;">
+                    <a href="mailto:noam@maof.tech?subject=עניין - בית ספר פיילוט&body=שלום נועם, בית הספר שלנו מעוניין להיות חלק מהפיילוט." style="background:#059669;color:white;padding:12px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">📧 צרו קשר עכשיו</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ TAB: IIA ══ -->
+        <div class="tab-pane" id="tab-iia">
+            <div class="aud-banner iia">🔬 מותאם לרשות החדשנות – מסלול תנופה</div>
 
         <!-- PROBLEM -->
         <div class="section">
@@ -639,15 +801,26 @@
         <div class="highlight-box">
             <div>
                 <div class="ask-title">מה אנחנו מחפשים</div>
-                <div class="ask-main">שותפות אסטרטגית + מימון Seed</div>
-                <div class="ask-sub">פיילוט עם 10-20 חיילים · שותפות עם תוכניות קיימות · מענק רשות החדשנות</div>
+                <div class="ask-main">מסלול תנופה – רשות החדשנות</div>
+                <div class="ask-sub">חידוש טכנולוגי מוכח · אתגר NP-Hard · ROI למדינה: 230x</div>
             </div>
             <div class="ask-amount">
                 <div class="amount-num">200K ₪</div>
-                <div class="amount-label">מסלול תנופה – רשות החדשנות</div>
+                <div class="amount-label">85% מתקציב של 235K ₪</div>
             </div>
         </div>
 
-    </div>
+        </div><!-- /tab-pane iia -->
+
+    </div><!-- /page -->
+
+<script>
+function switchTab(tab) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.aud-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.querySelector('.aud-tab.' + tab).classList.add('active');
+}
+</script>
 </body>
 </html>

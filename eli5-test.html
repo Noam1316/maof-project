@@ -425,8 +425,47 @@ body {
 }
 .tip-box h4 { color: var(--yellow); margin-bottom: 8px; }
 .tip-box ul { list-style: none; }
-.tip-box li { padding: 4px 0; font-size: 14px; color: var(--text2); }
+.tip-box li { padding: 6px 0; font-size: 14px; color: var(--text2); line-height: 1.5; }
 .tip-box li::before { content: '💡 '; }
+
+/* ── RUBRIC ── */
+.rubric-toggle {
+  background: none; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text2); font-family: 'Heebo', sans-serif; font-size: 13px;
+  padding: 8px 16px; cursor: pointer; margin: 12px 0;
+  transition: all .2s ease;
+}
+.rubric-toggle:hover { border-color: var(--teal); color: var(--teal); }
+.rubric-panel {
+  display: none;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin: 8px 0 20px;
+}
+.rubric-panel h4 { color: var(--teal); margin-bottom: 14px; font-size: 15px; }
+.rubric-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.rubric-row:last-child { border-bottom: none; }
+.rubric-icon { font-size: 20px; width: 28px; flex-shrink: 0; }
+.rubric-info { flex: 1; }
+.rubric-info strong { font-size: 13px; color: var(--text); display: block; margin-bottom: 2px; }
+.rubric-info span { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.rubric-weight {
+  font-size: 12px; font-weight: 700; color: var(--teal);
+  background: rgba(20,184,166,.1); padding: 2px 8px; border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* ── SCORE BADGE ── */
+.score-grade {
+  font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+  margin-right: 8px;
+}
+.grade-A { background: rgba(34,197,94,.2); color: var(--green); }
+.grade-B { background: rgba(59,130,246,.2); color: var(--blue); }
+.grade-C { background: rgba(234,179,8,.2); color: var(--yellow); }
+.grade-D { background: rgba(239,68,68,.2); color: var(--red); }
 
 .round-breakdown {
   background: var(--surface); border: 1px solid var(--border);
@@ -548,6 +587,51 @@ body {
       <h4>💡 דוגמה להסבר ELI5 מוצלח</h4>
       <p><strong>שאלה:</strong> "מה זה אלגוריתם?"</p>
       <p><strong>תשובה:</strong> "דמיין שאתה רוצה להכין כריך. אלגוריתם זה כמו מתכון – רשימת צעדים מדויקת: 1) תיקח לחם, 2) תמרח חמאה, 3) תשים גבינה, 4) תסגור. המחשב גם עובד ככה – הוא צריך הוראות מדויקות צעד אחרי צעד כדי לעשות משהו."</p>
+    </div>
+
+    <button class="rubric-toggle" onclick="toggleRubric()">📋 מה נמדד במבחן? (לחץ לפתיחת הרובריקה)</button>
+    <div class="rubric-panel" id="rubricPanel">
+      <h4>📊 מה המבחן מודד – 5 מדדים</h4>
+      <div class="rubric-row">
+        <div class="rubric-icon">🧩</div>
+        <div class="rubric-info">
+          <strong>פשטות (Simplicity)</strong>
+          <span>משפטים קצרים, מילים יומיומיות, הימנעות מז'רגון טכני. יילד בן 10 יבין?</span>
+        </div>
+        <div class="rubric-weight">28%</div>
+      </div>
+      <div class="rubric-row">
+        <div class="rubric-icon">🎯</div>
+        <div class="rubric-info">
+          <strong>דיוק (Accuracy)</strong>
+          <span>ההסבר נכון מבחינה מדעית? יש עומק? לא חסרים פרטים קריטיים?</span>
+        </div>
+        <div class="rubric-weight">25%</div>
+      </div>
+      <div class="rubric-row">
+        <div class="rubric-icon">🌉</div>
+        <div class="rubric-info">
+          <strong>אנלוגיות (Analogies)</strong>
+          <span>שימוש בדימויים מהחיים: "זה כמו...", "דמיין ש...", "בדיוק כמו..."</span>
+        </div>
+        <div class="rubric-weight">22%</div>
+      </div>
+      <div class="rubric-row">
+        <div class="rubric-icon">⚡</div>
+        <div class="rubric-info">
+          <strong>מעורבות (Engagement)</strong>
+          <span>שאלות רטוריות, פנייה ישירה לתלמיד, דוגמאות מעניינות. האם מחזיק את תשומת הלב?</span>
+        </div>
+        <div class="rubric-weight">15%</div>
+      </div>
+      <div class="rubric-row">
+        <div class="rubric-icon">🏗️</div>
+        <div class="rubric-info">
+          <strong>מבנה (Structure)</strong>
+          <span>פתיחה → גוף → סיכום. מילות מעבר. סדר הגיוני של רעיונות.</span>
+        </div>
+        <div class="rubric-weight">10%</div>
+      </div>
     </div>
 
     <div class="btn-center">
@@ -687,7 +771,7 @@ body {
         <div class="results-score-num" id="totalScore">0</div>
         <div class="results-score-label">ציון ELI5</div>
       </div>
-      <h2>תוצאות המבחן</h2>
+      <h2>תוצאות המבחן <span id="gradeBadge" class="score-grade"></span></h2>
       <p style="color: var(--text2);" id="scoreMessage">ההסברים שלך ברורים ומעניינים!</p>
     </div>
 
@@ -783,49 +867,258 @@ body {
 
 <script>
 // ══════════════════════════════════════════
-//  DATA & STATE
+//  QUESTION BANK — 6+ per topic per round
 // ══════════════════════════════════════════
-const QUESTIONS = {
+const QUESTION_BANK = {
   cyber: {
-    writing: { q: 'תסביר מה זה Firewall לילד בן 10', hint: 'השתמש באנלוגיה מהחיים – דלת, שומר, גדר...' },
-    video:   { q: 'מה זה פישינג (Phishing) ואיך נזהרים?', hint: 'תסביר כאילו אתה מזהיר חבר צעיר' },
-    chat:    { opening: 'היי! אני נועה מכיתה י\'. המורה אמרה שיש דבר שנקרא "סייבר" והוא קשור לאבטחה של מחשבים. מה זה בכלל אבטחת סייבר? 🤔' }
+    writing: [
+      { q: 'תסביר מה זה Firewall לילד בן 10', hint: 'השתמש באנלוגיה מהחיים – דלת, שומר, גדר...' },
+      { q: 'מה זה וירוס מחשב ואיך הוא מתפשט?', hint: 'תחשוב על וירוס אמיתי בגוף' },
+      { q: 'למה צריך סיסמה חזקה?', hint: 'תסביר עם דוגמה של מנעול ומפתח' },
+      { q: 'מה זה הצפנה ולמה היא חשובה?', hint: 'תחשוב על שפה סודית בין חברים' },
+      { q: 'מה זה האקר? האם כולם רעים?', hint: 'הסבר את ההבדל בין כובע לבן לכובע שחור' },
+      { q: 'מה קורה כשאתה מתחבר ל-WiFi ציבורי?', hint: 'תסביר את הסכנות בצורה פשוטה' }
+    ],
+    video: [
+      { q: 'מה זה פישינג (Phishing) ואיך נזהרים?', hint: 'תסביר כאילו אתה מזהיר חבר צעיר' },
+      { q: 'איך שומרים על הפרטיות ברשתות חברתיות?', hint: 'תן דוגמאות קונקרטיות מאינסטגרם/טיקטוק' },
+      { q: 'מה זה Ransomware ולמה זה מפחיד?', hint: 'תסביר כאילו מישהו נעל לך את החדר' },
+      { q: 'מה זה Two-Factor Authentication?', hint: 'תסביר עם דוגמה של כספת עם שני מפתחות' },
+      { q: 'מה זה VPN ולמה אנשים משתמשים בזה?', hint: 'תחשוב על מנהרה סודית' },
+      { q: 'איך עובד אנטי-וירוס?', hint: 'תסביר כמו שומר בכניסה לבניין' }
+    ],
+    chat: [
+      { opening: 'היי! אני נועה מכיתה י\'. המורה אמרה שיש דבר שנקרא "סייבר" והוא קשור לאבטחה של מחשבים. מה זה בכלל אבטחת סייבר? 🤔', topic: 'אבטחת סייבר' },
+      { opening: 'היי! קיבלתי הודעה במייל שאומרת שזכיתי באייפון 😱 אמא אמרה לי לא ללחוץ. למה? מה יכול לקרות?', topic: 'פישינג' },
+      { opening: 'שלום! חבר שלי אמר שהוא יודע לפרוץ למחשבים. זה אומר שהוא האקר? זה חוקי? 🤨', topic: 'האקינג אתי' },
+      { opening: 'היי! למה אבא שלי כל הזמן אומר לי לא להשתמש באותה סיסמה בכל מקום? מה הבעיה? 🔑', topic: 'סיסמאות' },
+      { opening: 'שלום! בחדשות דיברו על "מתקפת סייבר על בית חולים". איך אפשר לתקוף מחשב? 😰', topic: 'מתקפות סייבר' }
+    ]
   },
   python: {
-    writing: { q: 'תסביר מה זה לולאת For כאילו זה משחק', hint: 'תחשוב על פעולות שחוזרות על עצמן' },
-    video:   { q: 'מה זה משתנה (Variable) בתכנות?', hint: 'השתמש בדוגמאות מוחשיות – קופסה, מגירה...' },
-    chat:    { opening: 'היי! המורה למדעי המחשב אמר שאנחנו צריכים ללמוד פייתון. זה שפה של נחשים? 😅 מה בכלל עושים עם זה?' }
+    writing: [
+      { q: 'תסביר מה זה לולאת For כאילו זה משחק', hint: 'תחשוב על פעולות שחוזרות על עצמן' },
+      { q: 'מה זה פונקציה בתכנות? תסביר בלי קוד', hint: 'תחשוב על מכונת קפה או מתכון' },
+      { q: 'מה ההבדל בין רשימה (List) למילון (Dictionary)?', hint: 'תחשוב על רשימת קניות vs ספר טלפונים' },
+      { q: 'מה זה באג ואיך מוצאים אותו?', hint: 'תסביר כמו בלש שמחפש רמזים' },
+      { q: 'למה תכנות דומה ללגו?', hint: 'תחשוב על בניית דברים מחלקים קטנים' },
+      { q: 'מה זה If-Else? תסביר עם דוגמה יומיומית', hint: 'תחשוב על החלטות שאתה עושה כל יום' }
+    ],
+    video: [
+      { q: 'מה זה משתנה (Variable) בתכנות?', hint: 'השתמש בדוגמאות מוחשיות – קופסה, מגירה...' },
+      { q: 'למה פייתון נחשבת שפה קלה ללמידה?', hint: 'השווה לשפות אחרות או לשפות מדוברות' },
+      { q: 'מה זה String ולמה קוראים לזה "מחרוזת"?', hint: 'תחשוב על חרוזים על חוט' },
+      { q: 'איך מחשב יודע מה לעשות? תסביר מה זה קוד', hint: 'תחשוב על הוראות למישהו שלא מבין רמזים' },
+      { q: 'מה זה Debug ולמה מתכנתים עושים את זה כל הזמן?', hint: 'תחשוב על טעויות כתיב שמשנות משמעות' },
+      { q: 'מה זה API? תסביר בפשטות', hint: 'תחשוב על מלצר במסעדה' }
+    ],
+    chat: [
+      { opening: 'היי! המורה למדעי המחשב אמר שאנחנו צריכים ללמוד פייתון. זה שפה של נחשים? 😅 מה בכלל עושים עם זה?', topic: 'פייתון בסיסי' },
+      { opening: 'היי! ניסיתי לכתוב קוד ויש לי שגיאה שכתוב "SyntaxError". מה זה אומר? 😤', topic: 'שגיאות' },
+      { opening: 'שלום! חבר שלי בנה משחק עם פייתון. אפשר באמת לבנות משחקים עם זה? איך? 🎮', topic: 'פרויקטים' },
+      { opening: 'היי! מה ההבדל בין פייתון ל-JavaScript? למה יש כל כך הרבה שפות תכנות? 🤔', topic: 'שפות תכנות' },
+      { opening: 'שלום! המורה אמר שצריך "לחשוב כמו מחשב". מה זה אומר? מחשבים חושבים? 🧠', topic: 'חשיבה אלגוריתמית' }
+    ]
   },
   physics: {
-    writing: { q: 'למה השמיים כחולים?', hint: 'הסבר בלי נוסחאות – פשוט וויזואלי' },
-    video:   { q: 'מה זה כוח הכבידה ולמה דברים נופלים?', hint: 'דמיין שאתה מסביר לילד בגן משחקים' },
-    chat:    { opening: 'שלום! למדנו היום על אנרגיה בשיעור פיזיקה ולא הבנתי כלום 😩 מה זה בכלל אנרגיה? אפשר לראות אותה?' }
+    writing: [
+      { q: 'למה השמיים כחולים?', hint: 'הסבר בלי נוסחאות – פשוט וויזואלי' },
+      { q: 'מה זה חשמל ואיך הוא מגיע לשקע בבית?', hint: 'תסביר את המסלול מתחנת הכוח' },
+      { q: 'למה מטוס כבד לא נופל?', hint: 'תסביר עילוי בלי מתמטיקה' },
+      { q: 'מה ההבדל בין חום לטמפרטורה?', hint: 'תחשוב על כוס תה ואמבטיה חמה' },
+      { q: 'איך רואים צבעים? למה דם אדום ושמיים כחולים?', hint: 'תסביר על אור ואורכי גל בפשטות' },
+      { q: 'למה ברק מגיע לפני רעם?', hint: 'תסביר את ההבדל בין מהירות אור וקול' }
+    ],
+    video: [
+      { q: 'מה זה כוח הכבידה ולמה דברים נופלים?', hint: 'דמיין שאתה מסביר לילד בגן משחקים' },
+      { q: 'מה קורה בתוך מיקרוגל? איך הוא מחמם אוכל?', hint: 'תסביר בלי "קרינה אלקטרומגנטית"' },
+      { q: 'למה קרח צף על מים?', hint: 'זה למעשה יוצא דופן בטבע – תסביר למה' },
+      { q: 'איך עובד מגנט?', hint: 'תסביר כוחות משיכה ודחייה בפשטות' },
+      { q: 'מה זה קול ואיך אנחנו שומעים?', hint: 'תחשוב על גלים במים' },
+      { q: 'למה בחלל אין קול?', hint: 'תסביר את הצורך במדיום לתנועת גלים' }
+    ],
+    chat: [
+      { opening: 'שלום! למדנו היום על אנרגיה בשיעור פיזיקה ולא הבנתי כלום 😩 מה זה בכלל אנרגיה? אפשר לראות אותה?', topic: 'אנרגיה' },
+      { opening: 'היי! למה כשאני קופץ אני חוזר למטה? מה מושך אותי? ואיך אסטרונאוטים מרחפים? 🚀', topic: 'כבידה' },
+      { opening: 'שלום! אמרו לנו שהכל עשוי מאטומים. מה זה אטום? אפשר לראות אותו? 🔬', topic: 'אטומים' },
+      { opening: 'היי! למה בקיץ חם ובחורף קר? זה בגלל שהשמש רחוקה? ☀️', topic: 'עונות השנה' },
+      { opening: 'שלום! ראיתי בסרט שאפשר לנסוע בזמן. זה אמיתי? אפשר? ⏰', topic: 'זמן ויחסות' }
+    ]
   },
   math: {
-    writing: { q: 'מה זה משתנה? תסביר בלי מספרים', hint: 'השתמש בדוגמאות מהחיים היומיומיים' },
-    video:   { q: 'למה חשוב ללמוד מתמטיקה?', hint: 'תן דוגמאות רלוונטיות לנוער' },
-    chat:    { opening: 'היי, אני ממש לא מבינה מתמטיקה 😭 אבל כולם אומרים שזה חשוב. למה בכלל צריך את זה? מתי בחיים אני הולכת להשתמש בנוסחאות?' }
+    writing: [
+      { q: 'מה זה משתנה? תסביר בלי מספרים', hint: 'השתמש בדוגמאות מהחיים היומיומיים' },
+      { q: 'למה 0 הוא מספר חשוב?', hint: 'תחשוב מה היה קורה בלעדיו' },
+      { q: 'מה זה הסתברות? תסביר עם דוגמה מהחיים', hint: 'תחשוב על קוביות, מזג אוויר, ארוחה' },
+      { q: 'מה זה אחוזים ולמה הם בכל מקום?', hint: 'דוגמאות: הנחות, ציונים, סקרים' },
+      { q: 'מה ההבדל בין שטח להיקף?', hint: 'תסביר עם דוגמה של חדר או מגרש' },
+      { q: 'למה אי אפשר לחלק באפס?', hint: 'תסביר עם דוגמה של חלוקת ממתקים' }
+    ],
+    video: [
+      { q: 'למה חשוב ללמוד מתמטיקה?', hint: 'תן דוגמאות רלוונטיות לנוער' },
+      { q: 'מה זה פיתגורס ולמה זה שימושי?', hint: 'תסביר עם דוגמה של בניין או סולם' },
+      { q: 'מה זה גרף ומה הוא מספר לנו?', hint: 'תחשוב על גרפים שרואים בחדשות' },
+      { q: 'איך מתמטיקה עוזרת במשחקי מחשב?', hint: 'גרפיקה, פיזיקה, AI – הכל מתמטיקה' },
+      { q: 'מה זה אינסוף? האם יש מספר הכי גדול?', hint: 'זו שאלה פילוסופית-מתמטית' },
+      { q: 'למה סדר פעולות חשבון חשוב?', hint: 'תראה מה קורה כשמתעלמים ממנו' }
+    ],
+    chat: [
+      { opening: 'היי, אני ממש לא מבינה מתמטיקה 😭 אבל כולם אומרים שזה חשוב. למה בכלל צריך את זה? מתי בחיים אני הולכת להשתמש בנוסחאות?', topic: 'חשיבות מתמטיקה' },
+      { opening: 'היי! למה שלילי כפול שלילי יוצא חיובי? זה לא הגיוני! 😤', topic: 'מספרים שליליים' },
+      { opening: 'שלום! מה זה X במתמטיקה? למה צריך אותיות במקום מספרים? 📝', topic: 'אלגברה' },
+      { opening: 'היי! מה זה פרקטל? ראיתי תמונות מטורפות באינטרנט של צורות שחוזרות על עצמן 🌀', topic: 'פרקטלים' },
+      { opening: 'שלום! אם אני זורק מטבע 10 פעמים וכל פעם יצא עץ, מה הסיכוי שבפעם ה-11 יצא פלי? 🪙', topic: 'הסתברות' }
+    ]
   },
   ai: {
-    writing: { q: 'מה זה בינה מלאכותית? תסביר לסבתא', hint: 'הימנע ממילים טכניות לגמרי' },
-    video:   { q: 'איך מחשב "לומד" – Machine Learning בפשטות', hint: 'השתמש בדוגמה של ילד שלומד' },
-    chat:    { opening: 'היי! אמא שלי אמרה ש-ChatGPT הולך להחליף את כל המורים. זה נכון?? 😱 מה זה בכלל בינה מלאכותית ואיך היא עובדת?' }
+    writing: [
+      { q: 'מה זה בינה מלאכותית? תסביר לסבתא', hint: 'הימנע ממילים טכניות לגמרי' },
+      { q: 'מה ההבדל בין AI חכם לבין תוכנית מחשב רגילה?', hint: 'תסביר את ההבדל בין כללים לבין למידה' },
+      { q: 'איך מחשב מזהה פנים בתמונה?', hint: 'תסביר בלי "רשת נוירונים" – השתמש בדימוי' },
+      { q: 'האם מחשב באמת "חושב"?', hint: 'תסביר את ההבדל בין חישוב לחשיבה' },
+      { q: 'מה זה ChatGPT ואיך הוא יודע לדבר?', hint: 'תסביר בלי "מודל שפה גדול"' },
+      { q: 'האם AI יכול להיות יצירתי?', hint: 'תן דוגמאות של AI שיוצר אמנות/מוזיקה' }
+    ],
+    video: [
+      { q: 'איך מחשב "לומד" – Machine Learning בפשטות', hint: 'השתמש בדוגמה של ילד שלומד' },
+      { q: 'מה זה רובוט ולמה הוא לא כמו בסרטים?', hint: 'הסבר את הפער בין מציאות לפנטזיה' },
+      { q: 'איך AI עוזר לרופאים?', hint: 'דוגמאות: צילומי רנטגן, תרופות חדשות' },
+      { q: 'מה זה Deep Fake ולמה זה מסוכן?', hint: 'תסביר איך AI יכול ליצור סרטונים מזויפים' },
+      { q: 'האם AI ייקח לנו את העבודה?', hint: 'תסביר בצורה מאוזנת – מה ישתנה ומה לא' },
+      { q: 'מה זה רכב אוטונומי ואיך הוא נוהג לבד?', hint: 'תסביר את החיישנים וקבלת ההחלטות' }
+    ],
+    chat: [
+      { opening: 'היי! אמא שלי אמרה ש-ChatGPT הולך להחליף את כל המורים. זה נכון?? 😱 מה זה בכלל בינה מלאכותית ואיך היא עובדת?', topic: 'AI ומורים' },
+      { opening: 'היי! ראיתי סרטון של אדם שמדבר אבל זה לא באמת הוא! אמרו שזה AI. איך זה עובד? 😨', topic: 'Deep Fakes' },
+      { opening: 'שלום! אם מחשב יכול לנצח בשחמט, למה הוא לא יכול לנהל מדינה? 🤔', topic: 'גבולות AI' },
+      { opening: 'היי! חבר אמר שה-AI מרגל עלינו דרך הטלפון. זה נכון? 📱', topic: 'AI ופרטיות' },
+      { opening: 'שלום! ניסיתי לצייר עם AI ויצא מדהים! איך הוא יודע לצייר? הוא למד באמת? 🎨', topic: 'AI גנרטיבי' }
+    ]
   },
   data: {
-    writing: { q: 'מה זה Big Data? תסביר עם דוגמה מהחיים', hint: 'תחשוב על סופרמרקט, ווייז, אינסטגרם...' },
-    video:   { q: 'מה ההבדל בין מידע לנתונים?', hint: 'השתמש בדוגמאות מוחשיות' },
-    chat:    { opening: 'היי! אני שומע כל הזמן על "דאטה" ו"ביג דאטה". מה זה? למה כולם ככה מתלהבים מזה? 🤷' }
+    writing: [
+      { q: 'מה זה Big Data? תסביר עם דוגמה מהחיים', hint: 'תחשוב על סופרמרקט, ווייז, אינסטגרם...' },
+      { q: 'מה ההבדל בין מידע לנתונים?', hint: 'תחשוב על מספרים בלי הקשר vs מספרים עם משמעות' },
+      { q: 'איך ווייז יודע שיש פקק?', hint: 'תסביר איסוף נתונים מכל הנהגים' },
+      { q: 'מה זה אלגוריתם המלצות (כמו ביוטיוב)?', hint: 'תסביר למה יוטיוב "מכיר" אותך' },
+      { q: 'למה כולם רוצים את הנתונים שלנו?', hint: 'תסביר את הערך הכלכלי של מידע' },
+      { q: 'מה זה ענן (Cloud) ואיפה התמונות שלי באמת?', hint: 'תסביר שזה מחשבים של מישהו אחר' }
+    ],
+    video: [
+      { q: 'מה זה מדע הנתונים ומה עושה Data Scientist?', hint: 'תסביר כאילו מישהו שואל מה אתה רוצה להיות כשתגדל' },
+      { q: 'איך נתונים הופכים להחלטות?', hint: 'דוגמה: מסעדה שמחליטה מה לבשל' },
+      { q: 'מה זה Excel ולמה כולם משתמשים בזה?', hint: 'תסביר טבלאות ונוסחאות בפשטות' },
+      { q: 'איך אינסטגרם יודע מה להראות לך?', hint: 'תסביר אלגוריתם בלי המילה "אלגוריתם"' },
+      { q: 'מה זה גרף ואיך הוא עוזר להבין נתונים?', hint: 'תראה דוגמאות חזותיות' },
+      { q: 'איך סופרמרקט יודע מה להזמין למדפים?', hint: 'תסביר ניתוח מגמות בפשטות' }
+    ],
+    chat: [
+      { opening: 'היי! אני שומע כל הזמן על "דאטה" ו"ביג דאטה". מה זה? למה כולם ככה מתלהבים מזה? 🤷', topic: 'ביג דאטה' },
+      { opening: 'היי! למה פייסבוק מראה לי דברים שדיברתי עליהם? הם מקשיבים לי?? 📱', topic: 'מעקב נתונים' },
+      { opening: 'שלום! אמרו לנו בכיתה ש"נתונים זה הנפט החדש". מה זה אומר? 🛢️', topic: 'ערך הנתונים' },
+      { opening: 'היי! מה זה Dashboard? המנהל הראה לנו משהו עם הרבה גרפים ומספרים 📊', topic: 'דשבורד' },
+      { opening: 'שלום! ראיתי ביוטיוב סרטון על "הטיה באלגוריתמים". מה זה ולמה זה בעיה? 🤔', topic: 'הטיה בנתונים' }
+    ]
   }
 };
 
-const CHAT_RESPONSES = [
-  { trigger: null, responses: ['אממ... לא הבנתי. אפשר דוגמה? 🤔', 'מה זה אומר בעברית פשוטה?', 'רגע, קשה לי. אפשר להסביר אחרת?'] },
-  { trigger: 'analogy', responses: ['אהה! אז זה כמו {X}?', 'וואו, עכשיו זה הגיוני! אבל למה צריך את זה?', 'אוקיי הבנתי! ומה קורה אם...?'] },
-  { trigger: 'example', responses: ['מגניב! ואיפה אני רואה את זה ביומיום?', 'אז למשל בטלפון שלי זה גם עובד ככה?', 'סבבה! יש עוד דוגמאות?'] },
-  { trigger: 'followup', responses: ['ומה ההבדל בין זה ל...?', 'ואיך זה קשור למה שלמדנו קודם?', 'אבל למה שמישהו ירצה לעשות את זה?'] },
-  { trigger: 'deep', responses: ['רגע, זה נשמע מסובך... אפשר לפשט?', 'אני חושבת שהבנתי... אבל מה עם...?', 'וואלה מעניין! כאילו אני מתחילה להבין 💡'] },
-  { trigger: 'final', responses: ['תודה רבה!! עכשיו הבנתי הרבה יותר טוב! 😊', 'אתה מסביר מעולה! הלוואי שהמורה שלנו היה מסביר ככה 😄', 'סוף סוף מישהו הצליח להסביר לי! תודה! 🙏'] }
-];
+// ══════════════════════════════════════════
+//  SMART CHAT ENGINE
+// ══════════════════════════════════════════
+const CHAT_ENGINE = {
+  // Detect response quality signals
+  analyzeResponse(text) {
+    const t = text.trim();
+    const signals = {
+      hasAnalogy: /כמו|דמיין|נגיד ש|בדיוק כמו|דומה ל|תחשוב על|מזכיר|דומה/.test(t),
+      hasExample: /למשל|לדוגמה|לדוגמא|בדוגמה|פעם|נגיד|נניח|כגון/.test(t),
+      hasSimpleWords: t.split(' ').length > 5 && !/אלגוריתם|פרוטוקול|אינפרסטרוקטורה|ארכיטקטורה|אבסטרקציה/.test(t),
+      isLong: t.split(' ').length > 25,
+      isShort: t.split(' ').length < 8,
+      asksQuestion: t.includes('?'),
+      isRepeat: false // set dynamically
+    };
+    return signals;
+  },
+
+  // Generate contextual follow-up based on what was said
+  getResponse(userText, msgIndex, lastResponses) {
+    const s = this.analyzeResponse(userText);
+    const isRepeat = lastResponses.some(r => {
+      const overlap = userText.split(' ').filter(w => w.length > 3 && r.includes(w)).length;
+      return overlap > 3;
+    });
+
+    if (msgIndex >= 6) {
+      return this._pick([
+        'תודה רבה!! עכשיו הבנתי הרבה יותר טוב! 😊',
+        'אתה מסביר מעולה! הלוואי שהמורה שלנו היה מסביר ככה 😄',
+        'סוף סוף מישהו הצליח להסביר לי! תודה! 🙏',
+        'וואו, זה בדיוק מה שהייתי צריכה! ✨'
+      ]);
+    }
+
+    if (isRepeat) {
+      return this._pick([
+        'אמרת את זה כבר... אפשר להסביר אחרת? 😅',
+        'אני מבינה שזה חשוב, אבל אפשר דוגמה אחרת?',
+        'רגע, אני מבולבלת – אפשר מזווית אחרת?'
+      ]);
+    }
+
+    if (s.isShort) {
+      return this._pick([
+        'אה... אפשר קצת יותר? לא ממש הבנתי 🤔',
+        'קצר מדי בשבילי! תסביר יותר?',
+        'נו... ועוד? תתפרט 😊'
+      ]);
+    }
+
+    if (s.hasAnalogy && s.hasExample) {
+      return this._pick([
+        'וואו! הדוגמה שנתת ממש עזרה לי! אבל מה קורה כש...?',
+        'אהה!! עכשיו הבנתי! זה כמו... ואיפה עוד רואים את זה?',
+        'מגניב! ואיך זה קשור למה שנלמד בכיתה? 🤩'
+      ]);
+    }
+
+    if (s.hasAnalogy && !s.hasExample) {
+      return this._pick([
+        'אהה, הדימוי עזר! יש לך גם דוגמה אמיתית?',
+        'אוקיי, אז זה כמו... אבל בחיים האמיתיים זה נראה איך?',
+        'הסבר מעניין! ואיפה אני פוגשת את זה בחיי היומיום? 🌍'
+      ]);
+    }
+
+    if (s.hasExample && !s.hasAnalogy) {
+      return this._pick([
+        'הדוגמה טובה! אבל אפשר גם לדמות את זה למשהו אחר?',
+        'מגניב! ויש עוד דוגמאות? רק אחת לא מספיקה לי 😄',
+        'אוקיי הבנתי את הדוגמה, אבל הרעיון הכללי – מה זה אומר?'
+      ]);
+    }
+
+    if (s.isLong && !s.hasAnalogy && !s.hasExample) {
+      return this._pick([
+        'כתבת הרבה... אבל אני לא בטוחה שהבנתי 😅 אפשר בפשטות יותר?',
+        'קצת מסובך. אפשר להסביר כאילו אני בכיתה ג\'?',
+        'הרבה מילות "טכניות"... אפשר בלי ז\'רגון? 🙏'
+      ]);
+    }
+
+    // Default contextual responses by message index
+    const byIndex = [
+      ['מה זה אומר בדיוק? אפשר דוגמה? 🤔', 'לא הבנתי עדיין... תנסה אחרת?', 'אממ... קצת מסובך. אפשר יותר פשוט?'],
+      ['אוקיי, אבל למה זה חשוב לי? מה זה קשור לחיים שלי?', 'מעניין! ואיך זה עובד בפועל?', 'הבנתי חלק... ומה עם...?'],
+      ['וואי, כאילו מתחילה להבין! אבל מה ההבדל בין X ל-Y?', 'אז למה לא כולם עושים את זה?', 'ואיך זה קשור למה שלמדנו קודם?'],
+      ['סבבה! ויש לזה חסרונות? מה יכול להשתבש?', 'מגניב! ואתה חושב שבעתיד זה ישתנה?', 'אוקיי הבנתי! אבל חבר שלי אמר שזה עובד אחרת...']
+    ];
+    const pool = byIndex[Math.min(msgIndex - 1, byIndex.length - 1)] || byIndex[0];
+    return this._pick(pool);
+  },
+
+  _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+};
 
 let state = {
   topic: null,
@@ -835,15 +1128,108 @@ let state = {
   totalTime: 0,
   round1Text: '',
   round2Recorded: false,
+  round2Duration: 0,        // seconds actually recorded
   chatHistory: [],
+  chatResponseTexts: [],    // for repeat detection
   chatResponseIndex: 0,
   mediaStream: null,
-  mediaRecorder: null
+  mediaRecorder: null,
+  selectedQuestions: null   // picked randomly at start
 };
+
+// ══════════════════════════════════════════
+//  REAL TEXT ANALYSIS ENGINE
+// ══════════════════════════════════════════
+const TECH_WORDS = ['אלגוריתם','פרוטוקול','אינפרסטרוקטורה','ארכיטקטורה','אבסטרקציה',
+  'אנקפסולציה','פולימורפיזם','אסינכרוני','סינכרוני','מיקרוסרוויס','קונטיינר',
+  'אורכסטרציה','קובנטס','דוקר','ריפקטורינג','דיפלוימנט','אינטגרציה','אוטומציה',
+  'API','SDK','REST','HTTP','SQL','NoSQL','ORM','JWT','OAuth','regex'];
+
+const ANALOGY_WORDS = ['כמו','דמיין','נגיד ש','בדיוק כמו','דומה ל','תחשוב על','מזכיר',
+  'דומה','מתנהג כמו','פועל כמו','זה כאילו','נראה כ','דמות ל','אפשר להשוות'];
+
+const EXAMPLE_WORDS = ['למשל','לדוגמה','לדוגמא','בדוגמה','פעם','נגיד','נניח','כגון',
+  'נניח ש','דוגמה ל','קחו לדוגמה','כך לדוגמה'];
+
+const ENGAGE_WORDS = ['מגניב','נחמד','מעניין','כייף','שימושי','חכם','חשוב','מדהים',
+  '!','?','אתה','את','שלך','בחיים שלך','תדמיין','תחשוב'];
+
+function analyzeText(text) {
+  if (!text || !text.trim()) {
+    return { simplicity: 20, accuracy: 20, analogies: 10, engagement: 20, structure: 20 };
+  }
+
+  const t = text.trim();
+  const words = t.split(/\s+/).filter(w => w.length > 0);
+  const sentences = t.split(/[.!?。\n]/).filter(s => s.trim().length > 2);
+  const wordCount = words.length;
+  const sentenceCount = Math.max(1, sentences.length);
+  const avgSentLen = wordCount / sentenceCount;
+
+  // ── SIMPLICITY ──
+  // Short sentences = good, long = bad; tech jargon = penalty
+  let simplicity = 50;
+  if (avgSentLen < 10) simplicity += 20;
+  else if (avgSentLen < 15) simplicity += 10;
+  else if (avgSentLen > 25) simplicity -= 15;
+
+  const techCount = TECH_WORDS.filter(w => t.toLowerCase().includes(w.toLowerCase())).length;
+  simplicity -= techCount * 8;
+
+  if (wordCount >= 30) simplicity += 10;
+  if (wordCount >= 60) simplicity += 5;
+  simplicity = Math.max(15, Math.min(95, Math.round(simplicity)));
+
+  // ── ANALOGIES ──
+  let analogies = 25;
+  const analogyHits = ANALOGY_WORDS.filter(w => t.includes(w)).length;
+  analogies += analogyHits * 18;
+  if (analogyHits >= 2) analogies += 10; // bonus for multiple
+  analogies = Math.max(15, Math.min(95, Math.round(analogies)));
+
+  // ── EXAMPLES ──  (feeds into engagement)
+  const exampleHits = EXAMPLE_WORDS.filter(w => t.includes(w)).length;
+
+  // ── ENGAGEMENT ──
+  let engagement = 35;
+  engagement += exampleHits * 12;
+  const engageHits = ENGAGE_WORDS.filter(w => t.includes(w)).length;
+  engagement += Math.min(engageHits * 6, 25);
+  const questionCount = (t.match(/\?/g) || []).length;
+  engagement += questionCount * 8;
+  if (wordCount > 20) engagement += 10;
+  engagement = Math.max(15, Math.min(95, Math.round(engagement)));
+
+  // ── ACCURACY ── (proxy: topic keywords present + not too vague)
+  let accuracy = 45;
+  if (wordCount >= 20) accuracy += 15;
+  if (wordCount >= 50) accuracy += 10;
+  if (sentenceCount >= 2) accuracy += 10;
+  // penalize if almost no content words
+  if (wordCount < 10) accuracy -= 20;
+  accuracy = Math.max(15, Math.min(95, Math.round(accuracy)));
+
+  // ── STRUCTURE ──
+  let structure = 35;
+  if (sentenceCount >= 3) structure += 20;
+  if (sentenceCount >= 5) structure += 10;
+  // Logical flow markers
+  const flowWords = ['ראשית','שנית','לבסוף','לכן','לדוגמה','לסיכום','כלומר','בנוסף','כתוצאה'];
+  const flowHits = flowWords.filter(w => t.includes(w)).length;
+  structure += flowHits * 8;
+  if (wordCount >= 40) structure += 10;
+  structure = Math.max(15, Math.min(95, Math.round(structure)));
+
+  return { simplicity, accuracy, analogies, engagement, structure };
+}
 
 // ══════════════════════════════════════════
 //  NAVIGATION & FLOW
 // ══════════════════════════════════════════
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function selectTopic(el) {
   document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
@@ -916,10 +1302,17 @@ function updateTimerDisplay(display, fill) {
 function startTest() {
   if (!state.topic) return;
 
-  const q = QUESTIONS[state.topic];
-  document.getElementById('writingQuestion').textContent = q.writing.q;
-  document.getElementById('writingHint').textContent = q.writing.hint;
-  document.getElementById('videoQuestion').textContent = q.video.q;
+  const bank = QUESTION_BANK[state.topic];
+  // Pick random questions from each pool
+  state.selectedQuestions = {
+    writing: pickRandom(bank.writing),
+    video:   pickRandom(bank.video),
+    chat:    pickRandom(bank.chat)
+  };
+
+  document.getElementById('writingQuestion').textContent = state.selectedQuestions.writing.q;
+  document.getElementById('writingHint').textContent = state.selectedQuestions.writing.hint;
+  document.getElementById('videoQuestion').textContent = state.selectedQuestions.video.q;
 
   goToScreen('writing', 1);
   startTimer(180, 'timer1', 'timer1Fill', () => {
@@ -975,6 +1368,10 @@ async function startRecording() {
     };
     state.mediaRecorder.start();
 
+    // Track recording duration
+    state.round2Duration = 0;
+    state._recInterval = setInterval(() => { state.round2Duration++; }, 1000);
+
     // Start timer
     startTimer(120, 'timer2', 'timer2Fill', () => {
       showToast('⏰ הזמן נגמר!', 'info');
@@ -990,6 +1387,7 @@ async function startRecording() {
 
 function stopRecording() {
   clearInterval(state.timer);
+  clearInterval(state._recInterval);
   if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
     state.mediaRecorder.stop();
   }
@@ -997,7 +1395,7 @@ function stopRecording() {
     state.mediaStream.getTracks().forEach(t => t.stop());
   }
   document.getElementById('recIndicator').classList.add('hidden');
-  showToast('✅ סבב 2 הושלם!', 'success');
+  showToast('✅ סבב 2 הושלם! הקלטת ' + state.round2Duration + ' שניות', 'success');
   setTimeout(() => finishRound2(), 800);
 }
 
@@ -1014,13 +1412,12 @@ function finishRound2() {
 //  ROUND 3: CHAT
 // ══════════════════════════════════════════
 function startChatRound() {
-  const q = QUESTIONS[state.topic];
+  const chatQ = state.selectedQuestions.chat;
   const messages = document.getElementById('chatMessages');
   messages.innerHTML = '';
 
-  // Opening message from "student"
   setTimeout(() => {
-    addChatMessage('student', q.chat.opening);
+    addChatMessage('student', chatQ.opening);
   }, 800);
 
   startTimer(180, 'timer3', 'timer3Fill', () => {
@@ -1029,6 +1426,7 @@ function startChatRound() {
   });
 
   state.chatResponseIndex = 0;
+  state.chatResponseTexts = [];
 }
 
 function addChatMessage(type, text) {
@@ -1050,34 +1448,22 @@ function sendChat() {
   state.chatHistory.push(text);
   input.value = '';
 
-  // Show typing indicator
   const typing = document.getElementById('typingIndicator');
   typing.classList.add('active');
 
-  // Simulate AI student response
-  const delay = 1200 + Math.random() * 1500;
+  // Realistic typing delay based on response length
+  const delay = 1000 + Math.random() * 1200;
   setTimeout(() => {
     typing.classList.remove('active');
 
     state.chatResponseIndex++;
-    let responsePool;
-
-    if (state.chatResponseIndex >= 5) {
-      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'final').responses;
-    } else if (state.chatResponseIndex >= 3) {
-      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'deep').responses;
-    } else if (text.includes('דוגמ') || text.includes('למשל') || text.includes('כמו')) {
-      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'example').responses;
-    } else if (text.length > 80) {
-      responsePool = CHAT_RESPONSES.find(r => r.trigger === 'analogy').responses;
-    } else {
-      responsePool = CHAT_RESPONSES.find(r => r.trigger === null).responses;
-    }
-
-    const response = responsePool[Math.floor(Math.random() * responsePool.length)];
+    const response = CHAT_ENGINE.getResponse(text, state.chatResponseIndex, state.chatResponseTexts);
+    state.chatResponseTexts.push(response);
     addChatMessage('student', response);
 
     if (state.chatResponseIndex >= 6) {
+      // Disable input after chat ends
+      document.getElementById('chatInput').disabled = true;
       setTimeout(() => {
         showToast('🎉 הצ\'אט הסתיים! מחשב תוצאות...', 'success');
         setTimeout(() => finishTest(), 1500);
@@ -1100,42 +1486,53 @@ function finishTest() {
 }
 
 function calculateScores() {
-  const text = state.round1Text || '';
-  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const chatMsgs = state.chatHistory.length;
+  // ── ROUND 1: Real text analysis ──
+  const r1 = analyzeText(state.round1Text || '');
+
+  // ── ROUND 2: Video scoring based on actual recording ──
   const hasVideo = state.round2Recorded;
+  const recSecs = state.round2Duration || 0;
+  let videoBonus = 0;
+  if (hasVideo) {
+    if (recSecs >= 90) videoBonus = 15;       // recorded most of the 2 min
+    else if (recSecs >= 45) videoBonus = 10;  // decent recording
+    else if (recSecs >= 15) videoBonus = 5;   // short but tried
+  }
 
-  // Simulate scoring based on actual input
-  let simplicity = Math.min(95, 50 + (wordCount > 20 ? 20 : 0) + (wordCount > 50 ? 10 : 0) + Math.random() * 15);
-  let accuracy = Math.min(95, 60 + (wordCount > 30 ? 15 : 0) + Math.random() * 20);
-  let analogies = Math.min(95, 40 + (text.includes('כמו') || text.includes('דמיין') ? 25 : 0) + (text.includes('דוגמ') ? 15 : 0) + Math.random() * 15);
-  let engagement = Math.min(95, 45 + (text.includes('?') ? 15 : 0) + (chatMsgs > 3 ? 15 : 0) + (hasVideo ? 10 : 0) + Math.random() * 10);
-  let structure = Math.min(95, 50 + (text.split(/[.!?]/).length > 3 ? 20 : 0) + (wordCount > 40 ? 10 : 0) + Math.random() * 15);
+  // ── ROUND 3: Chat quality analysis ──
+  const chatTexts = state.chatHistory.join(' ');
+  const chatCount = state.chatHistory.length;
+  const r3 = analyzeText(chatTexts);
 
-  // Clamp to integers
-  simplicity = Math.round(simplicity);
-  accuracy = Math.round(accuracy);
-  analogies = Math.round(analogies);
-  engagement = Math.round(engagement);
-  structure = Math.round(structure);
+  // Bonus for having multiple exchanges
+  const chatBonus = Math.min(15, chatCount * 3);
 
-  // Total weighted score
-  const total = Math.round(
-    simplicity * 0.30 +
-    accuracy * 0.25 +
-    analogies * 0.20 +
+  // ── COMBINE: weighted blend of R1 + R2 + R3 ──
+  const simplicity  = Math.round(r1.simplicity  * 0.6 + r3.simplicity  * 0.4);
+  const accuracy    = Math.round(r1.accuracy    * 0.65 + r3.accuracy   * 0.35);
+  const analogies   = Math.round(r1.analogies   * 0.5 + r3.analogies   * 0.5);
+  const engagement  = Math.min(95, Math.round(r1.engagement * 0.4 + r3.engagement * 0.4 + videoBonus + chatBonus * 0.5));
+  const structure   = Math.round(r1.structure   * 0.7 + r3.structure   * 0.3);
+
+  // ── TOTAL weighted score ──
+  const total = Math.min(98, Math.round(
+    simplicity * 0.28 +
+    accuracy   * 0.25 +
+    analogies  * 0.22 +
     engagement * 0.15 +
-    structure * 0.10
-  );
+    structure  * 0.10
+  ));
 
-  // Round scores
-  const round1 = Math.round(simplicity * 0.4 + accuracy * 0.3 + structure * 0.3);
-  const round2 = hasVideo ? Math.round(engagement * 0.5 + simplicity * 0.3 + analogies * 0.2) : Math.round(total * 0.5);
-  const round3 = Math.round(engagement * 0.3 + analogies * 0.3 + simplicity * 0.2 + accuracy * 0.2);
+  // ── Per-round scores ──
+  const round1 = Math.min(98, Math.round(r1.simplicity * 0.35 + r1.accuracy * 0.35 + r1.structure * 0.30));
+  const round2 = hasVideo
+    ? Math.min(98, Math.round(engagement * 0.5 + simplicity * 0.3 + analogies * 0.2 + videoBonus))
+    : Math.round(total * 0.55); // partial credit if skipped
+  const round3 = Math.min(98, Math.round(r3.engagement * 0.3 + r3.analogies * 0.3 + r3.simplicity * 0.2 + r3.accuracy * 0.2 + chatBonus));
 
-  // Impact on Dual Scoring
-  const schoolImpact = Math.round(total * 0.35); // 35% of Score A
-  const companyImpact = Math.round(total * 0.25); // 25% of Score B
+  // ── Dual Scoring Engine impact ──
+  const schoolImpact = Math.round(total * 0.35); // 35% of Score A (Teaching Aptitude)
+  const companyImpact = Math.round(total * 0.25); // 25% of Score B (Soft Skills)
 
   return { simplicity, accuracy, analogies, engagement, structure, total, round1, round2, round3, schoolImpact, companyImpact };
 }
@@ -1150,12 +1547,22 @@ function animateResults(scores) {
   // Animate total number
   animateNumber('totalScore', scores.total, 2000);
 
-  // Set score message
+  // Grade badge
+  const badge = document.getElementById('gradeBadge');
   const msg = document.getElementById('scoreMessage');
-  if (scores.total >= 85) msg.textContent = '🌟 מצוין! יש לך כישרון טבעי להוראה!';
-  else if (scores.total >= 70) msg.textContent = '👍 טוב מאוד! עם קצת תרגול תהיה מורה מעולה';
-  else if (scores.total >= 55) msg.textContent = '💪 בסיס טוב – יש מקום לשיפור';
-  else msg.textContent = '📚 צריך עוד תרגול – אל תוותר!';
+  if (scores.total >= 85) {
+    badge.textContent = 'A'; badge.className = 'score-grade grade-A';
+    msg.textContent = '🌟 מצוין! יש לך כישרון טבעי להוראה!';
+  } else if (scores.total >= 70) {
+    badge.textContent = 'B'; badge.className = 'score-grade grade-B';
+    msg.textContent = '👍 טוב מאוד! עם קצת תרגול תהיה מורה מעולה';
+  } else if (scores.total >= 55) {
+    badge.textContent = 'C'; badge.className = 'score-grade grade-C';
+    msg.textContent = '💪 בסיס טוב – יש מקום לשיפור';
+  } else {
+    badge.textContent = 'D'; badge.className = 'score-grade grade-D';
+    msg.textContent = '📚 צריך עוד תרגול – אל תוותר!';
+  }
 
   // Round scores
   animateNumber('round1Score', scores.round1, 1500);
@@ -1258,29 +1665,67 @@ function drawRadar(scores) {
 }
 
 function generateTips(scores) {
-  const tips = [];
   const metrics = [
-    { name: 'פשטות', val: scores.simplicity, tip: 'נסה להשתמש במשפטים קצרים יותר ומילים יומיומיות' },
-    { name: 'דיוק', val: scores.accuracy, tip: 'ודא שההסבר מדויק מבחינה מדעית גם כשהוא פשוט' },
-    { name: 'אנלוגיות', val: scores.analogies, tip: 'הוסף יותר דימויים מהחיים – "זה כמו...", "דמיין ש..."' },
-    { name: 'מעורבות', val: scores.engagement, tip: 'שאל שאלות רטוריות, הוסף הומור או סיפור קצר' },
-    { name: 'מבנה', val: scores.structure, tip: 'התחל עם הרעיון הכללי, ואז צלול לפרטים בהדרגה' }
+    {
+      name: 'פשטות', val: scores.simplicity,
+      tips: [
+        'השתמש במשפטים קצרים – עד 12 מילים למשפט',
+        'הימנע ממילים טכניות כמו "אלגוריתם" – השתמש ב"שיטה" או "דרך"',
+        'קרא את ההסבר בקול – אם נשמע כמו ספר לימוד, פשט אותו'
+      ]
+    },
+    {
+      name: 'דיוק', val: scores.accuracy,
+      tips: [
+        'ודא שהעובדות נכונות – הסבר פשוט צריך להיות גם מדויק',
+        'השתמש בדוגמאות אמיתיות מהעולם, לא דוגמאות דמיוניות',
+        'אם מסביר תהליך – תאר את כל השלבים, אל תדלג'
+      ]
+    },
+    {
+      name: 'אנלוגיות', val: scores.analogies,
+      tips: [
+        'הוסף לפחות דימוי אחד: "זה כמו...", "דמיין ש...", "בדיוק כמו..."',
+        'בחר דימויים מחיי היומיום – אוכל, ספורט, משחקים',
+        'שתי אנלוגיות = הרבה יותר ברור מאשר אחת'
+      ]
+    },
+    {
+      name: 'מעורבות', val: scores.engagement,
+      tips: [
+        'שאל שאלות רטוריות: "שמעת פעם על...?", "מה היית עושה אם...?"',
+        'פנה ישירות לתלמיד: "תחשוב על זה", "דמיין שאתה..."',
+        'הוסף דוגמאות מהחיים שלהם – טלפון, משחקים, מוזיקה'
+      ]
+    },
+    {
+      name: 'מבנה', val: scores.structure,
+      tips: [
+        'פתח עם "מה זה?" → הסבר "איך זה עובד?" → סגור עם "למה זה חשוב?"',
+        'השתמש במילות מעבר: "ראשית", "לכן", "לסיכום"',
+        'חלק להסבר ל-3 משפטים לפחות – פתיחה, גוף, סיכום'
+      ]
+    }
   ];
 
-  // Sort by lowest score – show worst first
   metrics.sort((a, b) => a.val - b.val);
 
-  // Show tips for the 3 weakest
+  const list = document.getElementById('tipsList');
+  let html = '';
   for (let i = 0; i < Math.min(3, metrics.length); i++) {
-    if (metrics[i].val < 90) {
-      tips.push(metrics[i].name + ' (' + metrics[i].val + '%) – ' + metrics[i].tip);
+    if (metrics[i].val < 88) {
+      const tip = metrics[i].tips[Math.floor(Math.random() * metrics[i].tips.length)];
+      html += `<li><strong>${metrics[i].name} (${metrics[i].val}%)</strong> – ${tip}</li>`;
     }
   }
+  if (!html) html = '<li>מצוין בכל הקטגוריות! המשך כך 🌟</li>';
+  list.innerHTML = html;
+}
 
-  if (tips.length === 0) tips.push('מצוין בכל הקטגוריות! המשך כך 🌟');
-
-  const list = document.getElementById('tipsList');
-  list.innerHTML = tips.map(t => '<li>' + t + '</li>').join('');
+// ── Rubric panel toggle ──
+function toggleRubric() {
+  const panel = document.getElementById('rubricPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
 // ══════════════════════════════════════════

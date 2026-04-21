@@ -321,7 +321,7 @@
             <tr><td>שם המיזם</td><td>מעוף – Tech-Lead Israel</td></tr>
             <tr><td>שם המגיש</td><td>נועם אוקון</td></tr>
             <tr><td>תחום</td><td>HRTech / EdTech / AI-based Decision Support System</td></tr>
-            <tr><td>תקציב מבוקש</td><td>200,000 ₪ (85% מתקציב מאושר של 235,000 ₪)</td></tr>
+            <tr><td>תקציב מבוקש</td><td>200,000 ₪ (80% מתקציב מאושר של 250,000 ₪)</td></tr>
             <tr><td>משך התוכנית</td><td>12 חודשים</td></tr>
             <tr><td>שלב המיזם</td><td>Pre-Seed · הוכחת היתכנות טכנולוגית ועסקית</td></tr>
         </table>
@@ -530,13 +530,152 @@
                 </tr>
             </table>
 
-            <h3>3.2 הערך הטכנולוגי הייחודי</h3>
+            <h3>3.2 האתגר הטכנולוגי – למה זה קשה</h3>
+            <p>
+                מעוף אינו "אפליקציית השמה נוספת". המורכבות הטכנולוגית נובעת משלושה אתגרים מחקריים פתוחים:
+            </p>
+
+            <div class="callout" style="margin-bottom:14px;">
+                <strong>אתגר 1 – Three-Way Matching עם אינטרסים מנוגדים (NP-Hard Problem)</strong><br>
+                רוב פלטפורמות השידוך (LinkedIn, Monday, Comeet) פותרות בעיית שידוך <em>דו-צדדית</em> (מועמד ↔ חברה).
+                מעוף חייב לפתור שידוך <em>תלת-צדדי</em>: מועמד ↔ בית ספר ↔ חברת הייטק – כאשר האינטרסים לעיתים סותרים.
+                מועמד שמצוין בהייטק עלול להיות חלש בהוראה, ולהפך. האלגוריתם חייב למקסם ערך כולל לשלושת הצדדים בו-זמנית,
+                תוך שמירה על סף מינימום (60 נקודות) בכל ציון בנפרד.
+                זהו אתגר אופטימיזציה מסוג Stable Matching with Constraints שלא קיים בשוק הישראלי.
+            </div>
+
+            <div class="callout callout-green" style="margin-bottom:14px;">
+                <strong>אתגר 2 – Cold-Start ללא Dataset קיים</strong><br>
+                כל מערכת ML לניבוי ביצועים צריכה דאטה היסטורי. לא קיים בישראל שום מאגר נתונים של
+                "חיילים משוחררים שלימדו STEM בו-זמנית עם עבודה בהייטק" – כי המודל עצמו חדש.
+                האתגר הטכנולוגי: כיצד לאמן מודל חיזוי ראשוני ללא דאטה, תוך שימוש ב-Transfer Learning
+                ממאגרים קרובים (ביצועי מורים בתוכנית PostDF, נתוני Atidim, סקרי Hay Group על כישורי ניהול).
+                גישה זו לא יושמה בהקשר ישראלי ומהווה חידוש מחקרי.
+            </div>
+
+            <div class="callout" style="margin-bottom:14px; border-right-color: #a855f7;">
+                <strong>אתגר 3 – מבחן ELI5 כמדד הסברה ניתן-לכימות (Novel Assessment)</strong><br>
+                הערכת "יכולת הוראה" היא תחום פתוח במחקר חינוכי. כלים קיימים (Praxis, TPSR) דורשים
+                הסמכה פורמלית ואינם מתאימים לסינון מהיר של אלפי מועמדים.
+                מעוף מפתחת מבחן ELI5 מובנה (Explain Like I'm 5) עם ניתוח NLP אוטומטי של:
+                פשטות לשונית, שימוש באנלוגיות, מבנה הסבר, ומעורבות קהל.
+                הציון מוזן ישירות ל-Scoring Engine ומכוייל מול תוצאות בפועל בכיתה –
+                כך נוצר loop של ולידציה שלא קיים בשום כלי הערכה מקצועי היום.
+            </div>
+
+            <h3>3.3 תרומה מדעית ותעשייתית</h3>
+            <table class="data-table">
+                <tr>
+                    <th>תחום</th>
+                    <th>חידוש מחקרי</th>
+                    <th>יישום תעשייתי</th>
+                </tr>
+                <tr>
+                    <td>Matching Theory</td>
+                    <td>Three-way stable matching עם multi-objective optimization</td>
+                    <td>אלגוריתם שיבוץ שניתן להרחיב לתחומים נוספים (פרחי הוראה, שנת שירות)</td>
+                </tr>
+                <tr>
+                    <td>Transfer Learning / Cold-Start</td>
+                    <td>אימון מודל על דאטה אנלוגי ממאגרים קיימים ללא דאטה ספציפי</td>
+                    <td>מפחית זמן הגעה לדיוק של 70%+ מ-18 חודשים ל-3 חודשים</td>
+                </tr>
+                <tr>
+                    <td>NLP להערכת כישורי הוראה</td>
+                    <td>מדד ELI5 אוטומטי – ניתוח פשטות, אנלוגיות, מבנה ומעורבות</td>
+                    <td>סינון 1,000 מועמדים ביום ללא מעורבות אנושית בשלב הראשוני</td>
+                </tr>
+                <tr>
+                    <td>Adaptive Feedback Loop</td>
+                    <td>כיול משקלות אוטומטי לפי תוצאות בפועל (Bayesian updating)</td>
+                    <td>שיפור רציף של דיוק השידוך בלי התערבות מהנדס</td>
+                </tr>
+            </table>
+
+            <h3>3.4 מה כבר בנוי – הוכחת היתכנות</h3>
+            <p>
+                במסגרת שלב ה-POC שבוצע לפני הגשת הבקשה, פותחו הרכיבים הבאים ופרוסים לצפייה ציבורית:
+            </p>
             <ul>
-                <li><strong>Dual Scoring</strong> – ציון נפרד לכל צד (ביה"ס וחברה) עם סף מינימום 60 לשניהם – מבטיח איכות בשני הצדדים</li>
-                <li><strong>Three-way matching algorithm</strong> – שידוך בו-זמני של 3 צדדים (מועמד, בית ספר, חברה) – אתגר NP-hard שנפתר בגישת AI/ML</li>
-                <li><strong>Feedback Loop</strong> – השוואת ציון חיזוי vs ביצועים בפועל (משוב מנהל, דירוג תלמידים, הערכת ביצועים) → עדכון משקלות אוטומטי</li>
-                <li><strong>מבחן ELI5</strong> – הערכת יכולת הסברה ופישוט – קריטי גם להוראה וגם ל-Soft Skills בהייטק</li>
+                <li><strong>מבחן ELI5 אינטראקטיבי</strong> – 3 סבבים (כתיבה, וידאו, צ'אט) עם ניתוח NLP בסיסי, מאגר 100+ שאלות ב-6 תחומים</li>
+                <li><strong>Dual Scoring Engine v0.1</strong> – ניתוח טקסט אמיתי עם 5 מדדים מכווינים (ללא Math.random), Feedback Loop על תגובות צ'אט</li>
+                <li><strong>3 פורטלים</strong> – ממשקים לחיילים, מנהלי בתי ספר, וחברות הייטק</li>
+                <li><strong>Simulation אינטראקטיבית</strong> – 3 פרופילי מועמד דמו עם ציוני שידוך מלאים, בר התאמה אנימטי, ממשק הגשת מועמד מותאם אישית</li>
             </ul>
+            <div class="callout callout-green">
+                <strong>כל הרכיבים פועלים ופרוסים בפועל.</strong> המערכת פועלת ללא Anthropic API –
+                הארכיטקטורה מוכיחה שגרעין לוגיקת השידוך ניתן לביצוע ב-rule-based + lightweight NLP,
+                ו-LLM יתווסף בגרסאות עתידיות כשכבת העשרה בלבד.
+                <br><br>
+                <strong>📂 קוד מקור לבדיקה:</strong> <span style="font-family:monospace;font-weight:600;">github.com/Noam1316</span><br>
+                <strong>📧 לקבלת גישה לדמו חי:</strong> <span style="font-family:monospace;">noamokun1@gmail.com</span>
+            </div>
+        </div>
+
+        <!-- 3.6 IP -->
+        <div class="section">
+            <h2><span class="sec-num">3.6</span> קניין רוחני ויתרון טכנולוגי מגן</h2>
+            <p>
+                מעוף מפתחת שני רכיבים טכנולוגיים ייחודיים בעלי פוטנציאל הגנה:
+            </p>
+            <table class="data-table">
+                <tr>
+                    <th>רכיב</th>
+                    <th>מה ייחודי</th>
+                    <th>הגנה אפשרית</th>
+                </tr>
+                <tr>
+                    <td><strong>Dual Scoring Engine</strong></td>
+                    <td>אלגוריתם דירוג כפול (ציון A + ציון B) עם Feedback Loop אוטומטי ועדכון משקלות. שילוב Three-Way Matching עם סף מינימום כפול — לא מתועד בספרות הציבורית.</td>
+                    <td>Trade Secret + פטנט תהליך (בבחינה)</td>
+                </tr>
+                <tr>
+                    <td><strong>ELI5 Assessment</strong></td>
+                    <td>מדידת כושר הוראה דרך ניתוח שפה טבעי (פשטות, אנלוגיות, מבנה, מעורבות) — ולידציה מול ביצועים בכיתה בפועל. שיטה חדשה שאינה קיימת בכלי הערכה מסחריים.</td>
+                    <td>פטנט שיטה / Copyright</td>
+                </tr>
+                <tr>
+                    <td><strong>IDF Skill Crosswalk</strong></td>
+                    <td>מיפוי ייחודי של תפקידים צבאיים לכישורי הוראה ולדרישות הייטק — נבנה מניסיון מבצעי ישיר ואינו זמין בשום מאגר ציבורי.</td>
+                    <td>Proprietary Dataset</td>
+                </tr>
+            </table>
+            <div class="callout callout-orange">
+                <strong>אסטרטגיית IP:</strong> בשלב הנוכחי ההגנה היא Trade Secret + First-Mover Advantage.
+                כספי המענק יאפשרו ייעוץ עו"ד פטנטים לבחינת הגשת בקשת פטנט לשיטת ה-ELI5 Assessment וה-Dual Scoring בישראל ובארה"ב.
+            </div>
+        </div>
+
+        <!-- 3.5 BARRIERS TO ENTRY -->
+        <div class="section">
+            <h2><span class="sec-num">3.5</span> חסמי כניסה – למה קשה לשכפל את מעוף</h2>
+            <table class="data-table">
+                <tr>
+                    <th>חסם</th>
+                    <th>הסבר</th>
+                    <th>זמן לשכפול למתחרה</th>
+                </tr>
+                <tr>
+                    <td><strong>Dataset ייחודי</strong></td>
+                    <td>מאגר ביצועים של חיילים בתפקיד ההיברידי – נבנה רק מניסיון בשטח. אין קיצורי דרך.</td>
+                    <td>3–5 שנות פיילוט</td>
+                </tr>
+                <tr>
+                    <td><strong>אמון מוסדי</strong></td>
+                    <td>משרד החינוך וחברות ההייטק לא מאמצות פלטפורמה חדשה ללא רקורד. מעוף נכנס דרך מסגרות קיימות (עמיתי הוראה, לוחמים להייטק).</td>
+                    <td>2–3 שנות שיתוף פעולה</td>
+                </tr>
+                <tr>
+                    <td><strong>IDF Skill Crosswalk</strong></td>
+                    <td>מיפוי מיומנויות צבאיות ↔ אזרחיות בהקשר ישראלי – פותח ע"י מעוף, לא קיים בשום מאגר פתוח.</td>
+                    <td>12–18 חודשים</td>
+                </tr>
+                <tr>
+                    <td><strong>מודל 2+2 כחוזה משפטי</strong></td>
+                    <td>תבנית חוזית מפורטת להעסקה כפולה (50% חינוך / 50% הייטק) תוך עמידה בדיני עבודה ישראליים.</td>
+                    <td>6–12 חודשים משפטי</td>
+                </tr>
+            </table>
         </div>
 
         <!-- 4. MARKET -->
@@ -766,7 +905,7 @@
                 <tr>
                     <td>שכר מפתח ראשי</td>
                     <td>Full-stack + AI/ML · 12 חודשים</td>
-                    <td>72,000</td>
+                    <td>80,000</td>
                 </tr>
                 <tr>
                     <td>שכר מייסד</td>
@@ -776,7 +915,7 @@
                 <tr>
                     <td>תשתיות ענן</td>
                     <td>AWS/GCP · Compute + Storage + AI APIs</td>
-                    <td>24,000</td>
+                    <td>28,000</td>
                 </tr>
                 <tr>
                     <td>כלי AI ו-APIs</td>
@@ -791,7 +930,7 @@
                 <tr>
                     <td>משפטי + רגולציה</td>
                     <td>חוזים, GDPR, הגנת פרטיות</td>
-                    <td>12,000</td>
+                    <td>15,000</td>
                 </tr>
                 <tr>
                     <td>שיווק + BD</td>
@@ -801,12 +940,12 @@
                 <tr class="total">
                     <td>סה"כ</td>
                     <td></td>
-                    <td>235,000</td>
+                    <td>250,000</td>
                 </tr>
             </table>
 
             <div class="callout-orange callout">
-                <strong>מענק מבוקש:</strong> 200,000 ₪ (85% מהתקציב) · <strong>השקעה עצמית:</strong> 35,000 ₪ (15%)
+                <strong>מענק מבוקש:</strong> 200,000 ₪ (80% מהתקציב) · <strong>השקעה עצמית:</strong> 50,000 ₪ (20%)
             </div>
         </div>
 
@@ -824,65 +963,224 @@
 
         <!-- 9. TEAM -->
         <div class="section">
-            <h2><span class="sec-num">9</span> הצוות</h2>
+            <h2><span class="sec-num">9</span> הצוות והיזם</h2>
 
+            <h3>9.1 נועם אוקון – מייסד ומנכ"ל</h3>
+            <p>
+                שילוב נדיר של <strong>רקע מבצעי-טכנולוגי</strong>, <strong>הכשרה ב-AI</strong>, ו<strong>הבנה אישית של קהל היעד</strong> –
+                שלושת המרכיבים הקריטיים לבניית פלטפורמה כמו מעוף.
+            </p>
+
+            <table class="data-table" style="margin-top:12px;">
+                <tr><th>תחום</th><th>ניסיון וכישורים</th><th>רלוונטיות למעוף</th></tr>
+                <tr>
+                    <td><strong>שירות צבאי</strong></td>
+                    <td>מנהל רשת + חמ"ליסט; ניהול תשתיות IT בסביבה מבצעית; עבודה תחת לחץ ועם גורמים מרובים בו-זמנית</td>
+                    <td>הבנה עמוקה של אוכלוסיית היעד – מבפנים. יכולת לתרגם כישורים צבאיים לשפה אזרחית</td>
+                </tr>
+                <tr>
+                    <td><strong>AI & Data Science</strong></td>
+                    <td>הכשרה מקיפה בבנאיה קולג'; פיתוח Dual Scoring Engine (מודל דירוג כפול School Match + Company Match), מנוע NLP לניתוח כושר הוראה (ELI5), ו-3 פורטלים פונקציונליים מלאים</td>
+                    <td>הוכחת יכולת לבנות מערכות AI מורכבות ללא תלות ב-API חיצוני. ישירות: Scoring Engine, ELI5 NLP, Three-Way Matching</td>
+                </tr>
+                <tr>
+                    <td><strong>הבנת שוק</strong></td>
+                    <td>יזם one-person שבנה 5 פורטלים פעילים (חיילים, חברות, משרד חינוך, ELI5, סימולציה) כ-POC מלא לפני הגשת הבקשה</td>
+                    <td>מוכיח ביצוע מהיר, self-sufficiency טכנולוגי, ויכולת לספק תוצאות ללא תלות בצוות גדול</td>
+                </tr>
+                <tr>
+                    <td><strong>למה דווקא אני?</strong></td>
+                    <td colspan="2">אני עברתי את המעבר הזה בעצמי – שחרור מהצבא, חיפוש דרך, הכשרה מחדש. אני מכיר את הכאב, את החסמים, ואת הפוטנציאל שמחכה בצד השני. זה לא פרויקט אקדמי – זה פתרון לבעיה שחייתי.</td>
+                </tr>
+            </table>
+
+            <h3>9.2 תוכנית גיוס צוות – 12 חודשים</h3>
             <div class="grid-2">
                 <div class="card">
-                    <h4>נועם אוקון – מייסד ומנכ"ל</h4>
-                    <ul style="list-style:none; padding:0;">
-                        <li>• רקע מבצעי-טכנולוגי בצה"ל</li>
-                        <li>• ניהול רשת + חמ"ליסט</li>
-                        <li>• הכשרה ב-AI & Data Science</li>
-                        <li>• הבנה עמוקה של קהל היעד – לוחמים וחיילים עם רקע מקצועי מכלל הזרועות</li>
+                    <h4>חודשים 1–6: One-Person + יועצים</h4>
+                    <ul style="list-style:none;padding:0;font-size:13px;">
+                        <li>• יזם: פיתוח Scoring Engine v1 + POC ידני</li>
+                        <li>• יועץ משפטי: מבנה חוזה 2+2 (פרילנסר)</li>
+                        <li>• יועץ חינוכי: קשרי משרד החינוך (מתנדב/הסכם הדדי)</li>
+                        <li>• מנטור טכנולוגי: בוגר 8200 / אקסלרטור</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h4>יועצים ושותפים פוטנציאליים</h4>
-                    <ul style="list-style:none; padding:0;">
-                        <li>• עתידים – שותף אסטרטגי (בדיונים)</li>
-                        <li>• משרד החינוך – מנגנון עמיתי הוראה</li>
-                        <li>• האגף לחיילים משוחררים – צינור מועמדים</li>
+                    <h4>חודשים 7–12: גיוס ראשון</h4>
+                    <ul style="list-style:none;padding:0;font-size:13px;">
+                        <li>• Full-Stack Developer (שכיר / equity): 72,000 ₪ תקציב</li>
+                        <li>• BD Manager (חצי משרה): קשרים עם חברות + בתי"ס</li>
+                        <li>• CTO (שותף + equity): מועמד בהתהוות</li>
                     </ul>
                 </div>
+            </div>
+
+            <h3>9.3 שותפים אסטרטגיים</h3>
+            <table class="data-table">
+                <tr><th>גורם</th><th>סטטוס</th><th>מה מביא למעוף</th></tr>
+                <tr><td>עתידים / לוחמים להייטק</td><td>בדיונים</td><td>2,000+ בוגרים, מותג, ערוץ מועמדים</td></tr>
+                <tr><td>משרד החינוך – עמיתי הוראה</td><td>מסגרת קיימת</td><td>הסמכה + שכר מורה + כניסה לבתי"ס</td></tr>
+                <tr><td>האגף לחיילים משוחררים</td><td>מסגרת קיימת</td><td>גישה ל-25,000 חיילים משוחררים/שנה</td></tr>
+                <tr><td>MindCET / 8200 Impact</td><td>פוטנציאלי</td><td>אקסלרטור, חיבורים, קרן</td></tr>
+            </table>
+        </div>
+
+        <!-- 10. RISK ANALYSIS -->
+        <div class="section">
+            <h2><span class="sec-num">10</span> ניתוח סיכונים ואסטרטגיות הפחתה</h2>
+            <table class="data-table">
+                <tr>
+                    <th>סיכון</th>
+                    <th>הסתברות</th>
+                    <th>השפעה</th>
+                    <th>אסטרטגיית הפחתה</th>
+                </tr>
+                <tr>
+                    <td><strong>משרד החינוך לא מאמץ מורים בלי הסמכה מלאה</strong></td>
+                    <td>בינונית</td>
+                    <td>גבוהה</td>
+                    <td>כניסה דרך מסגרת "עמיתי הוראה" הקיימת + מסלול PostDF שמוכיח תקדים. ניתן להתחיל ללמד בלי רישיון ולהשיג בשנה הראשונה.</td>
+                </tr>
+                <tr>
+                    <td><strong>חברות הייטק לא ישלמו SaaS לפני תוצאות מוכחות</strong></td>
+                    <td>גבוהה</td>
+                    <td>בינונית</td>
+                    <td>מודל Freemium: 3 חיילים ראשונים ללא עלות SaaS. Success Fee בלבד בחודש 25. זה מוריד חסם כניסה ומוכיח value לפני תשלום.</td>
+                </tr>
+                <tr>
+                    <td><strong>Cold-Start: אין מועמדים ראשונים</strong></td>
+                    <td>נמוכה</td>
+                    <td>גבוהה</td>
+                    <td>שיתוף עם "לוחמים להייטק" (ערוץ מוכח, 2,000+ בוגרים). גיוס ידני ראשוני של 5–10 חיילים מהרשת האישית.</td>
+                </tr>
+                <tr>
+                    <td><strong>מועמדים לא מחזיקים 24 חודשים (נשירה)</strong></td>
+                    <td>בינונית</td>
+                    <td>גבוהה</td>
+                    <td>Retention Score (25% מציון A) מזהה מועמדים בסיכון לפני שיבוץ. מנגנון ליווי חודשי + "emergency exit" לאחר 12 חודשים בחוזה.</td>
+                </tr>
+                <tr>
+                    <td><strong>תחרות: שחקן גדול (Comeet, Monday) יעתיק את המודל</strong></td>
+                    <td>נמוכה</td>
+                    <td>בינונית</td>
+                    <td>Dataset ייחודי + אמון מוסדי + IDF Skill Crosswalk = 3–5 שנות יתרון. שחקנים גדולים לא מתמקדים בנישות ממשלתיות מורכבות.</td>
+                </tr>
+                <tr>
+                    <td><strong>מימון לא מתחדש לאחר תנופה</strong></td>
+                    <td>בינונית</td>
+                    <td>גבוהה</td>
+                    <td>תוכנית עבודה מכוונת: Revenue ראשון בחודש 10 + הגשה מקבילה לקרן הון אנושי להייטק (IIA) + 8200 Impact בחודש 9.</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 11. STATE ROI -->
+        <div class="section">
+            <h2><span class="sec-num">11</span> תשואה חברתית-כלכלית למדינה (ROI)</h2>
+            <p>
+                מעוף אינו רק מיזם עסקי – הוא פותר כשל שוק לאומי. להלן חישוב שמרני של הערך שנוצר למדינה
+                מכל קבוצת שיבוץ של <strong>100 חיילים</strong>:
+            </p>
+
+            <table class="data-table" style="margin-top:12px;">
+                <tr><th>מדד</th><th>חישוב</th><th>ערך שנתי למדינה</th></tr>
+                <tr>
+                    <td><strong>חינוך: תלמידים שנחשפים ל-STEM איכותי</strong></td>
+                    <td>100 מורים × 120 תלמידים/מורה</td>
+                    <td><strong>12,000 תלמידים/שנה</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>חינוך: צמצום מחסור מורי STEM</strong></td>
+                    <td>100 שיבוצים = 2.9% מהמחסור הארצי (3,500)</td>
+                    <td>חיסכון ממשלתי: <strong>~18M ₪</strong> (עלות מורה ממוצע 180K ₪/שנה)</td>
+                </tr>
+                <tr>
+                    <td><strong>הייטק: חיסכון בעלויות גיוס</strong></td>
+                    <td>100 בוגרים × חיסכון 200K ₪ לחברה vs גיוס רגיל</td>
+                    <td><strong>20M ₪</strong> חיסכון לתעשייה</td>
+                </tr>
+                <tr>
+                    <td><strong>הייטק: הכנסות מס על שכר הבוגרים</strong></td>
+                    <td>100 עובדים × שכר 20K ₪ × מס 25% × 12 חודשים</td>
+                    <td><strong>6M ₪/שנה</strong> הכנסת מס</td>
+                </tr>
+                <tr>
+                    <td><strong>חיסכון בדמי אבטלה / תמיכה</strong></td>
+                    <td>100 חיילים שאחרת היו מחפשים עבודה 6–12 חודשים</td>
+                    <td><strong>~2M ₪</strong> חיסכון</td>
+                </tr>
+                <tr style="background:#f0fdf4;">
+                    <td><strong>סה"כ ערך למדינה (100 שיבוצים)</strong></td>
+                    <td></td>
+                    <td><strong>~46M ₪/שנה</strong></td>
+                </tr>
+                <tr style="background:#eff6ff;">
+                    <td><strong>השקעת המדינה במענק תנופה</strong></td>
+                    <td>מענק חד-פעמי × מכפיל</td>
+                    <td><strong>200,000 ₪</strong></td>
+                </tr>
+                <tr style="background:#fef9c3;">
+                    <td><strong>ROI למדינה</strong></td>
+                    <td>46M ÷ 200K</td>
+                    <td><strong>230x תשואה</strong> על השקעת המדינה</td>
+                </tr>
+            </table>
+
+            <div class="callout callout-green" style="margin-top:14px;">
+                <strong>השוואה בינלאומית:</strong> תוכנית Year Up (ארה"ב) – מחקר RCT מוכיח $2.46 תשואה חברתית לכל $1 מושקע.
+                מעוף מכוון לתשואה גבוהה יותר בזכות הכפלת הערך: גם חינוך וגם הייטק מאותה השקעה.
             </div>
         </div>
 
         <!-- 10. MILESTONES -->
         <div class="section">
-            <h2><span class="sec-num">10</span> אבני דרך להצלחה</h2>
+            <h2><span class="sec-num">10</span> תכנית עבודה ואבני דרך – 12 חודשים</h2>
 
             <table class="data-table">
                 <tr>
-                    <th>אבן דרך</th>
-                    <th>מדד הצלחה</th>
-                    <th>תזמון</th>
+                    <th>רבעון</th>
+                    <th>מטרה</th>
+                    <th>תוצרים מדידים</th>
+                    <th>KPI</th>
+                    <th>תקציב</th>
                 </tr>
                 <tr>
-                    <td>PoC ידני</td>
-                    <td>5+ חיילים שובצו בהצלחה</td>
-                    <td>חודש 3</td>
+                    <td><strong>Q1</strong><br><small>חודשים 1–3</small></td>
+                    <td>MVP + פיילוט ראשון</td>
+                    <td>Scoring Engine v1 פעיל, 3 פורטלים מלאים, גיוס 5 חיילים ראשונים, חיבור ל-2 בתי ספר</td>
+                    <td>5 רישומים · 2 בתי ספר · דיוק אלגוריתם &gt;65%</td>
+                    <td>62,500 ₪</td>
                 </tr>
                 <tr>
-                    <td>Scoring Engine v1</td>
-                    <td>אלגוריתם פעיל עם דיוק > 70%</td>
-                    <td>חודש 6</td>
+                    <td><strong>Q2</strong><br><small>חודשים 4–6</small></td>
+                    <td>סינון בקנה מידה</td>
+                    <td>ELI5 אוטומטי מלא, Dashboard analytics, 20 חיילים במערכת, ייעוץ פטנטים</td>
+                    <td>20 מועמדים מדורגים · דיוק &gt;72% · 1 חוות דעת פטנטים</td>
+                    <td>62,500 ₪</td>
                 </tr>
                 <tr>
-                    <td>פיילוט מורחב</td>
-                    <td>20+ חיילים, 5+ בתי ספר, 3+ חברות</td>
-                    <td>חודש 9</td>
+                    <td><strong>Q3</strong><br><small>חודשים 7–9</small></td>
+                    <td>שיבוצים ראשונים</td>
+                    <td>הסכם עם חברת הייטק מאמצת אחת לפחות, 5+ בתי ספר, 3 שיבוצים פעילים, מדידת Feedback Loop ראשון</td>
+                    <td>3 שיבוצים מאושרים · 1 חברת הייטק · Feedback Loop מכוייל</td>
+                    <td>62,500 ₪</td>
                 </tr>
                 <tr>
-                    <td>Revenue ראשון</td>
-                    <td>2+ חברות משלמות SaaS</td>
-                    <td>חודש 10</td>
+                    <td><strong>Q4</strong><br><small>חודשים 10–12</small></td>
+                    <td>Scale + גיוס המשך</td>
+                    <td>10+ שיבוצים פעילים, Revenue ראשון (SaaS), Seed deck מוכן, הגשה למסלול הון אנושי IIA</td>
+                    <td>10 שיבוצים · 2 חברות משלמות · Pitch deck מוכן</td>
+                    <td>62,500 ₪</td>
                 </tr>
-                <tr>
-                    <td>הכנה ל-Scale</td>
-                    <td>50+ חיילים, הגשה למסלול הון אנושי</td>
-                    <td>חודש 12</td>
+                <tr class="total">
+                    <td colspan="4"><strong>סה"כ תקציב שנתי</strong></td>
+                    <td><strong>250,000 ₪</strong></td>
                 </tr>
             </table>
+            <div class="callout callout-green" style="margin-top:12px;">
+                <strong>נקודת ציון בסיום:</strong> 10 חיילים משוחררים משובצים בפועל (מורים + מסלול הייטק מובטח),
+                2 חברות הייטק כלקוחות משלמות, מערכת AI פעילה ומכוייל מעל 500 אינטראקציות מדידות.
+            </div>
         </div>
 
         <!-- FOOTER -->

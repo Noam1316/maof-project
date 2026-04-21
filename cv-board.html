@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>נועם אוקון · CV Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface2: #1f2937;
+  --border: #374151;
+  --text: #f9fafb;
+  --text2: #9ca3af;
+  --text3: #6b7280;
+  --teal: #14b8a6;
+  --blue: #3b82f6;
+  --purple: #8b5cf6;
+  --green: #10b981;
+  --orange: #f59e0b;
+  --red: #ef4444;
+  --gold: #f0c040;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Heebo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* ── GRID LAYOUT ── */
+.board {
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  min-height:100vh;
+}
+
+/* ── LEFT SIDEBAR ── */
+.sidebar {
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  padding:40px 28px;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+
+.avatar-wrap {
+  display:flex; flex-direction:column; align-items:center; margin-bottom:28px;
+}
+.avatar {
+  width:100px; height:100px; border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  display:flex; align-items:center; justify-content:center;
+  font-size:40px; margin-bottom:16px;
+  box-shadow:0 0 0 4px rgba(20,184,166,.2), 0 0 0 8px rgba(20,184,166,.08);
+}
+.name { font-size:22px; font-weight:900; text-align:center; }
+.title-tag {
+  margin-top:6px; font-size:12px; font-weight:600; text-align:center;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+
+.contact-list { list-style:none; margin:20px 0; }
+.contact-list li {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:13px; color:var(--text2);
+}
+.contact-list li .ico { font-size:15px; width:20px; text-align:center; }
+.contact-list li a { color:var(--teal); text-decoration:none; }
+.contact-list li a:hover { text-decoration:underline; }
+
+.sidebar-section { margin-bottom:28px; }
+.sidebar-section h3 {
+  font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--text3); margin-bottom:14px; padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+}
+
+.skill-group { margin-bottom:14px; }
+.skill-group-label { font-size:12px; color:var(--text2); margin-bottom:6px; }
+.skill-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.skill-tag {
+  font-size:11px; padding:3px 10px; border-radius:20px; font-weight:600;
+  background:var(--surface2); border:1px solid var(--border); color:var(--text2);
+}
+.skill-tag.teal  { border-color:var(--teal);   color:var(--teal); }
+.skill-tag.blue  { border-color:var(--blue);   color:var(--blue); }
+.skill-tag.green { border-color:var(--green);  color:var(--green); }
+.skill-tag.purple{ border-color:var(--purple); color:var(--purple); }
+.skill-tag.orange{ border-color:var(--orange); color:var(--orange); }
+
+.lang-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.lang-label { font-size:13px; color:var(--text2); }
+.lang-dots { display:flex; gap:4px; }
+.lang-dot {
+  width:10px; height:10px; border-radius:50%;
+  background:var(--border);
+}
+.lang-dot.filled { background:var(--teal); }
+
+/* ── MAIN CONTENT ── */
+.main { padding:40px 48px; }
+
+.section {
+  margin-bottom:48px;
+}
+.section-header {
+  display:flex; align-items:center; gap:12px; margin-bottom:24px;
+}
+.section-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center; font-size:17px;
+  flex-shrink:0;
+}
+.icon-teal   { background:rgba(20,184,166,.15); }
+.icon-blue   { background:rgba(59,130,246,.15); }
+.icon-purple { background:rgba(139,92,246,.15); }
+.icon-green  { background:rgba(16,185,129,.15); }
+.icon-orange { background:rgba(245,158,11,.15); }
+.icon-red    { background:rgba(239,68,68,.15); }
+
+.section-header h2 {
+  font-size:20px; font-weight:900; color:var(--text);
+}
+.section-header .count {
+  font-size:12px; color:var(--text3); margin-right:auto;
+  background:var(--surface2); padding:2px 10px; border-radius:20px;
+}
+
+/* ── HERO CARD ── */
+.hero-card {
+  background:linear-gradient(135deg,#0f1f3d 0%,#0a1628 50%,#071220 100%);
+  border:1px solid rgba(59,130,246,.3);
+  border-radius:16px; padding:32px; margin-bottom:48px;
+  position:relative; overflow:hidden;
+}
+.hero-card::before {
+  content:''; position:absolute; top:-60px; left:-60px;
+  width:200px; height:200px; border-radius:50%;
+  background:radial-gradient(circle,rgba(20,184,166,.15) 0%,transparent 70%);
+}
+.hero-card .hero-title {
+  font-size:30px; font-weight:900; margin-bottom:8px;
+  background:linear-gradient(135deg,#fff,#94a3b8);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.hero-card .hero-sub {
+  font-size:15px; color:var(--teal); font-weight:600; margin-bottom:16px;
+}
+.hero-card .hero-desc {
+  font-size:14px; color:var(--text2); line-height:1.8; max-width:680px;
+}
+.hero-tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+.hero-tag {
+  font-size:12px; padding:5px 14px; border-radius:20px; font-weight:600;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+  color:var(--text2);
+}
+
+/* ── TIMELINE (experience/education) ── */
+.timeline { position:relative; }
+.timeline::before {
+  content:''; position:absolute; right:7px; top:6px; bottom:0;
+  width:2px; background:linear-gradient(to bottom,var(--teal),transparent);
+}
+.tl-item { display:flex; gap:24px; margin-bottom:28px; position:relative; }
+.tl-dot {
+  width:16px; height:16px; border-radius:50%; flex-shrink:0; margin-top:4px;
+  border:2px solid var(--teal); background:var(--bg);
+  box-shadow:0 0 8px rgba(20,184,166,.4);
+}
+.tl-body { flex:1; }
+.tl-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.tl-org { font-size:15px; font-weight:700; color:var(--text); }
+.tl-period {
+  font-size:11px; color:var(--text3); background:var(--surface2);
+  padding:2px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+}
+.tl-role { font-size:13px; color:var(--teal); font-weight:600; margin:2px 0 6px; }
+.tl-desc { font-size:13px; color:var(--text2); line-height:1.7; }
+.tl-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.tl-tag {
+  font-size:11px; padding:2px 8px; border-radius:12px;
+  background:var(--surface2); color:var(--text3);
+}
+
+/* ── PROJECT CARDS ── */
+.projects-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+.project-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:22px; transition:all .3s ease;
+  cursor:default; position:relative; overflow:hidden;
+}
+.project-card:hover {
+  border-color:var(--teal);
+  box-shadow:0 4px 24px rgba(20,184,166,.12);
+  transform:translateY(-3px);
+}
+.project-card.featured {
+  grid-column:1/-1;
+  border-color:rgba(20,184,166,.4);
+  background:linear-gradient(135deg,rgba(20,184,166,.06) 0%,rgba(59,130,246,.04) 100%);
+}
+.project-card.featured::after {
+  content:'⭐ הוכחת יכולת טכנית';
+  position:absolute; top:14px; left:14px;
+  font-size:11px; font-weight:700; color:var(--gold);
+  background:rgba(240,192,64,.1); border:1px solid rgba(240,192,64,.3);
+  padding:3px 10px; border-radius:20px;
+}
+
+.proj-top { display:flex; align-items:flex-start; gap:14px; margin-bottom:14px; }
+.proj-icon {
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+}
+.proj-info { flex:1; }
+.proj-name { font-size:16px; font-weight:700; margin-bottom:3px; }
+.proj-tagline { font-size:12px; color:var(--text3); }
+
+.proj-desc { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; }
+
+.proj-metrics {
+  display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px;
+}
+.proj-metric { text-align:center; }
+.proj-metric .num { font-size:18px; font-weight:900; color:var(--teal); font-family:'JetBrains Mono',monospace; }
+.proj-metric .lbl { font-size:10px; color:var(--text3); }
+
+.proj-stack { display:flex; gap:6px; flex-wrap:wrap; }
+.stack-tag {
+  font-size:10px; padding:3px 8px; border-radius:8px;
+  background:var(--surface2); border:1px solid var(--border); color:var(--text3);
+  font-family:'JetBrains Mono',monospace;
+}
+
+.proj-links { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.proj-link {
+  font-size:12px; font-weight:600; padding:6px 14px; border-radius:8px;
+  text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+  transition:all .2s ease;
+}
+.proj-link.live {
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  color:white; box-shadow:0 2px 8px rgba(20,184,166,.3);
+}
+.proj-link.live:hover { box-shadow:0 4px 16px rgba(20,184,166,.5); transform:translateY(-1px); }
+.proj-link.ghost {
+  background:var(--surface2); border:1px solid var(--border); color:var(--text2);
+}
+.proj-link.ghost:hover { border-color:var(--teal); color:var(--teal); }
+
+/* ── SIGNAL NEWS SHOWCASE ── */
+.signal-showcase {
+  background:var(--surface); border:1px solid rgba(20,184,166,.35);
+  border-radius:16px; padding:28px; margin-bottom:20px;
+  background:linear-gradient(135deg,rgba(20,184,166,.07) 0%,rgba(59,130,246,.04) 100%);
+}
+.signal-showcase .badge-live {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:11px; font-weight:700; color:var(--green);
+  background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.3);
+  padding:3px 12px; border-radius:20px; margin-bottom:16px;
+}
+.badge-live::before {
+  content:''; width:7px; height:7px; border-radius:50%;
+  background:var(--green); animation:pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.6;transform:scale(1.3)}
+}
+.signal-title {
+  font-size:22px; font-weight:900; margin-bottom:6px;
+}
+.signal-sub { font-size:13px; color:var(--text2); margin-bottom:18px; line-height:1.7; }
+
+.signal-features {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px;
+}
+.sf {
+  background:rgba(0,0,0,.2); border:1px solid var(--border);
+  border-radius:10px; padding:14px;
+}
+.sf .sf-icon { font-size:20px; margin-bottom:8px; }
+.sf .sf-title { font-size:12px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.sf .sf-desc  { font-size:11px; color:var(--text3); line-height:1.5; }
+
+.signal-tech {
+  display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;
+}
+
+.signal-links { display:flex; gap:10px; }
+
+.print-urls { display:none; }
+
+/* ── HIGHLIGHT NUMBERS ── */
+.numbers-row {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+  margin-bottom:24px;
+}
+.num-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:18px; text-align:center;
+}
+.num-card .big {
+  font-size:28px; font-weight:900; font-family:'JetBrains Mono',monospace;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.num-card .small { font-size:11px; color:var(--text3); margin-top:4px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .board { grid-template-columns:1fr; }
+  .sidebar { position:static; height:auto; }
+  .main { padding:24px 20px; }
+  .projects-grid { grid-template-columns:1fr; }
+  .signal-features { grid-template-columns:1fr 1fr; }
+  .numbers-row { grid-template-columns:repeat(2,1fr); }
+}
+
+/* ══════════════════════════════
+   PRINT STYLESHEET – clean CV
+   ══════════════════════════════ */
+@media print {
+  /* ── Page setup ── */
+  @page { margin: 18mm 16mm; size: A4; }
+
+  /* ── Reset dark theme to light ── */
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface2: #f1f5f9;
+    --border: #cbd5e1;
+    --text: #0f172a;
+    --text2: #475569;
+    --text3: #64748b;
+    --teal: #0d9488;
+    --blue: #2563eb;
+    --purple: #7c3aed;
+    --green: #059669;
+    --orange: #d97706;
+    --gold: #b45309;
+  }
+
+  body { background: white !important; color: #0f172a !important; font-size: 11px; }
+
+  /* ── Layout: sidebar on top, main below ── */
+  .board { display: block !important; }
+
+  .sidebar {
+    position: static !important;
+    height: auto !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px;
+    padding: 20px 24px !important;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .avatar-wrap {
+    grid-column: 1 / -1;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .avatar {
+    width: 60px !important; height: 60px !important;
+    font-size: 26px !important;
+    flex-shrink: 0;
+    box-shadow: none !important;
+    background: #e0f2fe !important;
+  }
+
+  .name { font-size: 20px !important; font-weight: 900; text-align: right !important; }
+  .title-tag {
+    font-size: 11px !important; text-align: right !important;
+    -webkit-text-fill-color: var(--teal) !important;
+    background: none !important;
+    color: var(--teal) !important;
+  }
+
+  .contact-list li { font-size: 11px !important; }
+  .sidebar-section h3 { font-size: 9px !important; }
+  .skill-tag { font-size: 10px !important; padding: 2px 7px !important; }
+  .lang-label { font-size: 11px !important; }
+
+  .main { padding: 0 !important; }
+
+  /* ── Hero card ── */
+  .hero-card {
+    background: #f0f9ff !important;
+    border: 1px solid #bae6fd !important;
+    border-radius: 10px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 18px;
+  }
+  .hero-card::before { display: none; }
+  .hero-card .hero-title {
+    font-size: 18px !important;
+    -webkit-text-fill-color: #0f172a !important;
+    background: none !important;
+    color: #0f172a !important;
+  }
+  .hero-card .hero-sub { font-size: 12px !important; }
+  .hero-card .hero-desc { font-size: 11px !important; }
+  .hero-tag {
+    background: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+    font-size: 10px !important;
+  }
+
+  /* ── Numbers row ── */
+  .numbers-row {
+    page-break-inside: avoid; break-inside: avoid;
+    margin-bottom: 16px;
+  }
+  .num-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+  .num-card .big {
+    font-size: 20px !important;
+    -webkit-text-fill-color: var(--teal) !important;
+  }
+
+  /* ── Sections ── */
+  .section { margin-bottom: 20px !important; }
+  .section-header { margin-bottom: 12px !important; }
+  .section-header h2 { font-size: 14px !important; color: #0f172a !important; }
+  .section-icon { background: #f1f5f9 !important; }
+
+  /* ── Signal showcase ── */
+  .signal-showcase {
+    background: #f0fdf4 !important;
+    border: 1px solid #a7f3d0 !important;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .badge-live { background: #dcfce7 !important; border-color: #86efac !important; }
+  .badge-live::before { animation: none !important; background: #16a34a !important; }
+  .signal-title { font-size: 15px !important; color: #0f172a !important; }
+  .signal-sub { font-size: 11px !important; }
+  .sf {
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .sf .sf-title { color: #0f172a !important; }
+  .sf .sf-desc  { font-size: 10px !important; }
+  .stack-tag {
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #475569 !important;
+    font-size: 10px !important;
+  }
+  .signal-links { margin-top: 12px !important; }
+
+  /* ── Project cards ── */
+  .projects-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .project-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    page-break-inside: avoid; break-inside: avoid;
+    box-shadow: none !important;
+    transform: none !important;
+    padding: 14px !important;
+  }
+  .project-card.featured {
+    grid-column: 1 / -1;
+    background: #f0fdf4 !important;
+    border-color: #a7f3d0 !important;
+  }
+  .project-card.featured::after {
+    font-size: 9px !important; padding: 2px 8px !important;
+    background: #fef9c3 !important; border-color: #fde047 !important;
+    color: #854d0e !important;
+  }
+  .proj-name { font-size: 13px !important; color: #0f172a !important; }
+  .proj-tagline { font-size: 10px !important; }
+  .proj-desc { font-size: 11px !important; }
+  .proj-metric .num { font-size: 14px !important; }
+
+  /* ── Links: hide interactive buttons, keep text ── */
+  .proj-link.live { background: var(--teal) !important; box-shadow: none !important; }
+  .proj-link.ghost {
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #475569 !important;
+  }
+  .signal-links .proj-link.live { background: var(--green) !important; }
+
+  .signal-links { display: none !important; }
+  .print-urls {
+    display: flex !important;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: #f0fdf9;
+    border: 1px solid #99f6e4;
+    border-radius: 8px;
+  }
+  .print-urls span {
+    font-size: 11px;
+    color: #0f766e;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Timeline ── */
+  .timeline::before { background: var(--teal) !important; }
+  .tl-item { page-break-inside: avoid; break-inside: avoid; }
+  .tl-dot { background: white !important; }
+  .tl-org { font-size: 13px !important; }
+  .tl-role { font-size: 11px !important; }
+  .tl-desc { font-size: 11px !important; }
+  .tl-period {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    font-size: 10px !important;
+  }
+  .tl-tag {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    font-size: 10px !important;
+  }
+
+  /* ── "What I'm looking for" cards ── */
+  [style*="border-top:3px solid var(--teal)"],
+  [style*="border-top:3px solid var(--blue)"],
+  [style*="border-top:3px solid var(--green)"] {
+    page-break-inside: avoid; break-inside: avoid;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  /* ── Hide CTA button in print ── */
+  a[href^="mailto"][style*="background:linear-gradient"] {
+    background: #0d9488 !important;
+    box-shadow: none !important;
+  }
+
+  /* ── Force page breaks at good spots ── */
+  .section:nth-child(3) { page-break-before: always; }
+
+  /* ── Ensure text colours visible ── */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+</style>
+</head>
+<body>
+<div class="board">
+
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="avatar-wrap">
+      <div class="avatar">🚀</div>
+      <div class="name">נועם אוקון</div>
+      <div class="title-tag">מהנדס AI · יזם · בוגר חיל התקשוב בצה"ל</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;letter-spacing:0.03em;">AI Engineer · Entrepreneur · IDF Signal Corps Veteran</div>
+    </div>
+
+    <ul class="contact-list">
+      <li><span class="ico">📧</span> <a href="mailto:noamokun1@gmail.com">noamokun1@gmail.com</a></li>
+      <li><span class="ico">📱</span> <a href="tel:+972528543498">052-854-3498</a></li>
+      <li><span class="ico">🌐</span> <a href="https://signal-news-noam1316s-projects.vercel.app/dashboard" target="_blank">Signal News (Live)</a></li>
+      <li><span class="ico">💻</span> <a href="https://github.com/Noam1316" target="_blank">github.com/Noam1316</a></li>
+      <li><span class="ico">📍</span> ישראל</li>
+      <li><span class="ico">🗓️</span> אפריל 2026</li>
+    </ul>
+
+    <div class="sidebar-section">
+      <h3>מיומנויות טכניות</h3>
+      <div class="skill-group">
+        <div class="skill-group-label">AI / Data</div>
+        <div class="skill-tags">
+          <span class="skill-tag teal">Python</span>
+          <span class="skill-tag teal">NLP</span>
+          <span class="skill-tag teal">ML</span>
+          <span class="skill-tag teal">Data Pipelines</span>
+          <span class="skill-tag teal">Keyword Analysis</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Full-Stack</div>
+        <div class="skill-tags">
+          <span class="skill-tag blue">Next.js</span>
+          <span class="skill-tag blue">React</span>
+          <span class="skill-tag blue">TypeScript</span>
+          <span class="skill-tag blue">Tailwind CSS</span>
+          <span class="skill-tag blue">Node.js</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Infrastructure</div>
+        <div class="skill-tags">
+          <span class="skill-tag purple">Vercel</span>
+          <span class="skill-tag purple">Linux</span>
+          <span class="skill-tag purple">Networks</span>
+          <span class="skill-tag purple">REST APIs</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Product & Design</div>
+        <div class="skill-tags">
+          <span class="skill-tag orange">UX/UI</span>
+          <span class="skill-tag orange">RTL Design</span>
+          <span class="skill-tag orange">HTML/CSS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>שפות</h3>
+      <div class="lang-row">
+        <span class="lang-label">עברית</span>
+        <div class="lang-dots">
+          <div class="lang-dot filled"></div><div class="lang-dot filled"></div>
+          <div class="lang-dot filled"></div><div class="lang-dot filled"></div>
+          <div class="lang-dot filled"></div>
+        </div>
+      </div>
+      <div class="lang-row">
+        <span class="lang-label">אנגלית</span>
+        <div class="lang-dots">
+          <div class="lang-dot filled"></div><div class="lang-dot filled"></div>
+          <div class="lang-dot filled"></div><div class="lang-dot filled"></div>
+          <div class="lang-dot filled"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>נקודות חוזק</h3>
+      <div class="skill-tags" style="flex-direction:column;gap:8px;">
+        <span class="skill-tag green" style="text-align:center;">🎯 One-Person Operation</span>
+        <span class="skill-tag green" style="text-align:center;">⚡ Rapid Prototyping</span>
+        <span class="skill-tag green" style="text-align:center;">🧠 Domain Expert (IDF)</span>
+        <span class="skill-tag green" style="text-align:center;">🏗️ Systems Thinking</span>
+        <span class="skill-tag green" style="text-align:center;">🌍 Social Impact Focus</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>קישורים</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="https://signal-news-noam1316s-projects.vercel.app/dashboard" target="_blank" style="font-size:12px;font-weight:600;color:#fff;text-decoration:none;padding:10px 12px;background:linear-gradient(135deg,#14b8a6,#0d9488);border-radius:8px;border:1px solid #14b8a6;display:flex;align-items:center;gap:8px;box-shadow:0 0 12px rgba(20,184,166,.3);">🌐 Signal News · LIVE</a>
+        <a href="grant-tnufa.html" style="font-size:12px;color:var(--text2);text-decoration:none;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:8px;" target="_blank">📄 בקשת מענק תנופה</a>
+        <a href="simulation.html" style="font-size:12px;color:var(--text2);text-decoration:none;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:8px;" target="_blank">🤖 סימולטור Scoring Engine</a>
+        <a href="eli5-test.html" style="font-size:12px;color:var(--text2);text-decoration:none;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:8px;" target="_blank">🧠 מבחן ELI5</a>
+        <a href="privacy-policy.html" style="font-size:12px;color:var(--text2);text-decoration:none;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:8px;" target="_blank">🔒 מדיניות פרטיות</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════ MAIN ══════ -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero-card">
+      <div class="hero-title">בונה AI שפותר בעיות לאומיות</div>
+      <div class="hero-sub">AI Engineer · מייסד מעוף · בוגר חיל התקשוב בצה"ל</div>
+      <div class="hero-desc">
+        שילוב נדיר: רקע מבצעי-טכנולוגי בצה"ל + הכשרת AI & Data Science + חשיבה יזמית.
+        בניתי מאפס, כ-one-person operation, פלטפורמת AI מלאה לפתרון כשל שוק לאומי –
+        מחסור של 3,500 מורי STEM ופער 15,000 ג'וניורים בהייטק –
+        תוך שימוש ב-NLP, Scoring Algorithms, ו-Full-Stack Development ללא API חיצוני.
+      </div>
+      <div class="hero-tags">
+        <span class="hero-tag">🎯 Zero-to-Product בפחות מ-3 חודשים</span>
+        <span class="hero-tag">⚡ 8+ קבצי HTML/JS/Python מלאים</span>
+        <span class="hero-tag">🤖 NLP ללא API key</span>
+        <span class="hero-tag">🌐 Vercel Deployment</span>
+        <span class="hero-tag">📊 28+ RSS Sources · Real-time</span>
+      </div>
+    </div>
+
+    <!-- NUMBERS -->
+    <div class="numbers-row">
+      <div class="num-card"><div class="big">8+</div><div class="small">קבצי קוד מלאים<br>בפרויקט</div></div>
+      <div class="num-card"><div class="big">28+</div><div class="small">מקורות RSS<br>בזמן אמת</div></div>
+      <div class="num-card"><div class="big">100+</div><div class="small">שאלות ELI5<br>ב-6 תחומים</div></div>
+      <div class="num-card"><div class="big">230x</div><div class="small">ROI מחושב<br>למדינה</div></div>
+    </div>
+
+    <!-- SIGNAL NEWS SHOWCASE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-teal">📡</div>
+        <h2>הוכחת יכולת טכנית – Signal News</h2>
+      </div>
+
+      <div class="signal-showcase">
+        <div class="badge-live">LIVE · פועל בפרודקשן</div>
+        <div class="signal-title">Signal News · פלטפורמת מודיעין גיאופוליטי</div>
+        <div class="signal-sub">
+          מערכת AI לניתוח חדשות בזמן אמת מ-28+ מקורות RSS, זיהוי אנומליות, השוואה לשווקי הימורים (Polymarket),
+          וניתוח הטיה תקשורתית – הכל ללא API key, keyword-based בלבד.
+          <strong style="color:var(--teal);">בנוי, פרוס, ופועל.</strong>
+        </div>
+
+        <div class="signal-features">
+          <div class="sf">
+            <div class="sf-icon">⚡</div>
+            <div class="sf-title">Shock Detection</div>
+            <div class="sf-desc">זיהוי סטטיסטי של זעזועים: likelihood shocks, narrative splits, fragmentation</div>
+          </div>
+          <div class="sf">
+            <div class="sf-icon">📊</div>
+            <div class="sf-title">Signal vs Market</div>
+            <div class="sf-desc">50 שווקים פעילים מ-Polymarket · Alpha Score · הסבר אוטומטי בעברית</div>
+          </div>
+          <div class="sf">
+            <div class="sf-icon">⚖️</div>
+            <div class="sf-title">Media Bias Analysis</div>
+            <div class="sf-desc">DB של 35+ מקורות · Coverage Gaps · Narrative Divergence שמאל↔ימין</div>
+          </div>
+          <div class="sf">
+            <div class="sf-icon">🌍</div>
+            <div class="sf-title">Map + Entity Graph</div>
+            <div class="sf-desc">מפת SVG + NER גרף ישויות + geo-clustering</div>
+          </div>
+          <div class="sf">
+            <div class="sf-icon">🧠</div>
+            <div class="sf-title">Story Clustering</div>
+            <div class="sf-desc">קיבוץ כתבות לסיפורים לפי keyword similarity + likelihood scoring</div>
+          </div>
+          <div class="sf">
+            <div class="sf-icon">🔄</div>
+            <div class="sf-title">Real-Time Cache</div>
+            <div class="sf-desc">In-memory shared cache, Vercel serverless, עדכון כל 15 דקות</div>
+          </div>
+        </div>
+
+        <div class="signal-tech">
+          <span class="stack-tag">Next.js 16</span>
+          <span class="stack-tag">TypeScript</span>
+          <span class="stack-tag">React 19</span>
+          <span class="stack-tag">Tailwind v4</span>
+          <span class="stack-tag">Vercel Serverless</span>
+          <span class="stack-tag">RSS Parsing</span>
+          <span class="stack-tag">Polymarket API</span>
+          <span class="stack-tag">NLP · Keyword Analysis</span>
+          <span class="stack-tag">RTL · Hebrew UI</span>
+          <span class="stack-tag">SVG Maps</span>
+        </div>
+
+        <div class="signal-links">
+          <a class="proj-link live" href="https://signal-news-noam1316s-projects.vercel.app/dashboard" target="_blank">
+            🌐 פתח דמו חי
+          </a>
+          <a class="proj-link ghost" href="https://github.com/Noam1316/signal-news" target="_blank">
+            💻 קוד מקור (GitHub)
+          </a>
+        </div>
+        <div class="print-urls">
+          <span>🌐 signal-news-noam1316s-projects.vercel.app/dashboard</span>
+          <span>💻 github.com/Noam1316/signal-news</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🏗️</div>
+        <h2>פרויקטים – מעוף Platform</h2>
+        <span class="count">6 רכיבים</span>
+      </div>
+
+      <div class="projects-grid">
+
+        <!-- MAOF MAIN -->
+        <div class="project-card" style="grid-column:1/-1; border-color:rgba(139,92,246,.4); background:linear-gradient(135deg,rgba(139,92,246,.06),transparent);">
+          <div class="proj-top">
+            <div class="proj-icon" style="background:rgba(139,92,246,.15);">🚀</div>
+            <div class="proj-info">
+              <div class="proj-name">מעוף – Tech-Lead Israel</div>
+              <div class="proj-tagline">פלטפורמת AI לשידוך הון אנושי · 3-Sided Marketplace</div>
+            </div>
+          </div>
+          <div class="proj-desc">
+            מערכת DSS לשידוך חיילים משוחררים עם רקע טכנולוגי ↔ הוראת STEM ↔ חברות הייטק.
+            כולל Dual Scoring Engine (School Match + Company Match), Three-Way Matching Algorithm,
+            ELI5 Assessment, ו-Feedback Loop – הכל בנוי ללא backend מסורתי, Vercel Serverless בלבד.
+          </div>
+          <div class="proj-metrics">
+            <div class="proj-metric"><div class="num">5</div><div class="lbl">פורטלים</div></div>
+            <div class="proj-metric"><div class="num">100%</div><div class="lbl">NLP ללא API</div></div>
+            <div class="proj-metric"><div class="num">15K+</div><div class="lbl">מועמדים פוטנציאליים/שנה</div></div>
+            <div class="proj-metric"><div class="num">87%</div><div class="lbl">מרווח גולמי</div></div>
+          </div>
+          <div class="proj-stack">
+            <span class="stack-tag">HTML/JS/CSS</span>
+            <span class="stack-tag">Python (fpdf2)</span>
+            <span class="stack-tag">Node.js (docx)</span>
+            <span class="stack-tag">NLP Algorithm</span>
+            <span class="stack-tag">RTL Design</span>
+          </div>
+          <div class="proj-links">
+            <a class="proj-link ghost" href="simulation.html" target="_blank">🤖 Scoring Demo</a>
+            <a class="proj-link ghost" href="eli5-test.html" target="_blank">🧠 ELI5 Test</a>
+            <a class="proj-link ghost" href="grant-tnufa.html" target="_blank">📄 בקשת מענק</a>
+            <a class="proj-link ghost" href="https://github.com/Noam1316/maof-project" target="_blank">💻 GitHub</a>
+          </div>
+        </div>
+
+        <!-- SCORING ENGINE -->
+        <div class="project-card">
+          <div class="proj-top">
+            <div class="proj-icon" style="background:rgba(20,184,166,.15);">⚖️</div>
+            <div class="proj-info">
+              <div class="proj-name">Dual Scoring Engine</div>
+              <div class="proj-tagline">מנוע שידוך תלת-צדדי · NP-Hard Optimization</div>
+            </div>
+          </div>
+          <div class="proj-desc">ציון A (School Match) + ציון B (Company Match). Three-way matching עם Multi-Objective Optimization. Feedback Loop עם Bayesian Weight Updates.</div>
+          <div class="proj-stack">
+            <span class="stack-tag">JavaScript</span><span class="stack-tag">Scoring Algorithm</span><span class="stack-tag">NLP</span>
+          </div>
+          <div class="proj-links">
+            <a class="proj-link live" href="simulation.html" target="_blank">▶ הפעל סימולציה</a>
+          </div>
+        </div>
+
+        <!-- ELI5 -->
+        <div class="project-card">
+          <div class="proj-top">
+            <div class="proj-icon" style="background:rgba(245,158,11,.15);">🧠</div>
+            <div class="proj-info">
+              <div class="proj-name">מבחן ELI5</div>
+              <div class="proj-tagline">הערכת כושר הוראה אוטומטית · Novel Assessment</div>
+            </div>
+          </div>
+          <div class="proj-desc">3 סבבים: כתיבה + וידאו + צ'אט. ניתוח NLP אמיתי (פשטות, אנלוגיות, מבנה, מעורבות). 100+ שאלות ב-6 תחומים. Adaptive Chatbot.</div>
+          <div class="proj-stack">
+            <span class="stack-tag">Vanilla JS</span><span class="stack-tag">NLP</span><span class="stack-tag">MediaRecorder API</span>
+          </div>
+          <div class="proj-links">
+            <a class="proj-link live" href="eli5-test.html" target="_blank">▶ נסה עכשיו</a>
+          </div>
+        </div>
+
+        <!-- PORTALS -->
+        <div class="project-card">
+          <div class="proj-top">
+            <div class="proj-icon" style="background:rgba(59,130,246,.15);">🖥️</div>
+            <div class="proj-info">
+              <div class="proj-name">3 פורטלים</div>
+              <div class="proj-tagline">חיילים · בתי ספר · חברות הייטק</div>
+            </div>
+          </div>
+          <div class="proj-desc">פורטלים ייחודיים לכל צד בפלטפורמה. חיילים נרשמים ועוברים מבחנים. מנהלי בתי"ס מגדירים צרכים. חברות מאשרות שיבוצים.</div>
+          <div class="proj-stack">
+            <span class="stack-tag">HTML/CSS/JS</span><span class="stack-tag">RTL</span><span class="stack-tag">Dashboard</span>
+          </div>
+          <div class="proj-links">
+            <a class="proj-link ghost" href="platform.html" target="_blank">🖥️ Main Platform</a>
+          </div>
+        </div>
+
+        <!-- GRANT + DOCS -->
+        <div class="project-card">
+          <div class="proj-top">
+            <div class="proj-icon" style="background:rgba(16,185,129,.15);">📄</div>
+            <div class="proj-info">
+              <div class="proj-name">תיעוד ומסמכים</div>
+              <div class="proj-tagline">PDF · DOCX · One-Pager · Grant Application</div>
+            </div>
+          </div>
+          <div class="proj-desc">יצירת מסמכים מקצועיים: בקשת מענק (IIA תנופה), One-Pager ל-3 קהלים, PDF עברי עם BiDi support, DOCX עם RTL מלא.</div>
+          <div class="proj-stack">
+            <span class="stack-tag">Python fpdf2</span><span class="stack-tag">python-bidi</span><span class="stack-tag">docx.js</span>
+          </div>
+          <div class="proj-links">
+            <a class="proj-link ghost" href="one-pager.html" target="_blank">📋 One-Pager</a>
+            <a class="proj-link ghost" href="grant-tnufa.html" target="_blank">📄 מענק</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- EXPERIENCE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-purple">💼</div>
+        <h2>ניסיון</h2>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <div class="tl-header">
+              <div>
+                <div class="tl-org">מעוף – Tech-Lead Israel</div>
+                <div class="tl-role">מייסד ומנכ"ל · One-Person Operation</div>
+              </div>
+              <div class="tl-period">2025 – היום</div>
+            </div>
+            <div class="tl-desc">בניית פלטפורמת AI מלאה לשידוך הון אנושי. פיתוח Dual Scoring Engine, מבחן ELI5 עם NLP אמיתי, 3 פורטלים, פלטפורמת Signal News חיה. הגשת בקשת מענק לרשות החדשנות.</div>
+            <div class="tl-tags">
+              <span class="tl-tag">AI/ML</span><span class="tl-tag">NLP</span><span class="tl-tag">Full-Stack</span>
+              <span class="tl-tag">Product Design</span><span class="tl-tag">Grant Writing</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot" style="border-color:var(--teal);box-shadow:0 0 8px rgba(20,184,166,.4);"></div>
+          <div class="tl-body">
+            <div class="tl-header">
+              <div>
+                <div class="tl-org">Signal News</div>
+                <div class="tl-role">מפתח ומעצב · פרויקט עצמאי בפרודקשן</div>
+              </div>
+              <div class="tl-period">2025 – היום</div>
+            </div>
+            <div class="tl-desc">
+              בנייה מלאה מאפס של פלטפורמת מודיעין גיאופוליטי בזמן אמת – <strong>בפרודקשן על Vercel</strong>.
+              המערכת מנתחת 28+ מקורות RSS, מזהה אנומליות סטטיסטיות, משווה לשווקי הימורים (Polymarket),
+              ומנתחת הטיה תקשורתית – <strong>הכל ללא API key</strong>, keyword-based NLP בלבד.
+              ממשק עברית RTL, דו-לשוני (עברית/אנגלית), דשבורד עם 4 סעיפים חיים.
+            </div>
+            <div class="tl-tags">
+              <span class="tl-tag">Next.js 16</span>
+              <span class="tl-tag">TypeScript</span>
+              <span class="tl-tag">React 19</span>
+              <span class="tl-tag">Tailwind v4</span>
+              <span class="tl-tag">Vercel Serverless</span>
+              <span class="tl-tag">NLP</span>
+              <span class="tl-tag">RSS Parsing</span>
+              <span class="tl-tag">Polymarket API</span>
+            </div>
+            <div class="proj-links" style="margin-top:10px;">
+              <a class="proj-link live" href="https://signal-news-noam1316s-projects.vercel.app/dashboard" target="_blank">🌐 דמו חי</a>
+              <a class="proj-link ghost" href="https://github.com/Noam1316/signal-news" target="_blank">💻 GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <div class="tl-header">
+              <div>
+                <div class="tl-org">צבא ההגנה לישראל</div>
+                <div class="tl-role">מנהל רשת + חמ"ליסט · חיל התקשוב</div>
+              </div>
+              <div class="tl-period">שירות סדיר</div>
+            </div>
+            <div class="tl-desc">
+              ניהול תשתיות IT בסביבה מבצעית: רשתות, שרתים, אבטחת מידע. תפקיד חמ"ליסט – ניהול מידע, קבלת החלטות בזמן אמת, תיאום בין גורמים מרובים תחת לחץ. ניסיון ישיר עם קהל היעד של מעוף.
+            </div>
+            <div class="tl-tags">
+              <span class="tl-tag">Network Management</span><span class="tl-tag">IT Security</span>
+              <span class="tl-tag">Decision Making</span><span class="tl-tag">Leadership</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">🎓</div>
+        <h2>הכשרה והשכלה</h2>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="border-color:var(--orange);box-shadow:0 0 8px rgba(245,158,11,.4);"></div>
+          <div class="tl-body">
+            <div class="tl-header">
+              <div>
+                <div class="tl-org">בנאיה קולג'</div>
+                <div class="tl-role">AI & Data Science – <span style="color:var(--orange);">בתכנון</span></div>
+              </div>
+              <div class="tl-period" style="border-color:var(--orange);color:var(--orange);">עתידי</div>
+            </div>
+            <div class="tl-desc">תוכנית מתוכננת ב-AI, Machine Learning, NLP, ו-Data Science. מימון מקרן לחיילים משוחררים. חלק מהתוכנית העסקית של מעוף.</div>
+            <div class="tl-tags">
+              <span class="tl-tag">Python</span><span class="tl-tag">ML</span><span class="tl-tag">NLP</span>
+              <span class="tl-tag">Data Science</span><span class="tl-tag">Statistics</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <div class="tl-header">
+              <div>
+                <div class="tl-org">Self-Taught · Claude Code</div>
+                <div class="tl-role">Full-Stack Development · AI-Assisted Engineering</div>
+              </div>
+              <div class="tl-period">2025–היום</div>
+            </div>
+            <div class="tl-desc">Next.js, TypeScript, React, Vercel Deployment, RTL UI Design, Python scripting, PDF/DOCX generation. בניית מוצרים שלמים מאפס בתוך שבועות.</div>
+            <div class="tl-tags">
+              <span class="tl-tag">Next.js</span><span class="tl-tag">TypeScript</span>
+              <span class="tl-tag">Vercel</span><span class="tl-tag">Python</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT I'M LOOKING FOR -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-orange">🎯</div>
+        <h2>מה אני מחפש</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;border-top:3px solid var(--teal);">
+          <div style="font-size:24px;margin-bottom:8px;">🤝</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">שותף CTO</div>
+          <div style="font-size:12px;color:var(--text2);">מתכנת מנוסה עם רקע בסטארטאפ שרוצה לפתור בעיה לאומית אמיתית + equity</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;border-top:3px solid var(--blue);">
+          <div style="font-size:24px;margin-bottom:8px;">💰</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">מימון תנופה</div>
+          <div style="font-size:12px;color:var(--text2);">מענק רשות החדשנות 200K ₪ + אקסלרטור (8200 Impact / MassChallenge)</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;border-top:3px solid var(--green);">
+          <div style="font-size:24px;margin-bottom:8px;">🏢</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">חברות פיילוט</div>
+          <div style="font-size:12px;color:var(--text2);">2-3 חברות הייטק לפיילוט ראשוני (LOI בלבד). 3 חיילים ראשונים – ללא עלות SaaS</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:24px;">
+        <a href="mailto:noamokun1@gmail.com?subject=יצירת קשר – מעוף" style="background:linear-gradient(135deg,var(--teal),var(--blue));color:white;padding:14px 40px;border-radius:12px;text-decoration:none;font-size:15px;font-weight:700;display:inline-block;box-shadow:0 4px 16px rgba(20,184,166,.3);">📧 בואו נדבר</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

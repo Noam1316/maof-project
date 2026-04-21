@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מדיניות פרטיות – מעוף Tech-Lead Israel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f172a;
+      --surface:  #1e293b;
+      --surface2: #273449;
+      --border:   #334155;
+      --text:     #f1f5f9;
+      --muted:    #94a3b8;
+      --accent:   #3b82f6;
+      --accent-soft: rgba(59,130,246,.12);
+      --green:    #10b981;
+      --green-soft: rgba(16,185,129,.12);
+      --amber:    #f59e0b;
+      --amber-soft: rgba(245,158,11,.10);
+      --header-h: 64px;
+      --toc-w:    260px;
+      --content-max: 780px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 16px;
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    header {
+      position: fixed;
+      top: 0; right: 0; left: 0;
+      height: var(--header-h);
+      background: rgba(15,23,42,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      z-index: 100;
+      gap: 1rem;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--green));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .logo-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .logo-sub {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .header-badge {
+      margin-right: auto; /* pushes to left in RTL */
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: .25rem .85rem;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .page-wrap {
+      margin-top: var(--header-h);
+      display: flex;
+      flex-direction: row-reverse; /* TOC on right, content on left in RTL */
+      max-width: 1180px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 1.5rem;
+      gap: 2.5rem;
+      align-items: flex-start;
+    }
+
+    /* ============================================================
+       TABLE OF CONTENTS (sticky right sidebar)
+    ============================================================ */
+    .toc {
+      width: var(--toc-w);
+      flex-shrink: 0;
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+      max-height: calc(100vh - var(--header-h) - 3rem);
+      overflow-y: auto;
+      padding: 1.25rem 0;
+    }
+
+    .toc-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      padding-right: 1rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toc-list a {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .45rem 1rem;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+      line-height: 1.35;
+    }
+
+    .toc-list a:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .toc-list a.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .toc-num {
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--surface2);
+      color: var(--muted);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .toc-list a.active .toc-num {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ============================================================
+       MAIN CONTENT
+    ============================================================ */
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 2.5rem 0 5rem;
+      max-width: var(--content-max);
+    }
+
+    /* Hero */
+    .hero {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .75rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(26px, 4vw, 34px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text) 60%, var(--muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      font-size: 13px;
+    }
+
+    .meta-chip {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: .3rem .85rem;
+      color: var(--muted);
+    }
+
+    .meta-chip .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-green { background: var(--green); }
+    .dot-blue  { background: var(--accent); }
+    .dot-amber { background: var(--amber); }
+
+    /* Section cards */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 2rem 2rem 2rem;
+      margin-bottom: 1.5rem;
+      scroll-margin-top: calc(var(--header-h) + 1.5rem);
+      transition: border-color .2s;
+    }
+
+    .section-card:hover {
+      border-color: var(--accent);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .icon-blue   { background: var(--accent-soft); }
+    .icon-green  { background: var(--green-soft); }
+    .icon-amber  { background: var(--amber-soft); }
+
+    .section-title-wrap {
+      flex: 1;
+    }
+
+    .section-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .1em;
+      margin-bottom: .2rem;
+    }
+
+    .section-card h2 {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .section-card p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: .9rem;
+    }
+
+    .section-card p:last-child { margin-bottom: 0; }
+
+    .section-card strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Lists */
+    .data-list {
+      list-style: none;
+      display: grid;
+      gap: .5rem;
+    }
+
+    .data-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .data-list li::before {
+      content: '●';
+      color: var(--accent);
+      font-size: 8px;
+      margin-top: .55rem;
+      flex-shrink: 0;
+    }
+
+    .data-list li strong { color: var(--text); }
+
+    /* Callout box */
+    .callout {
+      display: flex;
+      gap: .85rem;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin: 1.1rem 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: .05rem; }
+
+    .callout-blue  { background: var(--accent-soft); border: 1px solid rgba(59,130,246,.25); color: #93c5fd; }
+    .callout-green { background: var(--green-soft);  border: 1px solid rgba(16,185,129,.25); color: #6ee7b7; }
+    .callout-amber { background: var(--amber-soft);  border: 1px solid rgba(245,158,11,.25);  color: #fcd34d; }
+
+    /* Rights grid */
+    .rights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: .85rem;
+      margin-top: 1rem;
+    }
+
+    .right-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .right-card .right-icon { font-size: 22px; margin-bottom: .5rem; }
+
+    .right-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .35rem;
+    }
+
+    .right-card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 0;
+    }
+
+    /* Purposes table-like list */
+    .purpose-list {
+      display: grid;
+      gap: .75rem;
+      margin-top: .75rem;
+    }
+
+    .purpose-item {
+      display: flex;
+      gap: 1rem;
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: .9rem 1rem;
+      align-items: flex-start;
+    }
+
+    .purpose-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .purpose-body h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .2rem;
+    }
+
+    .purpose-body p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* Sharing parties */
+    .share-grid {
+      display: grid;
+      gap: .75rem;
+      margin-top: .75rem;
+    }
+
+    .share-row {
+      display: flex;
+      gap: 1rem;
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: .85rem 1rem;
+      align-items: flex-start;
+    }
+
+    .share-icon { font-size: 22px; flex-shrink: 0; }
+
+    .share-body h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .2rem;
+    }
+
+    .share-body p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* Retention table */
+    .retention-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: .75rem;
+    }
+
+    .retention-table th {
+      text-align: right;
+      font-weight: 700;
+      color: var(--text);
+      padding: .6rem .85rem;
+      background: var(--surface2);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .retention-table td {
+      padding: .65rem .85rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+
+    .retention-table tr:last-child td { border-bottom: none; }
+
+    .retention-table td:first-child { color: var(--text); font-weight: 500; }
+
+    /* Cookie minimal */
+    .cookie-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: .75rem;
+      margin-top: .75rem;
+    }
+
+    .cookie-type {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .9rem;
+    }
+
+    .cookie-type .ct-status {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      border-radius: 20px;
+      padding: .15rem .6rem;
+      display: inline-block;
+      margin-bottom: .45rem;
+    }
+
+    .ct-yes  { background: var(--green-soft);  color: var(--green); }
+    .ct-no   { background: rgba(239,68,68,.12); color: #f87171; }
+
+    .cookie-type h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .2rem;
+    }
+
+    .cookie-type p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* Contact box */
+    .contact-box {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.4rem;
+      margin-top: 1rem;
+    }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .contact-row .ci { font-size: 18px; }
+    .contact-row a { color: var(--accent); text-decoration: none; }
+    .contact-row a:hover { text-decoration: underline; }
+    .contact-row strong { color: var(--text); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ============================================================
+       SCROLLBAR
+    ============================================================ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ============================================================
+       PRINT
+    ============================================================ */
+    @media print {
+      header, .toc { display: none !important; }
+      .page-wrap { margin-top: 0; padding: 0; max-width: 100%; }
+      main { padding: 0; }
+      .section-card { border: 1px solid #ccc; break-inside: avoid; }
+      body { background: #fff; color: #111; font-size: 13px; }
+      .section-card { background: #f9f9f9; }
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 860px) {
+      .toc { display: none; }
+      .page-wrap { flex-direction: column; gap: 0; }
+      main { padding: 1.5rem 0 4rem; max-width: 100%; }
+    }
+
+    @media (max-width: 560px) {
+      .section-card { padding: 1.25rem; }
+      .rights-grid { grid-template-columns: 1fr 1fr; }
+      .cookie-types { grid-template-columns: 1fr 1fr; }
+      .header-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header>
+  <a href="#" class="header-logo">
+    <div class="logo-mark">מ</div>
+    <div class="logo-text">
+      <span class="logo-title">מעוף · מדיניות פרטיות</span>
+      <span class="logo-sub">Tech-Lead Israel</span>
+    </div>
+  </a>
+  <div class="header-badge">עודכן לאחרונה: אפריל 2026</div>
+</header>
+
+<!-- ============================================================
+     PAGE WRAP
+============================================================ -->
+<div class="page-wrap">
+
+  <!-- ============================================================
+       TABLE OF CONTENTS
+  ============================================================ -->
+  <nav class="toc" aria-label="תוכן עניינים">
+    <div class="toc-title">תוכן עניינים</div>
+    <ul class="toc-list" id="toc-list">
+      <li><a href="#s1"><span class="toc-num">1</span>מי אנחנו</a></li>
+      <li><a href="#s2"><span class="toc-num">2</span>מידע שאנו אוספים</a></li>
+      <li><a href="#s3"><span class="toc-num">3</span>מדוע אנו אוספים</a></li>
+      <li><a href="#s4"><span class="toc-num">4</span>עם מי אנו משתפים</a></li>
+      <li><a href="#s5"><span class="toc-num">5</span>זכויות המשתמש</a></li>
+      <li><a href="#s6"><span class="toc-num">6</span>אבטחת מידע</a></li>
+      <li><a href="#s7"><span class="toc-num">7</span>שמירת מידע</a></li>
+      <li><a href="#s8"><span class="toc-num">8</span>עוגיות</a></li>
+      <li><a href="#s9"><span class="toc-num">9</span>AI ואוטומציה</a></li>
+      <li><a href="#s10"><span class="toc-num">10</span>צור קשר ומנהל מידע</a></li>
+      <li><a href="#s11"><span class="toc-num">11</span>עדכוני מדיניות</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============================================================
+       MAIN CONTENT
+  ============================================================ -->
+  <main>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">מסמך מדיניות רשמי</div>
+      <h1>מדיניות פרטיות<br/>מעוף Tech-Lead Israel</h1>
+      <p class="hero-desc">
+        מעוף היא פלטפורמת AI להשמה שמחברת בין לוחמים משוחררים מצה"ל לבתי ספר ולחברות הייטק.
+        אנחנו אוספים נתונים רגישים — פסיכומטרים, רקע צבאי, הערכות מיומנות — ואנחנו נוטלים את האחריות לשמירתם ברצינות.
+        מדיניות זו מוסברת בשפה פשוטה, מבלי להסתתר מאחורי עורכי דין.
+      </p>
+      <div class="hero-meta">
+        <div class="meta-chip"><span class="dot dot-green"></span>תואם תיקון 13 לחוק הגנת הפרטיות (אוגוסט 2025)</div>
+        <div class="meta-chip"><span class="dot dot-blue"></span>עקרונות GDPR</div>
+        <div class="meta-chip"><span class="dot dot-amber"></span>עודכן: אפריל 2026</div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 1 — מי אנחנו
+    ============================================================ -->
+    <section class="section-card" id="s1">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🏢</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 1</div>
+          <h2>מי אנחנו</h2>
+        </div>
+      </div>
+
+      <p>
+        <strong>מעוף Tech-Lead Israel</strong> היא פלטפורמת AI לניהול הון אנושי, הפועלת במודל 2+2: שנתיים הוראת STEM בבתי ספר ושנתיים בהייטק. הפלטפורמה מנוהלת על-ידי <strong>נעם</strong>, מייסד יחיד עם רקע מבצעי-טכנולוגי בצה"ל.
+      </p>
+      <p>
+        כ<strong>מנהל מידע (Data Controller)</strong> לפי תיקון 13 לחוק הגנת הפרטיות וכ-Controller לפי ה-GDPR, אנחנו קובעים את מטרות ואמצעי עיבוד הנתונים האישיים שנאספים דרך הפלטפורמה.
+      </p>
+
+      <div class="contact-box">
+        <div class="contact-row"><span class="ci">📧</span><span>דוא"ל: <a href="mailto:noam@maof.ai">noam@maof.ai</a></span></div>
+        <div class="contact-row"><span class="ci">🌐</span><span>שם המיזם: מעוף Tech-Lead Israel</span></div>
+        <div class="contact-row"><span class="ci">⏱</span><span>זמן מענה ממוצע: עד <strong>30 ימי עסקים</strong></span></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 2 — מידע שאנו אוספים
+    ============================================================ -->
+    <section class="section-card" id="s2">
+      <div class="section-header">
+        <div class="section-icon icon-blue">📋</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 2</div>
+          <h2>איזה מידע אנו אוספים</h2>
+        </div>
+      </div>
+
+      <p>אנחנו אוספים רק את המידע הדרוש כדי להפעיל את מנוע ההשמה. להלן פירוט מלא:</p>
+
+      <ul class="data-list">
+        <li><strong>פרטים מזהים:</strong> שם מלא, תעודת זהות (לאימות בלבד), כתובת דוא"ל, מספר טלפון</li>
+        <li><strong>רקע צבאי:</strong> יחידה, תפקיד, דרגה, שנות שירות, קורסים צבאיים רלוונטיים, תחומי מומחיות מבצעיים</li>
+        <li><strong>מיומנויות ורקע אקדמי:</strong> תחומי ידע בSTEM, שפות תכנות, תעודות מקצועיות, השכלה פורמלית</li>
+        <li><strong>ציון ELI5 (Explain Like I'm 5):</strong> תוצאות מבחן כושר הוראה — יכולת הסבר מושגים מורכבים בשפה פשוטה; עשוי לכלול הקלטת וידאו/אודיו מהמבחן</li>
+        <li><strong>ציונים פסיכומטריים:</strong> נתוני פסיכומטרי רשמיים (אם הוגשו מרצון), הערכות קצב למידה ופוטנציאל צמיחה</li>
+        <li><strong>העדפות תעסוקה:</strong> מיקום גיאוגרפי מועדף, גודל חברה, סגנון עבודה, נושאי הוראה מועדפים</li>
+        <li><strong>מיקום:</strong> כתובת מגורים לצורך חישוב ציון שימור (מרחק מבית הספר) — לא מיקום GPS בזמן אמת</li>
+        <li><strong>מידע משפחתי:</strong> מצב משפחתי (לחישוב ציון שימור), ילדים (אופציונלי)</li>
+        <li><strong>נתוני שימוש בפלטפורמה:</strong> דפי שנצפו, זמן שהייה, לחצנים שנלחצו — לשיפור חוויית המשתמש בלבד</li>
+        <li><strong>תכתובות:</strong> פניות דוא"ל ו/או טפסי יצירת קשר</li>
+      </ul>
+
+      <div class="callout callout-amber">
+        <span class="callout-icon">⚠️</span>
+        <span>
+          <strong>נתונים רגישים:</strong> רקע צבאי, ציונים פסיכומטריים ואבחונים התנהגותיים מוגדרים כ"מידע רגיש" לפי תיקון 13 ולפי ה-GDPR. עיבודם מחייב הסכמה מפורשת ונפרדת — לא מספיקה הסכמה כללית לתנאי השימוש.
+        </span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 3 — מדוע אנו אוספים
+    ============================================================ -->
+    <section class="section-card" id="s3">
+      <div class="section-header">
+        <div class="section-icon icon-green">🎯</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 3</div>
+          <h2>מדוע אנו אוספים — בסיס משפטי ומטרות</h2>
+        </div>
+      </div>
+
+      <p>לכל עיבוד יש מטרה מוגדרת ובסיס משפטי ברור. אנחנו לא עושים "שימוש עתידי לא מוגדר" בנתונים שלך.</p>
+
+      <div class="purpose-list">
+        <div class="purpose-item">
+          <div class="purpose-num">1</div>
+          <div class="purpose-body">
+            <h3>מנוע השיבוץ (Placement Engine)</h3>
+            <p>חישוב ציון התאמה לבית ספר (School Match Score) וציון התאמה לחברה (Company Match Score), ייצור המלצות שיבוץ. <strong>בסיס משפטי:</strong> ביצוע חוזה — זוהי המהות של השירות שנרשמת אליו.</p>
+          </div>
+        </div>
+        <div class="purpose-item">
+          <div class="purpose-num">2</div>
+          <div class="purpose-body">
+            <h3>שיפור מנוע הניקוד</h3>
+            <p>השוואת ציון חיזוי מול ביצועים בפועל (Feedback Loop) ועדכון אוטומטי של משקלות המודל. <strong>בסיס משפטי:</strong> אינטרס לגיטימי — שיפור דיוק השיבוצים לטובת כל המשתתפים. ניתן להגיש התנגדות בכל עת.</p>
+          </div>
+        </div>
+        <div class="purpose-item">
+          <div class="purpose-num">3</div>
+          <div class="purpose-body">
+            <h3>שיפור הפלטפורמה</h3>
+            <p>ניתוח נתוני שימוש אנונימיים לשיפור UX, זיהוי שגיאות ואופטימיזציה של ממשק המשתמש. <strong>בסיס משפטי:</strong> אינטרס לגיטימי; הנתונים מאונונימים לפני הניתוח.</p>
+          </div>
+        </div>
+        <div class="purpose-item">
+          <div class="purpose-num">4</div>
+          <div class="purpose-body">
+            <h3>עמידה בדרישות רגולטוריות</h3>
+            <p>שמירת רשומות לפי חוק, תגובה לפניות רשויות אכיפה מוסמכות. <strong>בסיס משפטי:</strong> חובה חוקית.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-blue">
+        <span class="callout-icon">ℹ️</span>
+        <span>אנחנו <strong>לא מוכרים נתונים</strong> לצדדים שלישיים למטרות שיווק, פרסום, או כל מטרה מסחרית שאינה קשורה לשירות. לעולם.</span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 4 — עם מי אנו משתפים
+    ============================================================ -->
+    <section class="section-card" id="s4">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🤝</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 4</div>
+          <h2>עם מי אנו משתפים מידע</h2>
+        </div>
+      </div>
+
+      <p>שיתוף מידע מתרחש <strong>רק</strong> בהקשרים הבאים, ורק עם הסכמתך המפורשת לפני כל שיתוף:</p>
+
+      <div class="share-grid">
+        <div class="share-row">
+          <span class="share-icon">🏫</span>
+          <div class="share-body">
+            <h3>בתי ספר</h3>
+            <p>מנהלי בתי ספר שהצגת בפניהם עניין בהוראה יקבלו פרופיל מועמד הכולל: שם, מומחיות מקצועית, ציון School Match, וציון ELI5. הם אינם רואים ציונים פסיכומטריים גולמיים ולא נתונים רפואיים/אישיים.</p>
+          </div>
+        </div>
+        <div class="share-row">
+          <span class="share-icon">🏢</span>
+          <div class="share-body">
+            <h3>חברות הייטק מאמצות</h3>
+            <p>Microsoft, Elbit, Check Point וחברות שותפות אחרות יקבלו פרופיל הכולל: Tech Stack, ציון Company Match, ורקע צבאי רלוונטי. שיתוף מתרחש רק אחרי שאישרת את שיתוף הפרופיל עם אותה חברה ספציפית.</p>
+          </div>
+        </div>
+        <div class="share-row">
+          <span class="share-icon">📚</span>
+          <div class="share-body">
+            <h3>משרד החינוך ורשויות ממשלתיות</h3>
+            <p>נתונים מצטברים ואנונימיים לצורך דיווח על תוצאות תוכנית ה-2+2. נתונים מזהים אישיים לא יועברו לממשלה ללא הסכמה מפורשת ונפרדת שלך, אלא אם נדרש על-פי צו בית משפט.</p>
+          </div>
+        </div>
+        <div class="share-row">
+          <span class="share-icon">⚙️</span>
+          <div class="share-body">
+            <h3>ספקי תשתית (Processors)</h3>
+            <p>שירותי ענן כגון Vercel (אירוח) פועלים כ-Data Processors בלבד — הם מעבדים נתונים לפי הוראותינו ואינם רשאים להשתמש בהם לצרכיהם. הם כפופים להסכמי עיבוד נתונים (DPA) מחייבים.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">✅</span>
+        <span>
+          <strong>עיקרון ברירת המחדל:</strong> הפרופיל שלך סגור ואינו גלוי לגורם חיצוני כלשהו עד שאתה בוחר לפתוח אותו בפני גורם ספציפי (opt-in per party). אנחנו לא מפיצים פרופיל "לכולם" ואז נותנים לך לבקש להסיר.
+        </span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 5 — זכויות המשתמש
+    ============================================================ -->
+    <section class="section-card" id="s5">
+      <div class="section-header">
+        <div class="section-icon icon-green">⚖️</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 5</div>
+          <h2>זכויות המשתמש לפי תיקון 13 ו-GDPR</h2>
+        </div>
+      </div>
+
+      <p>
+        תיקון 13 לחוק הגנת הפרטיות (אוגוסט 2025) הרחיב משמעותית את זכויות הנושאים בישראל. להלן הזכויות שלך, ואיך לממש אותן:
+      </p>
+
+      <div class="rights-grid">
+        <div class="right-card">
+          <div class="right-icon">📂</div>
+          <h3>זכות גישה</h3>
+          <p>קבל עותק מלא של כל הנתונים שאנחנו מחזיקים עליך, בפורמט קריא ומובנה, תוך 30 יום.</p>
+        </div>
+        <div class="right-card">
+          <div class="right-icon">✏️</div>
+          <h3>זכות תיקון</h3>
+          <p>בקש תיקון נתון לא מדויק — למשל ציון שגוי, שם שגוי, מיקום ישן. נעדכן תוך 14 ימים.</p>
+        </div>
+        <div class="right-card">
+          <div class="right-icon">🗑️</div>
+          <h3>זכות מחיקה</h3>
+          <p>בקש מחיקת פרופילך ("הזכות להישכח"). נמחק את הנתונים תוך 30 יום, אלא אם קיימת חובה חוקית לשמור.</p>
+        </div>
+        <div class="right-card">
+          <div class="right-icon">🚫</div>
+          <h3>התנגדות לעיבוד</h3>
+          <p>התנגד לעיבוד המבוסס על אינטרס לגיטימי (שיפור מודל, אנליטיקה). העיבוד יופסק אלא אם יש סיבה חוקית מחייבת.</p>
+        </div>
+        <div class="right-card">
+          <div class="right-icon">🤖</div>
+          <h3>התנגדות להחלטה אוטומטית</h3>
+          <p>בקש ביקורת אנושית על ציון שיבוץ שהתקבל אוטומטית. זכות מפורשת לפי תיקון 13 ו-GDPR סעיף 22.</p>
+        </div>
+        <div class="right-card">
+          <div class="right-icon">📤</div>
+          <h3>ניידות מידע</h3>
+          <p>קבל את הנתונים שלך בפורמט מובנה (JSON/CSV) שניתן להעביר לפלטפורמה אחרת.</p>
+        </div>
+        <div class="right-card">
+          <div class="right-icon">⏸️</div>
+          <h3>הגבלת עיבוד</h3>
+          <p>בקש להגביל את עיבוד הנתונים (לא למחוק, אלא לנעול) בזמן בירור פנייה שלך.</p>
+        </div>
+        <div class="right-card">
+          <div class="right-icon">↩️</div>
+          <h3>ביטול הסכמה</h3>
+          <p>שלילת הסכמה לעיבוד נתונים רגישים בכל עת, מבלי שזה ישפיע על חוקיות העיבוד שנעשה לפני הביטול.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-blue">
+        <span class="callout-icon">📬</span>
+        <span>
+          לממש זכות כלשהי — שלח דוא"ל ל-<a href="mailto:noam@maof.ai" style="color:var(--accent)">noam@maof.ai</a> עם הכותרת "פנייה לפי חוק הגנת הפרטיות". נענה תוך 30 ימי עסקים. אם אינך מרוצה מהתגובה, תוכל לפנות ל<strong>הרשות להגנת הפרטיות</strong> (ipp.gov.il).
+        </span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 6 — אבטחת מידע
+    ============================================================ -->
+    <section class="section-card" id="s6">
+      <div class="section-header">
+        <div class="section-icon icon-amber">🔒</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 6</div>
+          <h2>אבטחת מידע</h2>
+        </div>
+      </div>
+
+      <p>תיקון 13 מטיל חובות אבטחה מחמירות על מנהלי מידע. להלן האמצעים שאנחנו נוקטים:</p>
+
+      <ul class="data-list">
+        <li><strong>הצפנה בתעבורה ובאחסון:</strong> TLS 1.3 לכל תקשורת; נתונים רגישים מוצפנים at-rest ב-AES-256.</li>
+        <li><strong>גישה מינימלית (Least Privilege):</strong> כל ספק תשתית מקבל גישה רק למה שנדרש לו לתפקידו. אין גישה פתוחה ל-DB.</li>
+        <li><strong>בדיקות חדירה (Penetration Testing):</strong> בדיקות אבטחה תקופתיות בהתאם לדרישות תיקון 13 — לפחות אחת לשנה לאחר הגעה להיקף מאגר מחייב.</li>
+        <li><strong>ניטור ורישום:</strong> כל גישה לנתונים אישיים נרשמת ב-Audit Log עם חותמת זמן וזיהוי המשתמש.</li>
+        <li><strong>סיסמאות ואימות:</strong> MFA מחויב לכל גישה אדמיניסטרטיבית. סיסמאות מאוחסנות כ-hash (bcrypt) בלבד — אין לנו גישה לסיסמה שלך.</li>
+        <li><strong>דיווח פרצות:</strong> במקרה של פרצת נתונים המשפיעה על נתונים רגישים, תקבל הודעה בתוך 72 שעות מרגע גילוי הפרצה, בהתאם לדרישות תיקון 13.</li>
+      </ul>
+
+      <div class="callout callout-amber">
+        <span class="callout-icon">⚡</span>
+        <span>
+          גילית חולשת אבטחה בפלטפורמה? שלח דיווח Responsible Disclosure ל-<a href="mailto:noam@maof.ai" style="color:var(--amber)">noam@maof.ai</a> עם הכותרת "Security Report". אנחנו מתחייבים לתגובה תוך 48 שעות.
+        </span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 7 — שמירת מידע
+    ============================================================ -->
+    <section class="section-card" id="s7">
+      <div class="section-header">
+        <div class="section-icon icon-blue">📅</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 7</div>
+          <h2>שמירת מידע — כמה זמן אנחנו שומרים</h2>
+        </div>
+      </div>
+
+      <p>אנחנו שומרים נתונים רק כל עוד יש לכך מטרה מוגדרת. הטבלה הבאה מפרטת את מדיניות השמירה שלנו:</p>
+
+      <table class="retention-table">
+        <thead>
+          <tr>
+            <th>סוג נתון</th>
+            <th>תקופת שמירה</th>
+            <th>הסבר</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>פרופיל מועמד פעיל</td>
+            <td>משך ההשתתפות + שנתיים</td>
+            <td>לצורך מעקב אחרי תוצאות, תביעות משפטיות, ואחריות מקצועית</td>
+          </tr>
+          <tr>
+            <td>פרופיל מועמד שנדחה / לא קודם</td>
+            <td>6 חודשים ממועד הדחייה</td>
+            <td>לטיפול בערעורים ומשוב; לאחר מכן נמחק אוטומטית</td>
+          </tr>
+          <tr>
+            <td>הקלטות ELI5</td>
+            <td>שנה אחת ממועד ההקלטה</td>
+            <td>לצורך בדיקת תלונות על ציון; לאחר מכן נמחק ללא אפשרות שחזור</td>
+          </tr>
+          <tr>
+            <td>נתוני שימוש (Analytics)</td>
+            <td>ללא הגבלה (מאונונמים)</td>
+            <td>לאחר אנונימיזציה מלאה, הנתונים אינם מאפשרים זיהוי אישי ואינם כפופים לחוק</td>
+          </tr>
+          <tr>
+            <td>תכתובות (דוא"ל, פניות)</td>
+            <td>שלוש שנים</td>
+            <td>לצורך ביקורת ואחריות; לאחר מכן נמחק</td>
+          </tr>
+          <tr>
+            <td>Audit Logs (יומן גישה)</td>
+            <td>שנה אחת</td>
+            <td>לצורך חקירת אירועי אבטחה</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 1rem;">
+        לאחר תום תקופת השמירה, הנתונים נמחקים <strong>אוטומטית</strong> ובאופן בלתי הפיך. מחיקה אקטיבית ומוקדמת על-פי בקשתך אפשרית בהתאם לסעיף 5.
+      </p>
+    </section>
+
+    <!-- ============================================================
+         SECTION 8 — עוגיות
+    ============================================================ -->
+    <section class="section-card" id="s8">
+      <div class="section-header">
+        <div class="section-icon icon-amber">🍪</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 8</div>
+          <h2>עוגיות (Cookies)</h2>
+        </div>
+      </div>
+
+      <p>
+        אנחנו מאמינים בגישה מינימליסטית: רק העוגיות ההכרחיות להפעלת הפלטפורמה. אין כאן פיקסל פרסומי, אין Google Analytics שמזהה אותך, ואין Third-Party Cookies.
+      </p>
+
+      <div class="cookie-types">
+        <div class="cookie-type">
+          <span class="ct-status ct-yes">כן — משתמשים</span>
+          <h3>Session Cookie</h3>
+          <p>שומר את מצב ההתחברות שלך. נמחק בסגירת הדפדפן.</p>
+        </div>
+        <div class="cookie-type">
+          <span class="ct-status ct-yes">כן — משתמשים</span>
+          <h3>CSRF Token</h3>
+          <p>מגן על הפעולות שלך מפני זיוף בקשות חוצות-אתרים. קריטי לאבטחה.</p>
+        </div>
+        <div class="cookie-type">
+          <span class="ct-status ct-yes">כן — משתמשים</span>
+          <h3>Language Preference</h3>
+          <p>שומר אם בחרת עברית או אנגלית. לא מועבר לצד שלישי.</p>
+        </div>
+        <div class="cookie-type">
+          <span class="ct-status ct-no">לא — אין כאן</span>
+          <h3>פרסומות ו-Tracking</h3>
+          <p>לא משתמשים בGoogle Ads, Facebook Pixel, או כל Tracker חיצוני.</p>
+        </div>
+        <div class="cookie-type">
+          <span class="ct-status ct-no">לא — אין כאן</span>
+          <h3>Analytics Third-Party</h3>
+          <p>אנליטיקת שימוש מתבצעת בצד השרת, לא ע"י JavaScript חיצוני בדפדפן שלך.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 9 — AI ואוטומציה
+    ============================================================ -->
+    <section class="section-card" id="s9">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🤖</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 9</div>
+          <h2>AI ואוטומציה — החלטות שמשפיעות עליך</h2>
+        </div>
+      </div>
+
+      <p>
+        הפלטפורמה משתמשת בעיבוד אוטומטי של נתונים כדי לחשב ציוני השמה. שקיפות מלאה על איך זה עובד היא חלק מהמחויבות שלנו.
+      </p>
+
+      <ul class="data-list" style="margin-bottom:1rem">
+        <li>
+          <strong>מבחן ELI5 (Explain Like I'm 5):</strong> מנוע ניתוח מילות מפתח מנתח את תשובתך ומעניק ציון כושר הוראה (0–100). הציון מהווה 35% מציון ה-School Match.
+        </li>
+        <li>
+          <strong>ציון School Match:</strong> חישוב אלגוריתמי המשקלל Teaching Aptitude (35%), Subject Match (25%), Retention Score (25%), Impact (15%). ציון מינימום 60 נדרש לשיבוץ.
+        </li>
+        <li>
+          <strong>ציון Company Match:</strong> חישוב אלגוריתמי המשקלל Tech Skills (35%), Growth Potential (25%), Soft Skills (25%), Cultural Fit (15%). ציון מינימום 60 נדרש לשיבוץ.
+        </li>
+        <li>
+          <strong>Feedback Loop:</strong> ביצועים בפועל משפיעים על עדכון אוטומטי של משקלות המודל — תהליך שמשפר את דיוק השיבוצים לאורך זמן.
+        </li>
+      </ul>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">👤</span>
+        <span>
+          <strong>זכות לביקורת אנושית:</strong> קיבלת ציון שנראה לך לא מדויק? לפי תיקון 13 וסעיף 22 ל-GDPR, יש לך זכות מוחלטת לבקש שאדם (לא רק אלגוריתם) יבחן את הציון שלך ויסביר את ההחלטה. שלח בקשה ל-<a href="mailto:noam@maof.ai" style="color:var(--green)">noam@maof.ai</a> עם הכותרת "בקשה לביקורת ציון". אנחנו מתחייבים לסקירה אנושית תוך 14 ימי עסקים.
+        </span>
+      </div>
+
+      <p>
+        המודל אינו מקבל החלטות על בסיס <strong>מין, גיל, אתניות, מוצא או כל מאפיין מוגן</strong> אחר. אם זיהית הטיה בתוצאות, דווח לנו מיידית — אנחנו מחויבים לאיתור ותיקון הטיות אלגוריתמיות.
+      </p>
+    </section>
+
+    <!-- ============================================================
+         SECTION 10 — צור קשר ומנהל מידע
+    ============================================================ -->
+    <section class="section-card" id="s10">
+      <div class="section-header">
+        <div class="section-icon icon-green">📞</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 10</div>
+          <h2>צור קשר ומנהל מידע</h2>
+        </div>
+      </div>
+
+      <p>
+        לכל שאלה, בקשה, תלונה, או דיווח שקשורים למדיניות זו — ישנה כתובת אחת ותגובה אחת:
+      </p>
+
+      <div class="contact-box">
+        <div class="contact-row">
+          <span class="ci">👤</span>
+          <span><strong>מנהל מידע (Data Controller):</strong> נעם, מייסד מעוף Tech-Lead Israel</span>
+        </div>
+        <div class="contact-row">
+          <span class="ci">📧</span>
+          <span><strong>דוא"ל פרטיות:</strong> <a href="mailto:noam@maof.ai">noam@maof.ai</a></span>
+        </div>
+        <div class="contact-row">
+          <span class="ci">⏱</span>
+          <span><strong>זמן מענה:</strong> עד 30 ימי עסקים לכל פנייה לפי חוק הגנת הפרטיות</span>
+        </div>
+        <div class="contact-row">
+          <span class="ci">🏛</span>
+          <span><strong>ערעור לרשות:</strong> <a href="https://www.gov.il/he/departments/israel_privacy_protection_authority" target="_blank" rel="noopener">הרשות להגנת הפרטיות (ipp.gov.il)</a></span>
+        </div>
+        <div class="contact-row">
+          <span class="ci">🇪🇺</span>
+          <span><strong>גורמי GDPR:</strong> לנושאי נתונים ב-EU — ניתן לפנות לרשות ה-DPA של מדינת המגורים שלך</span>
+        </div>
+      </div>
+
+      <p style="margin-top:1.1rem;">
+        כותרות מומלצות לדוא"ל שיזרזו טיפול: "פנייה לפי חוק הגנת הפרטיות – [סוג הבקשה]" (לדוגמה: "פנייה לפי חוק הגנת הפרטיות – בקשת מחיקה").
+      </p>
+    </section>
+
+    <!-- ============================================================
+         SECTION 11 — עדכוני מדיניות
+    ============================================================ -->
+    <section class="section-card" id="s11">
+      <div class="section-header">
+        <div class="section-icon icon-amber">🔔</div>
+        <div class="section-title-wrap">
+          <div class="section-num">סעיף 11</div>
+          <h2>עדכוני מדיניות</h2>
+        </div>
+      </div>
+
+      <p>
+        אנחנו מעדכנים מדיניות זו כאשר ישנו שינוי משמעותי בשירות, בחוק, או בנוהלי עיבוד הנתונים שלנו.
+      </p>
+
+      <ul class="data-list">
+        <li><strong>הודעה מוקדמת של 30 ימים:</strong> לפני כניסת שינוי מהותי לתוקף, תקבל הודעה ישירה בדוא"ל שרשמת.</li>
+        <li><strong>תאריך עדכון גלוי:</strong> ה"עודכן לאחרונה" בראש הדף מתעדכן בכל גרסה. אפשר לבדוק אם מדיניות השתנתה.</li>
+        <li><strong>שינויים קטנים (עריכת לשון, בהירות):</strong> ייכנסו לתוקף מיידי, ללא הודעה, כיוון שאינם משנים את מהות הזכויות.</li>
+        <li><strong>שינויים שמרחיבים סוגי עיבוד:</strong> יחייבו הסכמה מפורשת מחדש — לא "הסכמה שבשתיקה" מהמשך שימוש.</li>
+        <li><strong>ארכיון גרסאות:</strong> גרסאות קודמות של מדיניות זו יהיו זמינות לבקשה ל-<a href="mailto:noam@maof.ai" style="color:var(--accent)">noam@maof.ai</a>.</li>
+      </ul>
+
+      <div class="callout callout-blue">
+        <span class="callout-icon">📌</span>
+        <span>
+          הגרסה הנוכחית נכנסה לתוקף ב-<strong>אפריל 2026</strong> ומחליפה כל גרסה קודמת. גרסה זו תואמת את תיקון 13 לחוק הגנת הפרטיות שנכנס לתוקף באוגוסט 2025.
+        </span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="border:none; padding: 2rem 0 1rem; text-align:right;">
+      <p style="font-size:13px; color:var(--muted); margin:0;">
+        © 2026 מעוף Tech-Lead Israel · כל הזכויות שמורות ·
+        <a href="mailto:noam@maof.ai">noam@maof.ai</a>
+      </p>
+    </footer>
+
+  </main>
+</div>
+
+<!-- Global footer -->
+<footer>
+  מעוף Tech-Lead Israel · מדיניות פרטיות · תואם תיקון 13 לחוק הגנת הפרטיות (אוגוסט 2025) ועקרונות GDPR ·
+  <a href="mailto:noam@maof.ai">noam@maof.ai</a>
+</footer>
+
+<!-- ============================================================
+     ACTIVE TOC LINK (Intersection Observer)
+============================================================ -->
+<script>
+  (function () {
+    const sections = document.querySelectorAll('section[id]');
+    const tocLinks = document.querySelectorAll('.toc-list a');
+
+    function setActive(id) {
+      tocLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: '-64px 0px -55% 0px',
+        threshold: 0
+      }
+    );
+
+    sections.forEach(s => observer.observe(s));
+  })();
+</script>
+
+</body>
+</html>
