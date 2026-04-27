@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מעוף — פורטל חברה מאמצת</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #f0f2f5;
+  --surface:   #ffffff;
+  --card:      #ffffff;
+  --sidebar:   #16213e;
+  --sidebar2:  #1a2750;
+  --border:    #e4e8ef;
+  --border2:   #eef1f5;
+  --blue:      #2563eb;
+  --blue-lt:   #eff4ff;
+  --blue-mid:  #1d50c8;
+  --green:     #059669;
+  --green-lt:  #ecfdf5;
+  --amber:     #d97706;
+  --amber-lt:  #fffbeb;
+  --red:       #dc2626;
+  --red-lt:    #fef2f2;
+  --slate:     #64748b;
+  --text:      #0f172a;
+  --text-mid:  #475569;
+  --text-dim:  #94a3b8;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06), 0 1px 8px rgba(0,0,0,.04);
+  --shadow:    0 2px 8px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.03);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── LAYOUT ─────────────────────────────────── */
+.shell { display: flex; min-height: 100vh; }
+
+/* ─── SIDEBAR ────────────────────────────────── */
+.sidebar {
+  width: 228px; flex-shrink: 0;
+  background: var(--sidebar);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; right: 0; height: 100vh;
+  z-index: 50; border-left: 1px solid rgba(255,255,255,.05);
+}
+
+.sb-head {
+  padding: 22px 18px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.sb-brand {
+  font-size: 13px; font-weight: 700; color: #fff;
+  letter-spacing: -.3px; margin-bottom: 2px;
+}
+.sb-brand em { color: #4d9cff; font-style: normal; }
+.sb-tag {
+  font-size: 9px; font-weight: 500; color: rgba(255,255,255,.35);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+}
+.sb-company {
+  margin-top: 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 9px; padding: 9px 12px;
+  display: flex; align-items: center; gap: 9px;
+}
+.sb-co-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #22c55e; flex-shrink: 0;
+  box-shadow: 0 0 6px #22c55e88;
+}
+.sb-co-name { font-size: 13px; font-weight: 600; color: #fff; }
+.sb-co-type { font-size: 10px; color: rgba(255,255,255,.38); margin-top: 1px; }
+
+.sb-nav { flex: 1; padding: 16px 10px; overflow-y: auto; }
+.sb-section { margin-bottom: 20px; }
+.sb-section-label {
+  font-size: 9px; font-weight: 600; color: rgba(255,255,255,.28);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+  padding: 0 8px; margin-bottom: 4px;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 7px; cursor: pointer;
+  transition: background .15s; font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,.48); margin-bottom: 1px; position: relative;
+}
+.sb-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+.sb-item.active { background: rgba(37,99,235,.25); color: #7ab8ff; }
+.sb-item .ic { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.sb-badge {
+  margin-right: auto; font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 10px;
+}
+.sb-badge.red { background: #dc2626; color: #fff; }
+.sb-badge.green { background: #059669; color: #fff; }
+
+.sb-foot {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.sb-user { display: flex; align-items: center; gap: 10px; }
+.sb-av {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: linear-gradient(135deg, #2563eb, #16213e);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.sb-user-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.85); }
+.sb-user-role { font-size: 10px; color: rgba(255,255,255,.35); margin-top: 1px; }
+.sb-gear {
+  margin-right: auto; font-size: 14px;
+  color: rgba(255,255,255,.28); cursor: pointer;
+  padding: 4px; border-radius: 4px; transition: color .15s;
+}
+.sb-gear:hover { color: rgba(255,255,255,.7); }
+
+/* ─── MAIN ───────────────────────────────────── */
+.main { margin-right: 228px; flex: 1; padding: 28px 30px; min-height: 100vh; }
+
+/* ─── SCREENS ────────────────────────────────── */
+.screen { display: none; animation: fadeUp .22s ease; }
+.screen.active { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── TOPBAR ─────────────────────────────────── */
+.topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; gap: 16px; }
+.page-title { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.4px; }
+.page-title em { color: var(--blue); font-style: normal; }
+.page-sub { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+.topbar-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* ─── BUTTONS ────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 16px; border-radius: 7px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: var(--blue-mid); box-shadow: 0 3px 10px rgba(37,99,235,.3); }
+.btn-green { background: var(--green); color: #fff; }
+.btn-green:hover { background: #047857; }
+.btn-outline { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); }
+.btn-outline:hover { background: var(--blue-lt); }
+.btn-ghost { background: var(--surface); color: var(--text-mid); border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
+.btn-ghost:hover { border-color: var(--slate); color: var(--text); }
+
+/* ─── CARDS ──────────────────────────────────── */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; box-shadow: var(--shadow);
+}
+.card-p { padding: 20px 22px; }
+.card-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px 14px;
+}
+.card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.card-link { font-size: 12px; color: var(--blue); cursor: pointer; font-weight: 500; }
+.card-bd { padding: 4px 22px 18px; }
+
+/* ─── KPI ROW ────────────────────────────────── */
+.kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
+.kpi {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+  box-shadow: var(--shadow); position: relative; overflow: hidden;
+  transition: transform .15s;
+}
+.kpi:hover { transform: translateY(-2px); }
+.kpi-lbl {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .6px; color: var(--text-dim); margin-bottom: 7px;
+}
+.kpi-val {
+  font-size: 26px; font-weight: 700; line-height: 1;
+  font-family: 'DM Mono', monospace;
+}
+.kpi-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+.kpi-accent { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; border-radius: 0 0 12px 12px; }
+.c-blue { color: var(--blue); } .a-blue { background: var(--blue); }
+.c-green { color: var(--green); } .a-green { background: var(--green); }
+.c-amber { color: var(--amber); } .a-amber { background: var(--amber); }
+.c-red { color: var(--red); } .a-red { background: var(--red); }
+
+/* ─── TABLE ──────────────────────────────────── */
+.tbl-wrap {
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+table { width: 100%; border-collapse: collapse; background: var(--card); }
+thead tr { background: #f8fafc; }
+th {
+  padding: 10px 14px; text-align: right;
+  font-size: 10px; font-weight: 600; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: .5px;
+  border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+td { padding: 12px 14px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { cursor: pointer; transition: background .1s; }
+tbody tr:hover { background: #f9fafb; }
+
+/* ─── SCORE PILL ─────────────────────────────── */
+.score {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 26px; border-radius: 6px;
+  font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace;
+}
+.score-hi { background: var(--green-lt); color: var(--green); }
+.score-mid { background: var(--amber-lt); color: var(--amber); }
+.score-lo { background: var(--red-lt); color: var(--red); }
+
+/* ─── MATCH BAR ──────────────────────────────── */
+.mbar { display: flex; align-items: center; gap: 8px; min-width: 90px; }
+.mbar-track { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.mbar-fill { height: 100%; border-radius: 3px; }
+.mbar-pct { font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; width: 30px; }
+
+/* ─── STATUS ─────────────────────────────────── */
+.status {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.st-avail { background: var(--green-lt); color: var(--green); }
+.st-avail::before { background: var(--green); }
+.st-placed { background: var(--blue-lt); color: var(--blue); }
+.st-placed::before { background: var(--blue); }
+.st-pending { background: var(--amber-lt); color: var(--amber); }
+.st-pending::before { background: var(--amber); }
+
+/* ─── CANDIDATE ROW ──────────────────────────── */
+.cand { display: flex; align-items: center; gap: 10px; }
+.cand-av {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.cand-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.cand-unit { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+
+/* ─── CHIP ───────────────────────────────────── */
+.chip {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: 5px;
+  font-size: 11px; font-weight: 600; margin: 1px;
+}
+.chip-blue { background: var(--blue-lt); color: var(--blue); }
+.chip-green { background: var(--green-lt); color: var(--green); }
+.chip-gray { background: #f1f5f9; color: var(--slate); }
+.chip-amber { background: var(--amber-lt); color: var(--amber); }
+
+/* ─── FILTER BAR ─────────────────────────────── */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.filter-chip {
+  padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  border: 1.5px solid var(--border); background: var(--card);
+  cursor: pointer; color: var(--text-mid); transition: all .14s;
+}
+.filter-chip:hover { border-color: var(--blue); color: var(--blue); }
+.filter-chip.on { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); }
+.search-box {
+  padding: 6px 13px; border-radius: 8px; border: 1.5px solid var(--border);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+  outline: none; background: var(--card); min-width: 200px; transition: border .15s;
+}
+.search-box:focus { border-color: var(--blue); }
+
+/* ─── MODAL ──────────────────────────────────── */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,.4); backdrop-filter: blur(4px);
+  z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: #fff; border-radius: 16px; box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 660px; max-height: 90vh; overflow-y: auto;
+  animation: modalIn .22s ease;
+}
+@keyframes modalIn { from { opacity:0; transform:scale(.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.modal-head {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 14px; position: sticky; top: 0; background: #fff; z-index: 1;
+}
+.modal-av {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 700; color: #fff;
+}
+.modal-name { font-size: 17px; font-weight: 700; color: var(--text); }
+.modal-unit { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.modal-x {
+  margin-right: auto; width: 28px; height: 28px; border: 1.5px solid var(--border);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-dim); font-size: 13px; flex-shrink: 0; transition: all .15s;
+}
+.modal-x:hover { background: #f1f5f9; color: var(--text); }
+.modal-body { padding: 20px 24px; }
+.modal-kpi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.mkpi { background: #f8fafc; border-radius: 10px; padding: 13px; text-align: center; border: 1px solid var(--border2); }
+.mkpi-lbl { font-size: 9px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.mkpi-val { font-size: 21px; font-weight: 700; font-family: 'DM Mono', monospace; }
+.modal-section { margin-bottom: 18px; }
+.modal-sec-title { font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+.journey { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; border-radius: 9px; overflow: hidden; border: 1px solid var(--border); }
+.journey-phase { padding: 12px; text-align: center; background: #f8fafc; }
+.journey-phase.a { background: var(--blue-lt); border: 1px solid #bfdbfe; }
+.journey-phase.b { background: var(--green-lt); border: 1px solid #bbf7d0; }
+.jp-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin-bottom: 4px; }
+.jp-val { font-size: 13px; font-weight: 700; color: var(--text); }
+.jp-sub { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+.modal-foot { display: flex; gap: 8px; padding: 14px 24px 20px; border-top: 1px solid var(--border); }
+
+/* ─── NOTIFICATION ───────────────────────────── */
+.notif {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 16px; border-radius: 9px; border: 1px solid var(--border);
+  background: var(--card); margin-bottom: 8px; transition: background .1s; cursor: pointer;
+}
+.notif:hover { background: #f9fafb; }
+.notif.unread { background: #eff6ff; border-color: #bfdbfe; }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.notif-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.notif-sub { font-size: 11px; color: var(--text-dim); }
+.notif-time { font-size: 10px; color: var(--text-dim); white-space: nowrap; font-family: 'DM Mono', monospace; margin-top: 2px; }
+
+/* ─── PROGRESS ───────────────────────────────── */
+.progress-track { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+
+/* ─── AGREE STEP ─────────────────────────────── */
+.agree-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; border-radius: 9px;
+  border: 1px solid var(--border); background: var(--card); margin-bottom: 8px;
+}
+.agree-num {
+  width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+}
+.an-done { background: var(--green-lt); color: var(--green); }
+.an-active { background: var(--blue); color: #fff; }
+.an-todo { background: #f1f5f9; color: var(--text-dim); }
+.agree-label { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
+.agree-date { font-size: 11px; color: var(--text-dim); font-family: 'DM Mono', monospace; }
+.agree-action { font-size: 12px; color: var(--blue); cursor: pointer; font-weight: 600; }
+
+/* ─── SETTINGS FORM ──────────────────────────── */
+.sf-section { margin-bottom: 24px; }
+.sf-sec-title {
+  font-size: 10px; font-weight: 700; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: .6px;
+  margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border2);
+}
+.sf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.sf-field { display: flex; flex-direction: column; gap: 5px; }
+.sf-field.full { grid-column: span 2; }
+.sf-lbl { font-size: 11px; font-weight: 500; color: var(--text-mid); }
+.sf-input {
+  padding: 9px 13px; border-radius: 8px; border: 1.5px solid var(--border);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+  outline: none; transition: border .15s; background: #fff; width: 100%;
+}
+.sf-input:focus { border-color: var(--blue); }
+select.sf-input { cursor: pointer; -webkit-appearance: none; }
+.tc-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.tc {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  border: 1.5px solid var(--border); background: #f8fafc;
+  cursor: pointer; color: var(--text-mid); transition: all .14s;
+}
+.tc:hover { border-color: var(--blue); color: var(--blue); }
+.tc.on { border-color: var(--blue); background: var(--blue-lt); color: var(--blue); }
+.save-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-radius: 8px; margin-top: 16px;
+  background: var(--amber-lt); border: 1px solid #fde68a;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.save-bar.show { opacity: 1; pointer-events: auto; }
+
+/* ─── FINANCE ROWS ───────────────────────────── */
+.fin-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border2);
+}
+.fin-row:last-child { border-bottom: none; }
+.fin-who { font-size: 13px; color: var(--text-mid); width: 160px; flex-shrink: 0; }
+.fin-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.fin-fill { height: 100%; border-radius: 3px; }
+.fin-pct { font-size: 12px; font-weight: 600; color: var(--text-mid); width: 36px; text-align: center; }
+.fin-amt { font-size: 14px; font-weight: 700; font-family: 'DM Mono', monospace; width: 76px; text-align: left; }
+
+/* ─── GRID HELPERS ───────────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.g-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.mb16 { margin-bottom: 16px; }
+.mb20 { margin-bottom: 20px; }
+
+/* ─── AI CHAT ────────────────────────────────── */
+.chat-shell {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 18px;
+  height: calc(100vh - 120px);
+}
+.chat-main {
+  display: flex; flex-direction: column;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; box-shadow: var(--shadow); overflow: hidden;
+}
+.chat-topbar {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, #f0f6ff, #fff);
+}
+.chat-ai-av {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--blue), #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.chat-ai-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.chat-ai-sub { font-size: 11px; color: var(--text-dim); }
+.chat-online {
+  margin-right: auto; display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--green); font-weight: 600;
+}
+.chat-online::before { content:''; width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 5px var(--green); }
+
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  scroll-behavior: smooth;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.msg { display: flex; gap: 10px; max-width: 85%; animation: msgIn .2s ease; }
+@keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.msg.user { margin-right: auto; flex-direction: row-reverse; }
+.msg.ai { margin-left: auto; }
+.msg-av {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+}
+.msg-av.ai-av { background: linear-gradient(135deg, var(--blue), #7c3aed); color: #fff; font-size: 14px; }
+.msg-av.user-av { background: linear-gradient(135deg, #16213e, #2563eb); color: #fff; font-size: 10px; }
+.msg-bubble {
+  padding: 11px 14px; border-radius: 12px; font-size: 13px; line-height: 1.55;
+}
+.msg.user .msg-bubble {
+  background: var(--blue); color: #fff;
+  border-radius: 12px 2px 12px 12px;
+}
+.msg.ai .msg-bubble {
+  background: #f4f7fc; color: var(--text); border: 1px solid var(--border);
+  border-radius: 2px 12px 12px 12px;
+}
+.msg-time { font-size: 10px; color: var(--text-dim); margin-top: 4px; text-align: left; }
+.msg.user .msg-time { text-align: right; }
+
+/* candidate result cards inside chat */
+.chat-cand-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px; margin-top: 8px;
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; gap: 12px;
+}
+.chat-cand-card:hover { border-color: var(--blue); background: var(--blue-lt); transform: translateY(-1px); box-shadow: var(--shadow); }
+.chat-cand-card.rank-1 { border-color: var(--green); background: var(--green-lt); }
+.ccc-rank {
+  width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800;
+}
+.r1 { background: var(--green); color: #fff; }
+.r2 { background: var(--blue); color: #fff; }
+.r3 { background: #94a3b8; color: #fff; }
+.ccc-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.ccc-unit { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+.ccc-score { font-size: 15px; font-weight: 800; font-family: 'DM Mono', monospace; margin-right: auto; }
+.ccc-match { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+
+/* thinking indicator */
+.thinking {
+  display: flex; gap: 10px; align-items: center;
+  padding: 11px 14px; background: #f4f7fc; border: 1px solid var(--border);
+  border-radius: 2px 12px 12px 12px; font-size: 13px; color: var(--text-dim);
+}
+.thinking-dots { display: flex; gap: 4px; }
+.thinking-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--blue);
+  animation: tdot .9s infinite;
+}
+.thinking-dot:nth-child(2) { animation-delay: .15s; }
+.thinking-dot:nth-child(3) { animation-delay: .3s; }
+@keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.4;} 30%{transform:translateY(-5px);opacity:1;} }
+
+.chat-input-wrap {
+  padding: 14px 16px; border-top: 1px solid var(--border);
+  display: flex; gap: 10px; align-items: flex-end;
+  background: #fafbfc;
+}
+.chat-input {
+  flex: 1; padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+  outline: none; resize: none; line-height: 1.5; max-height: 100px;
+  transition: border .15s;
+}
+.chat-input:focus { border-color: var(--blue); }
+.chat-send {
+  width: 38px; height: 38px; border-radius: 10px; border: none;
+  background: var(--blue); color: #fff; font-size: 16px;
+  cursor: pointer; transition: all .15s; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.chat-send:hover { background: var(--blue-mid); transform: translateY(-1px); }
+.chat-send:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+
+/* sidebar panel */
+.chat-sidebar { display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+.prompt-chip {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 10px 12px; background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 9px; cursor: pointer; transition: all .15s; font-size: 12px;
+  color: var(--text-mid); line-height: 1.4;
+}
+.prompt-chip:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
+.prompt-chip .pi { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.context-item {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; padding: 6px 0; border-bottom: 1px solid var(--border2);
+}
+.context-item:last-child { border-bottom: none; }
+.context-key { color: var(--text-dim); }
+.context-val { font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
+
+  /* ── Company portal additions ── */
+  .cnotif-tab{padding:5px 14px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);border-radius:7px;color:#94a3b8;cursor:pointer;font-size:11px;font-family:'DM Mono',monospace;transition:.15s;}
+  .cnotif-tab:hover{color:#e2e8f0;}
+  .cnotif-active{background:rgba(37,99,235,.18)!important;border-color:rgba(37,99,235,.4)!important;color:#7ab8ff!important;}
+  .cmsg-card{display:flex;gap:14px;padding:15px 18px;background:#1e2a45;border:1px solid rgba(255,255,255,.07);border-radius:12px;cursor:pointer;transition:.2s;position:relative;}
+  .cmsg-card:hover{border-color:rgba(37,99,235,.3);}
+  .cmsg-card.unread{background:#1a3060;border-color:rgba(37,99,235,.3);}
+  .cmsg-card.unread::before{content:'';position:absolute;top:12px;right:12px;width:7px;height:7px;border-radius:50%;background:#3b82f6;}
+  .cmsg-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  /* placement request modal */
+  .preq-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+  .preq-box{background:#0f172a;border:1px solid rgba(37,99,235,.35);border-radius:18px;width:520px;max-width:94vw;overflow:hidden;}
+  .preq-head{padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;}
+  .preq-body{padding:22px 24px;display:flex;flex-direction:column;gap:16px;}
+  .preq-foot{padding:16px 24px;background:rgba(255,255,255,.02);display:flex;gap:10px;justify-content:flex-end;}
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-brand">מעוף <em>Israel</em></div>
+    <div class="sb-tag">פורטל חברה מאמצת</div>
+    <div class="sb-company">
+      <div class="sb-co-dot"></div>
+      <div>
+        <div class="sb-co-name">Mobileye</div>
+        <div class="sb-co-type">רכב אוטונומי · ירושלים</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-section">
+      <div class="sb-section-label">ניהול</div>
+      <div class="sb-item active" onclick="nav('dashboard')"><span class="ic">📊</span>לוח בקרה</div>
+      <div class="sb-item" onclick="nav('candidates')">
+        <span class="ic">🎖️</span>מועמדים
+        <span class="sb-badge green">9</span>
+      </div>
+      <div class="sb-item" onclick="nav('placements')"><span class="ic">📋</span>הצבות פעילות</div>
+      <div class="sb-item" onclick="nav('finance')"><span class="ic">💳</span>מימון ומס</div>
+      <div class="sb-item" onclick="nav('aichat')" style="border:1px solid rgba(77,159,255,.25);margin-top:4px">
+        <span class="ic">✨</span>AI Matching Chat
+        <span style="font-size:9px;background:rgba(37,99,235,.4);color:#7ab8ff;padding:1px 6px;border-radius:4px;font-weight:700;margin-right:auto">חדש</span>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-label">מערכת</div>
+      <div class="sb-item" onclick="nav('notifications')" id="notif-nav-item">
+        <span class="ic">🔔</span>התראות
+        <span class="sb-badge red">3</span>
+      </div>
+      <div class="sb-item" onclick="nav('agreement')"><span class="ic">📄</span>הסכם שותפות</div>
+      <div class="sb-item" onclick="nav('settings')"><span class="ic">⚙️</span>הגדרות חברה</div>
+    </div>
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av">ריז</div>
+      <div>
+        <div class="sb-user-name">רינת זוהר</div>
+        <div class="sb-user-role">HR Lead · Mobileye</div>
+      </div>
+      <div class="sb-gear" onclick="nav('settings')">⚙</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════════ -->
+<main class="main">
+
+<!-- ─── DASHBOARD ──────────────────────────────────────────────── -->
+<div id="s-dashboard" class="screen active">
+  <div class="topbar">
+    <div>
+      <div class="page-title">לוח <em>בקרה</em></div>
+      <div class="page-sub">Mobileye · תוכנית 2025 · עדכון: היום 09:22</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="nav('candidates')">🎖️ מועמדים</button>
+      <button class="btn btn-primary" onclick="nav('candidates')">+ בקש הצבה</button>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-lbl">Slots פנויים</div>
+      <div class="kpi-val c-blue">9<span style="font-size:14px;color:var(--text-dim)"> / 12</span></div>
+      <div class="kpi-sub">3 הוצבו השנה</div>
+      <div class="kpi-accent a-blue"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">ציון Match ממוצע</div>
+      <div class="kpi-val c-green">91</div>
+      <div class="kpi-sub">מועמדים מוצעים</div>
+      <div class="kpi-accent a-green"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">עלות חברה / חודש</div>
+      <div class="kpi-val c-amber">3,750<span style="font-size:14px">₪</span></div>
+      <div class="kpi-sub">25% · לפני הטבת מס</div>
+      <div class="kpi-accent a-amber"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">חיסכון מס שנתי</div>
+      <div class="kpi-val c-green">54K<span style="font-size:14px">₪</span></div>
+      <div class="kpi-sub">הטבת מס 15% ע"פ חוק</div>
+      <div class="kpi-accent a-green"></div>
+    </div>
+  </div>
+
+  <div class="g2 mb20">
+    <!-- Top candidates -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">🏆 Top מועמדים עבורך</div>
+        <div class="card-link" onclick="nav('candidates')">כל 9 המועמדים →</div>
+      </div>
+      <div class="card-bd" style="padding-top:8px">
+        <div onclick="openModal('noam')" style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--green-lt);border:1px solid #bbf7d0;border-radius:9px;cursor:pointer;margin-bottom:8px;transition:opacity .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          <div class="cand-av" style="background:linear-gradient(135deg,#dc2626,#16213e)">נל</div>
+          <div style="flex:1"><div class="cand-name">נועה לוי</div><div class="cand-unit">מודיעין · סייבר+AI</div></div>
+          <div class="score score-hi">97</div>
+          <div style="font-size:11px;color:var(--green);font-weight:700;background:#d1fae5;padding:2px 8px;border-radius:4px">94% match</div>
+        </div>
+        <div onclick="openModal('yuval')" style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:8px;transition:opacity .15s" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f9fafb'">
+          <div class="cand-av" style="background:linear-gradient(135deg,#059669,#16213e)">יכ</div>
+          <div style="flex:1"><div class="cand-name">יובל כהן</div><div class="cand-unit">8200 · סייבר+Python</div></div>
+          <div class="score score-hi">94</div>
+          <div style="font-size:11px;color:var(--green);font-weight:700;background:#d1fae5;padding:2px 8px;border-radius:4px">88% match</div>
+        </div>
+        <div onclick="openModal('michal')" style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:opacity .15s" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f9fafb'">
+          <div class="cand-av" style="background:linear-gradient(135deg,#d97706,#16213e)">מר</div>
+          <div style="flex:1"><div class="cand-name">מיכל ראובן</div><div class="cand-unit">תקשוב · Python+Data</div></div>
+          <div class="score score-mid">81</div>
+          <div style="font-size:11px;color:var(--amber);font-weight:700;background:var(--amber-lt);padding:2px 8px;border-radius:4px">76% match</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline chart -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">📈 Pipeline מועמדים · 2025</div></div>
+      <div style="padding:0 16px 18px"><canvas id="c-pipeline" style="max-height:200px"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <!-- Financing -->
+    <div class="card card-p">
+      <div class="card-title" style="margin-bottom:16px">💳 פיצול מימון</div>
+      <div class="fin-row">
+        <div class="fin-who">🏛 מדינה (50%)</div>
+        <div class="fin-track"><div class="fin-fill" style="width:50%;background:var(--blue)"></div></div>
+        <div class="fin-pct">50%</div>
+        <div class="fin-amt c-blue">7,500₪</div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-who">🏙 רשות מקומית (25%)</div>
+        <div class="fin-track"><div class="fin-fill" style="width:25%;background:var(--green)"></div></div>
+        <div class="fin-pct">25%</div>
+        <div class="fin-amt c-green">3,750₪</div>
+      </div>
+      <div class="fin-row" style="background:var(--amber-lt);border-radius:8px;padding:10px;border:1px solid #fde68a;margin-top:4px">
+        <div class="fin-who" style="font-weight:700;color:var(--amber)">🏢 Mobileye (25%)</div>
+        <div class="fin-track"><div class="fin-fill" style="width:25%;background:var(--amber)"></div></div>
+        <div class="fin-pct">25%</div>
+        <div class="fin-amt c-amber">3,750₪</div>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border2);font-size:12px;color:var(--text-dim)">
+        שכר מורה סה"כ: <strong style="color:var(--text)">15,000₪/חודש</strong>
+      </div>
+    </div>
+
+    <!-- Tax -->
+    <div class="card card-p">
+      <div class="card-title" style="margin-bottom:14px">🧾 הטבת מס</div>
+      <div style="text-align:center;padding:10px 0 12px">
+        <div style="font-size:44px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;line-height:1">15%</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:4px">הכרת רשות המסים</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-mid)">עלות ברוטו שנתית</span><span style="font-weight:600;font-family:'DM Mono',monospace">45,000₪</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-mid)">הטבת מס שנתית</span><span style="font-weight:700;color:var(--green);font-family:'DM Mono',monospace">−6,750₪</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding-top:8px;border-top:1px solid var(--border2)"><span style="font-weight:700">עלות נטו</span><span style="font-weight:700;font-family:'DM Mono',monospace">38,250₪</span></div>
+      </div>
+    </div>
+
+    <!-- Agreement -->
+    <div class="card card-p">
+      <div class="card-title" style="margin-bottom:14px">📄 סטטוס הסכם</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--green-lt);border-radius:8px">
+          <span>✅</span><span style="font-size:12px;font-weight:600;color:var(--green)">חוזה ראשי — חתום</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--green-lt);border-radius:8px">
+          <span>✅</span><span style="font-size:12px;font-weight:600;color:var(--green)">נספח מימון — חתום</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--amber-lt);border-radius:8px;border:1px solid #fde68a">
+          <span>⏳</span><span style="font-size:12px;font-weight:600;color:var(--amber)">הצבת חייל — ממתין</span>
+        </div>
+      </div>
+      <button class="btn btn-outline" style="width:100%;margin-top:12px;font-size:12px;justify-content:center" onclick="nav('agreement')">הסכם מלא →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CANDIDATES ──────────────────────────────────────────────── -->
+<div id="s-candidates" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">מועמדים <em>מתאימים</em></div>
+      <div class="page-sub">מסונן לפי Tech Stack של Mobileye · Python · Cyber · CV</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">📥 ייצוא</button>
+      <button class="btn btn-primary">📩 בקש מועמד</button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <input class="search-box" placeholder="🔍 חיפוש שם / יחידה..." oninput="filterTbl(this.value)" id="tbl-search">
+    <div class="filter-chip on" onclick="fChip(this,'all')">הכל (9)</div>
+    <div class="filter-chip" onclick="fChip(this,'top')">ציון 90+ (4)</div>
+    <div class="filter-chip" onclick="fChip(this,'cyber')">סייבר</div>
+    <div class="filter-chip" onclick="fChip(this,'python')">Python</div>
+    <div class="filter-chip" onclick="fChip(this,'avail')">זמינים עכשיו</div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>מועמד</th>
+          <th>יחידה</th>
+          <th>מקצוע הוראה</th>
+          <th>Tech Match</th>
+          <th>ציון</th>
+          <th>Retention</th>
+          <th>Seniority</th>
+          <th>עלות/חודש</th>
+          <th>סטטוס</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="cand-tbody">
+        <tr data-tags="top cyber avail" onclick="openModal('noam')">
+          <td><div class="cand"><div class="cand-av" style="background:linear-gradient(135deg,#dc2626,#1e3a6e)">נל</div><div><div class="cand-name">נועה לוי</div><div class="cand-unit">מודיעין · נתיבות</div></div></div></td>
+          <td><span class="chip chip-blue">מודיעין</span></td>
+          <td><span class="chip chip-green">סייבר</span><span class="chip chip-green">AI</span></td>
+          <td><div class="mbar"><div class="mbar-track"><div class="mbar-fill" style="width:94%;background:var(--green)"></div></div><span class="mbar-pct c-green">94%</span></div></td>
+          <td><div class="score score-hi">97</div></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">96%</span></td>
+          <td><span class="chip chip-green">+18m</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span class="status st-avail">זמין</span></td>
+          <td><button class="btn btn-green" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('noam')">פרופיל</button></td>
+        </tr>
+        <tr data-tags="top cyber python avail" onclick="openModal('yuval')">
+          <td><div class="cand"><div class="cand-av" style="background:linear-gradient(135deg,#059669,#1e3a6e)">יכ</div><div><div class="cand-name">יובל כהן</div><div class="cand-unit">8200</div></div></div></td>
+          <td><span class="chip chip-blue">8200</span></td>
+          <td><span class="chip chip-green">סייבר</span><span class="chip chip-blue">Python</span></td>
+          <td><div class="mbar"><div class="mbar-track"><div class="mbar-fill" style="width:88%;background:var(--green)"></div></div><span class="mbar-pct c-green">88%</span></div></td>
+          <td><div class="score score-hi">94</div></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">91%</span></td>
+          <td><span class="chip chip-green">+18m</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span class="status st-avail">זמין</span></td>
+          <td><button class="btn btn-outline" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('yuval')">פרופיל</button></td>
+        </tr>
+        <tr data-tags="top python avail" onclick="openModal('ron')">
+          <td><div class="cand"><div class="cand-av" style="background:linear-gradient(135deg,#2563eb,#1e3a6e)">רמ</div><div><div class="cand-name">רון מזרחי</div><div class="cand-unit">חיל הים</div></div></div></td>
+          <td><span class="chip chip-gray">חיל הים</span></td>
+          <td><span class="chip chip-blue">Python</span><span class="chip chip-gray">אלגוריתמים</span></td>
+          <td><div class="mbar"><div class="mbar-track"><div class="mbar-fill" style="width:77%;background:var(--blue)"></div></div><span class="mbar-pct c-blue">77%</span></div></td>
+          <td><div class="score score-hi">90</div></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--amber)">58%</span></td>
+          <td><span class="chip chip-amber">+12m</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span class="status st-avail">זמין</span></td>
+          <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('ron')">פרופיל</button></td>
+        </tr>
+        <tr data-tags="top cyber avail" onclick="openModal('or')">
+          <td><div class="cand"><div class="cand-av" style="background:linear-gradient(135deg,#7c3aed,#1e3a6e)">אש</div><div><div class="cand-name">אור שמיר</div><div class="cand-unit">8200</div></div></div></td>
+          <td><span class="chip chip-blue">8200</span></td>
+          <td><span class="chip chip-green">סייבר</span></td>
+          <td><div class="mbar"><div class="mbar-track"><div class="mbar-fill" style="width:82%;background:var(--green)"></div></div><span class="mbar-pct c-green">82%</span></div></td>
+          <td><div class="score score-hi">90</div></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">89%</span></td>
+          <td><span class="chip chip-green">+18m</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span class="status st-pending">בתהליך</span></td>
+          <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('or')">פרופיל</button></td>
+        </tr>
+        <tr data-tags="python avail" onclick="openModal('michal')">
+          <td><div class="cand"><div class="cand-av" style="background:linear-gradient(135deg,#d97706,#1e3a6e)">מר</div><div><div class="cand-name">מיכל ראובן</div><div class="cand-unit">תקשוב</div></div></div></td>
+          <td><span class="chip chip-gray">תקשוב</span></td>
+          <td><span class="chip chip-blue">Python</span><span class="chip chip-gray">Data Science</span></td>
+          <td><div class="mbar"><div class="mbar-track"><div class="mbar-fill" style="width:76%;background:var(--blue)"></div></div><span class="mbar-pct c-blue">76%</span></div></td>
+          <td><div class="score score-mid">81</div></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--amber)">73%</span></td>
+          <td><span class="chip chip-amber">+12m</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span class="status st-avail">זמין</span></td>
+          <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('michal')">פרופיל</button></td>
+        </tr>
+        <tr data-tags="placed cyber" onclick="openModal('tamar')">
+          <td><div class="cand"><div class="cand-av" style="background:linear-gradient(135deg,#475569,#1e3a6e)">תב</div><div><div class="cand-name">תמר בן-דוד</div><div class="cand-unit">מודיעין</div></div></div></td>
+          <td><span class="chip chip-blue">מודיעין</span></td>
+          <td><span class="chip chip-green">סייבר</span><span class="chip chip-green">AI</span></td>
+          <td><div class="mbar"><div class="mbar-track"><div class="mbar-fill" style="width:91%;background:var(--green)"></div></div><span class="mbar-pct c-green">91%</span></div></td>
+          <td><div class="score score-hi">93</div></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">94%</span></td>
+          <td><span class="chip chip-green">+18m</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span class="status st-placed">הוצב</span></td>
+          <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation()">צפה</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ─── PLACEMENTS ──────────────────────────────────────────────── -->
+<div id="s-placements" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">הצבות <em>פעילות</em></div>
+      <div class="page-sub">2 בתחנה א' · 1 בתחנה ב' · עדכון שוטף</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" onclick="nav('candidates')">+ הצבה חדשה</button>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <!-- Phase A – Tamar -->
+    <div class="card card-p">
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:start">
+        <div class="cand-av" style="width:48px;height:48px;border-radius:12px;font-size:16px;background:linear-gradient(135deg,#475569,#16213e)">תב</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap">
+            <span style="font-size:15px;font-weight:700">תמר בן-דוד</span>
+            <span class="status st-placed">תחנה א' — פעיל</span>
+            <span class="chip chip-green">Retention 94%</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px">מודיעין · סייבר+AI · אורט נתיבות · ספט' 2024</div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);margin-bottom:5px">
+              <span>תחנה א' — 24 חודשים</span>
+              <span style="font-family:'DM Mono',monospace;font-weight:600;color:var(--text)">8 / 24</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:33%;background:linear-gradient(90deg,var(--blue),var(--green))"></div></div>
+          </div>
+        </div>
+        <div style="text-align:left;min-width:90px">
+          <div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">עלות/חודש</div>
+          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace">3,750₪</div>
+          <div style="font-size:10px;color:var(--green);margin-top:2px">לפני מס</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border2)">
+        <div style="text-align:center"><div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">ציון</div><div style="font-size:17px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace">93</div></div>
+        <div style="text-align:center"><div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Tech Match</div><div style="font-size:17px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace">91%</div></div>
+        <div style="text-align:center"><div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">בית ספר</div><div style="font-size:12px;font-weight:700">אורט נתיבות</div></div>
+        <div style="text-align:center"><div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">תחנה ב' צפויה</div><div style="font-size:12px;font-weight:700;color:var(--blue)">ספט' 2027</div></div>
+      </div>
+    </div>
+
+    <!-- Phase B – Alon -->
+    <div class="card card-p" style="border-color:#bfdbfe;background:#f0f6ff">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <span style="font-size:10px;font-weight:700;background:var(--blue);color:#fff;padding:3px 10px;border-radius:5px;letter-spacing:.5px;text-transform:uppercase">תחנה ב' — עובד בMobileye</span>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:start">
+        <div class="cand-av" style="width:48px;height:48px;border-radius:12px;font-size:16px;background:linear-gradient(135deg,#2563eb,#059669)">אב</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap">
+            <span style="font-size:15px;font-weight:700">אלון בן-אור</span>
+            <span class="status st-placed">Security Researcher</span>
+            <span class="chip chip-green">+18 חודש ניסיון מוכר</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px">8200 · הוצב ספט' 2023 · מסיים מרץ 2026</div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);margin-bottom:5px">
+              <span>תחנה ב' — 30 חודשים</span>
+              <span style="font-family:'DM Mono',monospace;font-weight:600;color:var(--text)">18 / 30</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:60%;background:linear-gradient(90deg,var(--green),#22c55e)"></div></div>
+          </div>
+        </div>
+        <div style="text-align:left;min-width:90px">
+          <div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">שכר חברה</div>
+          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace">28K₪</div>
+          <div style="font-size:10px;color:var(--blue);margin-top:2px">Mid+ level</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FINANCE ──────────────────────────────────────────────── -->
+<div id="s-finance" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">מימון <em>ומס</em></div>
+      <div class="page-sub">עלויות, הטבות והחזרים · Mobileye 2025</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">📄 דוח PDF</button>
+      <button class="btn btn-primary">🧾 הגש בקשת מס</button>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-lbl">עלות שנתית ברוטו</div><div class="kpi-val c-amber">45K₪</div><div class="kpi-sub">לחייל אחד</div><div class="kpi-accent a-amber"></div></div>
+    <div class="kpi"><div class="kpi-lbl">חיסכון מס שנתי</div><div class="kpi-val c-green">6,750₪</div><div class="kpi-sub">15% · רשות המסים</div><div class="kpi-accent a-green"></div></div>
+    <div class="kpi"><div class="kpi-lbl">עלות נטו שנתית</div><div class="kpi-val c-blue">38,250₪</div><div class="kpi-sub">לחייל אחד</div><div class="kpi-accent a-blue"></div></div>
+    <div class="kpi"><div class="kpi-lbl">ROI — לעומת גיוס ישיר</div><div class="kpi-val c-green">3.2×</div><div class="kpi-sub">Senior Mid+ שקול</div><div class="kpi-accent a-green"></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card card-p">
+      <div class="card-title" style="margin-bottom:16px">📊 עלות לחברה לאורך המסלול</div>
+      <canvas id="c-cost" style="max-height:230px"></canvas>
+    </div>
+    <div class="card card-p">
+      <div class="card-title" style="margin-bottom:16px">💰 מה Mobileye מרוויחה?</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="padding:14px;background:var(--green-lt);border-radius:10px;border:1px solid #bbf7d0">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Senior Security Researcher בשוק</div>
+          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace">~520,000₪/שנה</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">כולל גיוס + Onboarding + הדרכה</div>
+        </div>
+        <div style="padding:14px;background:var(--blue-lt);border-radius:10px;border:1px solid #bfdbfe">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">עלות תוכנית מעוף (4 שנים)</div>
+          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--blue)">~812,000₪</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">תחנה א' (25%) + שכר תחנה ב' · לפני מס</div>
+        </div>
+        <div style="padding:12px;background:var(--green-lt);border-radius:10px;border:1px solid #bbf7d0;display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:16px">✅</span>
+          <div style="font-size:12px;color:var(--text-mid);line-height:1.6">נכנס כ-<strong style="color:var(--text)">Mid+</strong> עם +18 חודש ניסיון מוכר · Onboarding אפס · Retention גבוה · מוכן מהיום הראשון</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NOTIFICATIONS ──────────────────────────────────────────── -->
+<div id="s-notifications" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title"><em>הודעות</em> ועדכונים</div>
+      <div class="page-sub">עדכונים ממשרד החינוך, אישורי הצבה, ושינויים בתוכנית</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="markAllCompanyRead()">✓ סמן הכל כנקרא</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:18px;align-items:center">
+    <button onclick="filterCompanyMsgs('all',this)"     class="cnotif-tab cnotif-active">הכל <span id="ctab-all">5</span></button>
+    <button onclick="filterCompanyMsgs('unread',this)"  class="cnotif-tab">לא נקרא <span id="ctab-unread" style="color:#2563eb">3</span></button>
+    <button onclick="filterCompanyMsgs('placement',this)"class="cnotif-tab">הצבות <span id="ctab-placement">2</span></button>
+    <button onclick="filterCompanyMsgs('admin',this)"   class="cnotif-tab">מנהלי <span id="ctab-admin">3</span></button>
+  </div>
+
+  <div id="company-msgs-list" style="display:flex;flex-direction:column;gap:10px"></div>
+</div>
+
+<div id="s-agreement" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">הסכם <em>שותפות</em></div>
+      <div class="page-sub">Mobileye × מעוף · גרסה 2.1 · נחתם 03/01/2025</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">📥 הורד PDF</button>
+      <button class="btn btn-primary">✏️ בקש תיקון</button>
+    </div>
+  </div>
+
+  <div class="g-21">
+    <div class="card card-p">
+      <div class="card-title" style="margin-bottom:16px">🛤️ מעקב שלבי ההסכם</div>
+      <div class="agree-row"><div class="agree-num an-done">✓</div><div class="agree-label">הגשת בקשת שותפות</div><div class="agree-date">15/11/2024</div></div>
+      <div class="agree-row"><div class="agree-num an-done">✓</div><div class="agree-label">אישור עקרוני — משרד החינוך</div><div class="agree-date">28/11/2024</div></div>
+      <div class="agree-row"><div class="agree-num an-done">✓</div><div class="agree-label">חתימת חוזה ראשי</div><div class="agree-date">03/01/2025</div></div>
+      <div class="agree-row"><div class="agree-num an-done">✓</div><div class="agree-label">פתיחת חשבון מימון ייעודי</div><div class="agree-date">10/01/2025</div></div>
+      <div class="agree-row" style="background:var(--blue-lt);border-color:#bfdbfe"><div class="agree-num an-active">►</div><div class="agree-label" style="font-weight:700;color:var(--blue)">הצבת חייל ראשון — בתהליך</div><div class="agree-action" onclick="nav('candidates')">הצב עכשיו</div></div>
+      <div class="agree-row" style="opacity:.45"><div class="agree-num an-todo">5</div><div class="agree-label">דוח ביניים — 6 חודשים</div><div class="agree-date">יוני 2025</div></div>
+      <div class="agree-row" style="opacity:.45"><div class="agree-num an-todo">6</div><div class="agree-label">חידוש חוזה שנה 2</div><div class="agree-date">ינואר 2026</div></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card card-p">
+        <div class="card-title" style="margin-bottom:12px">📋 תנאים עיקריים</div>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:12px">
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">Slots מאושרים</span><strong>12</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">תקופת הסכם</span><strong>3 שנים</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">מימון חברה</span><strong>25% — 3,750₪</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">הטבת מס</span><strong style="color:var(--green)">15%</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">מינימום פעיל</span><strong>1 slot</strong></div>
+        </div>
+      </div>
+      <div class="card card-p" style="background:var(--green-lt);border-color:#bbf7d0">
+        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">✅ הסכם תקף</div>
+        <div style="font-size:12px;color:var(--text-mid);line-height:1.7">חתום: רינת זוהר (HR Lead)<br>נציג משרד: דנה כהן<br>תוקף: 31/12/2027</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SETTINGS ──────────────────────────────────────────────── -->
+<div id="s-settings" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">הגדרות <em>חברה</em></div>
+      <div class="page-sub">פרטי Mobileye ודרישות Tech Stack — משפיעים על שיבוץ מועמדים</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" onclick="saveSettings(event)">💾 שמור</button>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card card-p">
+      <div class="sf-section">
+        <div class="sf-sec-title">🏢 פרטי החברה</div>
+        <div class="sf-grid">
+          <div class="sf-field"><div class="sf-lbl">שם חברה</div><input class="sf-input" value="Mobileye" oninput="dirty()"></div>
+          <div class="sf-field"><div class="sf-lbl">סקטור</div>
+            <select class="sf-input" onchange="dirty()">
+              <option selected>רכב אוטונומי</option><option>סייבר</option><option>ביטחוני</option>
+              <option>תוכנה ארגונית</option><option>ביו-טק</option><option>פינטק</option>
+            </select></div>
+          <div class="sf-field"><div class="sf-lbl">מיקום</div><input class="sf-input" value="ירושלים / תל אביב" oninput="dirty()"></div>
+          <div class="sf-field"><div class="sf-lbl">Slots זמינים</div><input class="sf-input" type="number" value="9" min="1" max="50" oninput="dirty()"></div>
+          <div class="sf-field full"><div class="sf-lbl">איש קשר HR</div><input class="sf-input" value="רינת זוהר · rinatz@mobileye.com" oninput="dirty()"></div>
+        </div>
+      </div>
+      <div class="sf-section">
+        <div class="sf-sec-title">💻 Tech Stack נדרש — משפיע על ציון Tech Match</div>
+        <div class="tc-group">
+          <div class="tc on" onclick="this.classList.toggle('on')">Python</div>
+          <div class="tc on" onclick="this.classList.toggle('on')">Cyber Security</div>
+          <div class="tc on" onclick="this.classList.toggle('on')">Computer Vision</div>
+          <div class="tc on" onclick="this.classList.toggle('on')">Linux</div>
+          <div class="tc on" onclick="this.classList.toggle('on')">C++</div>
+          <div class="tc" onclick="this.classList.toggle('on')">AI & ML</div>
+          <div class="tc" onclick="this.classList.toggle('on')">Embedded</div>
+          <div class="tc" onclick="this.classList.toggle('on')">CUDA</div>
+          <div class="tc" onclick="this.classList.toggle('on')">Cloud</div>
+          <div class="tc" onclick="this.classList.toggle('on')">SLAM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-p">
+      <div class="sf-section">
+        <div class="sf-sec-title">🎯 תפקיד מוצע לחייל — תחנה ב'</div>
+        <div class="sf-grid">
+          <div class="sf-field full"><div class="sf-lbl">כותרת תפקיד</div><input class="sf-input" value="Security Researcher" oninput="dirty()"></div>
+          <div class="sf-field full"><div class="sf-lbl">תיאור</div><textarea class="sf-input" rows="3" style="resize:none" oninput="dirty()">עבודה על מערכות הגנת סייבר לרכב אוטונומי. Python, Cyber, ניסיון מודיעיני — יתרון.</textarea></div>
+          <div class="sf-field"><div class="sf-lbl">שכר חזוי (₪/חודש)</div><input class="sf-input" value="28,000" oninput="dirty()"></div>
+          <div class="sf-field"><div class="sf-lbl">מסלול קידום</div>
+            <select class="sf-input" onchange="dirty()">
+              <option selected>Mid → Senior → Lead</option>
+              <option>Junior → Mid → Senior</option>
+            </select></div>
+        </div>
+      </div>
+      <div class="sf-section">
+        <div class="sf-sec-title">⚙️ העדפות שיבוץ</div>
+        <div class="sf-grid">
+          <div class="sf-field"><div class="sf-lbl">עדיפות יחידה</div>
+            <select class="sf-input" onchange="dirty()">
+              <option selected>8200 / מודיעין ראשון</option>
+              <option>ללא העדפה</option><option>כל יחידת סייבר</option>
+            </select></div>
+          <div class="sf-field"><div class="sf-lbl">Retention מינימלי</div>
+            <select class="sf-input" onchange="dirty()">
+              <option>70%</option><option selected>80%</option><option>85%</option><option>90%</option>
+            </select></div>
+        </div>
+      </div>
+      <div class="save-bar" id="save-bar">
+        <span style="font-size:12px;color:var(--amber);font-weight:600">⚠️ יש שינויים שלא נשמרו</span>
+        <button class="btn btn-primary" style="font-size:12px;padding:5px 14px" onclick="saveSettings(event)">שמור עכשיו</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ─── AI MATCHING CHAT ──────────────────────────────────────────── -->
+<div id="s-aichat" class="screen">
+  <div class="topbar" style="margin-bottom:16px">
+    <div>
+      <div class="page-title">✨ AI <em>Matching Chat</em></div>
+      <div class="page-sub">שאל בשפה חופשית — המערכת מוצאת את המועמד הנכון עבורך</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="clearChat()">🗑 נקה שיחה</button>
+    </div>
+  </div>
+
+  <div class="chat-shell">
+    <!-- Main chat window -->
+    <div class="chat-main">
+      <div class="chat-topbar">
+        <div class="chat-ai-av">✨</div>
+        <div>
+          <div class="chat-ai-name">מעוף AI Matcher</div>
+          <div class="chat-ai-sub">מאגר 247 מועמדים · מעוף 2025</div>
+        </div>
+        <div class="chat-online">Online</div>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <!-- Welcome message -->
+        <div class="msg ai">
+          <div class="msg-av ai-av">✨</div>
+          <div>
+            <div class="msg-bubble">
+              שלום רינת! 👋<br><br>
+              אני <strong>AI Matcher</strong> — שאל אותי כל שאלה על מועמדים ואמצא את הכי מתאים ל-Mobileye.<br><br>
+              למשל: <em>"מצא לי חייל סייבר מ-8200 שגר עד 30 דק' ממרכז"</em> או <em>"מי הכי מתאים לתפקיד Security Researcher?"</em>
+            </div>
+            <div class="msg-time">עכשיו</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-wrap">
+        <textarea
+          class="chat-input"
+          id="chat-input"
+          placeholder='שאל למשל: "מצא חייל Python עם Retention גבוה שמוכן מיידית..."'
+          rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="chat-send" id="chat-send-btn" onclick="sendMsg()" title="שלח (Enter)">➤</button>
+      </div>
+    </div>
+
+    <!-- Right sidebar: prompts + context -->
+    <div class="chat-sidebar">
+      <!-- Prompt suggestions -->
+      <div class="card card-p">
+        <div class="card-title" style="margin-bottom:12px">💡 שאלות מומלצות</div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="prompt-list">
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">🎯</span>מי הכי מתאים לתפקיד Security Researcher?</div>
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">📍</span>מצא חייל סייבר שגר עד 30 דק' מירושלים</div>
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">⭐</span>מי מ-8200 עם Retention מעל 85%?</div>
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">🚀</span>מי מוכן להתחיל הכי מהר?</div>
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">💰</span>מה עלות הצבה של שני חיילים?</div>
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">📊</span>השווה בין נועה לוי ליובל כהן</div>
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">🔬</span>מי יש לו ניסיון ב-Computer Vision?</div>
+          <div class="prompt-chip" onclick="usePrompt(this)"><span class="pi">⚠️</span>מי בסיכון Retention נמוך?</div>
+        </div>
+      </div>
+
+      <!-- Current context -->
+      <div class="card card-p">
+        <div class="card-title" style="margin-bottom:12px">🏢 הקשר נוכחי — Mobileye</div>
+        <div>
+          <div class="context-item"><span class="context-key">Tech Stack</span><span class="context-val">Python·Cyber·CV</span></div>
+          <div class="context-item"><span class="context-key">Slots פנויים</span><span class="context-val">9 / 12</span></div>
+          <div class="context-item"><span class="context-key">מיקום</span><span class="context-val">ירושלים/ת"א</span></div>
+          <div class="context-item"><span class="context-key">תפקיד</span><span class="context-val">Security Res.</span></div>
+          <div class="context-item"><span class="context-key">Retention מינ'</span><span class="context-val">80%</span></div>
+          <div class="context-item"><span class="context-key">מועמדים במאגר</span><span class="context-val">247</span></div>
+        </div>
+      </div>
+
+      <!-- Chat stats -->
+      <div class="card card-p">
+        <div class="card-title" style="margin-bottom:10px">📈 סטטיסטיקת שיחה</div>
+        <div>
+          <div class="context-item"><span class="context-key">שאלות ששאלת</span><span class="context-val" id="stat-questions">0</span></div>
+          <div class="context-item"><span class="context-key">מועמדים שהוצגו</span><span class="context-val" id="stat-shown">0</span></div>
+          <div class="context-item"><span class="context-key">פרופילים נפתחו</span><span class="context-val" id="stat-opened">0</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ══ CANDIDATE MODAL ══════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-av" id="m-av"></div>
+      <div>
+        <div class="modal-name" id="m-name"></div>
+        <div class="modal-unit" id="m-unit"></div>
+      </div>
+      <div class="modal-x" onclick="closeModal()">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-kpi-grid" id="m-kpis"></div>
+      <div class="modal-section">
+        <div class="modal-sec-title">מסלול 2+2 מוצע</div>
+        <div class="journey">
+          <div class="journey-phase"><div class="jp-lbl">שלב 0</div><div class="jp-val">הכשרה</div><div class="jp-sub">3 חודשים</div></div>
+          <div class="journey-phase a"><div class="jp-lbl">תחנה א'</div><div class="jp-val" id="m-school" style="color:var(--blue)">—</div><div class="jp-sub" style="color:var(--blue)">24 חודש</div></div>
+          <div class="journey-phase b"><div class="jp-lbl">תחנה ב'</div><div class="jp-val" style="color:var(--green)">Mobileye</div><div class="jp-sub" id="m-role" style="color:var(--green)">Security Researcher</div></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-sec-title">Tech Stack — ירוק = מתאים לMobileye</div>
+        <div id="m-tech" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-sec-title">פרטים נוספים</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="m-extra"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-green" onclick="requestPlacement(currentModal)">✅ בקש הצבה</button>
+      <button class="btn btn-outline" onclick="alert('פרופיל PDF נשלח לאימייל ✓')">📄 שלח פרופיל</button>
+      <button class="btn btn-ghost" onclick="closeModal()">סגור</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const BLUE='#2563eb', GREEN='#059669', AMBER='#d97706', RED='#dc2626';
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.color = '#94a3b8';
+
+const navMap = {dashboard:0,candidates:1,placements:2,finance:3,aichat:4,notifications:5,agreement:6,settings:7};
+let inited = {};
+
+function nav(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-'+name).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach((n,i) => n.classList.toggle('active', i === navMap[name]));
+  if (name === 'notifications') initCompanyNotifications();
+  if (!inited[name]) { inited[name] = true; initScreen(name); }
+}
+
+function initScreen(n) {
+  if (n === 'dashboard') initDash();
+  if (n === 'finance')   initFinance();
+}
+
+/* ── Charts ───────────────────────────────────── */
+function initDash() {
+  new Chart(document.getElementById('c-pipeline'), {
+    type: 'bar',
+    data: {
+      labels: ['ינואר','פברואר','מרץ','אפריל','מאי','יוני'],
+      datasets: [
+        { label:'מועמדים חדשים', data:[3,5,7,4,6,9], backgroundColor:BLUE+'30', borderColor:BLUE, borderWidth:2, borderRadius:4 },
+        { label:'הוצבו',          data:[0,1,1,1,0,0],  backgroundColor:GREEN+'55', borderColor:GREEN, borderWidth:2, borderRadius:4 }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{ position:'bottom', labels:{ font:{size:10}, boxWidth:10, padding:12 } } },
+      scales: { x:{ grid:{display:false}, ticks:{font:{size:11}} },
+                y:{ grid:{color:'rgba(0,0,0,.04)'}, ticks:{font:{size:10}, stepSize:2} } } }
+  });
+}
+
+function initFinance() {
+  new Chart(document.getElementById('c-cost'), {
+    type: 'bar',
+    data: {
+      labels: ['שלב 0','שנה א\'','שנה ב\'','שנה ג\' (ב\')','שנה ד\' (ב\')'],
+      datasets: [{ label:'עלות חברה (₪)',
+        data:[0,45000,45000,336000,336000],
+        backgroundColor:[GREEN+'40',AMBER+'70',AMBER+'70',BLUE+'70',BLUE+'70'],
+        borderColor:[GREEN,AMBER,AMBER,BLUE,BLUE],
+        borderWidth:2, borderRadius:5 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>'₪'+c.raw.toLocaleString()}} },
+      scales:{ x:{grid:{display:false},ticks:{font:{size:10}}},
+               y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10},callback:v=>'₪'+(v/1000)+'K'}} } }
+  });
+}
+
+/* ── Candidate data ─────────────────────────────── */
+const CANDS = {
+  noam:  { name:'נועה לוי',   unit:'מודיעין · אנליסטית · נתיבות', av:'נל', g:'#dc2626,#16213e',
+            kpis:[{l:'Tech Match',v:'94%',c:GREEN},{l:'ציון',v:'97',c:BLUE},{l:'Retention',v:'96%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★★',c:AMBER}],
+            tech:['Python','Cyber','Linux','AI & ML','OSINT'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
+            school:'אורט נתיבות', role:'Security Researcher',
+            extra:[{l:'יחידה',v:'מודיעין'},{l:'דרגה',v:'סמל ראשון'},{l:'מרחק לביה"ס',v:"5 דק'"},{l:'זמינות',v:'מיידית'}] },
+  yuval: { name:'יובל כהן',   unit:'8200 · מפקד צוות', av:'יכ', g:'#059669,#16213e',
+            kpis:[{l:'Tech Match',v:'88%',c:GREEN},{l:'ציון',v:'94',c:BLUE},{l:'Retention',v:'91%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★★',c:AMBER}],
+            tech:['Python','Cyber Security','Linux','C++'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
+            school:'כפר מנחם טכנולוגי', role:'Security Researcher',
+            extra:[{l:'יחידה',v:'8200'},{l:'דרגה',v:'רס"ל'},{l:'מרחק לביה"ס',v:"12 דק'"},{l:'זמינות',v:'מיידית'}] },
+  michal:{ name:'מיכל ראובן', unit:'תקשוב · ר"פ', av:'מר', g:'#d97706,#16213e',
+            kpis:[{l:'Tech Match',v:'76%',c:AMBER},{l:'ציון',v:'81',c:AMBER},{l:'Retention',v:'73%',c:AMBER},{l:'Seniority Leap',v:'+12m',c:'#94a3b8'},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★☆',c:AMBER}],
+            tech:['Python','Data Science','SQL'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
+            school:'עמל חיפה', role:'Data Analyst',
+            extra:[{l:'יחידה',v:'תקשוב'},{l:'דרגה',v:'סמל'},{l:'מרחק לביה"ס',v:"7 דק'"},{l:'זמינות',v:'מיידית'}] },
+  ron:   { name:'רון מזרחי',  unit:'חיל הים · מהנדס', av:'רמ', g:'#2563eb,#16213e',
+            kpis:[{l:'Tech Match',v:'77%',c:BLUE},{l:'ציון',v:'90',c:BLUE},{l:'Retention',v:'58%',c:RED},{l:'Seniority Leap',v:'+12m',c:'#94a3b8'},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★☆',c:AMBER}],
+            tech:['Python','C++','Algorithms'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
+            school:'עמל חיפה', role:'Software Engineer',
+            extra:[{l:'יחידה',v:'חיל הים'},{l:'דרגה',v:'סמל'},{l:'מרחק לביה"ס',v:"18 דק'"},{l:'זמינות',v:'מיידית'}] },
+  or:    { name:'אור שמיר',   unit:'8200', av:'אש', g:'#7c3aed,#16213e',
+            kpis:[{l:'Tech Match',v:'82%',c:GREEN},{l:'ציון',v:'90',c:BLUE},{l:'Retention',v:'89%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★☆',c:AMBER}],
+            tech:['Cyber Security','Python','Linux'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
+            school:'כפר מנחם טכנולוגי', role:'Security Researcher',
+            extra:[{l:'יחידה',v:'8200'},{l:'דרגה',v:'סמל ראשון'},{l:'מרחק לביה"ס',v:"12 דק'"},{l:'זמינות',v:'בתהליך'}] },
+  tamar: { name:'תמר בן-דוד', unit:'מודיעין · הוצב', av:'תב', g:'#475569,#16213e',
+            kpis:[{l:'Tech Match',v:'91%',c:GREEN},{l:'ציון',v:'93',c:BLUE},{l:'Retention',v:'94%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★★',c:AMBER}],
+            tech:['Cyber Security','Python','Linux','AI & ML'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
+            school:'אורט נתיבות', role:'Security Researcher',
+            extra:[{l:'יחידה',v:'מודיעין'},{l:'דרגה',v:'רס"ל'},{l:'מרחק לביה"ס',v:"5 דק'"},{l:'זמינות',v:'הוצב'}] },
+};
+
+function openModal(id) {
+  currentModal = id;
+  const c = CANDS[id]; if (!c) return;
+  document.getElementById('m-av').textContent = c.av;
+  document.getElementById('m-av').style.background = `linear-gradient(135deg,${c.g})`;
+  document.getElementById('m-name').textContent = c.name;
+  document.getElementById('m-unit').textContent = c.unit;
+  document.getElementById('m-school').textContent = c.school;
+  document.getElementById('m-role').textContent = c.role;
+
+  document.getElementById('m-kpis').innerHTML = c.kpis.map(k =>
+    `<div class="mkpi"><div class="mkpi-lbl">${k.l}</div><div class="mkpi-val" style="color:${k.c}">${k.v}</div></div>`
+  ).join('');
+
+  document.getElementById('m-tech').innerHTML = c.tech.map(t => {
+    const match = c.myStack.some(s => s.toLowerCase().includes(t.toLowerCase().split(' ')[0]) || t.toLowerCase().includes(s.toLowerCase().split(' ')[0]));
+    return `<span class="chip ${match?'chip-green':'chip-gray'}">${match?'✓ ':''} ${t}</span>`;
+  }).join('');
+
+  document.getElementById('m-extra').innerHTML = c.extra.map(e =>
+    `<div style="padding:8px 10px;background:#f8fafc;border-radius:8px;font-size:12px;border:1px solid var(--border2)"><span style="color:var(--text-mid)">${e.l}: </span><strong>${e.v}</strong></div>`
+  ).join('');
+
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modal-bg').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+/* ── Table filter ───────────────────────────────── */
+function fChip(el, tag) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('tbl-search').value = '';
+  document.querySelectorAll('#cand-tbody tr').forEach(tr => {
+    tr.style.display = (tag === 'all' || (tr.dataset.tags||'').includes(tag)) ? '' : 'none';
+  });
+}
+function filterTbl(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('#cand-tbody tr').forEach(tr => {
+    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+/* ── Settings ───────────────────────────────────── */
+function dirty() {
+  document.getElementById('save-bar').classList.add('show');
+}
+function saveSettings(e) {
+  document.getElementById('save-bar').classList.remove('show');
+  const btn = e?.target;
+  if (btn) { const o = btn.textContent; btn.textContent = '✓ נשמר!'; btn.style.background = GREEN; setTimeout(() => { btn.textContent = o; btn.style.background = ''; }, 2000); }
+}
+
+/* ── Notifications ──────────────────────────────── */
+function markRead() {
+  document.querySelectorAll('.notif.unread').forEach(n => n.classList.remove('unread'));
+}
+
+/* ══ AI CHAT ══════════════════════════════════════ */
+
+// All candidate data for AI context
+const ALL_CANDS_DATA = [
+  { id:'noam',  name:'נועה לוי',   unit:'מודיעין', role:'אנליסטית',     city:'נתיבות',    score:97, tech:94, retention:96, seniority:18, subjects:['סייבר','AI'], stack:['Python','Cyber','Linux','AI & ML'], avail:true },
+  { id:'yuval', name:'יובל כהן',   unit:'8200',    role:'מפקד צוות',    city:'כפר מנחם',  score:94, tech:88, retention:91, seniority:18, subjects:['סייבר','Python'], stack:['Python','Cyber Security','Linux','C++'], avail:true },
+  { id:'ron',   name:'רון מזרחי',  unit:'חיל הים', role:'מהנדס',        city:'חיפה',      score:90, tech:77, retention:58, seniority:12, subjects:['Python','אלגוריתמים'], stack:['Python','C++','Algorithms'], avail:true },
+  { id:'or',    name:'אור שמיר',   unit:'8200',    role:'חייל קרבי',    city:'באר שבע',   score:90, tech:82, retention:89, seniority:18, subjects:['סייבר'], stack:['Cyber Security','Python','Linux'], avail:false },
+  { id:'michal',name:'מיכל ראובן', unit:'תקשוב',   role:'ר"פ',          city:'תל אביב',   score:81, tech:76, retention:73, seniority:12, subjects:['Python','Data Science'], stack:['Python','Data Science','SQL'], avail:true },
+  { id:'tamar', name:'תמר בן-דוד', unit:'מודיעין', role:'מ"כ',          city:'נתיבות',    score:93, tech:91, retention:94, seniority:18, subjects:['סייבר','AI'], stack:['Cyber Security','Python','Linux','AI & ML'], avail:false },
+  { id:'amir',  name:'עמיר צור',   unit:'תקשוב',   role:'מפקד מחלקה',  city:'ירושלים',   score:78, tech:71, retention:80, seniority:12, subjects:['מתמטיקה','Python'], stack:['Python','Java','SQL'], avail:true },
+  { id:'dana',  name:'דנה אשר',    unit:'8200',    role:'ראש מדור',     city:'רמת גן',    score:88, tech:85, retention:88, seniority:18, subjects:['סייבר','AI'], stack:['Python','Cyber','AI & ML','Linux'], avail:true },
+  { id:'lior',  name:'ליאור כץ',   unit:'חיל האוויר','role':'מפקד',    city:'חיפה',      score:84, tech:79, retention:82, seniority:12, subjects:['פיזיקה','אלקטרוניקה'], stack:['C++','Embedded','Linux'], avail:true },
+];
+
+const COMPANY_CONTEXT = {
+  name: 'Mobileye',
+  location: 'ירושלים / תל אביב',
+  stack: ['Python','Cyber Security','Computer Vision','Linux','C++'],
+  role: 'Security Researcher',
+  slots: 9,
+  minRetention: 80,
+  salary: 28000,
+};
+
+let chatHistory = [];
+let stats = { questions: 0, shown: 0, opened: 0 };
+
+function updateStats() {
+  document.getElementById('stat-questions').textContent = stats.questions;
+  document.getElementById('stat-shown').textContent    = stats.shown;
+  document.getElementById('stat-opened').textContent   = stats.opened;
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+function usePrompt(el) {
+  const txt = el.textContent.trim().replace(/^[^\s]+\s/, '');
+  document.getElementById('chat-input').value = txt;
+  document.getElementById('chat-input').focus();
+}
+
+function clearChat() {
+  chatHistory = [];
+  stats = { questions:0, shown:0, opened:0 };
+  updateStats();
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML = `
+    <div class="msg ai">
+      <div class="msg-av ai-av">✨</div>
+      <div>
+        <div class="msg-bubble">שיחה חדשה. שאל אותי על מועמדים במאגר! 🔍</div>
+        <div class="msg-time">עכשיו</div>
+      </div>
+    </div>`;
+}
+
+function getTime() {
+  return new Date().toLocaleTimeString('he-IL', { hour:'2-digit', minute:'2-digit' });
+}
+
+function appendMsg(role, html, time) {
+  const msgs = document.getElementById('chat-messages');
+  const isUser = role === 'user';
+  const div = document.createElement('div');
+  div.className = `msg ${isUser ? 'user' : 'ai'}`;
+  div.innerHTML = `
+    <div class="msg-av ${isUser ? 'user-av' : 'ai-av'}">${isUser ? 'ריז' : '✨'}</div>
+    <div>
+      <div class="msg-bubble">${html}</div>
+      <div class="msg-time">${time || getTime()}</div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function showThinking() {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.id = 'thinking-msg';
+  div.innerHTML = `
+    <div class="msg-av ai-av">✨</div>
+    <div>
+      <div class="thinking">
+        <div class="thinking-dots">
+          <div class="thinking-dot"></div>
+          <div class="thinking-dot"></div>
+          <div class="thinking-dot"></div>
+        </div>
+        מנתח את המאגר...
+      </div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeThinking() {
+  const t = document.getElementById('thinking-msg');
+  if (t) t.remove();
+}
+
+function renderCandCards(cands, intro) {
+  const colors = [
+    {bg:'var(--green-lt)',border:'#bbf7d0',rankCls:'r1',scoreCls:'color:var(--green)',matchBg:'#d1fae5',matchColor:'var(--green)'},
+    {bg:'var(--blue-lt)',border:'#bfdbfe',rankCls:'r2',scoreCls:'color:var(--blue)',matchBg:'#dbeafe',matchColor:'var(--blue)'},
+    {bg:'#f8fafc',border:'var(--border)',rankCls:'r3',scoreCls:'color:var(--slate)',matchBg:'#f1f5f9',matchColor:'var(--slate)'},
+  ];
+  let cards = cands.slice(0,3).map((c,i) => {
+    const cl = colors[Math.min(i, colors.length-1)];
+    return `
+      <div class="chat-cand-card ${i===0?'rank-1':''}"
+           style="background:${cl.bg};border-color:${cl.border}"
+           onclick="openModal('${c.id}');stats.opened++;updateStats()">
+        <div class="ccc-rank ${cl.rankCls}">${i+1}</div>
+        <div class="cand-av" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${CANDS[c.id]?.g ? `linear-gradient(135deg,${CANDS[c.id].g})` : '#16213e'}">${c.name.split('').slice(0,2).join('')}</div>
+        <div style="flex:1">
+          <div class="ccc-name">${c.name}</div>
+          <div class="ccc-unit">${c.unit} · ${c.city}</div>
+        </div>
+        <div style="text-align:left">
+          <div class="ccc-score" style="${cl.scoreCls}">${c.score}</div>
+          <div class="ccc-match" style="background:${cl.matchBg};color:${cl.matchColor}">${c.tech}% match</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.innerHTML = `
+    <div class="msg-av ai-av">✨</div>
+    <div style="max-width:420px">
+      <div class="msg-bubble" style="margin-bottom:4px">${intro}</div>
+      ${cards}
+      <div class="msg-time">${getTime()}</div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  stats.shown += cands.slice(0,3).length;
+  updateStats();
+}
+
+async /* sendMsg: see mock implementation below */
+
+// Local fallback matching (no API needed)
+function localMatch(q) {
+  const ql = q.toLowerCase();
+  let filtered = [...ALL_CANDS_DATA];
+
+  // Simple keyword matching
+  if (ql.includes('8200'))          filtered = filtered.filter(c => c.unit === '8200');
+  if (ql.includes('מודיעין'))        filtered = filtered.filter(c => c.unit === 'מודיעין');
+  if (ql.includes('סייבר') || ql.includes('cyber')) filtered = filtered.filter(c => c.stack.some(s => s.toLowerCase().includes('cyber')));
+  if (ql.includes('python'))         filtered = filtered.filter(c => c.stack.some(s => s.toLowerCase().includes('python')));
+  if (ql.includes('זמין') || ql.includes('מיידית')) filtered = filtered.filter(c => c.avail);
+  if (ql.includes('retention') || ql.includes('נשירה')) filtered = filtered.filter(c => c.retention >= 85);
+  if (ql.includes('+18') || ql.includes('בכיר')) filtered = filtered.filter(c => c.seniority >= 18);
+
+  // Sort by score
+  filtered.sort((a,b) => b.score - a.score);
+
+  if (filtered.length === 0) {
+    appendMsg('ai', 'לא מצאתי מועמדים בקריטריונים האלה. נסה לשנות את הסינון — למשל, הרחב את איזור הגיאוגרפי או הפחת את דרישת ה-Retention.');
+  } else {
+    renderCandCards(filtered, `מצאתי <strong>${filtered.length}</strong> מועמדים מתאימים לפי הקריטריונים שלך:`);
+  }
+}
+
+
+
+/* Init */
+window.addEventListener('load', () => { setTimeout(initDash, 80); inited.dashboard = true; });
+
+
+/* ══════════════════════════════════════════════════════
+   COMPANY PORTAL — mock AI + placement + notifications
+══════════════════════════════════════════════════════ */
+
+/* ── MOCK AI RESPONSES ── */
+const MOCK_RESPONSES = {
+  default: [
+    'על בסיס הפרופיל שלכם, **נועה לוי** (ציון 97, 94% Tech Match) היא ההתאמה הטובה ביותר. זמינה מיידית עם Retention צפוי 96% ועלות נטו **3,750₪/חודש** לאחר הטבת מס.',
+    'מצאתי **3 מועמדים** עם Retention מעל 85%:\n• נועה לוי — 96% ✓\n• תמר בן-דוד — 94% ✓\n• יובל כהן — 91% ✓\nכולם עם ניסיון טכנולוגי רלוונטי.',
+    'אני כאן לעזור עם חיפוש מועמדים, השוואה, עלויות ותהליך ההצבה. מה תרצו לדעת?',
+  ],
+  cyber: [
+    'מועמדי סייבר זמינים:\n1. **נועה לוי** — 8 שנות ניסיון מודיעין, Python+ML, ציון 97 ✓\n2. **יובל כהן** — 8200, Reverse Engineering, ציון 94 ✓\n3. **אור שמיר** — 8200, Network Security, ציון 90 ✓\nממליץ להתחיל עם נועה — הניסיון הכי רלוונטי.',
+  ],
+  compare: [
+    '**השוואה: נועה לוי vs יובל כהן**\n\n| קריטריון | נועה | יובל |\n|---|---|---|\n| ציון | 97 | 94 |\n| Tech Match | 94% | 88% |\n| Retention | 96% | 91% |\n| Seniority Leap | +18m | +18m |\n\n**המלצה:** נועה עדיפה לתפקידי ML/Security. יובל מתאים יותר ל-Reverse Engineering.',
+  ],
+  retention: [
+    'מועמדים עם Retention נמוך (סיכון):\n• **רון מזרחי** — 58% ⚠️ (פחות ניסיון הוראה)\n• **מיכל ראובן** — 73% ⚠️ (נדרש מנטורינג)\n\nשאר המועמדים מעל 85% — בטווח בטוח.',
+  ],
+  cost: [
+    'עלות מועמד אחד ל-24 חודשים:\n• עלות ברוטו: **180,000₪**\n• מימון מדינה (50%): **−90,000₪**\n• מימון רשות (25%): **−45,000₪**\n• **עלות נטו לחברה: 45,000₪** + הטבת מס 15%\n\nלעומת גיוס רגיל: 38-43K₪ עמלה + סיכון נטישה גבוה.',
+  ],
+  process: [
+    'תהליך ההצבה:\n1. אתם מגדירים Tech Stack ודרישות\n2. המנוע מסנן ומדרג מועמדים אוטומטית\n3. אתם בוחרים ומאשרים\n4. מועמד מגיע לעבוד אצלכם בחצי משרה\n5. לאחר שנתיים — אפשרות למשרה מלאה\n\nזמן ממוצע עד שיבוץ: **3-4 שבועות**.',
+  ],
+  python: [
+    'מועמדים עם Python חזק:\n• **נועה לוי** — Python + ML, ציון 97\n• **תמר בן-דוד** — Python + Data Science, ציון 89\n• **אור שמיר** — Python + DevOps, ציון 90\n\nכולם עם ניסיון מעשי מהצבא.',
+  ],
+  candidates: [
+    'יש כרגע **9 מועמדים פעילים** עם ציון ממוצע 91. הם מחולקים לפי התמחות:\n• סייבר/מודיעין: 3 מועמדים\n• פיתוח תוכנה: 4 מועמדים\n• Data/ML: 2 מועמדים\n\nרוצים לסנן לפי Tech Stack ספציפי?',
+  ],
+  esg: [
+    'השתתפות בתוכנית מעוף מייצרת **3 נקודות ESG מדידות**:\n• S — תמיכה בחיילים משוחררים\n• S — תרומה לחינוך STEM בפריפריה\n• G — שיתוף פעולה עם גורם ממשלתי מפוקח\n\nניתן לדווח על כך בדוח ESG שנתי.',
+  ],
+  contract: [
+    'ההסכם עם מעוף כולל:\n• התחייבות לחצי משרה ל-24 חודשים\n• אופציה למשרה מלאה לאחר שנתיים\n• מנגנון יציאה אחרי 6 חודשים אם אין התאמה\n• ביטוח וזכויות סוציאליות — באחריות המדינה\n\nרוצים לראות את נוסח ההסכם?',
+  ],
+};
+
+let companyMsgFilter = 'all';
+let currentModal = null;
+let placementRequests = {}; // id → status
+
+const COMPANY_MESSAGES = [
+  {id:'cm1', unread:true,  tag:'placement', icon:'📋', iconBg:'rgba(37,99,235,.15)',
+   title:'בקשת הצבה אושרה — נועה לוי',
+   body:'בקשת ההצבה של נועה לוי ל-Mobileye אושרה על ידי מנהל התוכנית. תאריך התחלה: 1 בספטמבר 2025.',
+   time:'לפני שעה', action:{label:'צפה בפרטים', fn:'placements'}},
+  {id:'cm2', unread:true,  tag:'admin',     icon:'📅', iconBg:'rgba(245,200,66,.12)',
+   title:'תזכורת — כנס שותפים 2025',
+   body:'כנס שותפי תעשייה של תוכנית מעוף יתקיים ב-20 ביוני בתל אביב. Mobileye מוזמנת לשלוח נציג.',
+   time:'אתמול', action:null},
+  {id:'cm3', unread:true,  tag:'admin',     icon:'💳', iconBg:'rgba(5,150,105,.15)',
+   title:'אישור חשבונית — פברואר 2025',
+   body:'חשבונית מימון חודש פברואר אושרה: 3,750₪. ההעברה תתבצע ב-5 במרץ.',
+   time:'לפני 2 ימים', action:null},
+  {id:'cm4', unread:false, tag:'placement', icon:'🤖', iconBg:'rgba(37,99,235,.1)',
+   title:'AI Match חדש — יובל כהן',
+   body:'המשדך מצא התאמה חדשה עבורך: יובל כהן, ציון 94, 88% Tech Match. ממתין לבקשת הצבה.',
+   time:'לפני 3 ימים', action:{label:'צפה במועמד', fn:'candidates'}},
+  {id:'cm5', unread:false, tag:'admin',     icon:'📄', iconBg:'rgba(124,58,237,.12)',
+   title:'עדכון תנאי תוכנית — 2025',
+   body:'תנאי ההשתתפות עודכנו לשנת 2025. שינוי עיקרי: מענק דיור עלה ל-15,000₪ חד-פעמי. יש לאשר את הנספח המעודכן.',
+   time:'לפני שבוע', action:{label:'צפה בהסכם', fn:'agreement'}},
+];
+
+/* ── NOTIFICATIONS ── */
+function initCompanyNotifications() {
+  renderCompanyMsgs();
+  updateNotifBadge();
+}
+
+function renderCompanyMsgs() {
+  const list = document.getElementById('company-msgs-list');
+  if (!list) return;
+  const filtered = COMPANY_MESSAGES.filter(m => {
+    if (companyMsgFilter === 'all')       return true;
+    if (companyMsgFilter === 'unread')    return m.unread;
+    if (companyMsgFilter === 'placement') return m.tag === 'placement';
+    if (companyMsgFilter === 'admin')     return m.tag === 'admin';
+    return true;
+  });
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:#64748b;font-size:13px">אין הודעות בקטגוריה זו</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(m => {
+    const actionBtn = m.action
+      ? '<button onclick="event.stopPropagation();companyMsgAction(\'' + m.id + '\')" style="margin-top:7px;padding:4px 12px;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);border-radius:6px;color:#7ab8ff;font-size:11px;cursor:pointer">' + m.action.label + ' →</button>'
+      : '';
+    return '<div class="cmsg-card ' + (m.unread?'unread':'') + '" onclick="openCompanyMsg(\'' + m.id + '\')">'
+      + '<div class="cmsg-icon" style="background:' + m.iconBg + '">' + m.icon + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:13px;font-weight:' + (m.unread?700:600) + ';color:' + (m.unread?'#f1f5f9':'#cbd5e1') + ';margin-bottom:4px">' + m.title + '</div>'
+      + '<div style="font-size:12px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:92%">' + m.body + '</div>'
+      + actionBtn
+      + '</div>'
+      + '<div style="font-size:10px;color:#475569;white-space:nowrap;flex-shrink:0">' + m.time + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function openCompanyMsg(id) {
+  const m = COMPANY_MESSAGES.find(x => x.id === id);
+  if (!m) return;
+  m.unread = false;
+  updateNotifBadge();
+  renderCompanyMsgs();
+  // show modal
+  const modal = document.createElement('div');
+  modal.className = 'preq-overlay';
+  modal.innerHTML = `<div class="preq-box">
+    <div style="height:3px;background:linear-gradient(90deg,#2563eb,#059669)"></div>
+    <div class="preq-head">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="cmsg-icon" style="background:${m.iconBg};width:42px;height:42px">${m.icon}</div>
+        <div><div style="font-size:15px;font-weight:700;color:#f1f5f9">${m.title}</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">${m.time}</div></div>
+      </div>
+      <button onclick="this.closest('.preq-overlay').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;color:#94a3b8;padding:6px 12px;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:20px 24px;font-size:13px;color:#cbd5e1;line-height:1.7">${m.body}</div>
+    <div class="preq-foot">
+      ${m.action?`<button onclick="companyMsgAction('${m.id}');this.closest('.preq-overlay').remove()" class="btn btn-primary">${m.action.label} →</button>`:''}
+      <button onclick="this.closest('.preq-overlay').remove()" class="btn btn-ghost">סגור</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
+}
+
+function companyMsgAction(id) {
+  const m = COMPANY_MESSAGES.find(x => x.id === id);
+  if (m?.action) nav(m.action.fn);
+}
+
+function filterCompanyMsgs(filter, btn) {
+  companyMsgFilter = filter;
+  document.querySelectorAll('.cnotif-tab').forEach(t => t.classList.remove('cnotif-active'));
+  btn.classList.add('cnotif-active');
+  renderCompanyMsgs();
+}
+
+function markAllCompanyRead() {
+  COMPANY_MESSAGES.forEach(m => m.unread = false);
+  updateNotifBadge();
+  renderCompanyMsgs();
+}
+
+function updateNotifBadge() {
+  const count = COMPANY_MESSAGES.filter(m => m.unread).length;
+  // Update nav badge
+  let badge = document.getElementById('notif-nav-badge');
+  if (!badge) {
+    const navItem = document.getElementById('notif-nav-item');
+    if (navItem) {
+      badge = document.createElement('span');
+      badge.id = 'notif-nav-badge';
+      badge.style.cssText = 'margin-right:auto;background:#dc2626;color:#fff;font-size:9px;padding:1px 6px;border-radius:10px;font-family:"DM Mono",monospace;font-weight:700';
+      navItem.appendChild(badge);
+    }
+  }
+  if (badge) { badge.textContent = count; badge.style.display = count > 0 ? '' : 'none'; }
+  // Update tab counts
+  const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('ctab-all',       COMPANY_MESSAGES.length);
+  set('ctab-unread',    count);
+  set('ctab-placement', COMPANY_MESSAGES.filter(m=>m.tag==='placement').length);
+  set('ctab-admin',     COMPANY_MESSAGES.filter(m=>m.tag==='admin').length);
+}
+
+/* ── PLACEMENT REQUEST FLOW ── */
+function requestPlacement(candidateId) {
+  closeModal();
+  const candidates = {
+    noam:  {name:'נועה לוי',    unit:'מודיעין', score:97, match:'94%', cost:'3,750₪'},
+    yuval: {name:'יובל כהן',   unit:'8200',     score:94, match:'88%', cost:'3,750₪'},
+    ron:   {name:'רון מזרחי',  unit:'חיל הים',  score:90, match:'77%', cost:'3,750₪'},
+    or:    {name:'אור שמיר',   unit:'8200',     score:90, match:'82%', cost:'3,750₪'},
+    michal:{name:'מיכל ראובן', unit:'תקשוב',   score:81, match:'76%', cost:'3,750₪'},
+    tamar: {name:'תמר בן-דוד', unit:'מודיעין', score:93, match:'91%', cost:'3,750₪'},
+  };
+  const cand = candidates[candidateId];
+  if (!cand) return;
+
+  // Already requested?
+  if (placementRequests[candidateId]) {
+    const status = placementRequests[candidateId];
+    showCompanyToast(status === 'approved' ? `✅ ${cand.name} כבר אושרה` : `⏳ בקשה ל-${cand.name} כבר נשלחה`);
+    return;
+  }
+
+  const modal = document.createElement('div');
+  modal.className = 'preq-overlay';
+  modal.innerHTML = `<div class="preq-box">
+    <div style="height:3px;background:linear-gradient(90deg,#2563eb,#059669)"></div>
+    <div class="preq-head">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:#f1f5f9">בקשת הצבה — ${cand.name}</div>
+        <div style="font-size:11px;color:#64748b;margin-top:3px">נא לאשר את פרטי הבקשה לפני שליחה למשרד</div>
+      </div>
+      <button onclick="this.closest('.preq-overlay').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;color:#94a3b8;padding:6px 12px;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div class="preq-body">
+      <!-- Candidate summary -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        ${[['ציון',cand.score,'#059669'],['Tech Match',cand.match,'#2563eb'],['יחידה',cand.unit,'#94a3b8'],['עלות/חודש',cand.cost,'#d97706']].map(([l,v,c])=>`
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:17px;font-weight:900;font-family:'DM Mono',monospace;color:${c}">${v}</div>
+          <div style="font-size:10px;color:#64748b;margin-top:2px">${l}</div>
+        </div>`).join('')}
+      </div>
+      <!-- Notes -->
+      <div>
+        <label style="font-size:11px;color:#64748b;font-family:'DM Mono',monospace;display:block;margin-bottom:5px">הערות לבקשה (אופציונלי)</label>
+        <textarea id="placement-notes" rows="2" placeholder="לדוגמה: מועדף להתחיל בספטמבר, תפקיד Security Researcher..." style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:9px 12px;color:#e2e8f0;font-size:12px;resize:none;box-sizing:border-box;outline:none"></textarea>
+      </div>
+      <!-- Confirm -->
+      <div style="background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);border-radius:10px;padding:12px 14px;font-size:12px;color:#7ab8ff">
+        ℹ️ הבקשה תישלח למשרד החינוך לאישור סופי. זמן תגובה ממוצע: 2.4 ימי עסקים.
+      </div>
+    </div>
+    <div class="preq-foot">
+      <button onclick="this.closest('.preq-overlay').remove()" class="btn btn-ghost">ביטול</button>
+      <button onclick="declinePlacement('${candidateId}','${cand.name}');this.closest('.preq-overlay').remove()" class="btn btn-outline" style="color:#dc2626;border-color:#dc2626">✕ דחה מועמד</button>
+      <button onclick="confirmPlacement('${candidateId}','${cand.name}');this.closest('.preq-overlay').remove()" class="btn btn-green">✅ שלח בקשה</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
+}
+
+function confirmPlacement(id, name) {
+  placementRequests[id] = 'pending';
+  // Add to notifications
+  COMPANY_MESSAGES.unshift({
+    id:'cm_new_'+Date.now(), unread:true, tag:'placement',
+    icon:'📨', iconBg:'rgba(37,99,235,.15)',
+    title:`בקשת הצבה נשלחה — ${name}`,
+    body:`בקשת ההצבה ל-${name} נשלחה למשרד החינוך ומחכה לאישור. זמן ממוצע: 2.4 ימים.`,
+    time:'עכשיו', action:{label:'צפה בהצבות', fn:'placements'}
+  });
+  updateNotifBadge();
+  showCompanyToast(`📨 בקשת הצבה ל-${name} נשלחה למשרד`);
+  // Simulate approval after 3s
+  setTimeout(() => {
+    placementRequests[id] = 'approved';
+    COMPANY_MESSAGES.unshift({
+      id:'cm_appr_'+Date.now(), unread:true, tag:'placement',
+      icon:'✅', iconBg:'rgba(5,150,105,.15)',
+      title:`הצבה אושרה — ${name}`,
+      body:`המשרד אישר את הצבת ${name} ל-Mobileye. ניתן לצפות בפרטים בלשונית הצבות פעילות.`,
+      time:'עכשיו', action:{label:'צפה בהצבות', fn:'placements'}
+    });
+    updateNotifBadge();
+    showCompanyToast(`✅ הצבת ${name} אושרה!`);
+  }, 3000);
+}
+
+function declinePlacement(id, name) {
+  placementRequests[id] = 'declined';
+  showCompanyToast(`✕ ${name} סומנה כלא מתאימה`);
+}
+
+/* ── MOCK AI CHAT ── */
+let companyChatHistory = [];
+
+function sendMsg() {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  autoResize(input);
+
+  // Append user message
+  appendCompanyMsg('user', text);
+  companyChatHistory.push(text.toLowerCase());
+
+  // Stats
+  const sq = document.getElementById('stat-questions');
+  if (sq) sq.textContent = (parseInt(sq.textContent)||0)+1;
+
+  // Show typing
+  const msgs = document.getElementById('chat-messages');
+  const typing = document.createElement('div');
+  typing.className = 'msg ai'; typing.id = 'company-typing';
+  typing.innerHTML = `<div class="msg-av ai-av">✨</div>
+    <div><div class="msg-bubble" style="padding:10px 14px">
+      <div style="display:flex;gap:5px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#7ab8ff;animation:pulse 1s infinite"></div>
+        <div style="width:6px;height:6px;border-radius:50%;background:#7ab8ff;animation:pulse 1s infinite .2s"></div>
+        <div style="width:6px;height:6px;border-radius:50%;background:#7ab8ff;animation:pulse 1s infinite .4s"></div>
+      </div>
+    </div></div>`;
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+    const reply = getMockResponse(text);
+    appendCompanyMsg('ai', reply);
+    const ss = document.getElementById('stat-shown');
+    if (ss) ss.textContent = (parseInt(ss.textContent)||0) + (reply.includes('•') ? 2 : 1);
+  }, 900 + Math.random()*600);
+}
+
+function getMockResponse(text) {
+  const t = text.toLowerCase();
+  if (t.includes('השוו') || t.includes('vs') || t.includes('לעומת')) return pick(MOCK_RESPONSES.compare);
+  if (t.includes('סייבר') || t.includes('cyber') || t.includes('8200')) return pick(MOCK_RESPONSES.cyber);
+  if (t.includes('retention') || t.includes('נשיר') || t.includes('סיכון')) return pick(MOCK_RESPONSES.retention);
+  if (t.includes('עלות') || t.includes('מחיר') || t.includes('תשלום') || t.includes('כסף')) return pick(MOCK_RESPONSES.cost);
+  if (t.includes('תהליך') || t.includes('איך') || t.includes('זמן') || t.includes('מתי')) return pick(MOCK_RESPONSES.process);
+  if (t.includes('python') || t.includes('פייתון') || t.includes('קוד') || t.includes('פיתוח')) return pick(MOCK_RESPONSES.python);
+  if (t.includes('מועמד') || t.includes('כמה') || t.includes('רשימה') || t.includes('מי')) return pick(MOCK_RESPONSES.candidates);
+  if (t.includes('esg') || t.includes('קהילה') || t.includes('תרומה') || t.includes('חברה')) return pick(MOCK_RESPONSES.esg);
+  if (t.includes('חוזה') || t.includes('הסכם') || t.includes('התחייבות') || t.includes('תנאי')) return pick(MOCK_RESPONSES.contract);
+  return pick(MOCK_RESPONSES.default);
+}
+function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+
+function appendCompanyMsg(role, text) {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const isUser = role === 'user';
+  const formatted = text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+  const div = document.createElement('div');
+  div.className = `msg ${isUser ? 'user' : 'ai'}`;
+  div.innerHTML = isUser
+    ? `<div class="msg-bubble user-bubble">${formatted}</div><div class="msg-time">עכשיו</div>`
+    : `<div class="msg-av ai-av">✨</div><div><div class="msg-bubble">${formatted}</div><div class="msg-time">עכשיו</div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+/* notifications init merged into nav() */
+
+/* ── TOAST ── */
+function showCompanyToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(37,99,235,.5);color:#7ab8ff;padding:10px 22px;border-radius:10px;font-size:13px;font-family:"DM Mono",monospace;z-index:99999;box-shadow:0 4px 24px rgba(0,0,0,.5)';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+/* currentModal tracking merged into openModal() */
+
+</script>
+</body>
+</html>
