@@ -661,16 +661,16 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
       <div class="kpi-accent a-green"></div>
     </div>
     <div class="kpi">
-      <div class="kpi-lbl">עלות חברה / חודש</div>
-      <div class="kpi-val c-amber">3,750<span style="font-size:14px">₪</span></div>
-      <div class="kpi-sub">25% · לפני הטבת מס</div>
-      <div class="kpi-accent a-amber"></div>
+      <div class="kpi-lbl">עלות תחנה א'</div>
+      <div class="kpi-val c-green">0<span style="font-size:14px">₪</span></div>
+      <div class="kpi-sub">גפ"ן מממן 100%</div>
+      <div class="kpi-accent a-green"></div>
     </div>
     <div class="kpi">
-      <div class="kpi-lbl">חיסכון מס שנתי</div>
-      <div class="kpi-val c-green">54K<span style="font-size:14px">₪</span></div>
-      <div class="kpi-sub">הטבת מס 15% ע"פ חוק</div>
-      <div class="kpi-accent a-green"></div>
+      <div class="kpi-lbl">עמלת השמה תחנה ב'</div>
+      <div class="kpi-val c-amber">35K<span style="font-size:14px">₪</span></div>
+      <div class="kpi-sub">חד-פעמי · לעומת 40K+ גיוס רגיל</div>
+      <div class="kpi-accent a-amber"></div>
     </div>
   </div>
 
@@ -713,41 +713,43 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
   <div class="g3">
     <!-- Financing -->
     <div class="card card-p">
-      <div class="card-title" style="margin-bottom:16px">💳 פיצול מימון</div>
-      <div class="fin-row">
-        <div class="fin-who">🏛 מדינה (50%)</div>
-        <div class="fin-track"><div class="fin-fill" style="width:50%;background:var(--blue)"></div></div>
-        <div class="fin-pct">50%</div>
-        <div class="fin-amt c-blue">7,500₪</div>
-      </div>
-      <div class="fin-row">
-        <div class="fin-who">🏙 רשות מקומית (25%)</div>
-        <div class="fin-track"><div class="fin-fill" style="width:25%;background:var(--green)"></div></div>
-        <div class="fin-pct">25%</div>
-        <div class="fin-amt c-green">3,750₪</div>
-      </div>
-      <div class="fin-row" style="background:var(--amber-lt);border-radius:8px;padding:10px;border:1px solid #fde68a;margin-top:4px">
-        <div class="fin-who" style="font-weight:700;color:var(--amber)">🏢 Mobileye (25%)</div>
-        <div class="fin-track"><div class="fin-fill" style="width:25%;background:var(--amber)"></div></div>
-        <div class="fin-pct">25%</div>
-        <div class="fin-amt c-amber">3,750₪</div>
-      </div>
-      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border2);font-size:12px;color:var(--text-dim)">
-        שכר מורה סה"כ: <strong style="color:var(--text)">15,000₪/חודש</strong>
+      <div class="card-title" style="margin-bottom:16px">💳 מבנה המימון</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="padding:12px;background:var(--green-lt);border-radius:9px;border:1px solid #bbf7d0">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;font-family:'DM Mono',monospace">תחנה א' — 2 שנות הוראת STEM</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:13px;color:var(--text-mid)">🏛 גפ"ן מממן הכל</span>
+            <span style="font-size:20px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace">0₪</span>
+          </div>
+          <div style="font-size:11px;color:var(--green);margin-top:4px">הוצאה לחברה — אפס. תקבלו עובד חצי משרה בחינם.</div>
+        </div>
+        <div style="padding:12px;background:var(--amber-lt);border-radius:9px;border:1px solid #fde68a">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;font-family:'DM Mono',monospace">תחנה ב' — משרה מלאה אצלכם</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:13px;color:var(--text-mid)">🏢 עמלת השמה חד-פעמית</span>
+            <span style="font-size:20px;font-weight:800;color:var(--amber);font-family:'DM Mono',monospace">35,000₪</span>
+          </div>
+          <div style="font-size:11px;color:var(--amber);margin-top:4px">לעומת 40,000₪+ בגיוס רגיל — ועם עובד שכבר מכיר אתכם.</div>
+        </div>
       </div>
     </div>
 
-    <!-- Tax -->
+    <!-- ESG Value -->
     <div class="card card-p">
-      <div class="card-title" style="margin-bottom:14px">🧾 הטבת מס</div>
-      <div style="text-align:center;padding:10px 0 12px">
-        <div style="font-size:44px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;line-height:1">15%</div>
-        <div style="font-size:11px;color:var(--text-dim);margin-top:4px">הכרת רשות המסים</div>
-      </div>
+      <div class="card-title" style="margin-bottom:14px">🌱 ערך ESG מוכח</div>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-mid)">עלות ברוטו שנתית</span><span style="font-weight:600;font-family:'DM Mono',monospace">45,000₪</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-mid)">הטבת מס שנתית</span><span style="font-weight:700;color:var(--green);font-family:'DM Mono',monospace">−6,750₪</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;padding-top:8px;border-top:1px solid var(--border2)"><span style="font-weight:700">עלות נטו</span><span style="font-weight:700;font-family:'DM Mono',monospace">38,250₪</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:9px;background:#f0fdf4;border-radius:8px">
+          <span style="font-size:15px">🤝</span>
+          <div style="font-size:12px;color:var(--text-mid);line-height:1.5"><strong style="color:var(--text)">S — Social:</strong> תמיכה מוכחת בחיילים משוחררים ובחינוך STEM בפריפריה</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:9px;background:#eff6ff;border-radius:8px">
+          <span style="font-size:15px">🏛</span>
+          <div style="font-size:12px;color:var(--text-mid);line-height:1.5"><strong style="color:var(--text)">G — Governance:</strong> שיתוף עם גוף ממשלתי מפוקח — רשות החדשנות</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:9px;background:#fefce8;border-radius:8px">
+          <span style="font-size:15px">📊</span>
+          <div style="font-size:12px;color:var(--text-mid);line-height:1.5"><strong style="color:var(--text)">דיווח:</strong> כל הנתונים מדידים לדוח ESG שנתי</div>
+        </div>
       </div>
     </div>
 
@@ -803,7 +805,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           <th>ציון</th>
           <th>Retention</th>
           <th>Seniority</th>
-          <th>עלות/חודש</th>
+          <th>עמלת השמה</th>
           <th>סטטוס</th>
           <th></th>
         </tr>
@@ -817,7 +819,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           <td><div class="score score-hi">97</div></td>
           <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">96%</span></td>
           <td><span class="chip chip-green">+18m</span></td>
-          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">35K₪</span></td>
           <td><span class="status st-avail">זמין</span></td>
           <td><button class="btn btn-green" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('noam')">פרופיל</button></td>
         </tr>
@@ -829,7 +831,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           <td><div class="score score-hi">94</div></td>
           <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">91%</span></td>
           <td><span class="chip chip-green">+18m</span></td>
-          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">35K₪</span></td>
           <td><span class="status st-avail">זמין</span></td>
           <td><button class="btn btn-outline" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('yuval')">פרופיל</button></td>
         </tr>
@@ -841,7 +843,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           <td><div class="score score-hi">90</div></td>
           <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--amber)">58%</span></td>
           <td><span class="chip chip-amber">+12m</span></td>
-          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">35K₪</span></td>
           <td><span class="status st-avail">זמין</span></td>
           <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('ron')">פרופיל</button></td>
         </tr>
@@ -853,7 +855,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           <td><div class="score score-hi">90</div></td>
           <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">89%</span></td>
           <td><span class="chip chip-green">+18m</span></td>
-          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">35K₪</span></td>
           <td><span class="status st-pending">בתהליך</span></td>
           <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('or')">פרופיל</button></td>
         </tr>
@@ -865,7 +867,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           <td><div class="score score-mid">81</div></td>
           <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--amber)">73%</span></td>
           <td><span class="chip chip-amber">+12m</span></td>
-          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">35K₪</span></td>
           <td><span class="status st-avail">זמין</span></td>
           <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openModal('michal')">פרופיל</button></td>
         </tr>
@@ -877,7 +879,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           <td><div class="score score-hi">93</div></td>
           <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)">94%</span></td>
           <td><span class="chip chip-green">+18m</span></td>
-          <td><span style="font-family:'DM Mono',monospace;font-weight:600">3,750₪</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-weight:600">35K₪</span></td>
           <td><span class="status st-placed">הוצב</span></td>
           <td><button class="btn btn-ghost" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation()">צפה</button></td>
         </tr>
@@ -919,9 +921,9 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
           </div>
         </div>
         <div style="text-align:left;min-width:90px">
-          <div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">עלות/חודש</div>
-          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace">3,750₪</div>
-          <div style="font-size:10px;color:var(--green);margin-top:2px">לפני מס</div>
+          <div style="font-size:10px;color:var(--text-dim);margin-bottom:3px">עמלת השמה</div>
+          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace">35,000₪</div>
+          <div style="font-size:10px;color:var(--green);margin-top:2px">חד-פעמי בתחנה ב'</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border2)">
@@ -968,20 +970,19 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
 <div id="s-finance" class="screen">
   <div class="topbar">
     <div>
-      <div class="page-title">מימון <em>ומס</em></div>
-      <div class="page-sub">עלויות, הטבות והחזרים · Mobileye 2025</div>
+      <div class="page-title">מימון <em>ועמלות</em></div>
+      <div class="page-sub">עלויות ומבנה תשלום · Mobileye 2025</div>
     </div>
     <div class="topbar-actions">
       <button class="btn btn-ghost">📄 דוח PDF</button>
-      <button class="btn btn-primary">🧾 הגש בקשת מס</button>
     </div>
   </div>
 
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-lbl">עלות שנתית ברוטו</div><div class="kpi-val c-amber">45K₪</div><div class="kpi-sub">לחייל אחד</div><div class="kpi-accent a-amber"></div></div>
-    <div class="kpi"><div class="kpi-lbl">חיסכון מס שנתי</div><div class="kpi-val c-green">6,750₪</div><div class="kpi-sub">15% · רשות המסים</div><div class="kpi-accent a-green"></div></div>
-    <div class="kpi"><div class="kpi-lbl">עלות נטו שנתית</div><div class="kpi-val c-blue">38,250₪</div><div class="kpi-sub">לחייל אחד</div><div class="kpi-accent a-blue"></div></div>
-    <div class="kpi"><div class="kpi-lbl">ROI — לעומת גיוס ישיר</div><div class="kpi-val c-green">3.2×</div><div class="kpi-sub">Senior Mid+ שקול</div><div class="kpi-accent a-green"></div></div>
+    <div class="kpi"><div class="kpi-lbl">עלות תחנה א'</div><div class="kpi-val c-green">0₪</div><div class="kpi-sub">גפ"ן מממן הכל</div><div class="kpi-accent a-green"></div></div>
+    <div class="kpi"><div class="kpi-lbl">עמלת השמה תחנה ב'</div><div class="kpi-val c-amber">35K₪</div><div class="kpi-sub">חד-פעמי</div><div class="kpi-accent a-amber"></div></div>
+    <div class="kpi"><div class="kpi-lbl">גיוס רגיל ג'וניור</div><div class="kpi-val c-blue">40K₪+</div><div class="kpi-sub">עמלה + סיכון נטישה</div><div class="kpi-accent a-blue"></div></div>
+    <div class="kpi"><div class="kpi-lbl">חיסכון לעומת גיוס רגיל</div><div class="kpi-val c-green">5K₪+</div><div class="kpi-sub">+ עובד מוכר ומחויב</div><div class="kpi-accent a-green"></div></div>
   </div>
 
   <div class="g2">
@@ -993,18 +994,18 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
       <div class="card-title" style="margin-bottom:16px">💰 מה Mobileye מרוויחה?</div>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div style="padding:14px;background:var(--green-lt);border-radius:10px;border:1px solid #bbf7d0">
-          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Senior Security Researcher בשוק</div>
-          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace">~520,000₪/שנה</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">כולל גיוס + Onboarding + הדרכה</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">תחנה א' — 2 שנים · עלות לחברה</div>
+          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)">0₪</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">גפ"ן מכסה שכר הוראה. הוצאתכם — אפס.</div>
         </div>
-        <div style="padding:14px;background:var(--blue-lt);border-radius:10px;border:1px solid #bfdbfe">
-          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">עלות תוכנית מעוף (4 שנים)</div>
-          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--blue)">~812,000₪</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">תחנה א' (25%) + שכר תחנה ב' · לפני מס</div>
+        <div style="padding:14px;background:var(--amber-lt);border-radius:10px;border:1px solid #fde68a">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">תחנה ב' — עמלת השמה חד-פעמית</div>
+          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--amber)">35,000₪</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">לעומת 40,000₪+ עמלת גיוס רגיל — בלי הסיכונים</div>
         </div>
         <div style="padding:12px;background:var(--green-lt);border-radius:10px;border:1px solid #bbf7d0;display:flex;gap:10px;align-items:flex-start">
           <span style="font-size:16px">✅</span>
-          <div style="font-size:12px;color:var(--text-mid);line-height:1.6">נכנס כ-<strong style="color:var(--text)">Mid+</strong> עם +18 חודש ניסיון מוכר · Onboarding אפס · Retention גבוה · מוכן מהיום הראשון</div>
+          <div style="font-size:12px;color:var(--text-mid);line-height:1.6">נכנס כ-<strong style="color:var(--text)">Mid+</strong> עם +18 חודש ניסיון מוכר · Onboarding אפס · מכיר את המערכות שלכם מהיום הראשון</div>
         </div>
       </div>
     </div>
@@ -1064,8 +1065,8 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
         <div style="display:flex;flex-direction:column;gap:9px;font-size:12px">
           <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">Slots מאושרים</span><strong>12</strong></div>
           <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">תקופת הסכם</span><strong>3 שנים</strong></div>
-          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">מימון חברה</span><strong>25% — 3,750₪</strong></div>
-          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">הטבת מס</span><strong style="color:var(--green)">15%</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">עלות תחנה א'</span><strong style="color:var(--green)">0₪ (גפ"ן)</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">עמלת השמה תחנה ב'</span><strong>35,000₪ חד-פעמי</strong></div>
           <div style="display:flex;justify-content:space-between"><span style="color:var(--text-mid)">מינימום פעיל</span><strong>1 slot</strong></div>
         </div>
       </div>
@@ -1337,9 +1338,9 @@ function initFinance() {
   new Chart(document.getElementById('c-cost'), {
     type: 'bar',
     data: {
-      labels: ['שלב 0','שנה א\'','שנה ב\'','שנה ג\' (ב\')','שנה ד\' (ב\')'],
+      labels: ['הכשרה','תחנה א\' שנה 1','תחנה א\' שנה 2','עמלת השמה','תחנה ב\' (שנה 3+)'],
       datasets: [{ label:'עלות חברה (₪)',
-        data:[0,45000,45000,336000,336000],
+        data:[0,0,0,35000,336000],
         backgroundColor:[GREEN+'40',AMBER+'70',AMBER+'70',BLUE+'70',BLUE+'70'],
         borderColor:[GREEN,AMBER,AMBER,BLUE,BLUE],
         borderWidth:2, borderRadius:5 }]
@@ -1354,32 +1355,32 @@ function initFinance() {
 /* ── Candidate data ─────────────────────────────── */
 const CANDS = {
   noam:  { name:'נועה לוי',   unit:'מודיעין · אנליסטית · נתיבות', av:'נל', g:'#dc2626,#16213e',
-            kpis:[{l:'Tech Match',v:'94%',c:GREEN},{l:'ציון',v:'97',c:BLUE},{l:'Retention',v:'96%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★★',c:AMBER}],
+            kpis:[{l:'Tech Match',v:'94%',c:GREEN},{l:'ציון',v:'97',c:BLUE},{l:'Retention',v:'96%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עמלת השמה',v:'35,000₪',c:AMBER},{l:'ELI5',v:'★★★★★',c:AMBER}],
             tech:['Python','Cyber','Linux','AI & ML','OSINT'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
             school:'אורט נתיבות', role:'Security Researcher',
             extra:[{l:'יחידה',v:'מודיעין'},{l:'דרגה',v:'סמל ראשון'},{l:'מרחק לביה"ס',v:"5 דק'"},{l:'זמינות',v:'מיידית'}] },
   yuval: { name:'יובל כהן',   unit:'8200 · מפקד צוות', av:'יכ', g:'#059669,#16213e',
-            kpis:[{l:'Tech Match',v:'88%',c:GREEN},{l:'ציון',v:'94',c:BLUE},{l:'Retention',v:'91%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★★',c:AMBER}],
+            kpis:[{l:'Tech Match',v:'88%',c:GREEN},{l:'ציון',v:'94',c:BLUE},{l:'Retention',v:'91%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עמלת השמה',v:'35,000₪',c:AMBER},{l:'ELI5',v:'★★★★★',c:AMBER}],
             tech:['Python','Cyber Security','Linux','C++'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
             school:'כפר מנחם טכנולוגי', role:'Security Researcher',
             extra:[{l:'יחידה',v:'8200'},{l:'דרגה',v:'רס"ל'},{l:'מרחק לביה"ס',v:"12 דק'"},{l:'זמינות',v:'מיידית'}] },
   michal:{ name:'מיכל ראובן', unit:'תקשוב · ר"פ', av:'מר', g:'#d97706,#16213e',
-            kpis:[{l:'Tech Match',v:'76%',c:AMBER},{l:'ציון',v:'81',c:AMBER},{l:'Retention',v:'73%',c:AMBER},{l:'Seniority Leap',v:'+12m',c:'#94a3b8'},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★☆',c:AMBER}],
+            kpis:[{l:'Tech Match',v:'76%',c:AMBER},{l:'ציון',v:'81',c:AMBER},{l:'Retention',v:'73%',c:AMBER},{l:'Seniority Leap',v:'+12m',c:'#94a3b8'},{l:'עמלת השמה',v:'35,000₪',c:AMBER},{l:'ELI5',v:'★★★★☆',c:AMBER}],
             tech:['Python','Data Science','SQL'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
             school:'עמל חיפה', role:'Data Analyst',
             extra:[{l:'יחידה',v:'תקשוב'},{l:'דרגה',v:'סמל'},{l:'מרחק לביה"ס',v:"7 דק'"},{l:'זמינות',v:'מיידית'}] },
   ron:   { name:'רון מזרחי',  unit:'חיל הים · מהנדס', av:'רמ', g:'#2563eb,#16213e',
-            kpis:[{l:'Tech Match',v:'77%',c:BLUE},{l:'ציון',v:'90',c:BLUE},{l:'Retention',v:'58%',c:RED},{l:'Seniority Leap',v:'+12m',c:'#94a3b8'},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★☆',c:AMBER}],
+            kpis:[{l:'Tech Match',v:'77%',c:BLUE},{l:'ציון',v:'90',c:BLUE},{l:'Retention',v:'58%',c:RED},{l:'Seniority Leap',v:'+12m',c:'#94a3b8'},{l:'עמלת השמה',v:'35,000₪',c:AMBER},{l:'ELI5',v:'★★★★☆',c:AMBER}],
             tech:['Python','C++','Algorithms'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
             school:'עמל חיפה', role:'Software Engineer',
             extra:[{l:'יחידה',v:'חיל הים'},{l:'דרגה',v:'סמל'},{l:'מרחק לביה"ס',v:"18 דק'"},{l:'זמינות',v:'מיידית'}] },
   or:    { name:'אור שמיר',   unit:'8200', av:'אש', g:'#7c3aed,#16213e',
-            kpis:[{l:'Tech Match',v:'82%',c:GREEN},{l:'ציון',v:'90',c:BLUE},{l:'Retention',v:'89%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★☆',c:AMBER}],
+            kpis:[{l:'Tech Match',v:'82%',c:GREEN},{l:'ציון',v:'90',c:BLUE},{l:'Retention',v:'89%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עמלת השמה',v:'35,000₪',c:AMBER},{l:'ELI5',v:'★★★★☆',c:AMBER}],
             tech:['Cyber Security','Python','Linux'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
             school:'כפר מנחם טכנולוגי', role:'Security Researcher',
             extra:[{l:'יחידה',v:'8200'},{l:'דרגה',v:'סמל ראשון'},{l:'מרחק לביה"ס',v:"12 דק'"},{l:'זמינות',v:'בתהליך'}] },
   tamar: { name:'תמר בן-דוד', unit:'מודיעין · הוצב', av:'תב', g:'#475569,#16213e',
-            kpis:[{l:'Tech Match',v:'91%',c:GREEN},{l:'ציון',v:'93',c:BLUE},{l:'Retention',v:'94%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עלות/חודש',v:'3,750₪',c:'#0f172a'},{l:'ELI5',v:'★★★★★',c:AMBER}],
+            kpis:[{l:'Tech Match',v:'91%',c:GREEN},{l:'ציון',v:'93',c:BLUE},{l:'Retention',v:'94%',c:GREEN},{l:'Seniority Leap',v:'+18m',c:AMBER},{l:'עמלת השמה',v:'35,000₪',c:AMBER},{l:'ELI5',v:'★★★★★',c:AMBER}],
             tech:['Cyber Security','Python','Linux','AI & ML'], myStack:['Python','Cyber Security','Computer Vision','Linux','C++'],
             school:'אורט נתיבות', role:'Security Researcher',
             extra:[{l:'יחידה',v:'מודיעין'},{l:'דרגה',v:'רס"ל'},{l:'מרחק לביה"ס',v:"5 דק'"},{l:'זמינות',v:'הוצב'}] },
@@ -1632,7 +1633,7 @@ window.addEventListener('load', () => { setTimeout(initDash, 80); inited.dashboa
 /* ── MOCK AI RESPONSES ── */
 const MOCK_RESPONSES = {
   default: [
-    'על בסיס הפרופיל שלכם, **נועה לוי** (ציון 97, 94% Tech Match) היא ההתאמה הטובה ביותר. זמינה מיידית עם Retention צפוי 96% ועלות נטו **3,750₪/חודש** לאחר הטבת מס.',
+    'על בסיס הפרופיל שלכם, **נועה לוי** (ציון 97, 94% Tech Match) היא ההתאמה הטובה ביותר. זמינה מיידית עם Retention צפוי 96%. תחנה א\' — עלות לכם **0₪** (גפ"ן מממן). תחנה ב\' — עמלת השמה חד-פעמית **35,000₪**.',
     'מצאתי **3 מועמדים** עם Retention מעל 85%:\n• נועה לוי — 96% ✓\n• תמר בן-דוד — 94% ✓\n• יובל כהן — 91% ✓\nכולם עם ניסיון טכנולוגי רלוונטי.',
     'אני כאן לעזור עם חיפוש מועמדים, השוואה, עלויות ותהליך ההצבה. מה תרצו לדעת?',
   ],
@@ -1646,7 +1647,7 @@ const MOCK_RESPONSES = {
     'מועמדים עם Retention נמוך (סיכון):\n• **רון מזרחי** — 58% ⚠️ (פחות ניסיון הוראה)\n• **מיכל ראובן** — 73% ⚠️ (נדרש מנטורינג)\n\nשאר המועמדים מעל 85% — בטווח בטוח.',
   ],
   cost: [
-    'עלות מועמד אחד ל-24 חודשים:\n• עלות ברוטו: **180,000₪**\n• מימון מדינה (50%): **−90,000₪**\n• מימון רשות (25%): **−45,000₪**\n• **עלות נטו לחברה: 45,000₪** + הטבת מס 15%\n\nלעומת גיוס רגיל: 38-43K₪ עמלה + סיכון נטישה גבוה.',
+    'מבנה העלויות:\n\n**תחנה א\' (2 שנות הוראה):**\n• עלות לחברה: **0₪** — גפ"ן מממן 100% את שכר ההוראה\n• אתם מקבלים עובד חצי משרה בחינם\n\n**תחנה ב\' (מעבר למשרה מלאה):**\n• עמלת השמה חד-פעמית: **35,000₪**\n• לעומת גיוס רגיל: 40,000₪+ עמלה + סיכון נטישה גבוה\n\nבסופו של דבר — עובד שמכיר אתכם, ב-5,000₪ פחות.',
   ],
   process: [
     'תהליך ההצבה:\n1. אתם מגדירים Tech Stack ודרישות\n2. המנוע מסנן ומדרג מועמדים אוטומטית\n3. אתם בוחרים ומאשרים\n4. מועמד מגיע לעבוד אצלכם בחצי משרה\n5. לאחר שנתיים — אפשרות למשרה מלאה\n\nזמן ממוצע עד שיבוץ: **3-4 שבועות**.',
@@ -1678,9 +1679,9 @@ const COMPANY_MESSAGES = [
    title:'תזכורת — כנס שותפים 2025',
    body:'כנס שותפי תעשייה של תוכנית מעוף יתקיים ב-20 ביוני בתל אביב. Mobileye מוזמנת לשלוח נציג.',
    time:'אתמול', action:null},
-  {id:'cm3', unread:true,  tag:'admin',     icon:'💳', iconBg:'rgba(5,150,105,.15)',
-   title:'אישור חשבונית — פברואר 2025',
-   body:'חשבונית מימון חודש פברואר אושרה: 3,750₪. ההעברה תתבצע ב-5 במרץ.',
+  {id:'cm3', unread:true,  tag:'admin',     icon:'📊', iconBg:'rgba(5,150,105,.15)',
+   title:'דוח פעילות רבעוני — Q1 2025',
+   body:'דוח פעילות רבעון ראשון מוכן לצפייה. 3 מועמדים בתהליך, ציון Match ממוצע: 91. ממתין לאישורכם.',
    time:'לפני 2 ימים', action:null},
   {id:'cm4', unread:false, tag:'placement', icon:'🤖', iconBg:'rgba(37,99,235,.1)',
    title:'AI Match חדש — יובל כהן',
@@ -1801,12 +1802,12 @@ function updateNotifBadge() {
 function requestPlacement(candidateId) {
   closeModal();
   const candidates = {
-    noam:  {name:'נועה לוי',    unit:'מודיעין', score:97, match:'94%', cost:'3,750₪'},
-    yuval: {name:'יובל כהן',   unit:'8200',     score:94, match:'88%', cost:'3,750₪'},
-    ron:   {name:'רון מזרחי',  unit:'חיל הים',  score:90, match:'77%', cost:'3,750₪'},
-    or:    {name:'אור שמיר',   unit:'8200',     score:90, match:'82%', cost:'3,750₪'},
-    michal:{name:'מיכל ראובן', unit:'תקשוב',   score:81, match:'76%', cost:'3,750₪'},
-    tamar: {name:'תמר בן-דוד', unit:'מודיעין', score:93, match:'91%', cost:'3,750₪'},
+    noam:  {name:'נועה לוי',    unit:'מודיעין', score:97, match:'94%', cost:'35K₪ תחנה ב\''},
+    yuval: {name:'יובל כהן',   unit:'8200',     score:94, match:'88%', cost:'35K₪ תחנה ב\''},
+    ron:   {name:'רון מזרחי',  unit:'חיל הים',  score:90, match:'77%', cost:'35K₪ תחנה ב\''},
+    or:    {name:'אור שמיר',   unit:'8200',     score:90, match:'82%', cost:'35K₪ תחנה ב\''},
+    michal:{name:'מיכל ראובן', unit:'תקשוב',   score:81, match:'76%', cost:'35K₪ תחנה ב\''},
+    tamar: {name:'תמר בן-דוד', unit:'מודיעין', score:93, match:'91%', cost:'35K₪ תחנה ב\''},
   };
   const cand = candidates[candidateId];
   if (!cand) return;
@@ -1832,7 +1833,7 @@ function requestPlacement(candidateId) {
     <div class="preq-body">
       <!-- Candidate summary -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-        ${[['ציון',cand.score,'#059669'],['Tech Match',cand.match,'#2563eb'],['יחידה',cand.unit,'#94a3b8'],['עלות/חודש',cand.cost,'#d97706']].map(([l,v,c])=>`
+        ${[['ציון',cand.score,'#059669'],['Tech Match',cand.match,'#2563eb'],['יחידה',cand.unit,'#94a3b8'],['עמלת השמה',cand.cost,'#d97706']].map(([l,v,c])=>`
         <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;text-align:center">
           <div style="font-size:17px;font-weight:900;font-family:'DM Mono',monospace;color:${c}">${v}</div>
           <div style="font-size:10px;color:#64748b;margin-top:2px">${l}</div>
