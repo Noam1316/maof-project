@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -574,9 +574,31 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
   .preq-body{padding:22px 24px;display:flex;flex-direction:column;gap:16px;}
   .preq-foot{padding:16px 24px;background:rgba(255,255,255,.02);display:flex;gap:10px;justify-content:flex-end;}
 
-</style>
+/* ─── MOBILE ─── */
+.mob-toggle{display:none;position:fixed;top:12px;right:12px;z-index:1000;background:var(--blue);border:none;border-radius:8px;width:40px;height:40px;cursor:pointer;font-size:20px;color:#fff;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+@media(max-width:768px){
+.mob-toggle{display:flex;}
+.sidebar{position:fixed;right:-228px;top:0;height:100vh;z-index:999;transition:right .3s ease;box-shadow:-4px 0 20px rgba(0,0,0,.4);}
+.sidebar.open{right:0;}
+.main{margin-right:0!important;padding:16px;max-width:100vw;}
+.kpi-row{grid-template-columns:1fr 1fr!important;}
+.g2,.g3,.g-21{grid-template-columns:1fr!important;}
+.topbar{flex-direction:column;gap:10px;}
+.topbar-actions{flex-wrap:wrap;}
+table{font-size:12px;}
+table th,table td{padding:8px 6px;}
+.modal-kpi-grid{grid-template-columns:1fr 1fr!important;}
+.journey{grid-template-columns:1fr!important;}
+.sf-grid{grid-template-columns:1fr!important;}
+.sf-field.full{grid-column:span 1!important;}
+.chat-sidebar{display:none!important;}
+}
+@media(max-width:480px){
+.kpi-row{grid-template-columns:1fr!important;}
+.modal-kpi-grid{grid-template-columns:1fr!important;}
+}</style>
 </head>
-<body>
+<body><button class="mob-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="תפריט">☰</button>
 <div class="shell">
 
 <!-- ══ SIDEBAR ══════════════════════════════════════════════════════ -->
@@ -661,9 +683,9 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
       <div class="kpi-accent a-green"></div>
     </div>
     <div class="kpi">
-      <div class="kpi-lbl">עלות תחנה א'</div>
-      <div class="kpi-val c-green">0<span style="font-size:14px">₪</span></div>
-      <div class="kpi-sub">גפ"ן מממן 100%</div>
+      <div class="kpi-lbl">תחנה א' — עמלת גיוס</div>
+      <div class="kpi-val c-green" style="font-size:22px">ללא עמלה</div>
+      <div class="kpi-sub">שכר חצי משרה בלבד · גפ"ן מממן ההוראה</div>
       <div class="kpi-accent a-green"></div>
     </div>
     <div class="kpi">
@@ -718,10 +740,10 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
         <div style="padding:12px;background:var(--green-lt);border-radius:9px;border:1px solid #bbf7d0">
           <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;font-family:'DM Mono',monospace">תחנה א' — 2 שנות הוראת STEM</div>
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:13px;color:var(--text-mid)">🏛 גפ"ן מממן הכל</span>
-            <span style="font-size:20px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace">0₪</span>
+            <span style="font-size:13px;color:var(--text-mid)">🏢 שכר חצי משרה טכנולוגי בלבד</span>
+            <span style="font-size:14px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace">ללא עמלה</span>
           </div>
-          <div style="font-size:11px;color:var(--green);margin-top:4px">הוצאה לחברה — אפס. תקבלו עובד חצי משרה בחינם.</div>
+          <div style="font-size:11px;color:var(--green);margin-top:4px">גפ"ן מכסה את שכר ההוראה — אתם משלמים רק חצי משרה טכנולוגי, כמו כל עובד רגיל.</div>
         </div>
         <div style="padding:12px;background:var(--amber-lt);border-radius:9px;border:1px solid #fde68a">
           <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;font-family:'DM Mono',monospace">תחנה ב' — משרה מלאה אצלכם</div>
@@ -979,7 +1001,7 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
   </div>
 
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-lbl">עלות תחנה א'</div><div class="kpi-val c-green">0₪</div><div class="kpi-sub">גפ"ן מממן הכל</div><div class="kpi-accent a-green"></div></div>
+    <div class="kpi"><div class="kpi-lbl">תחנה א' — עמלת גיוס</div><div class="kpi-val c-green" style="font-size:20px">ללא עמלה</div><div class="kpi-sub">שכר חצי משרה · גפ"ן מממן ההוראה</div><div class="kpi-accent a-green"></div></div>
     <div class="kpi"><div class="kpi-lbl">עמלת השמה תחנה ב'</div><div class="kpi-val c-amber">35K₪</div><div class="kpi-sub">חד-פעמי</div><div class="kpi-accent a-amber"></div></div>
     <div class="kpi"><div class="kpi-lbl">גיוס רגיל ג'וניור</div><div class="kpi-val c-blue">40K₪+</div><div class="kpi-sub">עמלה + סיכון נטישה</div><div class="kpi-accent a-blue"></div></div>
     <div class="kpi"><div class="kpi-lbl">חיסכון לעומת גיוס רגיל</div><div class="kpi-val c-green">5K₪+</div><div class="kpi-sub">+ עובד מוכר ומחויב</div><div class="kpi-accent a-green"></div></div>
@@ -994,9 +1016,9 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
       <div class="card-title" style="margin-bottom:16px">💰 מה Mobileye מרוויחה?</div>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div style="padding:14px;background:var(--green-lt);border-radius:10px;border:1px solid #bbf7d0">
-          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">תחנה א' — 2 שנים · עלות לחברה</div>
-          <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)">0₪</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">גפ"ן מכסה שכר הוראה. הוצאתכם — אפס.</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">תחנה א' — 2 שנים</div>
+          <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)">שכר חצי משרה · ללא עמלת גיוס</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">גפ"ן מכסה את שכר ההוראה. אתם משלמים חצי משרה טכנולוגי בלבד — כמו עובד רגיל.</div>
         </div>
         <div style="padding:14px;background:var(--amber-lt);border-radius:10px;border:1px solid #fde68a">
           <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">תחנה ב' — עמלת השמה חד-פעמית</div>
@@ -1647,7 +1669,7 @@ const MOCK_RESPONSES = {
     'מועמדים עם Retention נמוך (סיכון):\n• **רון מזרחי** — 58% ⚠️ (פחות ניסיון הוראה)\n• **מיכל ראובן** — 73% ⚠️ (נדרש מנטורינג)\n\nשאר המועמדים מעל 85% — בטווח בטוח.',
   ],
   cost: [
-    'מבנה העלויות:\n\n**תחנה א\' (2 שנות הוראה):**\n• עלות לחברה: **0₪** — גפ"ן מממן 100% את שכר ההוראה\n• אתם מקבלים עובד חצי משרה בחינם\n\n**תחנה ב\' (מעבר למשרה מלאה):**\n• עמלת השמה חד-פעמית: **35,000₪**\n• לעומת גיוס רגיל: 40,000₪+ עמלה + סיכון נטישה גבוה\n\nבסופו של דבר — עובד שמכיר אתכם, ב-5,000₪ פחות.',
+    'מבנה העלויות:\n\n**תחנה א\' (2 שנות הוראה):**\n• אתם משלמים: **שכר חצי משרה טכנולוגי** — כמו כל עובד רגיל\n• גפ"ן מכסה: שכר ההוראה (חצי משרה שנייה)\n• **ללא עמלת גיוס** — אפס תשלום נוסף\n\n**תחנה ב\' (מעבר למשרה מלאה):**\n• עמלת השמה חד-פעמית: **35,000₪**\n• לעומת גיוס רגיל: 40,000₪+ עמלה + סיכון נטישה\n\nבסופו של דבר — עובד שמכיר אתכם, עולה פחות מגיוס רגיל.',
   ],
   process: [
     'תהליך ההצבה:\n1. אתם מגדירים Tech Stack ודרישות\n2. המנוע מסנן ומדרג מועמדים אוטומטית\n3. אתם בוחרים ומאשרים\n4. מועמד מגיע לעבוד אצלכם בחצי משרה\n5. לאחר שנתיים — אפשרות למשרה מלאה\n\nזמן ממוצע עד שיבוץ: **3-4 שבועות**.',
@@ -1981,3 +2003,4 @@ function showCompanyToast(msg) {
 </script>
 </body>
 </html>
+
