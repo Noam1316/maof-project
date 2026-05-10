@@ -750,27 +750,31 @@
     font-family: 'IBM Plex Mono', monospace;
   }
 /* ─── MOBILE ─── */
-.mob-toggle{display:none;position:fixed;top:12px;right:12px;z-index:1000;background:var(--teal);border:none;border-radius:8px;width:40px;height:40px;cursor:pointer;font-size:20px;color:#0a1628;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+html,body{overflow-x:hidden;}
+.mob-toggle{display:none;position:fixed;top:12px;right:12px;z-index:1001;background:var(--teal);border:none;border-radius:8px;width:40px;height:40px;cursor:pointer;font-size:20px;color:#0a1628;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.mob-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;backdrop-filter:blur(2px);}
+.mob-backdrop.open{display:block;}
 @media(max-width:768px){
 .mob-toggle{display:flex;}
-.sidebar{position:fixed;right:-220px;top:0;height:100vh;z-index:999;transition:right .3s ease;box-shadow:-4px 0 20px rgba(0,0,0,.4);}
-.sidebar.open{right:0;}
-.main{margin-right:0!important;padding:16px;max-width:100vw;}
-.kpi-grid{grid-template-columns:1fr 1fr!important;}
-.dashboard-grid{grid-template-columns:1fr!important;}
+.sidebar{position:fixed!important;top:0!important;right:0!important;height:100vh!important;z-index:1000!important;transform:translateX(110%)!important;transition:transform .3s ease!important;}
+.sidebar.open{transform:translateX(0)!important;}
+.main{margin-right:0!important;padding:56px 16px 16px!important;max-width:100vw!important;width:100%!important;}
+.kpi-row,.kpi-grid{grid-template-columns:1fr 1fr!important;}
+.g2,.g3,.g-21,.options-grid,.sim-grid,.settings-form,.dashboard-grid,.insights-grid{grid-template-columns:1fr!important;}
 .needs-grid{grid-template-columns:1fr 1fr!important;}
-.insights-grid{grid-template-columns:1fr!important;}
+.settings-field.full,.sf-field.full{grid-column:span 1!important;}
 .topbar{flex-direction:column;gap:10px;}
 .topbar-actions{flex-wrap:wrap;}
 table{font-size:12px;}
 table th,table td{padding:8px 6px;}
+.chat-sidebar{display:none!important;}
 }
 @media(max-width:480px){
-.kpi-grid{grid-template-columns:1fr!important;}
-.needs-grid{grid-template-columns:1fr!important;}
+.kpi-row,.kpi-grid,.needs-grid{grid-template-columns:1fr!important;}
 }</style>
 </head>
-<body><button class="mob-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="תפריט">☰</button>
+<body>
+<button class="mob-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.mob-backdrop').classList.toggle('open')" aria-label="תפריט">☰</button><div class="mob-backdrop" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('open')"></div>
 <div class="app">
 
   <!-- SIDEBAR -->
@@ -3717,4 +3721,5 @@ function renderHistory() {
 </div><!-- close app wrapper -->
 </body>
 </html>
+
 
