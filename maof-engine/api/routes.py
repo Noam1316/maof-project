@@ -1,0 +1,128 @@
+"""
+FastAPI Routes — מעוף Dual Scoring Engine
+"""
+
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+
+from models.candidate import Candidate
+from models.school import School
+from models.company import Company
+from scoring.score_a import calculate_score_a
+from scoring.score_b import calculate_score_b
+from scoring.score_c import calculate_score_c
+from scoring.volume import calculate_volume_score
+from matching.hungarian import run_hungarian
+from data.synthetic import generate_dataset
+from main import run_full_matching
+
+router = APIRouter()
+
+
+# --- Request / Response Models ---
+
+class ScoreRequest(BaseModel):
+    candidate: Candidate
+    school: School
+    company: Company
+    total_placements: int = 0
+
+
+class ScoreResponse(BaseModel):
+    score_a: float
+    score_b: float
+    score_c: float
+    volume_score: float
+    final_score: float
+    passes_threshold: bool
+    breakdown: dict
+
+
+class MatchRequest(BaseModel):
+    candidates: List[Candidate]
+    schools: List[School]
+    companies: List[Company]
+    total_placements: int = 0
+
+
+class SimulateRequest(BaseModel):
+    n_candidates: int = 10
+    n_schools: int = 5
+    n_companies: int = 5
+
+
+# --- Endpoints ---
+
+@router.get("/health")
+def health():
+    return {"status": "ok", "engine": "Maof Dual Scoring Engine v1.0"}
+
+
+@router.post("/score", response_model=ScoreResponse)
+def score_single(req: ScoreRequest):
+    """ציון בודד — מועמד + בית ספר + חברה"""
+    a = calculate_score_a(req.candidate, req.school)
+    b = calculate_score_b(req.candidate, req.company)
+    c = calculate_score_c(a, b, req.candidate, req.school, req.company, req.total_placements)
+    vol = calculate_volume_score(a, b, c)
+
+    return ScoreResponse(
+        score_a=a,
+        score_b=b,
+        score_c=c,
+        volume_score=vol["volume_score"],
+        final_score=vol["final_score"],
+        passes_threshold=vol["passes_threshold"],
+        breakdown=vol["breakdown"],
+    )
+
+
+@router.post("/match")
+def match_all(req: MatchRequest):
+    """שיבוץ גלובלי — Hungarian Algorithm על כל המועמדים"""
+    if not req.candidates:
+        raise HTTPException(status_code=400, detail="אין מועמדים")
+    if not req.schools or not req.companies:
+        raise HTTPException(status_code=400, detail="אין בתי ספר או חברות")
+
+    results = run_full_matching(
+        req.candidates,
+        req.schools,
+        req.companies,
+        req.total_placements
+    )
+    return results
+
+
+@router.post("/simulate")
+def simulate(req: SimulateRequest):
+    """סימולציה עם נתונים סינתטיים"""
+    if req.n_candidates > 50:
+        raise HTTPException(status_code=400, detail="מקסימום 50 מועמדים לסימולציה")
+
+    candidates, schools, companies = generate_dataset(
+        req.n_candidates,
+        req.n_schools,
+        req.n_companies
+    )
+
+    results = run_full_matching(candidates, schools, companies)
+    return {
+        "input": {
+            "candidates": req.n_candidates,
+            "schools": req.n_schools,
+            "companies": req.n_companies,
+        },
+        "results": results
+    }
+
+
+@router.get("/simulate/quick")
+def simulate_quick():
+    """סימולציה מהירה — 5 מועמדים, 3 בתי ספר, 3 חברות"""
+    candidates, schools, companies = generate_dataset(5, 3, 3)
+    return run_full_matching(candidates, schools, companies)
