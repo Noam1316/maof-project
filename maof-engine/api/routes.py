@@ -21,8 +21,12 @@ from data.synthetic import generate_dataset
 from main import run_full_matching
 from genetic.optimizer import run_genetic_optimizer
 from nlp.eli5_analyzer import analyze_eli5
+from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
 
 router = APIRouter()
+
+# Global feedback loop instance
+_feedback_loop = FeedbackLoop()
 
 
 # --- Request / Response Models ---
@@ -157,6 +161,79 @@ def score_eli5(body: dict):
     if not text:
         raise HTTPException(status_code=400, detail="חסר שדה 'text'")
     return analyze_eli5(text)
+
+
+@router.post("/feedback/placement")
+def add_placement(body: dict):
+    """רישום שיבוץ חדש ל-Feedback Loop"""
+    try:
+        record = PlacementRecord(
+            placement_id=body["placement_id"],
+            candidate_id=body["candidate_id"],
+            school_id=body["school_id"],
+            company_id=body["company_id"],
+            predicted_score=body["predicted_score"],
+        )
+        _feedback_loop.add_placement(record)
+        return {"status": "ok", "placement_id": record.placement_id}
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f"חסר שדה: {e}")
+
+
+@router.post("/feedback/school")
+def add_school_feedback(body: dict):
+    """משוב בית ספר"""
+    try:
+        feedback = SchoolFeedback(
+            placement_id=body["placement_id"],
+            candidate_id=body["candidate_id"],
+            school_id=body["school_id"],
+            date=body.get("date", ""),
+            teacher_rating=body["teacher_rating"],
+            attendance_rate=body["attendance_rate"],
+            principal_satisfaction=body["principal_satisfaction"],
+            student_satisfaction=body["student_satisfaction"],
+        )
+        _feedback_loop.add_school_feedback(body["placement_id"], feedback)
+        return {"status": "ok", "actual_score": feedback.actual_score}
+    except (KeyError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/feedback/company")
+def add_company_feedback(body: dict):
+    """משוב חברת הייטק"""
+    try:
+        feedback = CompanyFeedback(
+            placement_id=body["placement_id"],
+            candidate_id=body["candidate_id"],
+            company_id=body["company_id"],
+            date=body.get("date", ""),
+            performance_score=body["performance_score"],
+            progression_rate=body["progression_rate"],
+            manager_satisfaction=body["manager_satisfaction"],
+        )
+        _feedback_loop.add_company_feedback(body["placement_id"], feedback)
+        return {"status": "ok", "actual_score": feedback.actual_score}
+    except (KeyError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/feedback/stats")
+def get_feedback_stats():
+    """סטטיסטיקות Feedback Loop"""
+    return {
+        "stats": _feedback_loop.get_stats(),
+        "errors": _feedback_loop.analyze_errors(),
+        "suggestion": _feedback_loop.suggest_weight_update(),
+    }
+
+
+@router.get("/feedback/export")
+def export_feedback():
+    """ייצוא נתונים לאימון מחדש"""
+    data = _feedback_loop.export_for_retraining()
+    return {"count": len(data), "data": data}
 
 
 @router.get("/simulate/quick")
