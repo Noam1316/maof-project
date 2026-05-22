@@ -21,6 +21,7 @@ from data.synthetic import generate_dataset
 from main import run_full_matching
 from genetic.optimizer import run_genetic_optimizer
 from nlp.eli5_analyzer import analyze_eli5
+from nlp.llm_comparator import analyze_with_llm_comparison
 from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
 
 router = APIRouter()
@@ -161,6 +162,18 @@ def score_eli5(body: dict):
     if not text:
         raise HTTPException(status_code=400, detail="חסר שדה 'text'")
     return analyze_eli5(text)
+
+
+@router.post("/eli5/compare")
+def score_eli5_compare(body: dict):
+    """ניתוח ELI5 + השוואה ל-LLM reference + בונוס תמציתיות"""
+    text = body.get("text", "")
+    topic = body.get("topic", "")
+    if not text:
+        raise HTTPException(status_code=400, detail="חסר שדה 'text'")
+    if not topic:
+        raise HTTPException(status_code=400, detail="חסר שדה 'topic'")
+    return analyze_with_llm_comparison(text, topic)
 
 
 @router.post("/feedback/placement")
