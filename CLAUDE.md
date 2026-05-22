@@ -52,7 +52,7 @@
 | מדד | משקל | מה נמדד |
 |-----|------|---------|
 | מיומנות טכנית (Tech Skills) | 35% | Tech-Stack Match + מבחן STEM מעשי + רקע צבאי טכני |
-| פוטנציאל צמיחה (Growth Potential) | 25% | קצב למידה + פסיכומטרי + מסלול קריירה |
+| פוטנציאל צמיחה (Growth Potential) | 25% | קצב למידה + רקע אקדמי/יחידה + מסלול קריירה |
 | כישורים רכים (Soft Skills) | 25% | ELI5 + מנהיגות + עבודת צוות |
 | התאמה תרבותית (Cultural Fit) | 15% | גודל חברה + סגנון עבודה + העדפות מיקום |
 
@@ -91,17 +91,26 @@
 
 ```
 maof-project/
-├── signal-news-demo/        # *** הפרויקט הפעיל *** — דמו מודיעין גיאופוליטי
-├── פורטל חיילים 2/          # פורטל לחיילים משוחררים (אב-טיפוס)
-├── פורטל חיילים 3/          # גרסה 3 של פורטל חיילים (אב-טיפוס)
-├── פורטל חברות 2/           # פורטל לחברות הייטק מאמצות (אב-טיפוס)
-└── פורטל משרד החינוך 6/     # פורטל למשרד החינוך (אב-טיפוס)
+├── signal-news-demo/              # *** הפרויקט הפעיל *** — דמו מודיעין גיאופוליטי
+└── maof-portals-deploy/           # 5 פורטלים deployed ל-Vercel (HTML סטטי, ללא build)
+    ├── index.html                 # דף hub — ניווט בין כל הפורטלים
+    ├── soldiers/index.html        # פורטל חיילים — דשבורד אישי, מסלול 2+2, שיבוצים
+    ├── companies/index.html       # פורטל חברות — KPIs, מועמדים, מסך פיננסי, AI chat
+    ├── education/index.html       # פורטל חינוך — ניהול גיוס מורי STEM
+    ├── eli5/index.html            # מבחן ELI5 — 5 שלבים להערכת יכולת הסבר
+    └── simulation/index.html      # סימולציה — הדגמת מודל 2+2 אינטראקטיבית
 ```
 
-### הפורטלים (אב-טיפוסים)
-- **פורטל חיילים** — מועמדים נרשמים, עוברים מבחנים, רואים שיבוצים
-- **פורטל חברות** — חברות הייטק (Microsoft, Elbit, Checkpoint) צופות במועמדים, מאשרות שיבוצים
-- **פורטל משרד החינוך** — מנהלי בתי ספר מגדירים צרכים, צופים במועמדים מותאמים
+### הפורטלים (maof-portals-deploy/)
+| פורטל | משתמשים | פיצ'ר מרכזי |
+|--------|---------|-------------|
+| **soldiers/** | חיילים משוחררים | דשבורד אישי, ציון, מסלול קריירה |
+| **companies/** | חברות הייטק | AI matching chat, KPIs, מסך פיננסי (35K עמלת תחנה ב') |
+| **education/** | משרד החינוך | ניהול צרכי STEM, גיוס מורים |
+| **eli5/** | מועמדים | מבחן 5-שלבי עם progress bar |
+| **simulation/** | בעלי עניין | הדגמת מודל 2+2 |
+
+> כל הפורטלים: HTML סטטי + CSS + Vanilla JS בלבד, RTL עברית, ללא build step.
 
 ### Signal News Demo
 הדמו הטכנולוגי — פלטפורמת מודיעין גיאופוליטי בזמן אמת שמדגימה:
@@ -164,6 +173,7 @@ RSS Sources (28+) → article-cache.ts (in-memory shared cache)
 
 ## Deployment
 
+- **Maof Portals Live:** https://maof-portals.vercel.app
 - **Signal News Live:** https://signal-news-noam1316s-projects.vercel.app/dashboard
 - **GitHub:** https://github.com/Noam1316/signal-news
 - **APIs:** Polymarket Gamma API (public), RSS feeds (public) — no keys needed
@@ -174,9 +184,9 @@ RSS Sources (28+) → article-cache.ts (in-memory shared cache)
 
 IMPORTANT: Rules for working in this codebase:
 - Primary UI language: Hebrew (RTL). Always use `dir={dir}` from `useLanguage()`.
-- The active demo project is `signal-news-demo/` — see its own CLAUDE.md for technical details.
-- Portal directories (פורטל חיילים, פורטל חברות, פורטל משרד החינוך) are earlier prototypes — do not modify without explicit request.
-- The Scoring Engine described above is the business logic spec — implementation lives in `signal-news-demo/src/services/`.
+- The active Next.js project is `signal-news-demo/` — see its own CLAUDE.md for technical details.
+- Active portals are in `maof-portals-deploy/` (soldiers, companies, education, eli5, simulation) — modify only on explicit request.
+- The Scoring Engine described above is the business logic spec — not yet implemented as backend.
 - No Anthropic API key available — all analysis must be keyword-based.
 - Deployment target: Vercel serverless. No native modules (no better-sqlite3, no sharp custom builds).
 - Signal vs Market is the priority feature — don't neglect it when adding other features.
