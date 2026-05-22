@@ -27,7 +27,7 @@ from nlp.code_test import run_code_test, get_first_question
 from nlp.semantic_match import get_semantic_similarity
 from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
 from database import repository as db
-from database.client import is_connected
+from database.client import is_connected, get_last_error
 
 router = APIRouter()
 
@@ -79,10 +79,12 @@ class OptimizeRequest(BaseModel):
 
 @router.get("/health")
 def health():
+    connected = is_connected()
     return {
         "status": "ok",
         "engine": "Maof Dual Scoring Engine v1.0",
-        "database": "supabase" if is_connected() else "in-memory",
+        "database": "supabase" if connected else "in-memory",
+        "db_error": get_last_error() if not connected else None,
     }
 
 
