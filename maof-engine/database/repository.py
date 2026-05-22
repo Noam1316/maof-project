@@ -9,12 +9,11 @@ CRUD operations לכל הטבלאות.
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from typing import List, Optional, Dict, Any
-from datetime import date
-from database.client import get_client
+from typing import List, Optional, Dict
+from database.client import is_connected, db_upsert, db_insert, db_select, db_count
 
 # ─── In-Memory Fallback ──────────────────────────────────────
-_memory = {
+_memory: Dict = {
     "candidates": {},
     "schools": {},
     "companies": {},
@@ -27,121 +26,103 @@ _memory = {
 }
 
 
-def _use_db():
-    return get_client() is not None
-
-
 # ─── Candidates ─────────────────────────────────────────────
 
 def upsert_candidate(data: Dict) -> Dict:
-    """שמור או עדכן מועמד"""
-    if _use_db():
-        result = get_client().table("candidates").upsert(data).execute()
-        return result.data[0] if result.data else data
-    else:
-        _memory["candidates"][data["id"]] = data
-        return data
+    if is_connected():
+        result = db_upsert("candidates", data)
+        return result or data
+    _memory["candidates"][data["id"]] = data
+    return data
 
 
 def get_candidate(candidate_id: str) -> Optional[Dict]:
-    if _use_db():
-        result = get_client().table("candidates").select("*").eq("id", candidate_id).execute()
-        return result.data[0] if result.data else None
+    if is_connected():
+        rows = db_select("candidates", {"id": f"eq.{candidate_id}"}, limit=1)
+        return rows[0] if rows else None
     return _memory["candidates"].get(candidate_id)
 
 
 def list_candidates(limit: int = 100) -> List[Dict]:
-    if _use_db():
-        result = get_client().table("candidates").select("*").limit(limit).execute()
-        return result.data or []
+    if is_connected():
+        return db_select("candidates", limit=limit)
     return list(_memory["candidates"].values())[:limit]
 
 
 def delete_candidate(candidate_id: str) -> bool:
-    if _use_db():
-        get_client().table("candidates").delete().eq("id", candidate_id).execute()
-        return True
-    if candidate_id in _memory["candidates"]:
-        del _memory["candidates"][candidate_id]
-        return True
+    if not is_connected():
+        if candidate_id in _memory["candidates"]:
+            del _memory["candidates"][candidate_id]
+            return True
     return False
 
 
 # ─── Schools ────────────────────────────────────────────────
 
 def upsert_school(data: Dict) -> Dict:
-    if _use_db():
-        result = get_client().table("schools").upsert(data).execute()
-        return result.data[0] if result.data else data
+    if is_connected():
+        result = db_upsert("schools", data)
+        return result or data
     _memory["schools"][data["id"]] = data
     return data
 
 
 def get_school(school_id: str) -> Optional[Dict]:
-    if _use_db():
-        result = get_client().table("schools").select("*").eq("id", school_id).execute()
-        return result.data[0] if result.data else None
+    if is_connected():
+        rows = db_select("schools", {"id": f"eq.{school_id}"}, limit=1)
+        return rows[0] if rows else None
     return _memory["schools"].get(school_id)
 
 
 def list_schools(limit: int = 100) -> List[Dict]:
-    if _use_db():
-        result = get_client().table("schools").select("*").limit(limit).execute()
-        return result.data or []
+    if is_connected():
+        return db_select("schools", limit=limit)
     return list(_memory["schools"].values())[:limit]
 
 
 # ─── Companies ──────────────────────────────────────────────
 
 def upsert_company(data: Dict) -> Dict:
-    if _use_db():
-        result = get_client().table("companies").upsert(data).execute()
-        return result.data[0] if result.data else data
+    if is_connected():
+        result = db_upsert("companies", data)
+        return result or data
     _memory["companies"][data["id"]] = data
     return data
 
 
 def get_company(company_id: str) -> Optional[Dict]:
-    if _use_db():
-        result = get_client().table("companies").select("*").eq("id", company_id).execute()
-        return result.data[0] if result.data else None
+    if is_connected():
+        rows = db_select("companies", {"id": f"eq.{company_id}"}, limit=1)
+        return rows[0] if rows else None
     return _memory["companies"].get(company_id)
 
 
 def list_companies(limit: int = 100) -> List[Dict]:
-    if _use_db():
-        result = get_client().table("companies").select("*").limit(limit).execute()
-        return result.data or []
+    if is_connected():
+        return db_select("companies", limit=limit)
     return list(_memory["companies"].values())[:limit]
 
 
 # ─── Placements ─────────────────────────────────────────────
 
 def save_placement(data: Dict) -> Dict:
-    if _use_db():
-        result = get_client().table("placements").upsert(data).execute()
-        return result.data[0] if result.data else data
+    if is_connected():
+        result = db_upsert("placements", data)
+        return result or data
     _memory["placements"][data["id"]] = data
     return data
 
 
 def get_placement(placement_id: str) -> Optional[Dict]:
-    if _use_db():
-        result = get_client().table("placements").select("*").eq("id", placement_id).execute()
-        return result.data[0] if result.data else None
+    if is_connected():
+        rows = db_select("placements", {"id": f"eq.{placement_id}"}, limit=1)
+        return rows[0] if rows else None
     return _memory["placements"].get(placement_id)
 
 
 def list_placements(limit: int = 100) -> List[Dict]:
-    if _use_db():
-        result = (
-            get_client().table("placements")
-            .select("*, candidates(name), schools(name), companies(name)")
-            .order("final_score", desc=True)
-            .limit(limit)
-            .execute()
-        )
-        return result.data or []
+    if is_connected():
+        return db_select("placements", limit=limit)
     return sorted(
         _memory["placements"].values(),
         key=lambda x: x.get("final_score", 0),
@@ -161,23 +142,15 @@ def save_eli5_result(candidate_id: str, topic: str, result: Dict) -> Dict:
         "passes_minimum": result.get("passes_minimum", False),
         "breakdown": result.get("breakdown", {}),
     }
-    if _use_db():
-        res = get_client().table("eli5_results").insert(record).execute()
-        return res.data[0] if res.data else record
+    if is_connected():
+        return db_insert("eli5_results", record) or record
     _memory["eli5_results"].append(record)
     return record
 
 
 def get_eli5_history(candidate_id: str) -> List[Dict]:
-    if _use_db():
-        result = (
-            get_client().table("eli5_results")
-            .select("*")
-            .eq("candidate_id", candidate_id)
-            .order("created_at", desc=True)
-            .execute()
-        )
-        return result.data or []
+    if is_connected():
+        return db_select("eli5_results", {"candidate_id": f"eq.{candidate_id}"})
     return [r for r in _memory["eli5_results"] if r.get("candidate_id") == candidate_id]
 
 
@@ -192,29 +165,24 @@ def save_code_test_result(candidate_id: str, result: Dict) -> Dict:
         "passed": result.get("passed", False),
         "results": result.get("results", []),
     }
-    if _use_db():
-        res = get_client().table("code_test_results").insert(record).execute()
-        return res.data[0] if res.data else record
+    if is_connected():
+        return db_insert("code_test_results", record) or record
     _memory["code_test_results"].append(record)
     return record
 
 
-# ─── School Feedback ────────────────────────────────────────
+# ─── Feedback ───────────────────────────────────────────────
 
 def save_school_feedback(data: Dict) -> Dict:
-    if _use_db():
-        result = get_client().table("school_feedback").insert(data).execute()
-        return result.data[0] if result.data else data
+    if is_connected():
+        return db_insert("school_feedback", data) or data
     _memory["school_feedback"].append(data)
     return data
 
 
-# ─── Company Feedback ───────────────────────────────────────
-
 def save_company_feedback(data: Dict) -> Dict:
-    if _use_db():
-        result = get_client().table("company_feedback").insert(data).execute()
-        return result.data[0] if result.data else data
+    if is_connected():
+        return db_insert("company_feedback", data) or data
     _memory["company_feedback"].append(data)
     return data
 
@@ -222,17 +190,12 @@ def save_company_feedback(data: Dict) -> Dict:
 # ─── Stats ──────────────────────────────────────────────────
 
 def get_global_stats() -> Dict:
-    if _use_db():
-        db = get_client()
-        candidates = db.table("candidates").select("id", count="exact").execute()
-        schools = db.table("schools").select("id", count="exact").execute()
-        companies = db.table("companies").select("id", count="exact").execute()
-        placements = db.table("placements").select("id", count="exact").execute()
+    if is_connected():
         return {
-            "candidates": candidates.count or 0,
-            "schools": schools.count or 0,
-            "companies": companies.count or 0,
-            "placements": placements.count or 0,
+            "candidates": db_count("candidates"),
+            "schools": db_count("schools"),
+            "companies": db_count("companies"),
+            "placements": db_count("placements"),
             "storage": "supabase",
         }
     return {
