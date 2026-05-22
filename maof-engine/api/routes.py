@@ -19,6 +19,7 @@ from scoring.volume import calculate_volume_score
 from matching.hungarian import run_hungarian
 from data.synthetic import generate_dataset
 from main import run_full_matching
+from genetic.optimizer import run_genetic_optimizer
 
 router = APIRouter()
 
@@ -53,6 +54,14 @@ class SimulateRequest(BaseModel):
     n_candidates: int = 10
     n_schools: int = 5
     n_companies: int = 5
+
+
+class OptimizeRequest(BaseModel):
+    n_candidates: int = 10
+    n_schools: int = 5
+    n_companies: int = 5
+    population_size: int = 20
+    generations: int = 30
 
 
 # --- Endpoints ---
@@ -119,6 +128,25 @@ def simulate(req: SimulateRequest):
         },
         "results": results
     }
+
+
+@router.post("/optimize")
+def optimize_weights(req: OptimizeRequest):
+    """Genetic Algorithm — כיוון משקלות על נתונים סינתטיים"""
+    if req.generations > 100:
+        raise HTTPException(status_code=400, detail="מקסימום 100 דורות")
+
+    candidates, schools, companies = generate_dataset(
+        req.n_candidates, req.n_schools, req.n_companies
+    )
+
+    result = run_genetic_optimizer(
+        candidates, schools, companies,
+        population_size=req.population_size,
+        generations=req.generations,
+        verbose=False,
+    )
+    return result
 
 
 @router.get("/simulate/quick")
