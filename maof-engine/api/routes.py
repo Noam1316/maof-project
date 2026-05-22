@@ -22,6 +22,9 @@ from main import run_full_matching
 from genetic.optimizer import run_genetic_optimizer
 from nlp.eli5_analyzer import analyze_eli5
 from nlp.llm_comparator import analyze_with_llm_comparison
+from nlp.eli5_chatbot import run_adaptive_session, get_next_question
+from nlp.code_test import run_code_test, get_first_question
+from nlp.semantic_match import get_semantic_similarity
 from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
 
 router = APIRouter()
@@ -174,6 +177,54 @@ def score_eli5_compare(body: dict):
     if not topic:
         raise HTTPException(status_code=400, detail="חסר שדה 'topic'")
     return analyze_with_llm_comparison(text, topic)
+
+
+@router.post("/eli5/chatbot")
+def eli5_chatbot(body: dict):
+    """מבחן ELI5 אדפטיבי — שאלות מתקדמות לפי ביצועים"""
+    topic = body.get("topic", "")
+    answers = body.get("answers", [])
+    if not topic:
+        raise HTTPException(status_code=400, detail="חסר שדה 'topic'")
+    if not isinstance(answers, list):
+        raise HTTPException(status_code=400, detail="'answers' חייב להיות רשימה")
+    return run_adaptive_session(topic, answers)
+
+
+@router.get("/eli5/chatbot/question")
+def eli5_next_question(topic: str, level: int = 0):
+    """מחזיר שאלה לפי נושא ורמה"""
+    q = get_next_question(topic, level)
+    if not q:
+        raise HTTPException(status_code=404, detail="אין שאלה ברמה זו")
+    return q
+
+
+@router.post("/code/test")
+def code_test(body: dict):
+    """מבחן קוד אדפטיבי — שאלות טכניות מתקדמות"""
+    answers = body.get("answers", [])
+    tech_stack = body.get("tech_stack", [])
+    if not isinstance(answers, list):
+        raise HTTPException(status_code=400, detail="'answers' חייב להיות רשימה")
+    return run_code_test(answers, tech_stack)
+
+
+@router.get("/code/test/first")
+def code_first_question(tech_stack: str = ""):
+    """מחזיר שאלה ראשונה לפי Tech Stack"""
+    stack = [t.strip() for t in tech_stack.split(",") if t.strip()] if tech_stack else []
+    return get_first_question(stack)
+
+
+@router.post("/semantic/match")
+def semantic_match(body: dict):
+    """השוואה סמנטית בין שתי רשימות מונחים"""
+    terms_a = body.get("terms_a", [])
+    terms_b = body.get("terms_b", [])
+    if not terms_a or not terms_b:
+        raise HTTPException(status_code=400, detail="חסרים שדות 'terms_a' ו-'terms_b'")
+    return get_semantic_similarity(terms_a, terms_b)
 
 
 @router.post("/feedback/placement")

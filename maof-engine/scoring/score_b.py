@@ -11,6 +11,7 @@
 
 from models.candidate import Candidate, AcademicBackground, MilitaryRole
 from models.company import Company
+from nlp.semantic_match import tech_stack_semantic_score
 
 
 # --- טבלת רקע אקדמי ---
@@ -40,10 +41,8 @@ def tech_stack_match(candidate: Candidate, company: Company) -> float:
         return 80.0
     if not candidate.tech_stack:
         return 30.0
-    candidate_set = set(t.lower() for t in candidate.tech_stack)
-    company_set = set(t.lower() for t in company.tech_stack)
-    overlap = len(candidate_set & company_set)
-    return min(100.0, (overlap / len(company_set)) * 100)
+    # Semantic match — עברית/אנגלית + נרדפות טכנולוגיות
+    return tech_stack_semantic_score(candidate.tech_stack, company.tech_stack)
 
 
 # --- מיומנות טכנית (35%) ---

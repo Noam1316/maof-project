@@ -11,6 +11,7 @@
 
 from models.candidate import Candidate, AcademicBackground
 from models.school import School
+from nlp.semantic_match import subject_semantic_score
 
 
 # --- טבלת מרחק ---
@@ -48,18 +49,17 @@ def retention_score(candidate: Candidate, school: School) -> float:
 
 # --- התאמת מקצוע (25%) ---
 def subject_match_score(candidate: Candidate, school: School) -> float:
-    # התאמת מקצוע עיקרי
-    primary_match = 100.0 if candidate.subject in school.required_subjects else 0.0
+    # כל מקצועות המועמד
+    candidate_subjects = [candidate.subject] + (candidate.additional_subjects or [])
 
-    # גמישות מקצועית — כמה מקצועות נוספים
+    # התאמה סמנטית — עברית/אנגלית + נרדפות
+    semantic_match = subject_semantic_score(candidate_subjects, school.required_subjects)
+
+    # גמישות מקצועית — כמה מקצועות נוספים יכול ללמד
     flexibility = min(100.0, len(candidate.additional_subjects) * 20)
 
-    # התאמת רמה — placeholder ל-vector similarity עתידי
-    level_match = 80.0  # TODO: sentence-transformers
-
     return (
-        primary_match * 0.50 +
-        level_match * 0.30 +
+        semantic_match * 0.80 +
         flexibility * 0.20
     )
 
