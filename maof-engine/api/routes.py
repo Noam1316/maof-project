@@ -26,6 +26,8 @@ from nlp.eli5_chatbot import run_adaptive_session, get_next_question
 from nlp.code_test import run_code_test, get_first_question
 from nlp.semantic_match import get_semantic_similarity
 from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
+from database import repository as db
+from database.client import is_connected
 
 router = APIRouter()
 
@@ -77,7 +79,100 @@ class OptimizeRequest(BaseModel):
 
 @router.get("/health")
 def health():
-    return {"status": "ok", "engine": "Maof Dual Scoring Engine v1.0"}
+    return {
+        "status": "ok",
+        "engine": "Maof Dual Scoring Engine v1.0",
+        "database": "supabase" if is_connected() else "in-memory",
+    }
+
+
+# ─── Database CRUD Endpoints ────────────────────────────────
+
+@router.post("/candidates")
+def create_candidate(body: dict):
+    """שמור מועמד חדש למסד הנתונים"""
+    if "id" not in body:
+        raise HTTPException(status_code=400, detail="חסר שדה 'id'")
+    return db.upsert_candidate(body)
+
+
+@router.get("/candidates")
+def list_candidates(limit: int = 50):
+    """רשימת כל המועמדים"""
+    return {"candidates": db.list_candidates(limit), "count": len(db.list_candidates(limit))}
+
+
+@router.get("/candidates/{candidate_id}")
+def get_candidate(candidate_id: str):
+    candidate = db.get_candidate(candidate_id)
+    if not candidate:
+        raise HTTPException(status_code=404, detail="מועמד לא נמצא")
+    return candidate
+
+
+@router.post("/schools")
+def create_school(body: dict):
+    """שמור בית ספר חדש"""
+    if "id" not in body:
+        raise HTTPException(status_code=400, detail="חסר שדה 'id'")
+    return db.upsert_school(body)
+
+
+@router.get("/schools")
+def list_schools(limit: int = 50):
+    return {"schools": db.list_schools(limit), "count": len(db.list_schools(limit))}
+
+
+@router.post("/companies")
+def create_company(body: dict):
+    """שמור חברה חדשה"""
+    if "id" not in body:
+        raise HTTPException(status_code=400, detail="חסר שדה 'id'")
+    return db.upsert_company(body)
+
+
+@router.get("/companies")
+def list_companies(limit: int = 50):
+    return {"companies": db.list_companies(limit), "count": len(db.list_companies(limit))}
+
+
+@router.get("/placements")
+def list_placements(limit: int = 50):
+    """רשימת כל השיבוצים — ממוין לפי ציון"""
+    return {"placements": db.list_placements(limit)}
+
+
+@router.get("/stats")
+def global_stats():
+    """סטטיסטיקות מסד הנתונים"""
+    return db.get_global_stats()
+
+
+@router.post("/eli5/save")
+def save_eli5(body: dict):
+    """שמור תוצאת ELI5 למסד הנתונים"""
+    candidate_id = body.get("candidate_id", "")
+    topic = body.get("topic", "")
+    result = body.get("result", {})
+    if not candidate_id:
+        raise HTTPException(status_code=400, detail="חסר 'candidate_id'")
+    return db.save_eli5_result(candidate_id, topic, result)
+
+
+@router.get("/eli5/history/{candidate_id}")
+def eli5_history(candidate_id: str):
+    """היסטוריית מבחני ELI5 של מועמד"""
+    return {"history": db.get_eli5_history(candidate_id)}
+
+
+@router.post("/code/save")
+def save_code_test(body: dict):
+    """שמור תוצאת מבחן קוד"""
+    candidate_id = body.get("candidate_id", "")
+    result = body.get("result", {})
+    if not candidate_id:
+        raise HTTPException(status_code=400, detail="חסר 'candidate_id'")
+    return db.save_code_test_result(candidate_id, result)
 
 
 @router.post("/score", response_model=ScoreResponse)
