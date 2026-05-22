@@ -20,6 +20,7 @@ from matching.hungarian import run_hungarian
 from data.synthetic import generate_dataset
 from main import run_full_matching
 from genetic.optimizer import run_genetic_optimizer
+from nlp.eli5_analyzer import analyze_eli5
 
 router = APIRouter()
 
@@ -147,6 +148,15 @@ def optimize_weights(req: OptimizeRequest):
         verbose=False,
     )
     return result
+
+
+@router.post("/eli5")
+def score_eli5(body: dict):
+    """ניתוח ELI5 — מנתח טקסט הסבר ומחזיר ציון"""
+    text = body.get("text", "")
+    if not text:
+        raise HTTPException(status_code=400, detail="חסר שדה 'text'")
+    return analyze_eli5(text)
 
 
 @router.get("/simulate/quick")
