@@ -6,6 +6,7 @@
 <title>מעוף — הפורטל האישי שלי</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
+body{max-width:100vw;}  * {box-sizing:border-box;}
 :root {
   --bg:      #0d0f14;
   --surface: #141720;
@@ -369,10 +370,12 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
 @media(max-width: 480px) {
   .kpi-row, .kpi-grid, .needs-grid { grid-template-columns: 1fr !important; }
 }
+
 </style>
 </head>
 <body>
 <button id="mobBtn" onclick="window.maofToggle()" style="display:none;position:fixed;top:12px;right:12px;z-index:2000;width:44px;height:44px;border-radius:10px;border:2px solid rgba(255,255,255,0.2);background:rgba(30,58,95,0.95);color:white;font-size:22px;cursor:pointer;">☰</button>
+<button id="maofCloseX" onclick="window.maofClose()" style="display:none;position:fixed;top:12px;left:12px;z-index:2001;width:44px;height:44px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:white;font-size:22px;cursor:pointer;align-items:center;justify-content:center;">✕</button>
 <div id="maofBd" onclick="window.maofClose()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;"></div>
 
 <div class="app">
@@ -421,6 +424,10 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
       <span class="icon">📬</span> הודעות
       <span class="notif-badge" id="msg-badge">3</span>
     </div>
+    <div class="nav-item" onclick="showScreen('myfeedback')">
+      <span class="icon">📝</span> המשוב שלי
+      <span class="notif-badge" style="background:var(--gold);color:var(--navy)">חדש</span>
+    </div>
     <div class="nav-item" onclick="showScreen('settings')">
       <span class="icon">👤</span> הגדרות אישיות
     </div>
@@ -440,6 +447,10 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
     </div>
     <div style="font-size:10px;color:var(--text-dim);margin-top:8px;text-align:center;font-family:'IBM Plex Mono',monospace">⚙️ ערוך הגדרות</div>
   </div>
+  <div id="engine-status" style="padding:10px 18px;border-top:1px solid var(--border2);display:flex;align-items:center;gap:8px;cursor:pointer" onclick="checkEngine()" title="לחץ לבדיקה מחדש">
+    <div id="engine-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-dim);flex-shrink:0;transition:all .3s"></div>
+    <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim)" id="engine-label">בודק מנוע...</div>
+  </div>
 </nav>
 
 <!-- ══ MAIN ══════════════════════════════════════════ -->
@@ -453,6 +464,7 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
       <div class="page-subtitle">המסלול שלך מוכן — 2 שנות הוראה + 2 שנות הייטק. בוא נתחיל.</div>
     </div>
     <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="runLiveScore()" id="btn-live-score" title="חישוב ציון חי מהמנוע">⚡ ציון חי</button>
       <button class="btn btn-ghost" onclick="showScreen('simulator')">💰 סימולטור שכר</button>
       <button class="btn btn-gold" onclick="showScreen('journey')">🚀 ראה את המסלול שלי</button>
     </div>
@@ -1365,6 +1377,94 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
 </div>
 <!-- END SCREEN AICHAT -->
 
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN: MY FEEDBACK — המשוב שלי
+═══════════════════════════════════════════════════════════ -->
+<div id="screen-myfeedback" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">המשוב <span>שלי</span></div>
+      <div class="page-subtitle">ציון חיזוי מול ביצועים בפועל — משוב מבית הספר ומהחברה</div>
+    </div>
+    <div class="topbar-actions">
+      <span id="sol-fb-status" style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim)">בודק...</span>
+      <button class="btn btn-gold" onclick="loadSoldierFeedback()">🔄 רענן</button>
+    </div>
+  </div>
+
+  <!-- ── SCORE OVERVIEW ── -->
+  <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap">
+    <div class="panel" style="flex:1;min-width:200px;text-align:center;border-color:rgba(245,200,66,0.25)">
+      <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">PREDICTED SCORE</div>
+      <div style="font-size:48px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--gold);line-height:1">97</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:6px">ציון שהמנוע חזה בעת השיבוץ</div>
+    </div>
+    <div class="panel" style="flex:1;min-width:200px;text-align:center;border-color:rgba(0,212,170,0.25)" id="sol-fb-actual-card">
+      <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">ACTUAL SCORE</div>
+      <div style="font-size:48px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--teal);line-height:1" id="sol-fb-actual-score">—</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:6px">ציון ממוצע על סמך משוב</div>
+    </div>
+    <div class="panel" style="flex:1;min-width:200px;text-align:center" id="sol-fb-error-card">
+      <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">PREDICTION ERROR</div>
+      <div style="font-size:48px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);line-height:1" id="sol-fb-error">—</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:6px">שגיאת חיזוי</div>
+    </div>
+  </div>
+
+  <!-- ── SCHOOL FEEDBACK ── -->
+  <div class="panel" style="margin-bottom:20px" id="sol-fb-school-panel">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <div style="font-size:24px">🏫</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff">משוב מבית הספר — אורט נתיבות</div>
+        <div style="font-size:11px;color:var(--text-dim)">תחנה א' · סייבר + AI · 24 חודשים</div>
+      </div>
+    </div>
+    <div id="sol-fb-school-content">
+      <div style="text-align:center;padding:28px;color:var(--text-dim);font-size:13px">
+        <div style="font-size:32px;margin-bottom:8px">⏳</div>
+        ממתין למשוב מבית הספר...<br>
+        <span style="font-size:11px">המשוב הבא צפוי בעוד 3 חודשים מיום תחילת ההוראה</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COMPANY FEEDBACK ── -->
+  <div class="panel" style="margin-bottom:20px" id="sol-fb-company-panel">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <div style="font-size:24px">🏢</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff">משוב מהחברה — Mobileye</div>
+        <div style="font-size:11px;color:var(--text-dim)">תחנה ב' · Security Researcher · צפוי להתחיל בעוד 24 חודש</div>
+      </div>
+    </div>
+    <div id="sol-fb-company-content">
+      <div style="text-align:center;padding:28px;color:var(--text-dim);font-size:13px">
+        <div style="font-size:32px;margin-bottom:8px">🔒</div>
+        משוב מהחברה ייפתח עם תחילת תחנה ב'<br>
+        <span style="font-size:11px">Mobileye · Security Researcher · Python | Cyber | CV</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WHAT FEEDBACK MEANS ── -->
+  <div class="panel" style="background:rgba(245,200,66,0.04);border-color:rgba(245,200,66,0.2)">
+    <div style="display:flex;gap:14px;align-items:flex-start">
+      <div style="font-size:24px;flex-shrink:0">💡</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px">איך המשוב עובד?</div>
+        <div style="font-size:12px;color:var(--text-dim);line-height:1.8">
+          <strong style="color:var(--text)">בית הספר</strong> מדרג אותך כל 3 חודשים: דירוג הוראה, נוכחות, שביעות רצון מנהל ותלמידים<br>
+          <strong style="color:var(--text)">החברה</strong> מדרגת אותך כל 6 חודשים: ביצועים טכניים, קצב התקדמות, שביעות רצון מנהל<br>
+          <strong style="color:var(--text)">הציון שלך</strong> משפיע על משקלות האלגוריתם — ככל שהמשוב טוב יותר, כך המנוע לומד מה עובד<br>
+          <strong style="color:var(--gold)">Seniority Leap:</strong> ציון הוראה גבוה = קפיצת ותק של עד 18 חודשים בכניסה לתחנה ב'
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END SCREEN MYFEEDBACK -->
+
 <div id="screen-settings" class="screen">
   <div class="topbar">
     <div>
@@ -1487,7 +1587,7 @@ const grid='rgba(255,255,255,0.05)',tc='#6b7a99';
 Chart.defaults.font.family="'IBM Plex Mono',monospace";
 Chart.defaults.color=tc;
 
-const navMap={dashboard:0,journey:1,schools:2,companies:3,upskill:4,simulator:5,checklist:6,preferences:7,messages:8,settings:9,aichat:10};
+const navMap={dashboard:0,journey:1,schools:2,companies:3,upskill:4,simulator:5,checklist:6,preferences:7,messages:8,myfeedback:9,settings:10,aichat:11};
 let initialized={};
 
 function showScreen(name){
@@ -1495,6 +1595,7 @@ function showScreen(name){
   document.getElementById('screen-'+name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.querySelectorAll('.nav-item')[navMap[name]]?.classList.add('active');
+  if(name==='myfeedback') loadSoldierFeedback();
   if(!initialized[name]){initialized[name]=true;initScreen(name);}
 }
 
@@ -2062,6 +2163,263 @@ function clearSoldierChat() {
   if (h) h.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-dim);font-size:12px">שיחה נוקתה — שאלי שאלה חדשה</div>`;
 }
 
+/* ══════════════════════════════════════════════════════
+   SOLDIER FEEDBACK VIEW
+══════════════════════════════════════════════════════ */
+async function loadSoldierFeedback() {
+  const statusEl = document.getElementById('sol-fb-status');
+  if (!engineOnline) {
+    if (statusEl) { statusEl.textContent = 'מנוע לא מחובר'; statusEl.style.color = 'var(--red)'; }
+    return;
+  }
+  if (statusEl) { statusEl.textContent = '🟢 מחובר'; statusEl.style.color = '#00d4aa'; }
+
+  const data = await fetchEngine('/feedback/placement/fb-p1');
+  if (!data) return;
+
+  const schoolFb = data.school_feedback;
+  const companyFb = data.company_feedback;
+
+  if (schoolFb) {
+    renderSchoolFeedbackView(schoolFb);
+  }
+  if (companyFb) {
+    renderCompanyFeedbackView(companyFb);
+  }
+
+  const scores = [];
+  if (schoolFb?.actual_score) scores.push(schoolFb.actual_score);
+  if (companyFb?.actual_score) scores.push(companyFb.actual_score);
+
+  if (scores.length > 0) {
+    const actual = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const predicted = 97;
+    const err = actual - predicted;
+    const absErr = Math.abs(err);
+    const errColor = absErr <= 5 ? '#00d4aa' : absErr <= 10 ? 'var(--amber)' : 'var(--red)';
+
+    document.getElementById('sol-fb-actual-score').textContent = actual.toFixed(0);
+    document.getElementById('sol-fb-error').textContent = (err > 0 ? '+' : '') + err.toFixed(1);
+    document.getElementById('sol-fb-error').style.color = errColor;
+
+    const errLabel = absErr <= 5 ? 'החיזוי היה מדויק!' : absErr <= 10 ? 'סטייה קלה מהחיזוי' : 'סטייה משמעותית';
+    document.getElementById('sol-fb-error-card').querySelector('div:last-child').textContent = errLabel;
+  }
+}
+
+function renderSchoolFeedbackView(fb) {
+  const container = document.getElementById('sol-fb-school-content');
+  if (!container) return;
+  const metrics = [
+    { label: 'דירוג הוראה', value: fb.teacher_rating, icon: '📚', weight: '40%' },
+    { label: 'נוכחות', value: fb.attendance_rate, icon: '📅', weight: '20%' },
+    { label: 'שביעות רצון מנהל', value: fb.principal_satisfaction, icon: '👨‍💼', weight: '25%' },
+    { label: 'שביעות רצון תלמידים', value: fb.student_satisfaction, icon: '👩‍🎓', weight: '15%' },
+  ];
+  const actual = fb.actual_score;
+  const scoreColor = actual >= 85 ? '#00d4aa' : actual >= 70 ? 'var(--amber)' : 'var(--red)';
+
+  container.innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding:14px;background:rgba(0,212,170,0.06);border-radius:10px;border:1px solid rgba(0,212,170,0.15)">
+      <div style="text-align:center">
+        <div style="font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">SCHOOL SCORE</div>
+        <div style="font-size:36px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:${scoreColor};line-height:1.1">${actual.toFixed(0)}</div>
+      </div>
+      <div style="flex:1;font-size:12px;color:var(--text-dim);line-height:1.6">
+        ${actual >= 85 ? '⭐ ביצועים מצוינים! הציון שלך גבוה מ-85 — זה מזכה אותך ב-<strong style="color:var(--gold)">Seniority Leap מלא (+18 חודשים)</strong>' :
+          actual >= 70 ? '👍 ביצועים טובים. ציון מעל 70 מבטיח המשך שיבוץ והמלצה לתחנה ב\'' :
+          '⚠️ יש מקום לשיפור. שוחח עם המנחה שלך על דרכים לשפר את ציון ההוראה'}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      ${metrics.map(m => {
+        const barColor = m.value >= 85 ? '#00d4aa' : m.value >= 70 ? 'var(--amber)' : 'var(--red)';
+        return `
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:10px;padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12px;color:var(--text)">${m.icon} ${m.label}</span>
+            <span style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">משקל ${m.weight}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+              <div style="width:${m.value}%;height:100%;background:${barColor};border-radius:4px;transition:width 1s ease"></div>
+            </div>
+            <span style="font-size:16px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:${barColor};min-width:28px">${m.value}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:12px;font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-align:left">
+      תאריך משוב: ${fb.feedback_date || 'היום'} · שיבוץ: fb-p1
+    </div>`;
+}
+
+function renderCompanyFeedbackView(fb) {
+  const container = document.getElementById('sol-fb-company-content');
+  if (!container) return;
+  const metrics = [
+    { label: 'ביצועים טכניים', value: fb.performance_score, icon: '💻', weight: '50%' },
+    { label: 'קצב התקדמות', value: fb.progression_rate, icon: '📈', weight: '30%' },
+    { label: 'שביעות רצון מנהל', value: fb.manager_satisfaction, icon: '👔', weight: '20%' },
+  ];
+  const actual = fb.actual_score;
+  const scoreColor = actual >= 85 ? '#00d4aa' : actual >= 70 ? 'var(--amber)' : 'var(--red)';
+
+  container.innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding:14px;background:rgba(122,162,247,0.06);border-radius:10px;border:1px solid rgba(122,162,247,0.15)">
+      <div style="text-align:center">
+        <div style="font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">COMPANY SCORE</div>
+        <div style="font-size:36px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:${scoreColor};line-height:1.1">${actual.toFixed(0)}</div>
+      </div>
+      <div style="flex:1;font-size:12px;color:var(--text-dim);line-height:1.6">
+        ${actual >= 85 ? '🚀 ביצועים מצוינים בחברה! את/ה במסלול לקידום מהיר' :
+          actual >= 70 ? '👍 ביצועים טובים. ממשיך/ה להתפתח לפי התוכנית' :
+          '⚠️ יש מקום לשיפור. שוחח/י עם המנטור שלך בחברה'}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      ${metrics.map(m => {
+        const barColor = m.value >= 85 ? '#00d4aa' : m.value >= 70 ? 'var(--amber)' : 'var(--red)';
+        return `
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:10px;padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12px;color:var(--text)">${m.icon} ${m.label}</span>
+            <span style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">${m.weight}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+              <div style="width:${m.value}%;height:100%;background:${barColor};border-radius:4px;transition:width 1s ease"></div>
+            </div>
+            <span style="font-size:16px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:${barColor};min-width:28px">${m.value}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:12px;font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-align:left">
+      תאריך משוב: ${fb.feedback_date || 'היום'} · שיבוץ: fb-p1
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════
+   MAOF ENGINE API INTEGRATION
+══════════════════════════════════════════════════════ */
+const MAOF_API = 'https://maof-project.onrender.com/api/v1';
+let engineOnline = false;
+
+async function fetchEngine(path, opts = {}) {
+  try {
+    const r = await fetch(`${MAOF_API}${path}`, {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    });
+    if (!r.ok) throw new Error(r.status);
+    return await r.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function checkEngine() {
+  const dot = document.getElementById('engine-dot');
+  const label = document.getElementById('engine-label');
+  if (!dot || !label) return;
+  label.textContent = 'מתחבר...';
+  dot.style.background = 'var(--amber)';
+
+  const data = await fetchEngine('/health');
+  if (data && data.status === 'ok') {
+    engineOnline = true;
+    dot.style.background = '#00d4aa';
+    dot.style.boxShadow = '0 0 6px #00d4aa';
+    const db = data.database === 'supabase' ? 'DB' : 'MEM';
+    label.textContent = `מנוע מעוף [${db}]`;
+    label.style.color = '#00d4aa';
+    onEngineReady();
+  } else {
+    engineOnline = false;
+    dot.style.background = 'var(--red)';
+    dot.style.boxShadow = 'none';
+    label.textContent = 'מנוע לא זמין';
+    label.style.color = 'var(--text-dim)';
+  }
+}
+
+async function onEngineReady() {
+  const stats = await fetchEngine('/stats');
+  if (stats) {
+    const total = (stats.candidates || 0) + (stats.schools || 0) + (stats.companies || 0);
+    if (total > 0) {
+      showSoldierToast(`מנוע מעוף מחובר — ${stats.candidates || 0} מועמדים, ${stats.schools || 0} בתי ספר`);
+    }
+  }
+}
+
+async function runLiveScore() {
+  if (!engineOnline) { showSoldierToast('המנוע לא מחובר — לחץ על הנקודה בסיידבר'); return; }
+  const unit = document.getElementById('s-unit')?.value || 'intel';
+  const subject = document.getElementById('s-subject')?.value || 'cyber';
+  const city = document.getElementById('s-city')?.value || 'נתיבות';
+  const name = document.getElementById('s-name')?.value || 'נועה לוי';
+
+  showSoldierToast('מחשב ציון מהמנוע...');
+
+  const candidate = {
+    id: 'portal-user', name,
+    eli5_score: 88, subject,
+    additional_subjects: [], distance_km: city === 'נתיבות' ? 5 : 30,
+    family_status_score: 70, commitment_score: 85, career_switches: 1,
+    willing_periphery: city === 'נתיבות' || city === 'באר שבע' || city === 'אשקלון',
+    tech_test_score: 82,
+    academic_background: unit === '8200' || unit === 'cyber' ? 'tech_unit' : 'warriors_tech',
+    independent_courses: 3, promotion_rate: 75,
+    military_role: unit === '8200' ? 'tech_lead' : 'soldier',
+    team_size: 6, conflict_resolution_score: 72,
+    preferred_company_size: 'large', work_style: 'hybrid',
+    preferred_location: 'center', willing_relocate: true,
+    tech_stack: subject === 'cyber' ? ['Python','Cyber','Networking'] : ['Python','Data Science'],
+    years_experience: 0
+  };
+  const school = {
+    id: 'ort-netivot', name: 'אורט נתיבות', location: 'נתיבות',
+    lat: 31.42, lng: 34.59,
+    required_subjects: [subject], grade_levels: ['10','11','12'],
+    socioeconomic_rank: 3, nurturing_index: 3, months_without_teacher: 6,
+    budget_available: true
+  };
+  const company = {
+    id: 'mobileye', name: 'Mobileye', location: 'ירושלים',
+    lat: 31.77, lng: 35.22, size: 'large', work_style: 'hybrid',
+    tech_stack: ['Python','CV','Cyber','C++'],
+    open_positions: 9, urgency_score: 70, willing_station_b: true
+  };
+
+  const result = await fetchEngine('/score', {
+    method: 'POST',
+    body: JSON.stringify({ candidate, school, company })
+  });
+
+  if (result) {
+    document.getElementById('sidebar-score').textContent = Math.round(result.final_score);
+    showSoldierToast(`ציון מהמנוע: A=${Math.round(result.score_a)} B=${Math.round(result.score_b)} סופי=${Math.round(result.final_score)}`);
+  } else {
+    showSoldierToast('שגיאה בחישוב — נסה שוב');
+  }
+}
+
+async function runLiveSimulation() {
+  if (!engineOnline) { showSoldierToast('המנוע לא מחובר'); return; }
+  showSoldierToast('מריץ סימולציה מהמנוע...');
+
+  const result = await fetchEngine('/simulate/quick');
+  if (result && result.placements) {
+    const n = result.placements.length;
+    const avg = Math.round(result.placements.reduce((s, p) => s + p.final_score, 0) / n);
+    showSoldierToast(`סימולציה: ${n} שיבוצים, ציון ממוצע ${avg}`);
+  }
+}
+
+window.addEventListener('load', () => setTimeout(checkEngine, 500));
+
 </script>
 
 <script>
@@ -2071,11 +2429,35 @@ function clearSoldierChat() {
   var btn=document.getElementById('mobBtn');
   if(window.innerWidth>768){if(sb)sb.style.display='flex';if(btn)btn.style.display='none';}
   else{if(mn){mn.style.marginRight='0';mn.style.padding='56px 16px 16px';mn.style.maxWidth='100vw';}if(btn)btn.style.display='flex';}
-  window.maofToggle=function(){if(!sb)return;var open=sb.style.display!=='none';sb.style.display=open?'none':'flex';sb.style.position=open?'':'fixed';sb.style.top=open?'':'0';sb.style.right=open?'':'0';sb.style.height=open?'':'100vh';sb.style.zIndex=open?'':'1000';sb.style.width=open?'':'240px';sb.style.overflowY=open?'':'auto';sb.style.flexDirection=open?'':'column';var bd=document.getElementById('maofBd');if(bd)bd.style.display=open?'none':'block';};
+  window.maofToggle=function(){if(!sb)return;var open=sb.style.display!=='none';if(!open){sb.style.cssText='display:flex!important;flex-direction:column!important;position:fixed!important;top:0!important;left:0!important;right:0!important;width:100vw!important;height:100vh!important;z-index:2000!important;overflow-y:auto!important;padding-top:56px!important;';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='flex';}else{sb.style.cssText='display:none!important;';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='none';}};
   window.maofClose=function(){if(sb)sb.style.display='none';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';};
-})();
+  // Wrap nav function to auto-close sidebar
+  var _origNav = window.showScreen;
+  window.showScreen = function() {
+    if(_origNav) _origNav.apply(this, arguments);
+    setTimeout(function(){ if(window.maofClose) window.maofClose(); }, 50);
+  };  // Wrap journey-track in horizontal scroll container on mobile
+  if(window.innerWidth<=768){
+    var jt=document.querySelector('.journey-track');
+    if(jt){
+      var wr=document.createElement('div');
+      wr.style.cssText='overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;padding-bottom:8px;';
+      jt.parentNode.insertBefore(wr,jt);
+      wr.appendChild(jt);
+      jt.style.cssText='display:flex!important;flex-direction:row!important;width:max-content!important;gap:0!important;';
+      jt.querySelectorAll('.journey-node').forEach(function(n){n.style.minWidth='150px';});
+      jt.querySelectorAll('.journey-arrow').forEach(function(a){a.style.minWidth='30px';a.style.flexShrink='0';});
+    }
+  }})();
 </script></body>
 </html>
+
+
+
+
+
+
+
 
 
 
