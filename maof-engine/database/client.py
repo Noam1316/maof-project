@@ -123,6 +123,26 @@ def _count(table: str) -> int:
         return 0
 
 
+def _delete(table: str, filters: Dict) -> bool:
+    global _last_error
+    if not is_connected():
+        _last_error = "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY"
+        return False
+    try:
+        r = httpx.delete(
+            f"{SUPABASE_URL}/rest/v1/{table}",
+            headers=_headers(),
+            params=filters,
+            timeout=10.0
+        )
+        r.raise_for_status()
+        _last_error = ""
+        return True
+    except Exception as e:
+        _last_error = str(e)
+        return False
+
+
 # ─── Public API ──────────────────────────────────────────────
 
 def db_upsert(table: str, data: Dict) -> Optional[Dict]:
@@ -136,3 +156,6 @@ def db_select(table: str, filters: Optional[Dict] = None, limit: int = 100) -> L
 
 def db_count(table: str) -> int:
     return _count(table)
+
+def db_delete(table: str, filters: Dict) -> bool:
+    return _delete(table, filters)

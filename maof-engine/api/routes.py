@@ -12,8 +12,8 @@ from typing import List, Optional
 from models.candidate import Candidate
 from models.school import School
 from models.company import Company
-from scoring.score_a import calculate_score_a
-from scoring.score_b import calculate_score_b
+from scoring.score_a import calculate_score_a, calculate_score_a_detailed
+from scoring.score_b import calculate_score_b, calculate_score_b_detailed
 from scoring.score_c import calculate_score_c
 from scoring.volume import calculate_volume_score
 from matching.hungarian import run_hungarian
@@ -52,6 +52,23 @@ class ScoreResponse(BaseModel):
     final_score: float
     passes_threshold: bool
     breakdown: dict
+
+
+class WhatIfRequest(BaseModel):
+    candidate: Candidate
+    school: School
+    company: Company
+    field: str
+    new_value: float
+    total_placements: int = 0
+
+
+class RecommendRequest(BaseModel):
+    candidate: Candidate
+    schools: List[School]
+    companies: List[Company]
+    top_n: int = 3
+    total_placements: int = 0
 
 
 class MatchRequest(BaseModel):
@@ -101,7 +118,8 @@ def create_candidate(body: dict):
 @router.get("/candidates")
 def list_candidates(limit: int = 50):
     """רשימת כל המועמדים"""
-    return {"candidates": db.list_candidates(limit), "count": len(db.list_candidates(limit))}
+    candidates = db.list_candidates(limit)
+    return {"candidates": candidates, "count": len(candidates)}
 
 
 @router.get("/candidates/{candidate_id}")
@@ -110,6 +128,14 @@ def get_candidate(candidate_id: str):
     if not candidate:
         raise HTTPException(status_code=404, detail="מועמד לא נמצא")
     return candidate
+
+
+@router.delete("/candidates/{candidate_id}")
+def delete_candidate(candidate_id: str):
+    """מחיקת מועמד"""
+    if not db.delete_candidate(candidate_id):
+        raise HTTPException(status_code=404, detail="מועמד לא נמצא")
+    return {"status": "deleted", "id": candidate_id}
 
 
 @router.post("/schools")
@@ -122,7 +148,8 @@ def create_school(body: dict):
 
 @router.get("/schools")
 def list_schools(limit: int = 50):
-    return {"schools": db.list_schools(limit), "count": len(db.list_schools(limit))}
+    schools = db.list_schools(limit)
+    return {"schools": schools, "count": len(schools)}
 
 
 @router.post("/companies")
@@ -135,7 +162,8 @@ def create_company(body: dict):
 
 @router.get("/companies")
 def list_companies(limit: int = 50):
-    return {"companies": db.list_companies(limit), "count": len(db.list_companies(limit))}
+    companies = db.list_companies(limit)
+    return {"companies": companies, "count": len(companies)}
 
 
 @router.get("/placements")
@@ -194,6 +222,118 @@ def score_single(req: ScoreRequest):
         passes_threshold=vol["passes_threshold"],
         breakdown=vol["breakdown"],
     )
+
+
+@router.post("/score/breakdown")
+def score_breakdown(req: ScoreRequest):
+    """פירוט מלא — כל תת-מדד עם הסבר"""
+    detail_a = calculate_score_a_detailed(req.candidate, req.school)
+    detail_b = calculate_score_b_detailed(req.candidate, req.company)
+    a = detail_a["total"]
+    b = detail_b["total"]
+    c = calculate_score_c(a, b, req.candidate, req.school, req.company, req.total_placements)
+    vol = calculate_volume_score(a, b, c)
+
+    return {
+        "score_a": detail_a,
+        "score_b": detail_b,
+        "score_c": c,
+        "volume_score": vol["volume_score"],
+        "final_score": vol["final_score"],
+        "passes_threshold": vol["passes_threshold"],
+        "summary": f"ציון סופי: {vol['final_score']} | A={a} B={b} C={c} | {'עובר סף' if vol['passes_threshold'] else 'לא עובר סף 60'}",
+    }
+
+
+@router.post("/score/whatif")
+def score_whatif(req: WhatIfRequest):
+    """What-If — שנה פרמטר אחד וראה before/after"""
+    ALLOWED_FIELDS = {
+        "eli5_score", "distance_km", "tech_test_score", "commitment_score",
+        "family_status_score", "conflict_resolution_score", "promotion_rate",
+        "willing_periphery", "willing_relocate", "career_switches",
+        "independent_courses", "team_size",
+    }
+    if req.field not in ALLOWED_FIELDS:
+        raise HTTPException(status_code=400, detail=f"שדה '{req.field}' לא נתמך. שדות: {', '.join(sorted(ALLOWED_FIELDS))}")
+
+    a_before = calculate_score_a(req.candidate, req.school)
+    b_before = calculate_score_b(req.candidate, req.company)
+    c_before = calculate_score_c(a_before, b_before, req.candidate, req.school, req.company, req.total_placements)
+    vol_before = calculate_volume_score(a_before, b_before, c_before)
+
+    modified = req.candidate.model_copy(update={req.field: req.new_value})
+
+    a_after = calculate_score_a(modified, req.school)
+    b_after = calculate_score_b(modified, req.company)
+    c_after = calculate_score_c(a_after, b_after, modified, req.school, req.company, req.total_placements)
+    vol_after = calculate_volume_score(a_after, b_after, c_after)
+
+    delta = round(vol_after["final_score"] - vol_before["final_score"], 2)
+    direction = "עלייה" if delta > 0 else "ירידה" if delta < 0 else "ללא שינוי"
+
+    return {
+        "field": req.field,
+        "old_value": getattr(req.candidate, req.field),
+        "new_value": req.new_value,
+        "before": {
+            "score_a": a_before, "score_b": b_before, "score_c": c_before,
+            "final_score": vol_before["final_score"], "passes_threshold": vol_before["passes_threshold"],
+        },
+        "after": {
+            "score_a": a_after, "score_b": b_after, "score_c": c_after,
+            "final_score": vol_after["final_score"], "passes_threshold": vol_after["passes_threshold"],
+        },
+        "delta": delta,
+        "direction": direction,
+        "explanation": f"שינוי {req.field} מ-{getattr(req.candidate, req.field)} ל-{req.new_value} → {direction} של {abs(delta)} נקודות (ציון סופי: {vol_before['final_score']} → {vol_after['final_score']})",
+    }
+
+
+@router.post("/recommend")
+def recommend_placements(req: RecommendRequest):
+    """Top-N שילובים מומלצים למועמד עם הסבר"""
+    if not req.schools or not req.companies:
+        raise HTTPException(status_code=400, detail="חסרים בתי ספר או חברות")
+
+    results = []
+    for school in req.schools:
+        for company in req.companies:
+            detail_a = calculate_score_a_detailed(req.candidate, school)
+            detail_b = calculate_score_b_detailed(req.candidate, company)
+            a = detail_a["total"]
+            b = detail_b["total"]
+            c = calculate_score_c(a, b, req.candidate, school, company, req.total_placements)
+            vol = calculate_volume_score(a, b, c)
+
+            results.append({
+                "school_id": school.id,
+                "school_name": school.name,
+                "company_id": company.id,
+                "company_name": company.name,
+                "score_a": a,
+                "score_b": b,
+                "score_c": c,
+                "final_score": vol["final_score"],
+                "passes_threshold": vol["passes_threshold"],
+                "explanation_a": detail_a["explanation"],
+                "explanation_b": detail_b["explanation"],
+                "strength_a": max(detail_a["components"].items(), key=lambda x: x[1]["raw"])[0],
+                "strength_b": max(detail_b["components"].items(), key=lambda x: x[1]["raw"])[0],
+            })
+
+    results.sort(key=lambda x: x["final_score"], reverse=True)
+    top = results[:req.top_n]
+
+    return {
+        "candidate_id": req.candidate.id,
+        "candidate_name": req.candidate.name,
+        "total_combinations": len(results),
+        "recommendations": top,
+        "summary": f"מתוך {len(results)} שילובים, ה-{len(top)} הטובים: " + ", ".join(
+            f"{r['school_name']}+{r['company_name']} ({r['final_score']})" for r in top
+        ),
+    }
 
 
 @router.post("/match")
@@ -378,6 +518,32 @@ def add_company_feedback(body: dict):
         return {"status": "ok", "actual_score": feedback.actual_score}
     except (KeyError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/feedback/candidate")
+def add_candidate_feedback(body: dict):
+    """משוב מועמד"""
+    try:
+        feedback = CandidateFeedback(
+            placement_id=body["placement_id"],
+            candidate_id=body["candidate_id"],
+            date=body.get("date", ""),
+            school_satisfaction=body["school_satisfaction"],
+            company_satisfaction=body["company_satisfaction"],
+            overall_satisfaction=body["overall_satisfaction"],
+        )
+        _feedback_loop.add_candidate_feedback(body["placement_id"], feedback)
+        return {"status": "ok", "actual_score": feedback.actual_score}
+    except (KeyError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/feedback/placement/{placement_id}")
+def get_placement_feedback(placement_id: str):
+    """כל המשוב לשיבוץ ספציפי"""
+    from database import repository as db
+    feedback = db.get_feedback_for_placement(placement_id)
+    return feedback
 
 
 @router.get("/feedback/stats")

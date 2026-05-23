@@ -97,3 +97,36 @@ def calculate_score_a(candidate: Candidate, school: School) -> float:
     )
 
     return round(score, 2)
+
+
+def calculate_score_a_detailed(candidate: Candidate, school: School) -> dict:
+    eli5 = candidate.eli5_score
+    subject = subject_match_score(candidate, school)
+    retention = retention_score(candidate, school)
+    impact = impact_score(school)
+
+    total = round(eli5 * 0.35 + subject * 0.25 + retention * 0.25 + impact * 0.15, 2)
+
+    return {
+        "total": total,
+        "components": {
+            "eli5": {"raw": round(eli5, 2), "weight": 0.35, "weighted": round(eli5 * 0.35, 2)},
+            "subject_match": {"raw": round(subject, 2), "weight": 0.25, "weighted": round(subject * 0.25, 2)},
+            "retention": {"raw": round(retention, 2), "weight": 0.25, "weighted": round(retention * 0.25, 2)},
+            "impact": {"raw": round(impact, 2), "weight": 0.15, "weighted": round(impact * 0.15, 2)},
+        },
+        "explanation": _explain_score_a(eli5, subject, retention, impact, total, candidate, school),
+    }
+
+
+def _explain_score_a(eli5, subject, retention, impact, total, candidate, school) -> str:
+    parts = []
+    parts.append(f"ציון A = {total}")
+    parts.append(f"ELI5={eli5:.0f}×35% + מקצוע={subject:.0f}×25% + שימור={retention:.0f}×25% + השפעה={impact:.0f}×15%")
+
+    best = max([("ELI5", eli5), ("התאמת מקצוע", subject), ("שימור", retention), ("השפעה", impact)], key=lambda x: x[1])
+    worst = min([("ELI5", eli5), ("התאמת מקצוע", subject), ("שימור", retention), ("השפעה", impact)], key=lambda x: x[1])
+    parts.append(f"חוזק: {best[0]} ({best[1]:.0f})")
+    parts.append(f"חולשה: {worst[0]} ({worst[1]:.0f})")
+
+    return " | ".join(parts)

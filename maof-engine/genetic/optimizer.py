@@ -316,4 +316,4 @@ if __name__ == "__main__":
     print(f"  Score A: {result['best_weights']['score_a']}")
     print(f"  Score B: {result['best_weights']['score_b']}")
     print(f"  Fitness: {result['best_weights']['fitness']}")
-    print(f"  Improvement over default: {result['improvement']}%")
+    print(f"  Improvement over default: {result['improvement_abs']}%")
