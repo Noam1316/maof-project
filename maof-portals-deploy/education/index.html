@@ -6,6 +6,7 @@
 <title>מעוף — פורטל ניהול</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
+body{max-width:100vw;}  * {box-sizing:border-box;}
   :root {
     --navy: #0a1628;
     --navy-mid: #112240;
@@ -766,10 +767,21 @@
 @media(max-width: 480px) {
   .kpi-row, .kpi-grid, .needs-grid { grid-template-columns: 1fr !important; }
 }
+@media(max-width:768px){
+  .compare-grid{
+    display:block!important;
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    white-space:nowrap!important;
+  }
+  .compare-grid > *{display:inline-block;min-width:120px;white-space:normal;vertical-align:top;}
+  .data-table, table{display:block!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;max-width:100%!important;}
+}
 </style>
 </head>
 <body>
 <button id="mobBtn" onclick="window.maofToggle()" style="display:none;position:fixed;top:12px;right:12px;z-index:2000;width:44px;height:44px;border-radius:10px;border:2px solid rgba(255,255,255,0.2);background:rgba(30,58,95,0.95);color:white;font-size:22px;cursor:pointer;">☰</button>
+<button id="maofCloseX" onclick="window.maofClose()" style="display:none;position:fixed;top:12px;left:12px;z-index:2001;width:44px;height:44px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:white;font-size:22px;cursor:pointer;align-items:center;justify-content:center;">✕</button>
 <div id="maofBd" onclick="window.maofClose()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;"></div>
 
 <div class="app">
@@ -812,6 +824,10 @@
         <span class="icon">✅</span> אישור הצבות
         <span class="nav-badge" id="approvals-badge">5</span>
       </div>
+      <div class="nav-item" onclick="showScreen('feedback')">
+        <span class="icon">📝</span> משוב וביצועים
+        <span class="nav-badge" style="background:var(--amber)">חי</span>
+      </div>
     </div>
 
     <div class="nav-section" style="margin-top:16px">
@@ -827,6 +843,10 @@
           <div class="user-name">דנה כהן</div>
           <div class="user-role">מנהלת מחוז תל אביב</div>
         </div>
+      </div>
+      <div id="edu-engine-status" style="display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer" onclick="checkEduEngine()" title="לחץ לבדיקה">
+        <div id="edu-engine-dot" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all .3s"></div>
+        <span id="edu-engine-label" style="font-size:9px;color:rgba(255,255,255,0.35);font-family:'IBM Plex Mono',monospace">בודק מנוע...</span>
       </div>
     </div>
   </nav>
@@ -2619,6 +2639,74 @@
 </div>
 <!-- END SCREEN APPROVALS -->
 
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN 9: FEEDBACK LOOP — משוב וביצועים
+═══════════════════════════════════════════════════════════ -->
+<div id="screen-feedback" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">משוב <span>וביצועים</span></div>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:4px">Feedback Loop — השוואת חיזוי מול ביצועים בפועל</div>
+    </div>
+    <div class="topbar-actions">
+      <span id="fb-api-status" style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim)">בודק חיבור...</span>
+      <button class="btn btn-primary" onclick="loadFeedbackStats()">🔄 רענן נתונים</button>
+    </div>
+  </div>
+
+  <!-- ── LOOP STATS ── -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px">
+    <div style="background:rgba(0,201,167,0.08);border:1px solid rgba(0,201,167,0.25);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:28px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:#00c9a7" id="fb-total">—</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:3px">שיבוצים במערכת</div>
+    </div>
+    <div style="background:rgba(122,162,247,0.08);border:1px solid rgba(122,162,247,0.25);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:28px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:#7aa2f7" id="fb-with-feedback">—</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:3px">עם משוב</div>
+    </div>
+    <div style="background:rgba(244,162,97,0.08);border:1px solid rgba(244,162,97,0.25);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:28px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:#f4a261" id="fb-mae">—</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:3px">שגיאה ממוצעת (MAE)</div>
+    </div>
+    <div style="background:rgba(187,154,247,0.08);border:1px solid rgba(187,154,247,0.25);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:28px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:#bb9af7" id="fb-phase">—</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:3px">שלב נוכחי</div>
+    </div>
+  </div>
+
+  <!-- ── AI RECOMMENDATION ── -->
+  <div id="fb-ai-rec" class="ai-rec" style="display:none">
+    <div class="ai-icon">🤖</div>
+    <div>
+      <div class="ai-rec-title">המלצת AI — כיוון משקלות</div>
+      <div class="ai-rec-text" id="fb-ai-text"></div>
+    </div>
+  </div>
+
+  <!-- ── PREDICTED vs ACTUAL CHART ── -->
+  <div id="fb-comparison" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:24px">
+    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:16px">📊 חיזוי מול ביצועים — Predicted vs Actual</div>
+    <div id="fb-chart-area" style="display:flex;flex-direction:column;gap:10px">
+      <div style="text-align:center;color:var(--text-dim);font-size:13px;padding:30px 0">שלח משוב לשיבוץ כדי לראות השוואה</div>
+    </div>
+  </div>
+
+  <!-- ── FEEDBACK FORMS ── -->
+  <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:16px">📝 שלח משוב על שיבוצים פעילים</div>
+  <div style="font-size:12px;color:var(--text-dim);margin-bottom:18px">בחר שיבוץ והזן את הציונים — המשוב נשלח ישירות למנוע מעוף ומשפיע על משקלות הדירוג</div>
+
+  <div id="fb-placements-list" style="display:flex;flex-direction:column;gap:14px">
+    <!-- Generated by JS -->
+  </div>
+
+  <!-- ── WEIGHT VISUALIZATION ── -->
+  <div id="fb-weights" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-top:24px;display:none">
+    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:16px">⚖️ הצעת עדכון משקלות</div>
+    <div id="fb-weights-content"></div>
+  </div>
+</div>
+<!-- END SCREEN FEEDBACK -->
+
 <!-- ── PLACEMENT DETAIL MODAL ── -->
 <div id="placement-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
   <div style="background:#0e1520;border:1px solid rgba(255,255,255,0.08);border-radius:18px;width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;position:relative" id="placement-modal-content">
@@ -2770,7 +2858,7 @@
   </div>
 
 <script>
-const navMap={overview:0,placements:1,needs:2,insights:3,companies:4,matching:5,trends:6,approvals:7};
+const navMap={overview:0,placements:1,needs:2,insights:3,companies:4,matching:5,trends:6,approvals:7,feedback:8};
 let chartsInitialized={companies:false,matching:false,trends:false};
 let radarChart=null;
 
@@ -2782,6 +2870,7 @@ function showScreen(name){
   if(name==='companies'&&!chartsInitialized.companies){try{initCompanyCharts();}catch(e){}chartsInitialized.companies=true;}
   if(name==='matching'&&!chartsInitialized.matching){try{initMatchingCharts();}catch(e){}chartsInitialized.matching=true;}
   if(name==='approvals'){initApprovals();}
+  if(name==='feedback'){initFeedbackScreen();}
 }
 
 function scrollToRisk(id){
@@ -3714,6 +3803,340 @@ function renderHistory() {
 
 // approvals init handled in main showScreen
 
+/* ── FEEDBACK LOOP ── */
+const FB_DEMO_PLACEMENTS = [
+  { id:'fb-p1', candidate_id:'noam-levi', school_id:'ort-netivot', company_id:'mobileye',
+    candidate:'נועה לוי', school:'אורט נתיבות', company:'Mobileye', subject:'סייבר + AI',
+    predicted_score: 97, color:'#e63946', initials:'נל' },
+  { id:'fb-p2', candidate_id:'yuval-cohen', school_id:'ort-kiryat-shmona', company_id:'checkpoint',
+    candidate:'יובל כהן', school:'אורט קריית שמונה', company:'Check Point', subject:'סייבר',
+    predicted_score: 94, color:'#00c9a7', initials:'יכ' },
+  { id:'fb-p3', candidate_id:'dana-asher', school_id:'gymnasia-herzliya', company_id:'waze',
+    candidate:'דנה אשר', school:'גימנסיה הרצליה', company:'Waze', subject:'Python + AI',
+    predicted_score: 88, color:'#7aa2f7', initials:'דא' },
+  { id:'fb-p4', candidate_id:'ron-mizrachi', school_id:'ort-beer-sheva', company_id:'rafael',
+    candidate:'רון מזרחי', school:'אורט באר שבע', company:'Rafael', subject:'Python',
+    predicted_score: 85, color:'#f4a261', initials:'רמ' },
+  { id:'fb-p5', candidate_id:'shir-levinson', school_id:'makif-arad', company_id:'tower-semi',
+    candidate:'שיר לוינסון', school:'מקיף ערד', company:'Tower Semi', subject:'מתמטיקה',
+    predicted_score: 81, color:'#bb9af7', initials:'של' },
+];
+
+let fbInitialized = false;
+let fbSubmitted = {};
+
+async function initFeedbackScreen() {
+  renderFeedbackForms();
+  if (!fbInitialized) {
+    await seedDemoPlacements();
+    fbInitialized = true;
+  }
+  loadFeedbackStats();
+}
+
+async function seedDemoPlacements() {
+  if (!engineOnline) return;
+  for (const p of FB_DEMO_PLACEMENTS) {
+    try {
+      await fetch(MAOF_API + '/feedback/placement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          placement_id: p.id, candidate_id: p.candidate_id,
+          school_id: p.school_id, company_id: p.company_id,
+          predicted_score: p.predicted_score
+        })
+      });
+    } catch {}
+  }
+}
+
+function renderFeedbackForms() {
+  const container = document.getElementById('fb-placements-list');
+  if (!container) return;
+  container.innerHTML = FB_DEMO_PLACEMENTS.map(p => {
+    const submitted = fbSubmitted[p.id];
+    return `
+    <div id="fb-card-${p.id}" style="background:var(--card);border:1px solid ${submitted ? 'rgba(0,201,167,0.3)' : 'var(--border)'};border-radius:14px;padding:20px;transition:.3s">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,${p.color},#1d3461);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">${p.initials}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#fff">${p.candidate}</div>
+          <div style="font-size:11px;color:var(--text-dim)">${p.school} · ${p.subject} → ${p.company}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">PREDICTED</div>
+          <div style="font-size:22px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--teal)">${p.predicted_score}</div>
+        </div>
+        ${submitted ? `<div style="text-align:center">
+          <div style="font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">ACTUAL</div>
+          <div style="font-size:22px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:${Math.abs(submitted.actual - p.predicted_score) <= 5 ? '#00c9a7' : '#f4a261'}">${submitted.actual}</div>
+        </div>` : ''}
+      </div>
+      ${submitted ? renderFeedbackResult(p, submitted) : renderFeedbackSliders(p)}
+    </div>`;
+  }).join('');
+}
+
+function renderFeedbackSliders(p) {
+  return `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 20px">
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:var(--text-dim)">דירוג מורה (Teaching)</label>
+        <span id="val-tr-${p.id}" style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--teal)">75</span>
+      </div>
+      <input type="range" min="0" max="100" value="75" id="sl-tr-${p.id}" oninput="document.getElementById('val-tr-${p.id}').textContent=this.value"
+        style="width:100%;accent-color:#00c9a7;height:6px">
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:var(--text-dim)">נוכחות (Attendance)</label>
+        <span id="val-at-${p.id}" style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--teal)">85</span>
+      </div>
+      <input type="range" min="0" max="100" value="85" id="sl-at-${p.id}" oninput="document.getElementById('val-at-${p.id}').textContent=this.value"
+        style="width:100%;accent-color:#00c9a7;height:6px">
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:var(--text-dim)">שביעות רצון מנהל</label>
+        <span id="val-ps-${p.id}" style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--teal)">80</span>
+      </div>
+      <input type="range" min="0" max="100" value="80" id="sl-ps-${p.id}" oninput="document.getElementById('val-ps-${p.id}').textContent=this.value"
+        style="width:100%;accent-color:#00c9a7;height:6px">
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:var(--text-dim)">שביעות רצון תלמידים</label>
+        <span id="val-ss-${p.id}" style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--teal)">78</span>
+      </div>
+      <input type="range" min="0" max="100" value="78" id="sl-ss-${p.id}" oninput="document.getElementById('val-ss-${p.id}').textContent=this.value"
+        style="width:100%;accent-color:#00c9a7;height:6px">
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-top:14px">
+    <button onclick="submitSchoolFeedback('${p.id}')" class="approve-btn">📤 שלח משוב למנוע</button>
+  </div>`;
+}
+
+function renderFeedbackResult(p, fb) {
+  const err = fb.actual - p.predicted_score;
+  const absErr = Math.abs(err);
+  const errColor = absErr <= 5 ? '#00c9a7' : absErr <= 10 ? '#f4a261' : '#e63946';
+  const errLabel = absErr <= 5 ? 'מדויק' : absErr <= 10 ? 'סטייה קלה' : 'סטייה משמעותית';
+  const pct = Math.min(100, fb.actual);
+  const predPct = Math.min(100, p.predicted_score);
+  return `
+  <div style="background:rgba(0,201,167,0.04);border:1px solid rgba(0,201,167,0.15);border-radius:10px;padding:14px;margin-top:4px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="font-size:11px;color:var(--text-dim)">שגיאת חיזוי:</span>
+      <span style="font-size:14px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:${errColor}">${err > 0 ? '+' : ''}${err.toFixed(1)}</span>
+      <span style="font-size:10px;padding:2px 8px;border-radius:4px;background:${errColor}22;color:${errColor};font-weight:600">${errLabel}</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+      <span style="font-size:10px;color:var(--text-dim);width:55px">חיזוי</span>
+      <div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+        <div style="width:${predPct}%;height:100%;background:var(--teal);border-radius:4px;opacity:0.4"></div>
+      </div>
+      <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);width:28px">${p.predicted_score}</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:10px;color:var(--text-dim);width:55px">בפועל</span>
+      <div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${errColor};border-radius:4px;transition:width 1s ease"></div>
+      </div>
+      <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:#fff;font-weight:700;width:28px">${fb.actual.toFixed(1)}</span>
+    </div>
+    <div style="font-size:10px;color:var(--text-dim);margin-top:10px;font-family:'IBM Plex Mono',monospace">
+      דירוג: ${fb.teacher_rating} · נוכחות: ${fb.attendance} · מנהל: ${fb.principal} · תלמידים: ${fb.students}
+    </div>
+  </div>`;
+}
+
+async function submitSchoolFeedback(placementId) {
+  const p = FB_DEMO_PLACEMENTS.find(x => x.id === placementId);
+  if (!p) return;
+
+  const tr = parseInt(document.getElementById('sl-tr-' + placementId)?.value || 75);
+  const at = parseInt(document.getElementById('sl-at-' + placementId)?.value || 85);
+  const ps = parseInt(document.getElementById('sl-ps-' + placementId)?.value || 80);
+  const ss = parseInt(document.getElementById('sl-ss-' + placementId)?.value || 78);
+
+  const btn = document.querySelector(`#fb-card-${placementId} button`);
+  if (btn) { btn.textContent = '⏳ שולח...'; btn.disabled = true; }
+
+  try {
+    const r = await fetch(MAOF_API + '/feedback/school', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        placement_id: placementId,
+        candidate_id: p.candidate_id,
+        school_id: p.school_id,
+        date: new Date().toISOString().split('T')[0],
+        teacher_rating: tr,
+        attendance_rate: at,
+        principal_satisfaction: ps,
+        student_satisfaction: ss,
+      })
+    });
+    const data = await r.json();
+    const actual = data.actual_score ?? ((tr * 0.40 + at * 0.20 + ps * 0.25 + ss * 0.15));
+
+    fbSubmitted[placementId] = { actual, teacher_rating: tr, attendance: at, principal: ps, students: ss };
+
+    renderFeedbackForms();
+    updateComparisonChart();
+    loadFeedbackStats();
+    showEduToast('משוב נשלח בהצלחה — ציון בפועל: ' + actual.toFixed(1));
+  } catch (e) {
+    const actual = tr * 0.40 + at * 0.20 + ps * 0.25 + ss * 0.15;
+    fbSubmitted[placementId] = { actual, teacher_rating: tr, attendance: at, principal: ps, students: ss };
+    renderFeedbackForms();
+    updateComparisonChart();
+    showEduToast('משוב נשמר (מצב מקומי)');
+  }
+}
+
+async function loadFeedbackStats() {
+  const statusEl = document.getElementById('fb-api-status');
+  if (!engineOnline) {
+    if (statusEl) { statusEl.textContent = 'מנוע לא מחובר'; statusEl.style.color = '#e63946'; }
+    return;
+  }
+  if (statusEl) { statusEl.textContent = '🟢 מחובר'; statusEl.style.color = '#22c55e'; }
+
+  try {
+    const r = await fetch(MAOF_API + '/feedback/stats', { signal: AbortSignal.timeout(10000) });
+    const data = await r.json();
+    const stats = data.stats || {};
+    const errors = data.errors || {};
+    const suggestion = data.suggestion || {};
+
+    document.getElementById('fb-total').textContent = stats.total_placements ?? '—';
+    document.getElementById('fb-with-feedback').textContent = stats.with_some_feedback ?? '—';
+    document.getElementById('fb-mae').textContent = stats.mean_absolute_error != null ? stats.mean_absolute_error.toFixed(1) : '—';
+    const phaseMap = { synthetic: 'סינתטי', mixed: 'מעורב', real_data: 'נתונים אמיתיים' };
+    document.getElementById('fb-phase').textContent = phaseMap[stats.phase] || stats.phase || '—';
+
+    if (errors.bias && errors.n_analyzed > 0) {
+      const recEl = document.getElementById('fb-ai-rec');
+      const textEl = document.getElementById('fb-ai-text');
+      if (recEl && textEl) {
+        recEl.style.display = 'flex';
+        textEl.innerHTML = `
+          <strong>הטיה:</strong> ${errors.bias} (${errors.n_analyzed} שיבוצים נותחו)<br>
+          <strong>שגיאה ממוצעת:</strong> ${errors.avg_error?.toFixed(1) ?? '—'}<br>
+          <strong>המלצה:</strong> ${errors.recommendation || '—'}`;
+      }
+    }
+
+    if (suggestion.suggested_adjustments) {
+      const wEl = document.getElementById('fb-weights');
+      const wContent = document.getElementById('fb-weights-content');
+      if (wEl && wContent) {
+        wEl.style.display = 'block';
+        const adj = suggestion.suggested_adjustments;
+        wContent.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <div style="text-align:center;padding:14px;background:rgba(0,201,167,0.06);border-radius:10px;border:1px solid rgba(0,201,167,0.15)">
+            <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px">Score A (הוראה)</div>
+            <div style="font-size:24px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--teal)">${(adj.score_a_weight_in_final * 100).toFixed(1)}%</div>
+          </div>
+          <div style="text-align:center;padding:14px;background:rgba(122,162,247,0.06);border-radius:10px;border:1px solid rgba(122,162,247,0.15)">
+            <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px">Score B (הייטק)</div>
+            <div style="font-size:24px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:#7aa2f7">${(adj.score_b_weight_in_final * 100).toFixed(1)}%</div>
+          </div>
+          <div style="text-align:center;padding:14px;background:rgba(187,154,247,0.06);border-radius:10px;border:1px solid rgba(187,154,247,0.15)">
+            <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px">Volume</div>
+            <div style="font-size:24px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:#bb9af7">${(adj.volume_weight_in_final * 100).toFixed(1)}%</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">${suggestion.note || ''}</div>`;
+      }
+    }
+  } catch {}
+}
+
+function updateComparisonChart() {
+  const area = document.getElementById('fb-chart-area');
+  if (!area) return;
+  const submitted = FB_DEMO_PLACEMENTS.filter(p => fbSubmitted[p.id]);
+  if (submitted.length === 0) {
+    area.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-size:13px;padding:30px 0">שלח משוב לשיבוץ כדי לראות השוואה</div>';
+    return;
+  }
+  area.innerHTML = submitted.map(p => {
+    const fb = fbSubmitted[p.id];
+    const err = fb.actual - p.predicted_score;
+    const absErr = Math.abs(err);
+    const errColor = absErr <= 5 ? '#00c9a7' : absErr <= 10 ? '#f4a261' : '#e63946';
+    return `
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:90px;font-size:12px;color:var(--text);font-weight:600;text-align:right">${p.candidate}</div>
+      <div style="flex:1;position:relative;height:28px;background:rgba(255,255,255,0.04);border-radius:6px;overflow:hidden">
+        <div style="position:absolute;top:0;right:0;height:100%;width:${p.predicted_score}%;background:rgba(0,201,167,0.15);border-radius:6px"></div>
+        <div style="position:absolute;top:0;right:0;height:100%;width:${fb.actual}%;background:${errColor}33;border-radius:6px;transition:width 1s"></div>
+        <div style="position:absolute;right:${p.predicted_score}%;top:0;height:100%;width:2px;background:var(--teal)"></div>
+        <div style="position:absolute;right:${fb.actual}%;top:0;height:100%;width:2px;background:${errColor}"></div>
+      </div>
+      <div style="width:80px;font-family:'IBM Plex Mono',monospace;font-size:11px">
+        <span style="color:var(--teal)">${p.predicted_score}</span>
+        <span style="color:var(--text-dim)"> / </span>
+        <span style="color:${errColor};font-weight:700">${fb.actual.toFixed(0)}</span>
+      </div>
+      <div style="width:50px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:${errColor};font-weight:700">${err > 0 ? '+' : ''}${err.toFixed(1)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── ENGINE API ── */
+const MAOF_API = 'https://maof-project.onrender.com/api/v1';
+let engineOnline = false;
+
+async function checkEduEngine() {
+  const dot = document.getElementById('edu-engine-dot');
+  const lbl = document.getElementById('edu-engine-label');
+  try {
+    const r = await fetch(MAOF_API + '/health', { signal: AbortSignal.timeout(12000) });
+    const d = await r.json();
+    engineOnline = d.status === 'ok';
+    if (dot) dot.style.background = engineOnline ? '#22c55e' : '#ef4444';
+    if (lbl) { lbl.textContent = engineOnline ? 'מנוע פעיל' : 'מנוע לא זמין'; lbl.style.color = engineOnline ? '#22c55e' : '#ef4444'; }
+    if (engineOnline) onEduEngineReady(d);
+  } catch {
+    engineOnline = false;
+    if (dot) dot.style.background = '#ef4444';
+    if (lbl) { lbl.textContent = 'מנוע לא זמין'; lbl.style.color = '#ef4444'; }
+  }
+}
+
+async function onEduEngineReady(health) {
+  try {
+    const r = await fetch(MAOF_API + '/stats', { signal: AbortSignal.timeout(10000) });
+    const stats = await r.json();
+    showEduToast('מנוע מעוף מחובר — ' + (stats.candidates || 0) + ' מועמדים, ' + (stats.schools || 0) + ' בתי ספר');
+  } catch {}
+}
+
+async function fetchEngineSchools() {
+  if (!engineOnline) return null;
+  try {
+    const r = await fetch(MAOF_API + '/schools', { signal: AbortSignal.timeout(10000) });
+    return await r.json();
+  } catch { return null; }
+}
+
+function showEduToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0a1628;border:1px solid rgba(0,201,167,.4);color:#00c9a7;padding:10px 22px;border-radius:10px;font-size:13px;font-family:"IBM Plex Mono",monospace;z-index:99999;box-shadow:0 4px 24px rgba(0,0,0,.5)';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+window.addEventListener('load', () => setTimeout(checkEduEngine, 500));
+
 </script>
 </div><!-- close app wrapper -->
 <script>
@@ -3723,11 +4146,24 @@ function renderHistory() {
   var btn=document.getElementById('mobBtn');
   if(window.innerWidth>768){if(sb)sb.style.display='flex';if(btn)btn.style.display='none';}
   else{if(mn){mn.style.marginRight='0';mn.style.padding='56px 16px 16px';mn.style.maxWidth='100vw';}if(btn)btn.style.display='flex';}
-  window.maofToggle=function(){if(!sb)return;var open=sb.style.display!=='none';sb.style.display=open?'none':'flex';sb.style.position=open?'':'fixed';sb.style.top=open?'':'0';sb.style.right=open?'':'0';sb.style.height=open?'':'100vh';sb.style.zIndex=open?'':'1000';sb.style.width=open?'':'220px';sb.style.overflowY=open?'':'auto';sb.style.flexDirection=open?'':'column';var bd=document.getElementById('maofBd');if(bd)bd.style.display=open?'none':'block';};
-  window.maofClose=function(){if(sb)sb.style.display='none';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';};
-})();
+  window.maofToggle=function(){if(!sb)return;var open=sb.style.display!=='none';if(!open){sb.style.cssText='display:flex!important;flex-direction:column!important;position:fixed!important;top:0!important;left:0!important;right:0!important;width:100vw!important;height:100vh!important;z-index:2000!important;overflow-y:auto!important;padding-top:56px!important;';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='flex';}else{sb.style.cssText='display:none!important;';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='none';}};
+  window.maofClose=function(){if(sb)sb.style.cssText='display:none!important;';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='none';};
+  // Wrap nav function to auto-close sidebar
+  var _origNav = window.showScreen;
+  window.showScreen = function() {
+    if(_origNav) _origNav.apply(this, arguments);
+    setTimeout(function(){ if(window.maofClose) window.maofClose(); }, 50);
+  };})();
 </script></body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

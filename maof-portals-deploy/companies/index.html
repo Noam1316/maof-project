@@ -6,6 +6,7 @@
 <title>מעוף — פורטל חברה מאמצת</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+body{max-width:100vw;}  * {box-sizing:border-box;}
 :root {
   --bg:        #f0f2f5;
   --surface:   #ffffff;
@@ -591,10 +592,16 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
 @media(max-width: 480px) {
   .kpi-row, .kpi-grid, .needs-grid { grid-template-columns: 1fr !important; }
 }
+@media(max-width:768px){
+  .chat-shell{grid-template-columns:1fr!important;}
+  .modal-kpi-grid{grid-template-columns:1fr 1fr!important;}
+  .table-wrap, table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;}
+}
 </style>
 </head>
 <body>
 <button id="mobBtn" onclick="window.maofToggle()" style="display:none;position:fixed;top:12px;right:12px;z-index:2000;width:44px;height:44px;border-radius:10px;border:2px solid rgba(255,255,255,0.2);background:rgba(30,58,95,0.95);color:white;font-size:22px;cursor:pointer;">☰</button>
+<button id="maofCloseX" onclick="window.maofClose()" style="display:none;position:fixed;top:12px;left:12px;z-index:2001;width:44px;height:44px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:white;font-size:22px;cursor:pointer;align-items:center;justify-content:center;">✕</button>
 <div id="maofBd" onclick="window.maofClose()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;"></div>
 
 <div class="shell">
@@ -635,6 +642,9 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
         <span class="sb-badge red">3</span>
       </div>
       <div class="sb-item" onclick="nav('agreement')"><span class="ic">📄</span>הסכם שותפות</div>
+      <div class="sb-item" onclick="nav('feedback')"><span class="ic">📝</span>משוב ביצועים
+        <span style="background:var(--amber);color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-right:auto;font-weight:700">חי</span>
+      </div>
       <div class="sb-item" onclick="nav('settings')"><span class="ic">⚙️</span>הגדרות חברה</div>
     </div>
   </div>
@@ -647,6 +657,10 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
         <div class="sb-user-role">HR Lead · Mobileye</div>
       </div>
       <div class="sb-gear" onclick="nav('settings')">⚙</div>
+    </div>
+    <div id="co-engine-status" style="display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer" onclick="checkCompanyEngine()" title="לחץ לבדיקה">
+      <div id="co-engine-dot" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all .3s"></div>
+      <span id="co-engine-label" style="font-size:9px;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace">בודק מנוע...</span>
     </div>
   </div>
 </nav>
@@ -1099,6 +1113,69 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
 </div>
 
 <!-- ─── SETTINGS ──────────────────────────────────────────────── -->
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN: FEEDBACK — משוב ביצועים חברה
+═══════════════════════════════════════════════════════════ -->
+<div id="s-feedback" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">משוב <em>ביצועים</em></div>
+      <div class="page-sub">Feedback Loop — דרגו מועמדים שהוצבו אצלכם. המשוב משפיע על ציוני ההתאמה העתידיים</div>
+    </div>
+    <div class="topbar-actions">
+      <span id="co-fb-api-status" style="font-size:11px;font-family:'DM Mono',monospace;color:#94a3b8">בודק חיבור...</span>
+      <button class="btn btn-primary" onclick="loadCompanyFeedbackStats()">🔄 רענן</button>
+    </div>
+  </div>
+
+  <!-- ── LOOP STATS ── -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px">
+    <div class="card" style="text-align:center;padding:18px">
+      <div style="font-size:28px;font-weight:900;font-family:'DM Mono',monospace;color:var(--blue)" id="co-fb-total">—</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:3px">שיבוצים במערכת</div>
+    </div>
+    <div class="card" style="text-align:center;padding:18px">
+      <div style="font-size:28px;font-weight:900;font-family:'DM Mono',monospace;color:#059669" id="co-fb-with">—</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:3px">עם משוב חברה</div>
+    </div>
+    <div class="card" style="text-align:center;padding:18px">
+      <div style="font-size:28px;font-weight:900;font-family:'DM Mono',monospace;color:var(--amber)" id="co-fb-mae">—</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:3px">שגיאה ממוצעת (MAE)</div>
+    </div>
+    <div class="card" style="text-align:center;padding:18px">
+      <div style="font-size:28px;font-weight:900;font-family:'DM Mono',monospace;color:#8b5cf6" id="co-fb-phase">—</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:3px">שלב נוכחי</div>
+    </div>
+  </div>
+
+  <!-- ── AI RECOMMENDATION ── -->
+  <div id="co-fb-ai-rec" style="display:none;background:linear-gradient(135deg,rgba(37,99,235,0.08),rgba(37,99,235,0.02));border:1px solid rgba(37,99,235,0.25);border-radius:12px;padding:18px;margin-bottom:24px;display:none">
+    <div style="display:flex;gap:14px;align-items:flex-start">
+      <div style="font-size:24px;flex-shrink:0">🤖</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:6px">המלצת AI — כיוון משקלות</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.6" id="co-fb-ai-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COMPARISON CHART ── -->
+  <div class="card" style="margin-bottom:24px;padding:22px">
+    <div style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:16px">📊 חיזוי מול ביצועים — Predicted vs Actual</div>
+    <div id="co-fb-chart" style="display:flex;flex-direction:column;gap:10px">
+      <div style="text-align:center;color:#94a3b8;font-size:13px;padding:30px 0">שלח משוב למועמד כדי לראות השוואה</div>
+    </div>
+  </div>
+
+  <!-- ── FEEDBACK FORMS ── -->
+  <div style="font-size:16px;font-weight:800;color:#1e293b;margin-bottom:16px">📝 דרגו מועמדים — תחנה ב'</div>
+  <div style="font-size:12px;color:#94a3b8;margin-bottom:18px">הזינו ציוני ביצועים — המשוב נשלח ישירות למנוע מעוף ומעדכן את האלגוריתם</div>
+
+  <div id="co-fb-list" style="display:flex;flex-direction:column;gap:14px">
+    <!-- Generated by JS -->
+  </div>
+</div>
+
 <div id="s-settings" class="screen">
   <div class="topbar">
     <div>
@@ -1320,7 +1397,7 @@ const BLUE='#2563eb', GREEN='#059669', AMBER='#d97706', RED='#dc2626';
 Chart.defaults.font.family = "'DM Mono', monospace";
 Chart.defaults.color = '#94a3b8';
 
-const navMap = {dashboard:0,candidates:1,placements:2,finance:3,aichat:4,notifications:5,agreement:6,settings:7};
+const navMap = {dashboard:0,candidates:1,placements:2,finance:3,aichat:4,notifications:5,agreement:6,feedback:7,settings:8};
 let inited = {};
 
 function nav(name) {
@@ -1328,6 +1405,7 @@ function nav(name) {
   document.getElementById('s-'+name).classList.add('active');
   document.querySelectorAll('.sb-item').forEach((n,i) => n.classList.toggle('active', i === navMap[name]));
   if (name === 'notifications') initCompanyNotifications();
+  if (name === 'feedback') initCompanyFeedback();
   if (!inited[name]) { inited[name] = true; initScreen(name); }
 }
 
@@ -1998,6 +2076,295 @@ function showCompanyToast(msg) {
 
 /* currentModal tracking merged into openModal() */
 
+/* ── COMPANY FEEDBACK LOOP ── */
+const CO_FB_PLACEMENTS = [
+  { id:'fb-p1', candidate_id:'noam-levi', company_id:'mobileye', school_id:'ort-netivot',
+    candidate:'נועה לוי', role:'Security Researcher', company:'Mobileye', stack:'Python · Cyber · CV',
+    predicted_score: 94, color:'#dc2626', initials:'נל' },
+  { id:'fb-p2', candidate_id:'yuval-cohen', company_id:'checkpoint', school_id:'ort-kiryat-shmona',
+    candidate:'יובל כהן', role:'Cyber Analyst', company:'Check Point', stack:'Cyber · Python · Linux',
+    predicted_score: 97, color:'#059669', initials:'יכ' },
+  { id:'fb-p3', candidate_id:'dana-asher', company_id:'waze', school_id:'gymnasia-herzliya',
+    candidate:'דנה אשר', role:'Data Engineer', company:'Waze', stack:'Python · Data · Cloud',
+    predicted_score: 86, color:'#2563eb', initials:'דא' },
+  { id:'fb-p4', candidate_id:'tamar-katz', company_id:'elbit', school_id:'kfar-menachem',
+    candidate:'תמר כץ', role:'Systems Engineer', company:'Elbit', stack:'C++ · Embedded · Linux',
+    predicted_score: 83, color:'#8b5cf6', initials:'תכ' },
+];
+
+let coFbInit = false;
+let coFbSubmitted = {};
+
+async function initCompanyFeedback() {
+  renderCompanyFeedbackForms();
+  if (!coFbInit) {
+    await seedCompanyPlacements();
+    coFbInit = true;
+  }
+  loadCompanyFeedbackStats();
+}
+
+async function seedCompanyPlacements() {
+  if (!engineOnline) return;
+  for (const p of CO_FB_PLACEMENTS) {
+    try {
+      await fetch(MAOF_API + '/feedback/placement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          placement_id: p.id, candidate_id: p.candidate_id,
+          school_id: p.school_id, company_id: p.company_id,
+          predicted_score: p.predicted_score
+        })
+      });
+    } catch {}
+  }
+}
+
+function renderCompanyFeedbackForms() {
+  const container = document.getElementById('co-fb-list');
+  if (!container) return;
+  container.innerHTML = CO_FB_PLACEMENTS.map(p => {
+    const sub = coFbSubmitted[p.id];
+    return `
+    <div class="card" style="padding:20px;border:1px solid ${sub ? 'rgba(5,150,105,0.3)' : 'rgba(0,0,0,0.06)'}">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:40px;height:40px;border-radius:10px;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">${p.initials}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#1e293b">${p.candidate}</div>
+          <div style="font-size:11px;color:#94a3b8">${p.role} @ ${p.company} · ${p.stack}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace">PREDICTED</div>
+          <div style="font-size:22px;font-weight:900;font-family:'DM Mono',monospace;color:var(--blue)">${p.predicted_score}</div>
+        </div>
+        ${sub ? `<div style="text-align:center">
+          <div style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace">ACTUAL</div>
+          <div style="font-size:22px;font-weight:900;font-family:'DM Mono',monospace;color:${Math.abs(sub.actual - p.predicted_score) <= 5 ? '#059669' : '#d97706'}">${sub.actual}</div>
+        </div>` : ''}
+      </div>
+      ${sub ? renderCoFbResult(p, sub) : renderCoFbSliders(p)}
+    </div>`;
+  }).join('');
+}
+
+function renderCoFbSliders(p) {
+  return `
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:#64748b">ביצועים טכניים</label>
+        <span id="co-val-perf-${p.id}" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--blue)">78</span>
+      </div>
+      <input type="range" min="0" max="100" value="78" id="co-sl-perf-${p.id}" oninput="document.getElementById('co-val-perf-${p.id}').textContent=this.value"
+        style="width:100%;accent-color:#2563eb;height:6px">
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:#64748b">קצב התקדמות</label>
+        <span id="co-val-prog-${p.id}" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--blue)">72</span>
+      </div>
+      <input type="range" min="0" max="100" value="72" id="co-sl-prog-${p.id}" oninput="document.getElementById('co-val-prog-${p.id}').textContent=this.value"
+        style="width:100%;accent-color:#2563eb;height:6px">
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <label style="font-size:11px;color:#64748b">שביעות רצון מנהל</label>
+        <span id="co-val-mgr-${p.id}" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--blue)">80</span>
+      </div>
+      <input type="range" min="0" max="100" value="80" id="co-sl-mgr-${p.id}" oninput="document.getElementById('co-val-mgr-${p.id}').textContent=this.value"
+        style="width:100%;accent-color:#2563eb;height:6px">
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-top:14px">
+    <button onclick="submitCompanyFeedback('${p.id}')" class="btn btn-primary">📤 שלח משוב למנוע</button>
+  </div>`;
+}
+
+function renderCoFbResult(p, fb) {
+  const err = fb.actual - p.predicted_score;
+  const absErr = Math.abs(err);
+  const errColor = absErr <= 5 ? '#059669' : absErr <= 10 ? '#d97706' : '#dc2626';
+  const errLabel = absErr <= 5 ? 'מדויק' : absErr <= 10 ? 'סטייה קלה' : 'סטייה משמעותית';
+  return `
+  <div style="background:rgba(5,150,105,0.04);border:1px solid rgba(5,150,105,0.15);border-radius:10px;padding:14px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="font-size:11px;color:#64748b">שגיאת חיזוי:</span>
+      <span style="font-size:14px;font-weight:900;font-family:'DM Mono',monospace;color:${errColor}">${err > 0 ? '+' : ''}${err.toFixed(1)}</span>
+      <span style="font-size:10px;padding:2px 8px;border-radius:4px;background:${errColor}18;color:${errColor};font-weight:600">${errLabel}</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+      <span style="font-size:10px;color:#94a3b8;width:55px">חיזוי</span>
+      <div style="flex:1;height:8px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden">
+        <div style="width:${p.predicted_score}%;height:100%;background:var(--blue);border-radius:4px;opacity:0.3"></div>
+      </div>
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:#94a3b8;width:28px">${p.predicted_score}</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:10px;color:#94a3b8;width:55px">בפועל</span>
+      <div style="flex:1;height:8px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden">
+        <div style="width:${fb.actual}%;height:100%;background:${errColor};border-radius:4px;transition:width 1s ease"></div>
+      </div>
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:#1e293b;font-weight:700;width:28px">${fb.actual.toFixed(1)}</span>
+    </div>
+    <div style="font-size:10px;color:#94a3b8;margin-top:10px;font-family:'DM Mono',monospace">
+      ביצועים: ${fb.performance} · התקדמות: ${fb.progression} · מנהל: ${fb.manager}
+    </div>
+  </div>`;
+}
+
+async function submitCompanyFeedback(placementId) {
+  const p = CO_FB_PLACEMENTS.find(x => x.id === placementId);
+  if (!p) return;
+
+  const perf = parseInt(document.getElementById('co-sl-perf-' + placementId)?.value || 78);
+  const prog = parseInt(document.getElementById('co-sl-prog-' + placementId)?.value || 72);
+  const mgr  = parseInt(document.getElementById('co-sl-mgr-'  + placementId)?.value || 80);
+
+  const btn = document.querySelector(`#co-fb-card-${placementId} button`) || (typeof event !== 'undefined' && event?.target);
+  if (btn) { btn.textContent = '⏳ שולח...'; btn.disabled = true; }
+
+  try {
+    const r = await fetch(MAOF_API + '/feedback/company', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        placement_id: placementId,
+        candidate_id: p.candidate_id,
+        company_id: p.company_id,
+        date: new Date().toISOString().split('T')[0],
+        performance_score: perf,
+        progression_rate: prog,
+        manager_satisfaction: mgr,
+      })
+    });
+    const data = await r.json();
+    const actual = data.actual_score ?? (perf * 0.50 + prog * 0.30 + mgr * 0.20);
+
+    coFbSubmitted[placementId] = { actual, performance: perf, progression: prog, manager: mgr };
+    renderCompanyFeedbackForms();
+    updateCoFbChart();
+    loadCompanyFeedbackStats();
+    showCompanyToast('משוב נשלח בהצלחה — ציון בפועל: ' + actual.toFixed(1));
+  } catch (e) {
+    const actual = perf * 0.50 + prog * 0.30 + mgr * 0.20;
+    coFbSubmitted[placementId] = { actual, performance: perf, progression: prog, manager: mgr };
+    renderCompanyFeedbackForms();
+    updateCoFbChart();
+    showCompanyToast('משוב נשמר (מצב מקומי)');
+  }
+}
+
+async function loadCompanyFeedbackStats() {
+  const statusEl = document.getElementById('co-fb-api-status');
+  if (!engineOnline) {
+    if (statusEl) { statusEl.textContent = 'מנוע לא מחובר'; statusEl.style.color = '#dc2626'; }
+    return;
+  }
+  if (statusEl) { statusEl.textContent = '🟢 מחובר'; statusEl.style.color = '#059669'; }
+
+  try {
+    const r = await fetch(MAOF_API + '/feedback/stats', { signal: AbortSignal.timeout(10000) });
+    const data = await r.json();
+    const stats = data.stats || {};
+    const errors = data.errors || {};
+
+    document.getElementById('co-fb-total').textContent = stats.total_placements ?? '—';
+    document.getElementById('co-fb-with').textContent = stats.with_some_feedback ?? '—';
+    document.getElementById('co-fb-mae').textContent = stats.mean_absolute_error != null ? stats.mean_absolute_error.toFixed(1) : '—';
+    const phaseMap = { synthetic: 'סינתטי', mixed: 'מעורב', real_data: 'אמיתי' };
+    document.getElementById('co-fb-phase').textContent = phaseMap[stats.phase] || stats.phase || '—';
+
+    if (errors.bias && errors.n_analyzed > 0) {
+      const recEl = document.getElementById('co-fb-ai-rec');
+      const textEl = document.getElementById('co-fb-ai-text');
+      if (recEl && textEl) {
+        recEl.style.display = 'block';
+        textEl.innerHTML = `<strong>הטיה:</strong> ${errors.bias} · <strong>שגיאה:</strong> ${errors.avg_error?.toFixed(1) ?? '—'} · <strong>המלצה:</strong> ${errors.recommendation || '—'}`;
+      }
+    }
+  } catch {}
+}
+
+function updateCoFbChart() {
+  const area = document.getElementById('co-fb-chart');
+  if (!area) return;
+  const submitted = CO_FB_PLACEMENTS.filter(p => coFbSubmitted[p.id]);
+  if (submitted.length === 0) {
+    area.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:13px;padding:30px 0">שלח משוב למועמד כדי לראות השוואה</div>';
+    return;
+  }
+  area.innerHTML = submitted.map(p => {
+    const fb = coFbSubmitted[p.id];
+    const err = fb.actual - p.predicted_score;
+    const absErr = Math.abs(err);
+    const errColor = absErr <= 5 ? '#059669' : absErr <= 10 ? '#d97706' : '#dc2626';
+    return `
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:90px;font-size:12px;color:#1e293b;font-weight:600;text-align:right">${p.candidate}</div>
+      <div style="flex:1;position:relative;height:28px;background:rgba(0,0,0,0.04);border-radius:6px;overflow:hidden">
+        <div style="position:absolute;top:0;right:0;height:100%;width:${p.predicted_score}%;background:rgba(37,99,235,0.12);border-radius:6px"></div>
+        <div style="position:absolute;top:0;right:0;height:100%;width:${fb.actual}%;background:${errColor}22;border-radius:6px;transition:width 1s"></div>
+        <div style="position:absolute;right:${p.predicted_score}%;top:0;height:100%;width:2px;background:var(--blue)"></div>
+        <div style="position:absolute;right:${fb.actual}%;top:0;height:100%;width:2px;background:${errColor}"></div>
+      </div>
+      <div style="width:80px;font-family:'DM Mono',monospace;font-size:11px">
+        <span style="color:var(--blue)">${p.predicted_score}</span>
+        <span style="color:#94a3b8"> / </span>
+        <span style="color:${errColor};font-weight:700">${fb.actual.toFixed(0)}</span>
+      </div>
+      <div style="width:50px;font-family:'DM Mono',monospace;font-size:11px;color:${errColor};font-weight:700">${err > 0 ? '+' : ''}${err.toFixed(1)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── ENGINE API ── */
+const MAOF_API = 'https://maof-project.onrender.com/api/v1';
+let engineOnline = false;
+
+async function checkCompanyEngine() {
+  const dot = document.getElementById('co-engine-dot');
+  const lbl = document.getElementById('co-engine-label');
+  try {
+    const r = await fetch(MAOF_API + '/health', { signal: AbortSignal.timeout(12000) });
+    const d = await r.json();
+    engineOnline = d.status === 'ok';
+    if (dot) dot.style.background = engineOnline ? '#22c55e' : '#ef4444';
+    if (lbl) { lbl.textContent = engineOnline ? 'מנוע פעיל' : 'מנוע לא זמין'; lbl.style.color = engineOnline ? '#22c55e' : '#ef4444'; }
+    if (engineOnline) onEngineReady(d);
+  } catch {
+    engineOnline = false;
+    if (dot) dot.style.background = '#ef4444';
+    if (lbl) { lbl.textContent = 'מנוע לא זמין'; lbl.style.color = '#ef4444'; }
+  }
+}
+
+async function onEngineReady(health) {
+  try {
+    const r = await fetch(MAOF_API + '/stats', { signal: AbortSignal.timeout(10000) });
+    const stats = await r.json();
+    showCompanyToast('מנוע מעוף מחובר — ' + (stats.candidates || 0) + ' מועמדים, ' + (stats.companies || 0) + ' חברות');
+  } catch {}
+}
+
+async function fetchEngineCompanies() {
+  if (!engineOnline) return null;
+  try {
+    const r = await fetch(MAOF_API + '/companies', { signal: AbortSignal.timeout(10000) });
+    return await r.json();
+  } catch { return null; }
+}
+
+async function fetchEngineCandidates() {
+  if (!engineOnline) return null;
+  try {
+    const r = await fetch(MAOF_API + '/candidates', { signal: AbortSignal.timeout(10000) });
+    return await r.json();
+  } catch { return null; }
+}
+
+window.addEventListener('load', () => setTimeout(checkCompanyEngine, 500));
+
 </script>
 <script>
 (function(){
@@ -2006,11 +2373,24 @@ function showCompanyToast(msg) {
   var btn=document.getElementById('mobBtn');
   if(window.innerWidth>768){if(sb)sb.style.display='flex';if(btn)btn.style.display='none';}
   else{if(mn){mn.style.marginRight='0';mn.style.padding='56px 16px 16px';mn.style.maxWidth='100vw';}if(btn)btn.style.display='flex';}
-  window.maofToggle=function(){if(!sb)return;var open=sb.style.display!=='none';sb.style.display=open?'none':'flex';sb.style.position=open?'':'fixed';sb.style.top=open?'':'0';sb.style.right=open?'':'0';sb.style.height=open?'':'100vh';sb.style.zIndex=open?'':'1000';sb.style.width=open?'':'228px';sb.style.overflowY=open?'':'auto';sb.style.flexDirection=open?'':'column';var bd=document.getElementById('maofBd');if(bd)bd.style.display=open?'none':'block';};
-  window.maofClose=function(){if(sb)sb.style.display='none';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';};
-})();
+  window.maofToggle=function(){if(!sb)return;var open=sb.style.display!=='none';if(!open){sb.style.cssText='display:flex!important;flex-direction:column!important;position:fixed!important;top:0!important;left:0!important;right:0!important;width:100vw!important;height:100vh!important;z-index:2000!important;overflow-y:auto!important;padding-top:56px!important;';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='flex';}else{sb.style.cssText='display:none!important;';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='none';}};
+  window.maofClose=function(){if(sb)sb.style.cssText='display:none!important;';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='none';};
+  // Wrap nav function to auto-close sidebar
+  var _origNav = window.nav;
+  window.nav = function() {
+    if(_origNav) _origNav.apply(this, arguments);
+    setTimeout(function(){ if(window.maofClose) window.maofClose(); }, 50);
+  };})();
 </script></body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
