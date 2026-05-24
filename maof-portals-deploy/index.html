@@ -1,25 +1,609 @@
-﻿<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מעוף – Tech-Lead Israel</title>
+<title>מעוף — Tech-Lead Israel | AI לניהול הון אנושי</title>
+<meta name="description" content="פלטפורמת AI לשידוך חיילים משוחררים עם הוראת STEM ותעשיית ההייטק — מודל 2+2 מחזורי">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Arial,sans-serif;direction:rtl;background:#1E3A5F;color:white;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
-h1{font-size:clamp(20px,5vw,32px);margin-bottom:8px;text-align:center;}
-p.sub{font-size:14px;color:#93c5fd;margin-bottom:32px;text-align:center;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;width:100%;max-width:600px;}
-.card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:20px 16px;text-align:center;text-decoration:none;color:white;transition:background .2s;}
-.card:hover{background:rgba(255,255,255,0.15);}
-.card .icon{font-size:28px;margin-bottom:8px;}
-.card .label{font-size:13px;font-weight:600;}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root {
+  --bg: #0a0c10;
+  --surface: #12151c;
+  --card: #181c28;
+  --card-hover: #1e2336;
+  --gold: #f5c842;
+  --gold-dim: #c9a030;
+  --teal: #00d4aa;
+  --blue: #4d9cff;
+  --red: #ff5c6a;
+  --green: #34d399;
+  --amber: #f4a261;
+  --text: #e8ecf4;
+  --text-mid: #94a3b8;
+  --text-dim: #5a6478;
+  --border: rgba(245,200,66,0.1);
+  --glow-gold: rgba(245,200,66,0.15);
+  --glow-teal: rgba(0,212,170,0.12);
+}
+
+body {
+  font-family:'Heebo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Subtle animated bg */
+body::before {
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 10%, rgba(245,200,66,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 20% 80%, rgba(0,212,170,0.03) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(77,156,255,0.02) 0%, transparent 60%);
+}
+
+.container{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+/* ─── TOPBAR ─────────────────────── */
+.topbar {
+  position:fixed;top:0;right:0;left:0;z-index:100;
+  background:rgba(10,12,16,0.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.topbar-inner {
+  max-width:1100px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-brand{display:flex;align-items:center;gap:10px;}
+.topbar-logo {
+  font-size:18px;font-weight:900;color:#fff;
+  letter-spacing:-0.5px;
+}
+.topbar-logo em{font-style:normal;color:var(--gold);}
+.topbar-tag {
+  font-size:8px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#0a0c10;padding:3px 8px;border-radius:4px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  font-family:'IBM Plex Mono',monospace;
+}
+.topbar-links{display:flex;gap:6px;}
+.topbar-links a {
+  font-size:12px;color:var(--text-mid);text-decoration:none;
+  padding:6px 12px;border-radius:6px;transition:all .2s;
+  font-weight:500;
+}
+.topbar-links a:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.topbar-links a.live {
+  background:rgba(0,212,170,0.12);color:var(--teal);
+  border:1px solid rgba(0,212,170,0.2);
+}
+
+/* ─── HERO ───────────────────────── */
+.hero {
+  padding:140px 0 80px;
+  text-align:center;
+}
+.hero-eyebrow {
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:600;color:var(--gold);
+  background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.15);
+  padding:6px 16px;border-radius:20px;margin-bottom:24px;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:0.5px;
+}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+
+.hero h1 {
+  font-size:clamp(32px,5vw,56px);
+  font-weight:900;line-height:1.15;
+  margin-bottom:18px;letter-spacing:-1px;
+}
+.hero h1 .gold{color:var(--gold);}
+.hero h1 .teal{color:var(--teal);}
+
+.hero-sub {
+  font-size:clamp(16px,2.5vw,20px);
+  color:var(--text-mid);max-width:650px;margin:0 auto 36px;
+  line-height:1.7;font-weight:300;
+}
+
+.hero-stats {
+  display:flex;justify-content:center;gap:48px;flex-wrap:wrap;
+  margin-bottom:40px;
+}
+.hero-stat {text-align:center;}
+.hero-stat .num {
+  font-size:36px;font-weight:900;
+  font-family:'IBM Plex Mono',monospace;
+  background:linear-gradient(135deg,var(--gold),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-stat .label{font-size:12px;color:var(--text-dim);margin-top:4px;}
+
+.hero-cta {display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:10px;font-size:14px;
+  font-weight:600;text-decoration:none;transition:all .25s;
+  border:none;cursor:pointer;font-family:'Heebo',sans-serif;
+}
+.btn-gold {
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#0a0c10;box-shadow:0 4px 24px rgba(245,200,66,0.3);
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 32px rgba(245,200,66,0.4);}
+.btn-outline {
+  background:transparent;color:var(--text);
+  border:1px solid rgba(255,255,255,0.12);
+}
+.btn-outline:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);}
+
+/* ─── PROBLEM ────────────────────── */
+.section{padding:80px 0;}
+.section-label {
+  font-size:10px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);
+  font-family:'IBM Plex Mono',monospace;margin-bottom:12px;
+  text-align:center;
+}
+.section-title {
+  font-size:clamp(24px,3.5vw,36px);font-weight:800;
+  text-align:center;margin-bottom:48px;letter-spacing:-0.5px;
+}
+
+.problem-grid {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.problem-card {
+  background:var(--card);border:1px solid rgba(255,255,255,0.05);
+  border-radius:16px;padding:32px 24px;text-align:center;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.problem-card::before {
+  content:'';position:absolute;top:0;right:0;left:0;height:3px;
+  border-radius:16px 16px 0 0;
+}
+.problem-card:nth-child(1)::before{background:var(--red);}
+.problem-card:nth-child(2)::before{background:var(--amber);}
+.problem-card:nth-child(3)::before{background:var(--blue);}
+.problem-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.1);}
+.problem-icon{font-size:36px;margin-bottom:16px;}
+.problem-num{font-size:28px;font-weight:900;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;}
+.problem-card:nth-child(1) .problem-num{color:var(--red);}
+.problem-card:nth-child(2) .problem-num{color:var(--amber);}
+.problem-card:nth-child(3) .problem-num{color:var(--blue);}
+.problem-text{font-size:14px;color:var(--text-mid);line-height:1.6;}
+
+/* ─── 2+2 MODEL ──────────────────── */
+.model-section{background:var(--surface);border-top:1px solid rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.04);}
+.journey {
+  display:flex;align-items:stretch;gap:0;position:relative;
+  max-width:900px;margin:0 auto;
+}
+.journey::before {
+  content:'';position:absolute;top:50%;right:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),var(--teal),var(--blue));
+  opacity:0.3;z-index:0;
+}
+.journey-step {
+  flex:1;text-align:center;padding:24px 16px;position:relative;z-index:1;
+}
+.step-dot {
+  width:48px;height:48px;border-radius:50%;margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;
+  border:3px solid;
+}
+.step-1 .step-dot{border-color:var(--gold);background:rgba(245,200,66,0.1);color:var(--gold);}
+.step-2 .step-dot{border-color:var(--teal);background:rgba(0,212,170,0.1);color:var(--teal);}
+.step-3 .step-dot{border-color:var(--blue);background:rgba(77,156,255,0.1);color:var(--blue);}
+.step-4 .step-dot{border-color:var(--green);background:rgba(52,211,153,0.1);color:var(--green);}
+
+.step-title{font-size:15px;font-weight:700;margin-bottom:6px;}
+.step-desc{font-size:12px;color:var(--text-mid);line-height:1.5;}
+.step-tag {
+  display:inline-block;font-size:10px;font-weight:600;
+  padding:3px 10px;border-radius:6px;margin-top:10px;
+  font-family:'IBM Plex Mono',monospace;
+}
+.step-1 .step-tag{background:rgba(245,200,66,0.12);color:var(--gold);}
+.step-2 .step-tag{background:rgba(0,212,170,0.12);color:var(--teal);}
+.step-3 .step-tag{background:rgba(77,156,255,0.12);color:var(--blue);}
+.step-4 .step-tag{background:rgba(52,211,153,0.12);color:var(--green);}
+
+/* ─── DEMOS ──────────────────────── */
+.demos-grid {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;
+}
+.demo-card {
+  background:var(--card);border:1px solid rgba(255,255,255,0.05);
+  border-radius:14px;padding:28px 24px;
+  text-decoration:none;color:var(--text);
+  transition:all .3s;display:flex;flex-direction:column;gap:12px;
+  position:relative;overflow:hidden;
+}
+.demo-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.12);background:var(--card-hover);}
+.demo-card-head{display:flex;align-items:center;justify-content:space-between;}
+.demo-card-icon{font-size:28px;}
+.demo-badge {
+  font-size:9px;font-weight:600;padding:3px 8px;border-radius:5px;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:0.5px;
+}
+.badge-live{background:rgba(52,211,153,0.15);color:var(--green);border:1px solid rgba(52,211,153,0.2);}
+.badge-api{background:rgba(77,156,255,0.15);color:var(--blue);border:1px solid rgba(77,156,255,0.2);}
+.badge-ai{background:rgba(245,200,66,0.15);color:var(--gold);border:1px solid rgba(245,200,66,0.2);}
+.demo-card h3{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+.demo-card p{font-size:13px;color:var(--text-mid);line-height:1.6;flex:1;}
+.demo-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.demo-tag {
+  font-size:10px;color:var(--text-dim);
+  background:rgba(255,255,255,0.04);padding:4px 8px;
+  border-radius:5px;font-family:'IBM Plex Mono',monospace;
+}
+.demo-arrow {
+  font-size:12px;color:var(--text-dim);
+  display:flex;align-items:center;gap:6px;margin-top:4px;
+  transition:color .2s;
+}
+.demo-card:hover .demo-arrow{color:var(--gold);}
+
+/* ─── ENGINE STATUS ──────────────── */
+.engine-bar {
+  display:flex;align-items:center;justify-content:center;gap:24px;
+  padding:20px;margin-top:32px;
+  background:var(--card);border:1px solid rgba(255,255,255,0.05);
+  border-radius:12px;flex-wrap:wrap;
+}
+.engine-indicator{display:flex;align-items:center;gap:8px;}
+.engine-dot {
+  width:8px;height:8px;border-radius:50%;
+  background:var(--text-dim);transition:all .5s;
+}
+.engine-dot.online{background:var(--green);box-shadow:0 0 8px rgba(52,211,153,0.5);}
+.engine-dot.offline{background:var(--red);}
+.engine-label{font-size:12px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;}
+.engine-endpoint{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;}
+
+/* ─── TECH ────────────────────────── */
+.tech-grid {
+  display:flex;justify-content:center;gap:32px;flex-wrap:wrap;
+  margin-top:32px;
+}
+.tech-item{text-align:center;}
+.tech-item .icon{font-size:28px;margin-bottom:8px;}
+.tech-item .name{font-size:12px;font-weight:600;color:var(--text-mid);}
+
+/* ─── FOOTER ─────────────────────── */
+footer {
+  padding:40px 0;text-align:center;
+  border-top:1px solid rgba(255,255,255,0.04);
+  margin-top:40px;
+}
+footer p{font-size:12px;color:var(--text-dim);line-height:1.8;}
+footer a{color:var(--gold);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+
+/* ─── RESPONSIVE ─────────────────── */
+@media(max-width:768px){
+  .problem-grid{grid-template-columns:1fr;}
+  .journey{flex-direction:column;gap:8px;}
+  .journey::before{display:none;}
+  .hero-stats{gap:24px;}
+  .topbar-links{display:none;}
+  .demos-grid{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .hero{padding:120px 0 60px;}
+  .hero h1{font-size:28px;}
+  .engine-bar{flex-direction:column;gap:12px;}
+}
 </style>
-</head><body>
-<h1>🚀 מעוף – Tech-Lead Israel</h1>
-<p class="sub">פלטפורמת AI לשידוך חיילים משוחררים עם הוראת STEM ותעשיית ההייטק</p>
-<div class="grid">
-  <a href="/soldiers" class="card"><div class="icon">🎖️</div><div class="label">פורטל חיילים</div></a>
-  <a href="/companies" class="card"><div class="icon">💻</div><div class="label">פורטל חברות</div></a>
-  <a href="/education" class="card"><div class="icon">🏫</div><div class="label">פורטל חינוך</div></a>
-  <a href="/eli5" class="card"><div class="icon">🧠</div><div class="label">מבחן ELI5</div></a>
-  <a href="/simulation" class="card"><div class="icon">⚙️</div><div class="label">סימולציה</div></a>
-</div>
-</body></html>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-brand">
+      <div class="topbar-logo"><em>מעוף</em> Tech-Lead</div>
+      <span class="topbar-tag">Israel</span>
+    </div>
+    <div class="topbar-links">
+      <a href="#problem">הבעיה</a>
+      <a href="#model">מודל 2+2</a>
+      <a href="#demos">דמואים</a>
+      <a href="https://signal-news-noam1316s-projects.vercel.app/dashboard" target="_blank" class="live">Signal News ↗</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      מיזם AI לניהול הון אנושי — רשות החדשנות, מסלול תנופה
+    </div>
+    <h1>
+      מחברים <span class="gold">לוחמים משוחררים</span><br>
+      עם <span class="teal">הוראת STEM</span> והייטק
+    </h1>
+    <p class="hero-sub">
+      מודל קריירה מעגלית 2+2 עם מנוע AI לשידוך, דירוג וסינון —
+      פותר בו-זמנית מחסור מורים, גיוס ג'וניורים, ושילוב חיילים
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">3,500</div>
+        <div class="label">מורי STEM חסרים</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">25K</div>
+        <div class="label">לוחמים משתחררים בשנה</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">2+2</div>
+        <div class="label">שנות הוראה + הייטק</div>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#demos" class="btn btn-gold">צפה בדמואים החיים ↓</a>
+      <a href="https://maof-project.onrender.com/docs" target="_blank" class="btn btn-outline">API Documentation ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="section-label">THE PROBLEM</div>
+    <h2 class="section-title">שלוש בעיות — פתרון אחד</h2>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">🏫</div>
+        <div class="problem-num">3,500</div>
+        <div class="problem-text">
+          מורי STEM חסרים במערכת החינוך.<br>
+          פריפריה ותיכונים טכנולוגיים הכי מושפעים.
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💻</div>
+        <div class="problem-num">62%</div>
+        <div class="problem-text">
+          מחברות ההייטק מדווחות על קושי בגיוס ג'וניורים איכותיים עם Soft Skills.
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🎖️</div>
+        <div class="problem-num">25K</div>
+        <div class="problem-text">
+          לוחמים משתחררים בשנה ללא מסלול קריירה ברור — פוטנציאל ענק שהולך לאיבוד.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2+2 MODEL -->
+<section class="section model-section" id="model">
+  <div class="container">
+    <div class="section-label">THE SOLUTION</div>
+    <h2 class="section-title">מודל 2+2 — קריירה מעגלית</h2>
+    <div class="journey">
+      <div class="journey-step step-1">
+        <div class="step-dot">1</div>
+        <div class="step-title">הכשרה</div>
+        <div class="step-desc">קורס AI & Data Science<br>בנאיה קולג'</div>
+        <div class="step-tag">מימון קרן</div>
+      </div>
+      <div class="journey-step step-2">
+        <div class="step-dot">2</div>
+        <div class="step-title">2 שנות הוראה</div>
+        <div class="step-desc">הוראת STEM בבתי ספר<br>סייבר, פייתון, פיזיקה</div>
+        <div class="step-tag">~15K ש"ח/חודש</div>
+      </div>
+      <div class="journey-step step-3">
+        <div class="step-dot">3</div>
+        <div class="step-title">2 שנות הייטק</div>
+        <div class="step-desc">עבודה בחברה מאמצת<br>Microsoft, Elbit, Checkpoint</div>
+        <div class="step-tag">משרה מובטחת</div>
+      </div>
+      <div class="journey-step step-4">
+        <div class="step-dot">✓</div>
+        <div class="step-title">Seniority Leap</div>
+        <div class="step-desc">2 שנות הוראה = 18 חודשי<br>ניסיון מקצועי (פיתוח+ניהול)</div>
+        <div class="step-tag">ערך מוסף</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMOS -->
+<section class="section" id="demos">
+  <div class="container">
+    <div class="section-label">LIVE DEMOS</div>
+    <h2 class="section-title">ראו את המערכת בפעולה</h2>
+    <div class="demos-grid">
+
+      <a href="/soldiers" class="demo-card">
+        <div class="demo-card-head">
+          <span class="demo-card-icon">🎖️</span>
+          <span class="demo-badge badge-live">LIVE</span>
+        </div>
+        <h3>פורטל חיילים</h3>
+        <p>דשבורד אישי למועמד — מסלול קריירה, ציוני התאמה, שיבוצים, מבחן ELI5 ומעקב התקדמות.</p>
+        <div class="demo-tags">
+          <span class="demo-tag">Dashboard</span>
+          <span class="demo-tag">Scoring</span>
+          <span class="demo-tag">Career Path</span>
+        </div>
+        <div class="demo-arrow">← כנסו לדמו</div>
+      </a>
+
+      <a href="/companies" class="demo-card">
+        <div class="demo-card-head">
+          <span class="demo-card-icon">💼</span>
+          <span class="demo-badge badge-ai">AI CHAT</span>
+        </div>
+        <h3>פורטל חברות</h3>
+        <p>דשבורד לחברה מאמצת — AI Chat לשאילתות מועמדים, KPIs, מסך פיננסי (35K עמלת השמה).</p>
+        <div class="demo-tags">
+          <span class="demo-tag">AI Matching</span>
+          <span class="demo-tag">KPIs</span>
+          <span class="demo-tag">Financial</span>
+        </div>
+        <div class="demo-arrow">← כנסו לדמו</div>
+      </a>
+
+      <a href="/education" class="demo-card">
+        <div class="demo-card-head">
+          <span class="demo-card-icon">🏫</span>
+          <span class="demo-badge badge-live">LIVE</span>
+        </div>
+        <h3>פורטל חינוך</h3>
+        <p>ממשק למשרד החינוך — ניהול צרכי STEM, גיוס מורים, שיבוץ אוטומטי ומשוב מבתי ספר.</p>
+        <div class="demo-tags">
+          <span class="demo-tag">STEM Needs</span>
+          <span class="demo-tag">Matching</span>
+          <span class="demo-tag">Feedback</span>
+        </div>
+        <div class="demo-arrow">← כנסו לדמו</div>
+      </a>
+
+      <a href="/eli5" class="demo-card">
+        <div class="demo-card-head">
+          <span class="demo-card-icon">🧠</span>
+          <span class="demo-badge badge-ai">AI NLP</span>
+        </div>
+        <h3>מבחן ELI5</h3>
+        <p>מבחן 5 שלבים להערכת יכולת הסבר — ניתוח NLP בזמן אמת מול Maof Engine API.</p>
+        <div class="demo-tags">
+          <span class="demo-tag">5-Step Test</span>
+          <span class="demo-tag">NLP Analysis</span>
+          <span class="demo-tag">Real-time</span>
+        </div>
+        <div class="demo-arrow">← כנסו לדמו</div>
+      </a>
+
+      <a href="/simulation" class="demo-card">
+        <div class="demo-card-head">
+          <span class="demo-card-icon">⚙️</span>
+          <span class="demo-badge badge-api">ENGINE API</span>
+        </div>
+        <h3>סימולציה</h3>
+        <p>הדגמה אינטראקטיבית של מודל 2+2 — Dual Scoring Engine חי עם Hungarian Algorithm.</p>
+        <div class="demo-tags">
+          <span class="demo-tag">Simulation</span>
+          <span class="demo-tag">Scoring</span>
+          <span class="demo-tag">Matching</span>
+        </div>
+        <div class="demo-arrow">← כנסו לדמו</div>
+      </a>
+
+      <a href="https://signal-news-noam1316s-projects.vercel.app/dashboard" target="_blank" class="demo-card" style="border-color:rgba(245,200,66,0.15);">
+        <div class="demo-card-head">
+          <span class="demo-card-icon">📡</span>
+          <span class="demo-badge badge-ai">SIGNAL AI</span>
+        </div>
+        <h3>Signal News — מודיעין גיאופוליטי</h3>
+        <p>פלטפורמת מודיעין בזמן אמת — ניתוח 28+ מקורות RSS, Signal vs Market, Media Bias, Shock Detection.</p>
+        <div class="demo-tags">
+          <span class="demo-tag">Real-time</span>
+          <span class="demo-tag">Polymarket</span>
+          <span class="demo-tag">Bias Analysis</span>
+          <span class="demo-tag">28+ Sources</span>
+        </div>
+        <div class="demo-arrow">← פתח בטאב חדש ↗</div>
+      </a>
+
+    </div>
+
+    <!-- Engine Status Bar -->
+    <div class="engine-bar">
+      <div class="engine-indicator">
+        <div class="engine-dot" id="engine-dot"></div>
+        <span class="engine-label" id="engine-status">בודק חיבור למנוע...</span>
+      </div>
+      <span class="engine-endpoint">maof-project.onrender.com/api/v1</span>
+      <a href="https://maof-project.onrender.com/docs" target="_blank" style="font-size:11px;color:var(--blue);text-decoration:none;font-family:'IBM Plex Mono',monospace;">
+        Swagger Docs ↗
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="section" style="padding:40px 0 60px;">
+  <div class="container">
+    <div class="section-label">TECH STACK</div>
+    <div class="tech-grid">
+      <div class="tech-item"><div class="icon">⚛️</div><div class="name">React 19</div></div>
+      <div class="tech-item"><div class="icon">▲</div><div class="name">Next.js 16</div></div>
+      <div class="tech-item"><div class="icon">🐍</div><div class="name">FastAPI</div></div>
+      <div class="tech-item"><div class="icon">🗄️</div><div class="name">Supabase</div></div>
+      <div class="tech-item"><div class="icon">🧬</div><div class="name">Hungarian Algo</div></div>
+      <div class="tech-item"><div class="icon">🧠</div><div class="name">NLP Engine</div></div>
+      <div class="tech-item"><div class="icon">📊</div><div class="name">Polymarket API</div></div>
+      <div class="tech-item"><div class="icon">🚀</div><div class="name">Vercel + Render</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>
+      <strong style="color:var(--gold);">מעוף — Tech-Lead Israel</strong><br>
+      מיזם AI לניהול הון אנושי ושילוב לוחמים משוחררים<br>
+      נבנה ע"י <strong style="color:#fff;">נעם</strong> — one-person operation עם Claude Code<br><br>
+      <a href="https://github.com/Noam1316/signal-news">GitHub ↗</a> &nbsp;·&nbsp;
+      <a href="https://maof-project.onrender.com/docs">API Docs ↗</a> &nbsp;·&nbsp;
+      <a href="https://signal-news-noam1316s-projects.vercel.app/dashboard">Signal News ↗</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+// Engine health check
+async function checkEngine() {
+  const dot = document.getElementById('engine-dot');
+  const label = document.getElementById('engine-status');
+  try {
+    const r = await fetch('https://maof-project.onrender.com/api/v1/health', {
+      signal: AbortSignal.timeout(12000)
+    });
+    if (r.ok) {
+      const d = await r.json();
+      dot.classList.add('online');
+      dot.classList.remove('offline');
+      label.textContent = 'Maof Engine — Online';
+      label.style.color = '#34d399';
+    } else { throw new Error(); }
+  } catch {
+    dot.classList.add('offline');
+    label.textContent = 'Engine offline (cold start ~30s)';
+    label.style.color = '#ff5c6a';
+    // Retry after 15s
+    setTimeout(checkEngine, 15000);
+  }
+}
+window.addEventListener('load', () => setTimeout(checkEngine, 500));
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
