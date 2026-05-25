@@ -46,7 +46,8 @@ GROQ_WEIGHT    = 0.45
 
 # Prompt — short, structured, JSON output
 SYSTEM_PROMPT = (
-    "You are an expert evaluator of ELI5 explanations (Explain Like I'm 5). "
+    "You are an expert evaluator of ELI5 explanations (Explain Like I'm 5). " \
+    "The explanation may be in Hebrew, English, or mixed — evaluate it regardless of language. "
     "Evaluate the given text and return ONLY valid JSON with exactly these keys:\n"
     '{"analogy_quality": 0-100, "conclusion_logic": 0-100, "audience_fit": 0-100, "reasoning": "one short sentence"}\n\n'
     "Scoring guide:\n"
