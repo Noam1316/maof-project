@@ -23,6 +23,7 @@ from genetic.optimizer import run_genetic_optimizer
 from nlp.eli5_analyzer import analyze_eli5
 from nlp.llm_comparator import analyze_with_llm_comparison
 from nlp.eli5_chatbot import run_adaptive_session, get_next_question
+from nlp.groq_eli5 import analyze_eli5_full
 from nlp.code_test import run_code_test, get_first_question
 from nlp.semantic_match import get_semantic_similarity
 from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
@@ -414,6 +415,16 @@ def score_eli5_compare(body: dict):
     if not topic:
         raise HTTPException(status_code=400, detail="חסר שדה 'topic'")
     return analyze_with_llm_comparison(text, topic)
+
+
+@router.post("/eli5/groq")
+def score_eli5_groq(body: dict):
+    """ניתוח ELI5 + Groq LLM layer (analogy quality, conclusion logic, audience fit)"""
+    text = body.get("text", "")
+    topic = body.get("topic", "")
+    if not text:
+        raise HTTPException(status_code=400, detail="חסר שדה 'text'")
+    return analyze_eli5_full(text, topic=topic)
 
 
 @router.post("/eli5/chatbot")

@@ -44,6 +44,30 @@ COHERENCE_KEYWORDS_EN = [
     "in conclusion", "as a result", "for this reason",
 ]
 
+
+# --- Hook keywords (opening invitation) ---
+HOOK_KEYWORDS_HE = [
+    "דמיין", "דמיינו", "תחשוב", "תחשבו", "נניח", "נגיד",
+    "שאלה", "למה", "איך", "האם ידעת",
+    "בוא נגיד", "בואו נגיד", "חשבת פעם",
+]
+HOOK_KEYWORDS_EN = [
+    "imagine", "suppose", "picture", "have you ever", "why does",
+    "what if", "let's say", "did you know", "ever wonder", "think about",
+]
+
+# --- Conclusion keywords (closing takeaway) ---
+CONCLUSION_KEYWORDS_HE = [
+    "לכן", "לסיכום", "לסיום", "מכאן ש",
+    "לפיכך", "ולכן", "כלומר", "בקצרה", "בגדול",
+    "אז בעצם", "זאת אומרת",
+]
+CONCLUSION_KEYWORDS_EN = [
+    "therefore", "in conclusion", "so basically", "in short",
+    "the bottom line", "to summarize", "in other words",
+    "ultimately", "that's why", "which means",
+]
+
 # --- מילים ז'רגוניסטיות (מורידות ציון) ---
 JARGON_HE = [
     "אלגוריתם", "פרמטר", "מטריקס", "פרוטוקול", "ממשק",
@@ -124,37 +148,30 @@ def analogy_score(text: str) -> float:
         return min(100.0, 80 + unique_found * 5)
 
 
-# --- מדד 3: יצירתיות (דוגמאות יומיומיות) ---
-EVERYDAY_EXAMPLES_HE = [
-    "מכונית", "בית", "ילד", "כדור", "מים", "אוכל", "חבר",
-    "מסעדה", "שוק", "ספר", "כסף", "זמן", "חנות", "אמא", "אבא",
-    "לחם", "שמש", "גשם", "כלב", "חתול", "בית ספר", "מורה",
-]
-
-EVERYDAY_EXAMPLES_EN = [
-    "car", "house", "child", "ball", "water", "food", "friend",
-    "restaurant", "market", "book", "money", "time", "store",
-    "parent", "bread", "sun", "rain", "dog", "cat", "school",
-]
-
-
+# --- מדד 3: מבנה נרטיבי (Hook + Conclusion) ---
 def creativity_score(text: str) -> float:
-    """
-    מזהה שימוש בדוגמאות מחיי היומיום
-    """
-    text_lower = text.lower()
-    all_examples = EVERYDAY_EXAMPLES_HE + EVERYDAY_EXAMPLES_EN
+    """Hook בפתיחה + מסקנה בסיום.
+    עמיד בפני keyword-stuffing: מודד מבנה, לא רשימת מילים.
 
-    found = sum(1 for ex in all_examples if ex.lower() in text_lower)
-
-    if found == 0:
-        return 30.0
-    elif found == 1:
-        return 60.0
-    elif found == 2:
-        return 80.0
-    else:
-        return min(100.0, 75 + found * 5)
+    hook בלבד          -> 70
+    מסקנה בלבד         -> 50
+    שניהם (מבנה שלם)   -> 100
+    אף אחד             -> 20
+    """
+    words = text.split()
+    if not words:
+        return 20.0
+    first = " ".join(words[:30]).lower()
+    last  = " ".join(words[-40:]).lower()
+    has_hook       = any(k.lower() in first for k in HOOK_KEYWORDS_HE + HOOK_KEYWORDS_EN)
+    has_conclusion = any(k.lower() in last  for k in CONCLUSION_KEYWORDS_HE + CONCLUSION_KEYWORDS_EN)
+    if has_hook and has_conclusion:
+        return 100.0
+    if has_hook:
+        return 70.0
+    if has_conclusion:
+        return 50.0
+    return 20.0
 
 
 # --- מדד 4: קוהרנטיות ---
@@ -248,7 +265,7 @@ def analyze_eli5(text: str) -> Dict:
     if analogies < 60:
         feedback.append("הוסף אנלוגיות — 'זה כמו...', 'דמיין ש...'")
     if creativity < 60:
-        feedback.append("השתמש בדוגמאות מחיי היומיום")
+        feedback.append("פתח עם שאלה/הזמנה ('דמיין ש...') וסיים עם מסקנה ('לכן', 'כלומר')")
     if coherence < 60:
         feedback.append("הוסף מילות חיבור — 'לכן', 'כי', 'בנוסף'")
     if conciseness < 60:
@@ -260,7 +277,7 @@ def analyze_eli5(text: str) -> Dict:
         "breakdown": {
             "simplicity": simplicity,
             "analogies": analogies,
-            "creativity": creativity,
+            "narrative_structure": creativity,
             "coherence": coherence,
             "conciseness": conciseness,
         },
