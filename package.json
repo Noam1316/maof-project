@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "docx": "^9.6.1",
+    "pptxgenjs": "^4.0.1"
+  },
+  "name": "maof-project",
+  "version": "1.0.0",
+  "description": "<div dir=\"rtl\">",
+  "main": "create_pitch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Noam1316/maof-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Noam1316/maof-project/issues"
+  },
+  "homepage": "https://github.com/Noam1316/maof-project#readme"
+}

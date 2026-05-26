@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.env
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+.vercel/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Generated / output files
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+*.png
+*.svg
+noam-okun-cv*.html
+cv-board.pdf
+signal-news-business-plan.*
+maof-project.*
+maof-tnufa*.docx
+maof-budget*.xlsx
+session-summary.md
+temp_application.txt
+
+# Build / generation scripts (one-time scripts, not project code)
+build_budget*.py
+create_*.py
+create_*.js
+fill_*.py
+gen_*.js
+generate-*.py
+generate-*.js
+
+# Slide previews
+slide-preview/
+slide-preview-supp/
+
+# Nested repos (managed separately)
+signal-news-demo/
+
+# Misc
+algorithm-spec.md
+portal-check.png
+zikuk-grant-application.docx
+maof-logo.html
+*.html
+!maof-portals-deploy/**/*.html
+!cv-board.html
