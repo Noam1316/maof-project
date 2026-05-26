@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מבחן חשיבה מערכתית · מעוף</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0f1117;
+      --surface: #1a1d27;
+      --surface2:#22263a;
+      --border:  #2e3350;
+      --text:    #f0f2ff;
+      --text2:   #8b92b8;
+      --orange:  #f97316;
+      --teal:    #14b8a6;
+      --purple:  #a855f7;
+      --green:   #22c55e;
+      --radius:  12px;
+    }
+
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 28px; border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .logo { font-size: 20px; font-weight: 800; color: var(--orange); }
+    .badge {
+      font-size: 12px; background: rgba(168,85,247,.15);
+      border: 1px solid rgba(168,85,247,.35); color: var(--purple);
+      padding: 4px 10px; border-radius: 20px;
+    }
+
+    /* ── Main ── */
+    main { flex: 1; max-width: 760px; margin: 0 auto; padding: 40px 20px; width: 100%; }
+
+    h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+    .subtitle { color: var(--text2); margin-bottom: 32px; font-size: 15px; line-height: 1.6; }
+
+    /* ── Chain dots ── */
+    .chain-bar {
+      display: flex; align-items: center; gap: 0; margin-bottom: 32px;
+    }
+    .chain-dot {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--surface2); border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: var(--text2);
+      transition: all .3s; flex-shrink: 0;
+    }
+    .chain-dot.active { background: var(--orange); border-color: var(--orange); color: #fff;
+      box-shadow: 0 0 14px rgba(249,115,22,.4); }
+    .chain-dot.done { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .chain-line { flex: 1; height: 2px; background: var(--border); }
+    .chain-line.done { background: var(--teal); }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+    }
+    .card-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--orange); margin-bottom: 12px;
+    }
+    .question-text { font-size: 17px; line-height: 1.65; font-weight: 600; }
+    .aspect-tag {
+      display: inline-block; margin-top: 10px;
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.3);
+      color: var(--orange);
+    }
+
+    /* ── Textarea ── */
+    textarea {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px; color: var(--text);
+      font-size: 15px; line-height: 1.65; resize: vertical; min-height: 120px;
+      font-family: inherit; transition: border-color .2s;
+    }
+    textarea:focus { outline: none; border-color: var(--orange); }
+    .word-count { font-size: 13px; color: var(--text2); margin-top: 8px; text-align: left; }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .btn {
+      padding: 12px 24px; border-radius: 10px; border: none;
+      font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: var(--orange); color: #fff; }
+    .btn-primary:hover { background: #ea6a0a; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary {
+      background: transparent; color: var(--text2);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--text2); color: var(--text); }
+
+    /* ── Topic selector ── */
+    .topics { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    .topic-btn {
+      padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text2);
+      cursor: pointer; font-size: 14px; transition: all .2s;
+    }
+    .topic-btn:hover { border-color: var(--orange); color: var(--text); }
+    .topic-btn.selected {
+      background: rgba(249,115,22,.15); border-color: var(--orange); color: var(--orange);
+      font-weight: 700;
+    }
+
+    /* ── Results ── */
+    .score-big {
+      font-size: 72px; font-weight: 900; color: var(--orange); text-align: center;
+      line-height: 1;
+    }
+    .score-label { text-align: center; color: var(--text2); margin-top: 8px; }
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+    .metric-card {
+      background: var(--surface2); border-radius: 10px;
+      padding: 16px; text-align: center;
+    }
+    .metric-val { font-size: 28px; font-weight: 800; color: var(--teal); }
+    .metric-name { font-size: 12px; color: var(--text2); margin-top: 4px; }
+    .per-answer-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .pa-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface2); border-radius: 8px; padding: 12px 16px;
+    }
+    .pa-q { font-size: 13px; color: var(--text2); flex: 1; padding-left: 12px; }
+    .pa-score { font-size: 18px; font-weight: 800; color: var(--orange); flex-shrink: 0; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 10px 20px; border-radius: 8px; font-size: 14px;
+      opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999;
+    }
+    #toast.show { opacity: 1; }
+
+    /* ── Screens ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Source badge ── */
+    .source-badge {
+      font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 8px;
+      background: rgba(20,184,166,.12); border: 1px solid rgba(20,184,166,.3); color: var(--teal);
+    }
+    .source-badge.fallback {
+      background: rgba(139,92,246,.12); border-color: rgba(139,92,246,.3); color: var(--purple);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">מעוף ⚡</div>
+  <div class="badge">Score B · מבחן חשיבה מערכתית</div>
+</header>
+
+<main>
+
+  <!-- ════ SCREEN: START ════ -->
+  <div class="screen active" id="screen-start">
+    <h1>מבחן חשיבה מערכתית</h1>
+    <p class="subtitle">
+      5 שאלות שכל אחת נובעת מהתשובה הקודמת.<br>
+      המבחן לא בודק שינון — הוא בודק אם אתה מבין <strong>למה</strong> דברים עובדים.
+    </p>
+
+    <div class="card">
+      <div class="card-label">בחר תחום</div>
+      <div class="topics">
+        <button class="topic-btn selected" onclick="selectTopic('סייבר', this)">🔐 סייבר</button>
+        <button class="topic-btn" onclick="selectTopic('פייתון', this)">🐍 פייתון</button>
+        <button class="topic-btn" onclick="selectTopic('רשתות', this)">🌐 רשתות</button>
+        <button class="topic-btn" onclick="selectTopic('ai', this)">🤖 AI / ML</button>
+        <button class="topic-btn" onclick="selectTopic('ענן', this)">☁️ ענן</button>
+        <button class="topic-btn" onclick="selectTopic('web', this)">💻 Web</button>
+        <button class="topic-btn" onclick="selectTopic('נתונים', this)">📊 Data</button>
+        <button class="topic-btn" onclick="selectTopic('מתמטיקה', this)">📐 מתמטיקה</button>
+      </div>
+    </div>
+
+    <div class="card" style="border-color: rgba(249,115,22,.3)">
+      <div class="card-label">📋 מה לצפות</div>
+      <div style="display:grid; gap:10px; font-size:14px; color:var(--text2); line-height:1.6">
+        <div>→ <strong style="color:var(--text)">שאלה 1</strong> — בסיס (מה זה X?)</div>
+        <div>→ <strong style="color:var(--text)">שאלות 2-4</strong> — Groq חוזר על מה שאמרת ושואל עמוק יותר</div>
+        <div>→ <strong style="color:var(--text)">שאלה 5</strong> — עיצוב מערכת (אינטגרציה)</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="startTest()">התחל מבחן ←</button>
+    </div>
+  </div>
+
+  <!-- ════ SCREEN: TEST ════ -->
+  <div class="screen" id="screen-test">
+    <div class="chain-bar" id="chainBar"></div>
+
+    <div class="card" id="questionCard">
+      <div class="card-label" id="qLabel">שאלה 1 מתוך 5</div>
+      <div class="question-text" id="questionText">טוען...</div>
+      <span class="aspect-tag" id="aspectTag">—</span>
+    </div>
+
+    <textarea id="answerArea" placeholder="כתוב את תשובתך כאן — הסבר, דוגמאות, מה שמתאים..."></textarea>
+    <div class="word-count">מילים: <strong id="wordCount">0</strong></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnNext" onclick="submitAnswer()">שלח ← שאלה הבאה</button>
+      <button class="btn btn-secondary" onclick="finishEarly()">סיים עכשיו</button>
+    </div>
+  </div>
+
+  <!-- ════ SCREEN: RESULTS ════ -->
+  <div class="screen" id="screen-results">
+    <div class="card" style="text-align:center; padding:32px">
+      <div class="card-label" style="text-align:center">ציון חשיבה מערכתית</div>
+      <div class="score-big" id="totalScore">—</div>
+      <div class="score-label" id="scoreLabel">מחשב...</div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-val" id="depthScore">—</div>
+        <div class="metric-name">עומק התקדמות</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="coverageScore">—</div>
+        <div class="metric-name">כיסוי מושגים</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="consistScore">—</div>
+        <div class="metric-name">עקביות</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="qCount">—</div>
+        <div class="metric-name">שאלות שנענו</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="card-label">פירוט לפי תשובה</div>
+      <div class="per-answer-list" id="perAnswerList"></div>
+    </div>
+
+    <div class="btn-row" style="margin-top:24px">
+      <button class="btn btn-primary" onclick="restartTest()">מבחן חדש</button>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+const MAOF_API = 'https://maof-project.onrender.com/api/v1';
+
+const ASPECT_LABELS = {
+  foundation: 'בסיס',
+  mechanism:  'מנגנון',
+  failure:    'כשל',
+  connection: 'קשרים',
+  design:     'עיצוב',
+};
+
+let state = {
+  topic:    'סייבר',
+  qaPairs:  [],
+  currentQ: null,
+};
+
+// ── Topic selection ──
+function selectTopic(topic, el) {
+  state.topic = topic;
+  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── Chain bar ──
+function renderChain(current, total = 5) {
+  const bar = document.getElementById('chainBar');
+  bar.innerHTML = '';
+  for (let i = 1; i <= total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'chain-dot';
+    dot.id = `dot${i}`;
+    dot.textContent = i === total ? '✓' : i;
+    if (i < current)       dot.classList.add('done');
+    else if (i === current) dot.classList.add('active');
+    bar.appendChild(dot);
+    if (i < total) {
+      const line = document.createElement('div');
+      line.className = 'chain-line' + (i < current ? ' done' : '');
+      bar.appendChild(line);
+    }
+  }
+}
+
+// ── Start ──
+async function startTest() {
+  showToast('⌛ טוען שאלה ראשונה...');
+  state.qaPairs = [];
+  goTo('test');
+  renderChain(1);
+
+  try {
+    const r = await fetch(`${MAOF_API}/systemic/start?topic=${encodeURIComponent(state.topic)}`);
+    const q = await r.json();
+    displayQuestion(q, 1);
+  } catch {
+    showToast('❌ שגיאת חיבור למנוע');
+  }
+}
+
+function displayQuestion(q, index) {
+  state.currentQ = q;
+  document.getElementById('qLabel').innerHTML =
+    `שאלה <strong>${index}</strong> מתוך 5` +
+    (q.source === 'groq'
+      ? ' <span class="source-badge">Groq AI</span>'
+      : ' <span class="source-badge fallback">קבועה</span>');
+  document.getElementById('questionText').textContent = q.question || q.q || '—';
+  document.getElementById('aspectTag').textContent = ASPECT_LABELS[q.aspect] || q.aspect || '—';
+  document.getElementById('answerArea').value = '';
+  document.getElementById('wordCount').textContent = '0';
+  document.getElementById('btnNext').disabled = false;
+  renderChain(index);
+}
+
+// ── Answer ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('answerArea').addEventListener('input', () => {
+    const w = document.getElementById('answerArea').value.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('wordCount').textContent = w;
+  });
+});
+
+async function submitAnswer() {
+  const answer = document.getElementById('answerArea').value.trim();
+  if (!answer || answer.length < 15) {
+    showToast('כתוב תשובה לפני שליחה'); return;
+  }
+  document.getElementById('btnNext').disabled = true;
+
+  state.qaPairs.push({ question: state.currentQ.question, answer });
+
+  const nextIndex = state.qaPairs.length + 1;
+  if (nextIndex > 5) {
+    await finishAndScore();
+    return;
+  }
+
+  showToast('⌛ Groq מכין שאלה...');
+  try {
+    const r = await fetch(`${MAOF_API}/systemic/next`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: state.topic, qa_pairs: state.qaPairs }),
+    });
+    const next = await r.json();
+
+    if (next.done) {
+      await finishAndScore(); return;
+    }
+    displayQuestion(next, nextIndex);
+    showToast('✅ שאלה הבאה מוכנה');
+  } catch {
+    showToast('❌ שגיאה — נסה שוב');
+    document.getElementById('btnNext').disabled = false;
+    state.qaPairs.pop();
+  }
+}
+
+async function finishEarly() {
+  if (state.qaPairs.length === 0) { goTo('start'); return; }
+  await finishAndScore();
+}
+
+// ── Score ──
+async function finishAndScore() {
+  goTo('results');
+  showToast('⌛ מחשב ציון...');
+
+  try {
+    const r = await fetch(`${MAOF_API}/systemic/score`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: state.topic, qa_pairs: state.qaPairs }),
+    });
+    const data = await r.json();
+    renderResults(data);
+  } catch {
+    document.getElementById('totalScore').textContent = '—';
+    document.getElementById('scoreLabel').textContent = 'שגיאת חיבור';
+  }
+}
+
+function renderResults(data) {
+  const total = Math.round(data.total_score || 0);
+  document.getElementById('totalScore').textContent = total;
+  document.getElementById('scoreLabel').textContent =
+    total >= 75 ? '🌟 חשיבה מערכתית מצוינת' :
+    total >= 60 ? '👍 הבנה טובה — יש עומק' :
+    total >= 45 ? '💪 בסיס קיים — צריך עוד עומק' :
+                  '📚 תרגל חיבורים בין מושגים';
+
+  document.getElementById('depthScore').textContent    = Math.round(data.depth_score    || 0);
+  document.getElementById('coverageScore').textContent = Math.round(data.coverage_score || 0);
+  document.getElementById('consistScore').textContent  = Math.round(data.consistency    || 0);
+  document.getElementById('qCount').textContent        = data.questions_answered || state.qaPairs.length;
+
+  const list = document.getElementById('perAnswerList');
+  list.innerHTML = '';
+  (data.per_answer || []).forEach((pa, i) => {
+    const row = document.createElement('div');
+    row.className = 'pa-row';
+    const q = state.qaPairs[i]?.question || `שאלה ${pa.index}`;
+    row.innerHTML = `
+      <div style="font-size:13px;color:var(--orange);font-weight:700;flex-shrink:0">Q${pa.index}</div>
+      <div class="pa-q">${q.length > 70 ? q.slice(0,70)+'…' : q}</div>
+      <div class="pa-score">${Math.round(pa.score)}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function restartTest() {
+  state.qaPairs = [];
+  state.currentQ = null;
+  goTo('start');
+}
+
+// ── Utils ──
+function goTo(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
