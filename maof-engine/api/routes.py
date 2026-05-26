@@ -140,6 +140,73 @@ def delete_candidate(candidate_id: str):
     return {"status": "deleted", "id": candidate_id}
 
 
+@router.post("/candidates/{candidate_id}/complete-assessment")
+def complete_assessment(candidate_id: str, body: dict):
+    """
+    סגירת פייפליין הערכה — מקבל תוצאות מבחנים וסוגר את הציונים על המועמד.
+
+    body:
+      eli5_score     — ציון ELI5 (סבבים 1-3)   [0-100]
+      code_score     — ציון מבחן קוד (סבב 4)   [0-100]  (אופציונלי)
+      systemic_score — ציון חשיבה מערכתית       [0-100]  (אופציונלי)
+      topic          — נושא המבחן               (אופציונלי)
+
+    מחשב:
+      tech_test_score = systemic_score × 0.55 + code_score × 0.45
+      (fallback: אם חסר אחד, משתמש בקיים בלבד)
+
+    מעדכן את המועמד ב-DB ומחזיר את הציונים המחושבים.
+    """
+    candidate = db.get_candidate(candidate_id)
+    if not candidate:
+        raise HTTPException(status_code=404, detail="מועמד לא נמצא")
+
+    eli5       = body.get("eli5_score")
+    code       = body.get("code_score")
+    systemic   = body.get("systemic_score")
+
+    # --- וולידציה ---
+    for name, val in [("eli5_score", eli5), ("code_score", code), ("systemic_score", systemic)]:
+        if val is not None and not (0 <= float(val) <= 100):
+            raise HTTPException(status_code=400, detail=f"'{name}' חייב להיות בין 0 ל-100")
+
+    # --- חישוב tech_test_score ---
+    c = float(code     or candidate.get("code_score",     0))
+    s = float(systemic or candidate.get("systemic_score", 0))
+
+    if s > 0 and c > 0:
+        tech_test = round(s * 0.55 + c * 0.45, 2)
+    elif s > 0:
+        tech_test = round(s, 2)
+    elif c > 0:
+        tech_test = round(c, 2)
+    else:
+        tech_test = float(candidate.get("tech_test_score", 0))
+
+    # --- עדכון ---
+    updates = {"tech_test_score": tech_test}
+    if eli5     is not None: updates["eli5_score"]     = round(float(eli5), 2)
+    if code     is not None: updates["code_score"]     = round(float(code), 2)
+    if systemic is not None: updates["systemic_score"] = round(float(systemic), 2)
+    if body.get("topic"):    updates["subject"]        = body["topic"]
+
+    candidate.update(updates)
+    db.upsert_candidate(candidate)
+
+    return {
+        "status":          "updated",
+        "candidate_id":    candidate_id,
+        "eli5_score":      candidate.get("eli5_score"),
+        "code_score":      candidate.get("code_score"),
+        "systemic_score":  candidate.get("systemic_score"),
+        "tech_test_score": tech_test,
+        "pipeline_complete": all([
+            candidate.get("eli5_score", 0) > 0,
+            tech_test > 0,
+        ]),
+    }
+
+
 @router.post("/schools")
 def create_school(body: dict):
     """שמור בית ספר חדש"""

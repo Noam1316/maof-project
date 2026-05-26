@@ -52,6 +52,12 @@ class Candidate(BaseModel):
     preferred_location: str = Field(description="מיקום גיאוגרפי מועדף")
     willing_relocate: bool = Field(default=False)
 
+    # --- ציוני מבחנים גולמיים (מוזנים ע"י complete-assessment) ---
+    systemic_score: float = Field(ge=0, le=100, default=0.0,
+                                  description="מבחן חשיבה מערכתית (Score B component)")
+    code_score: float     = Field(ge=0, le=100, default=0.0,
+                                  description="מבחן קוד — ELI5 סבב 4")
+
     # --- מטא ---
     tech_stack: List[str] = Field(default=[], description="טכנולוגיות")
     years_experience: float = Field(ge=0, default=0)
