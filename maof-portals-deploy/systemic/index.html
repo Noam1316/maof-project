@@ -185,6 +185,25 @@
     }
     .extend-banner.show { display: block; }
 
+    /* ── Code editor ── */
+    .code-editor-wrap {
+      position: relative; margin-bottom: 8px;
+    }
+    .code-lang-tag {
+      position: absolute; top: 10px; left: 12px;
+      font-size: 11px; padding: 2px 8px; border-radius: 6px;
+      background: rgba(20,184,166,.15); color: var(--teal);
+      border: 1px solid rgba(20,184,166,.3); pointer-events: none; z-index: 1;
+    }
+    textarea.code-mode {
+      font-family: 'Consolas', 'Fira Mono', monospace;
+      font-size: 13px; line-height: 1.6; direction: ltr; text-align: left;
+      padding-top: 34px;
+    }
+    .code-hint {
+      font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.5;
+    }
+
     /* ── Source badge ── */
     .source-badge {
       font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 8px;
@@ -260,8 +279,16 @@
       <span class="aspect-tag" id="aspectTag">—</span>
     </div>
 
-    <textarea id="answerArea" placeholder="כתוב את תשובתך כאן — הסבר, דוגמאות, מה שמתאים..."></textarea>
-    <div class="word-count">מילים: <strong id="wordCount">0</strong></div>
+    <div class="code-hint" id="codeHint" style="display:none">
+      💡 כתוב קוד + הסבר קצר לכל חלק. Syntax מושלם לא חובה — חשוב שהלוגיקה ברורה.
+    </div>
+    <div class="code-editor-wrap">
+      <div class="code-lang-tag" id="codeLangTag" style="display:none">python</div>
+      <textarea id="answerArea" placeholder="כתוב את תשובתך כאן — הסבר, דוגמאות, מה שמתאים..."></textarea>
+    </div>
+    <div class="word-count">
+      <span id="wordCountLabel">מילים</span>: <strong id="wordCount">0</strong>
+    </div>
 
     <div class="btn-row">
       <button class="btn btn-primary" id="btnNext" onclick="submitAnswer()">שלח ← שאלה הבאה</button>
@@ -294,6 +321,10 @@
         <div class="metric-val" id="qCount">—</div>
         <div class="metric-name">שאלות שנענו</div>
       </div>
+      <div class="metric-card" id="codeScoreCard" style="display:none">
+        <div class="metric-val" id="codeScoreVal" style="color:var(--purple)">—</div>
+        <div class="metric-name">✍️ ציון קוד</div>
+      </div>
     </div>
 
     <div class="card" style="margin-top:20px">
@@ -324,13 +355,16 @@ const ASPECT_LABELS = {
   design:     'עיצוב',
 };
 
+const CODE_QUESTION_TIME = 180; // 3 דקות לשאלת קוד
+
 let state = {
   topic:      'סייבר',
   qaPairs:    [],
   currentQ:   null,
-  maxQ:       BASE_QUESTIONS,   // יכול לעלות ל-7
+  maxQ:       BASE_QUESTIONS,
   timerSecs:  QUESTION_TIME,
   timerInt:   null,
+  isCodeQ:    false,
 };
 
 // ── Topic selection ──
@@ -341,26 +375,29 @@ function selectTopic(topic, el) {
 }
 
 // ── Timer ──
-function startTimer() {
+function startTimer(isCode = false) {
   clearInterval(state.timerInt);
-  state.timerSecs = QUESTION_TIME;
+  state.timerSecs = isCode ? CODE_QUESTION_TIME : QUESTION_TIME;
   updateTimerUI();
+  const total = state.timerSecs;
   state.timerInt = setInterval(() => {
     state.timerSecs--;
-    updateTimerUI();
+    updateTimerUI(total);
     if (state.timerSecs <= 0) {
       clearInterval(state.timerInt);
       showToast('⏰ הזמן נגמר — שולח תשובה');
       submitAnswer(true);
     }
   }, 1000);
+  updateTimerUI(total);
 }
 
-function updateTimerUI() {
+function updateTimerUI(total) {
+  total = total || (state.isCodeQ ? CODE_QUESTION_TIME : QUESTION_TIME);
   const s = state.timerSecs;
   const m = Math.floor(s / 60);
   const sec = String(s % 60).padStart(2, '0');
-  const pct = (s / QUESTION_TIME) * 100;
+  const pct = (s / total) * 100;
 
   const fill    = document.getElementById('timerFill');
   const display = document.getElementById('timerDisplay');
@@ -426,25 +463,50 @@ async function startTest() {
 
 function displayQuestion(q, index) {
   state.currentQ = q;
+  state.isCodeQ  = q.type === 'code';
+
+  const isCode = state.isCodeQ;
+  const area = document.getElementById('answerArea');
+
+  // label
   document.getElementById('qLabel').innerHTML =
     `שאלה <strong>${index}</strong> מתוך ${state.maxQ}` +
-    (q.source === 'groq'
-      ? ' <span class="source-badge">Groq AI</span>'
-      : ' <span class="source-badge fallback">קבועה</span>');
-  document.getElementById('questionText').textContent = q.question || q.q || '—';
-  document.getElementById('aspectTag').textContent = ASPECT_LABELS[q.aspect] || q.aspect || '—';
-  document.getElementById('answerArea').value = '';
+    (isCode
+      ? ' <span class="source-badge" style="background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.4);color:var(--purple)">✍️ קוד</span>'
+      : q.source === 'groq'
+        ? ' <span class="source-badge">Groq AI</span>'
+        : ' <span class="source-badge fallback">קבועה</span>');
+
+  document.getElementById('questionText').textContent = q.question || '—';
+  document.getElementById('aspectTag').textContent = isCode ? 'כתיבת קוד' : (ASPECT_LABELS[q.aspect] || q.aspect || '—');
+
+  // code editor toggle
+  document.getElementById('codeHint').style.display    = isCode ? '' : 'none';
+  document.getElementById('codeLangTag').style.display = isCode ? '' : 'none';
+  document.getElementById('codeLangTag').textContent   = q.language || 'code';
+  document.getElementById('wordCountLabel').textContent = isCode ? 'תווים' : 'מילים';
+
+  area.classList.toggle('code-mode', isCode);
+  area.placeholder = isCode
+    ? '# כתוב את הקוד כאן\ndef your_function(...):\n    pass'
+    : 'כתוב את תשובתך כאן — הסבר, דוגמאות, מה שמתאים...';
+  area.value = '';
+  area.disabled = false;
+
   document.getElementById('wordCount').textContent = '0';
   document.getElementById('btnNext').disabled = false;
   renderChain(index);
-  startTimer();
+  startTimer(isCode);
 }
 
 // ── Answer ──
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('answerArea').addEventListener('input', () => {
-    const w = document.getElementById('answerArea').value.trim().split(/\s+/).filter(Boolean).length;
-    document.getElementById('wordCount').textContent = w;
+    const val = document.getElementById('answerArea').value;
+    const count = state.isCodeQ
+      ? val.length
+      : val.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('wordCount').textContent = count;
   });
 });
 
@@ -461,7 +523,8 @@ async function submitAnswer(timeout = false) {
   document.getElementById('btnNext').disabled = true;
   state.qaPairs.push({
     question: state.currentQ.question,
-    answer:   answer || '(לא ענה בזמן)'
+    answer:   answer || '(לא ענה בזמן)',
+    type:     state.isCodeQ ? 'code' : 'text',
   });
 
   const nextIndex = state.qaPairs.length + 1;
@@ -536,6 +599,10 @@ function renderResults(data) {
   document.getElementById('coverageScore').textContent = Math.round(data.coverage_score || 0);
   document.getElementById('consistScore').textContent  = Math.round(data.consistency    || 0);
   document.getElementById('qCount').textContent        = data.questions_answered || state.qaPairs.length;
+  if (data.code_score !== null && data.code_score !== undefined) {
+    document.getElementById('codeScoreCard').style.display = '';
+    document.getElementById('codeScoreVal').textContent    = Math.round(data.code_score);
+  }
 
   const list = document.getElementById('perAnswerList');
   list.innerHTML = '';

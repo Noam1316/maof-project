@@ -25,7 +25,10 @@ from nlp.llm_comparator import analyze_with_llm_comparison
 from nlp.eli5_chatbot import run_adaptive_session, get_next_question
 from nlp.groq_eli5 import analyze_eli5_full
 from nlp.code_test import run_code_test, get_first_question
-from nlp.systemic_test import get_opening_question, get_next_question as get_systemic_next, score_chain
+from nlp.systemic_test import (
+    get_opening_question, get_next_question as get_systemic_next,
+    score_chain, score_code_answer,
+)
 from nlp.semantic_match import get_semantic_similarity
 from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
 from database import repository as db
@@ -561,13 +564,26 @@ def systemic_next(body: dict):
 def systemic_score(body: dict):
     """
     ציון סופי לשרשרת שאלות-תשובות.
-    body: { "topic": str, "qa_pairs": [{"question": str, "answer": str}] }
+    body: { "topic": str, "qa_pairs": [{"question": str, "answer": str, "type"?: str}] }
     """
     topic    = body.get("topic", "")
     qa_pairs = body.get("qa_pairs", [])
     if not qa_pairs:
         raise HTTPException(status_code=400, detail="חסרות תשובות לניתוח")
     return score_chain(topic, qa_pairs)
+
+
+@router.post("/systemic/code-review")
+def systemic_code_review(body: dict):
+    """
+    ניתוח תשובת קוד — Groq מעריך נכונות, קריאות ו-best practices.
+    body: { "question": str, "answer": str }
+    """
+    question = body.get("question", "")
+    answer   = body.get("answer", "")
+    if not answer.strip():
+        raise HTTPException(status_code=400, detail="חסרת תשובה")
+    return score_code_answer(question, answer)
 
 
 @router.post("/semantic/match")
