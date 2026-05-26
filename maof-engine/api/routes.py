@@ -25,6 +25,7 @@ from nlp.llm_comparator import analyze_with_llm_comparison
 from nlp.eli5_chatbot import run_adaptive_session, get_next_question
 from nlp.groq_eli5 import analyze_eli5_full
 from nlp.code_test import run_code_test, get_first_question
+from nlp.systemic_test import get_opening_question, get_next_question as get_systemic_next, score_chain
 from nlp.semantic_match import get_semantic_similarity
 from feedback.loop import FeedbackLoop, PlacementRecord, SchoolFeedback, CompanyFeedback, CandidateFeedback
 from database import repository as db
@@ -464,6 +465,42 @@ def code_first_question(tech_stack: str = ""):
     """מחזיר שאלה ראשונה לפי Tech Stack"""
     stack = [t.strip() for t in tech_stack.split(",") if t.strip()] if tech_stack else []
     return get_first_question(stack)
+
+
+# ══════════════════════════════════════════════
+#  Systemic Thinking Test — Score B Component
+# ══════════════════════════════════════════════
+
+@router.get("/systemic/start")
+def systemic_start(topic: str = ""):
+    """שאלת פתיחה למבחן חשיבה מערכתית"""
+    return get_opening_question(topic)
+
+
+@router.post("/systemic/next")
+def systemic_next(body: dict):
+    """
+    מחזיר שאלת המשך לפי היסטוריית השיחה.
+    body: { "topic": str, "qa_pairs": [{"question": str, "answer": str}] }
+    """
+    topic    = body.get("topic", "")
+    qa_pairs = body.get("qa_pairs", [])
+    if not isinstance(qa_pairs, list):
+        raise HTTPException(status_code=400, detail="'qa_pairs' חייב להיות רשימה")
+    return get_systemic_next(topic, qa_pairs)
+
+
+@router.post("/systemic/score")
+def systemic_score(body: dict):
+    """
+    ציון סופי לשרשרת שאלות-תשובות.
+    body: { "topic": str, "qa_pairs": [{"question": str, "answer": str}] }
+    """
+    topic    = body.get("topic", "")
+    qa_pairs = body.get("qa_pairs", [])
+    if not qa_pairs:
+        raise HTTPException(status_code=400, detail="חסרות תשובות לניתוח")
+    return score_chain(topic, qa_pairs)
 
 
 @router.post("/semantic/match")
