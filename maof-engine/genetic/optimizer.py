@@ -10,6 +10,19 @@ Genetic Algorithm — Weight Optimizer
 סה"כ 8 משקלות — 4 לציון A, 4 לציון B.
 
 אילוץ: כל קבוצת 4 חייבת לסכום ל-1.0
+
+--- אופטימיזציית ביצועים (numpy vectorization) ---
+במקום לחשב ציוני רכיבים בכל דור × כרומוזום,
+ה-engine מחשב אותם פעם אחת לפני הלולאה הגנטית:
+
+  precompute_matrices() → a_mat[n_c, n_s, 4]  (eli5, subject, retention, impact)
+                           b_mat[n_c, n_k, 4]  (tech, growth, soft, culture)
+                           urgency_mat[n_s, n_k]
+                           proximity_vec[n_c]
+
+  evaluate_fitness_vectorized() → אופרציות numpy בלבד, אפס לולאות Python.
+
+חיסכון: O(G × P × C × S × K × heavy_python) → O(C × (S+K) × heavy_python + G × P × numpy)
 """
 
 import sys, os
@@ -123,8 +136,8 @@ def evaluate_fitness(
     companies: List,
 ) -> float:
     """
-    Fitness = סכום ציוני הנפח של כל השיבוצים האפשריים.
-    ככל שגבוה יותר — המשקלות טובות יותר.
+    Fitness גרסה קלאסית (Python loops).
+    שמורה לתאימות לאחור — run_genetic_optimizer משתמש בגרסה הוקטוריזצית.
     """
     from scoring.score_c import calculate_score_c
     from scoring.volume import calculate_volume_score
@@ -144,6 +157,127 @@ def evaluate_fitness(
                     count += 1
 
     return total / max(count, 1)
+
+
+# ============================================================
+# numpy Vectorized Fitness — O(C×(S+K)) precompute once
+# ============================================================
+
+def precompute_matrices(
+    candidates: List[Candidate],
+    schools: List,
+    companies: List,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    מחשב מראש את כל רכיבי הציון — פעם אחת לפני הלולאה הגנטית.
+
+    Returns:
+        a_mat       — [n_c, n_s, 4]   (eli5, subject, retention, impact)
+        b_mat       — [n_c, n_k, 4]   (tech, growth, soft, culture)
+        urgency_mat — [n_s, n_k]       urgency_score(school, company)
+        proximity_v — [n_c]            proximity_score(candidate)
+    """
+    from scoring.score_a import subject_match_score, retention_score, impact_score
+    from scoring.score_b import (
+        tech_skills_score, growth_potential_score,
+        soft_skills_score, cultural_fit_score,
+    )
+    from scoring.score_c import urgency_score, proximity_score
+
+    n_c, n_s, n_k = len(candidates), len(schools), len(companies)
+
+    a_mat = np.zeros((n_c, n_s, 4))
+    b_mat = np.zeros((n_c, n_k, 4))
+    urgency_mat = np.zeros((n_s, n_k))
+    proximity_v = np.zeros(n_c)
+
+    # -- ציון A: (candidate × school) --
+    for i, cand in enumerate(candidates):
+        proximity_v[i] = proximity_score(cand)
+        for j, school in enumerate(schools):
+            a_mat[i, j] = [
+                cand.eli5_score,
+                subject_match_score(cand, school),
+                retention_score(cand, school),
+                impact_score(school),
+            ]
+
+    # -- ציון B: (candidate × company) --
+    for i, cand in enumerate(candidates):
+        # growth ו-soft לא תלויים בחברה — מחשבים פעם אחת
+        growth = growth_potential_score(cand)
+        soft = soft_skills_score(cand)
+        for k, company in enumerate(companies):
+            b_mat[i, k] = [
+                tech_skills_score(cand, company),
+                growth,
+                soft,
+                cultural_fit_score(cand, company),
+            ]
+
+    # -- דחיפות: (school × company) --
+    for j, school in enumerate(schools):
+        for k, company in enumerate(companies):
+            urgency_mat[j, k] = urgency_score(school, company)
+
+    return a_mat, b_mat, urgency_mat, proximity_v
+
+
+def evaluate_fitness_vectorized(
+    weights: Chromosome,
+    a_mat: np.ndarray,
+    b_mat: np.ndarray,
+    urgency_mat: np.ndarray,
+    proximity_v: np.ndarray,
+    willingness: float = 100.0,
+) -> float:
+    """
+    Fitness וקטורי — numpy בלבד, אפס לולאות Python.
+
+    Args:
+        weights      — הכרומוזום הנוכחי
+        a_mat        — [n_c, n_s, 4] מ-precompute_matrices
+        b_mat        — [n_c, n_k, 4] מ-precompute_matrices
+        urgency_mat  — [n_s, n_k]   מ-precompute_matrices
+        proximity_v  — [n_c]        מ-precompute_matrices
+        willingness  — ציון נכונות קבוע (100 = כולם מוכנים, phase 1)
+
+    Returns:
+        float — ממוצע ציוני-נפח של כל השיבוצים שעברו סף 60.
+    """
+    a_w = np.array([weights.w_eli5, weights.w_subject, weights.w_retention, weights.w_impact])
+    b_w = np.array([weights.w_tech, weights.w_growth, weights.w_soft, weights.w_culture])
+
+    # ציוני A ו-B: matmul על ציר האחרון → [n_c, n_s] ו-[n_c, n_k]
+    scores_a = a_mat @ a_w  # [n_c, n_s]
+    scores_b = b_mat @ b_w  # [n_c, n_k]
+
+    # הרחבה ל-3D לשידור משולש: [n_c, n_s, n_k]
+    sa = scores_a[:, :, np.newaxis]   # [n_c, n_s, 1]
+    sb = scores_b[:, np.newaxis, :]   # [n_c, 1, n_k]
+
+    # score_c = (min(A,B) + urgency + proximity + willingness) / 4
+    min_ab = np.minimum(sa, sb)                             # [n_c, n_s, n_k]
+    urg = urgency_mat[np.newaxis, :, :]                     # [1, n_s, n_k]
+    prox = proximity_v[:, np.newaxis, np.newaxis]           # [n_c, 1, 1]
+    scores_c = (min_ab + urg + prox + willingness) / 4.0   # [n_c, n_s, n_k]
+
+    # סף מינימום — 60 בכל ציון
+    passes = (sa >= 60.0) & (sb >= 60.0) & (scores_c >= 60.0)  # bool [n_c, n_s, n_k]
+
+    # ציון נפח = ∛((A-60)(B-60)(C-60)) / 40 × 100
+    vol = (sa - 60.0) * (sb - 60.0) * (scores_c - 60.0)
+    # np.cbrt עמיד בפני 0 ומספרים שליליים (passes מסנן)
+    vol_score = np.clip(np.cbrt(vol) / 40.0 * 100.0, 0.0, 100.0)
+
+    # ציון סופי = vol×0.5 + A×0.25 + B×0.25
+    final_score = np.clip(vol_score * 0.5 + sa * 0.25 + sb * 0.25, 0.0, 100.0)
+
+    # ממוצע רק על שיבוצים שעברו סף
+    valid = np.where(passes, final_score, 0.0)
+    count = int(passes.sum())
+
+    return float(valid.sum()) / max(count, 1)
 
 
 # --- פעולות גנטיות ---
@@ -233,7 +367,17 @@ def run_genetic_optimizer(
 ) -> dict:
     """
     מריץ את האלגוריתם הגנטי ומחזיר את המשקלות האופטימליות.
+
+    שלב 1 (פעם אחת): precompute_matrices — כל חישובי הציון הכבדים.
+    שלב 2 (G × P פעמים): evaluate_fitness_vectorized — numpy בלבד.
     """
+
+    # ===== שלב 1: Pre-compute (הכבד — רץ פעם אחת) =====
+    if verbose:
+        print(f"  מחשב מטריצות ציון... ({len(candidates)}c × {len(schools)}s × {len(companies)}k)")
+    a_mat, b_mat, urgency_mat, proximity_v = precompute_matrices(candidates, schools, companies)
+    if verbose:
+        print(f"  ✓ precompute סיים | מתחיל {generations} דורות")
 
     # אוכלוסיה התחלתית — כולל ברירת המחדל
     population = [default_chromosome()] + [
@@ -244,9 +388,11 @@ def run_genetic_optimizer(
     history = []
 
     for gen in range(generations):
-        # חישוב fitness לכל כרומוזום
+        # ===== שלב 2: Fitness וקטורי (מהיר) =====
         for chrom in population:
-            chrom.fitness = evaluate_fitness(chrom, candidates, schools, companies)
+            chrom.fitness = evaluate_fitness_vectorized(
+                chrom, a_mat, b_mat, urgency_mat, proximity_v
+            )
 
         # מיון
         population.sort(key=lambda c: c.fitness, reverse=True)

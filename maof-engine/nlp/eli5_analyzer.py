@@ -5,9 +5,10 @@ ELI5 Analyzer — NLP לניתוח יכולת הסבר
 מנתח טקסט לפי 5 מדדים:
   1. פשטות      — Flesch-like + אורך מילים ומשפטים
   2. אנלוגיות   — זיהוי "כמו", "דמיין", "זה דומה ל"
-  3. יצירתיות   — שימוש בדוגמאות מחיי היומיום
+                 שדרוג: מילה סופרת רק אם משמשת בהקשר אמיתי (≥6 מילים במשפט)
+  3. נרטיב      — Hook בפתיחה + מסקנה בסיום (מבנה, לא רשימת מילים)
   4. קוהרנטיות  — קשר בין משפטים
-  5. תמציתיות   — פחות מילים לאותו רעיון
+  5. תמציתיות   — פחות מילים לאותו רעיון + TTR + filler detection
 
 ללא API Key — keyword-based analysis בלבד.
 """
@@ -68,6 +69,19 @@ CONCLUSION_KEYWORDS_EN = [
     "ultimately", "that's why", "which means",
 ]
 
+# --- מילות מילוי (filler) — מנפחות בלי להוסיף תוכן ---
+FILLER_PHRASES_HE = [
+    "כמובן", "בגדול", "למעשה", "כאמור", "כידוע", "בין היתר",
+    "מן הסתם", "אחרי הכל", "בסופו של דבר", "חשוב לציין",
+    "כדאי לציין", "ראוי לציין", "מעניין לציין",
+]
+
+FILLER_PHRASES_EN = [
+    "basically", "obviously", "needless to say", "as mentioned",
+    "it is worth noting", "it goes without saying", "first and foremost",
+    "last but not least", "at the end of the day",
+]
+
 # --- מילים ז'רגוניסטיות (מורידות ציון) ---
 JARGON_HE = [
     "אלגוריתם", "פרמטר", "מטריקס", "פרוטוקול", "ממשק",
@@ -126,18 +140,37 @@ def simplicity_score(text: str) -> float:
     return round(max(0, min(100, score)), 2)
 
 
+# --- עזר: בדיקת שימוש בהקשר אמיתי ---
+def _keyword_in_real_context(keyword: str, sentences: List[str], min_words: int = 6) -> bool:
+    """
+    מחזיר True רק אם מילת המפתח מופיעה במשפט עם ≥min_words מילים.
+    מונע keyword stuffing: "לדוגמה." לבד לא סופר.
+    """
+    kw_lower = keyword.lower()
+    for sentence in sentences:
+        if kw_lower in sentence.lower() and len(sentence.split()) >= min_words:
+            return True
+    return False
+
+
 # --- מדד 2: אנלוגיות ---
 def analogy_score(text: str) -> float:
     """
-    מזהה שימוש במילות אנלוגיה ודוגמאות
+    מזהה שימוש במילות אנלוגיה ודוגמאות.
+    שדרוג: מילה סופרת רק אם מופיעה בהקשר אמיתי (משפט עם ≥6 מילים).
+    "לדוגמה." בודד — לא סופר. "לדוגמה, כשאתה לוחץ..." — כן סופר.
     """
-    text_lower = text.lower()
+    sentences = split_sentences(text)
     all_keywords = ANALOGY_KEYWORDS_HE + ANALOGY_KEYWORDS_EN
 
-    found = [kw for kw in all_keywords if kw.lower() in text_lower]
-    unique_found = len(set(found))
+    # סינון: רק מילות אנלוגיה שמשמשות בהקשר משפטי אמיתי
+    qualified = {
+        kw for kw in all_keywords
+        if _keyword_in_real_context(kw, sentences, min_words=6)
+    }
+    unique_found = len(qualified)
 
-    # ציון: 0 אנלוגיות = 20, 1 = 60, 2 = 80, 3+ = 100
+    # ציון: 0 = 20, 1 = 60, 2 = 80, 3+ = 100
     if unique_found == 0:
         return 20.0
     elif unique_found == 1:
@@ -201,28 +234,46 @@ def coherence_score(text: str) -> float:
 def conciseness_score(text: str) -> float:
     """
     פחות מילים לאותו רעיון = ציון גבוה.
-    מדדים: יחס מילות תוכן למילים כלליות, אין חזרות.
+    מדדים:
+      - חזרות מילים (חזרה >2 פעמים = עונש)
+      - אורך כולל (קצר/ארוך מדי = עונש)
+      - TTR (Type-Token Ratio) — ייחודיות: < 0.35 = טקסט חזרתי מדי
+      - Filler phrases — מילים שמנפחות בלי תוכן
     """
+    from collections import Counter
     words = tokenize(text)
 
     if not words:
         return 50.0
 
-    # חזרות — מילים שחוזרות יותר מפעמיים
-    from collections import Counter
+    # --- חזרות ---
     word_counts = Counter(w.lower() for w in words if len(w) > 3)
     repetitions = sum(1 for count in word_counts.values() if count > 2)
-
-    # אורך כולל — טקסט קצר מדי או ארוך מדי
-    length_penalty = 0
-    if len(words) < 20:
-        length_penalty = 20  # קצר מדי
-    elif len(words) > 150:
-        length_penalty = 15  # ארוך מדי
-
     repetition_penalty = min(30, repetitions * 10)
 
-    score = 100 - length_penalty - repetition_penalty
+    # --- אורך כולל ---
+    length_penalty = 0
+    if len(words) < 20:
+        length_penalty = 20   # קצר מדי
+    elif len(words) > 150:
+        length_penalty = 15   # ארוך מדי
+
+    # --- TTR: Type-Token Ratio (ייחודיות מילים) ---
+    # ערך תקין: 0.45-0.70. מתחת ל-0.35 → טקסט חזרתי/ממולא
+    ttr_penalty = 0
+    if len(words) > 15:
+        ttr = len(set(w.lower() for w in words)) / len(words)
+        if ttr < 0.35:
+            ttr_penalty = int((0.35 - ttr) * 80)   # עד ~28 נקודות
+            ttr_penalty = min(ttr_penalty, 25)
+
+    # --- Filler phrases ---
+    text_lower = text.lower()
+    all_fillers = FILLER_PHRASES_HE + FILLER_PHRASES_EN
+    filler_count = sum(1 for f in all_fillers if f.lower() in text_lower)
+    filler_penalty = min(15, filler_count * 5)
+
+    score = 100 - length_penalty - repetition_penalty - ttr_penalty - filler_penalty
     return round(max(0, min(100, score)), 2)
 
 
