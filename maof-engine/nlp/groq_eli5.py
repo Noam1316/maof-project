@@ -41,8 +41,9 @@ GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
 TIMEOUT_S    = 8.0
 
 # Weight blend: keyword vs Groq
-KEYWORD_WEIGHT = 0.55
-GROQ_WEIGHT    = 0.45
+# Groq covers 3/6 metrics — keyword now has accuracy + improved coherence
+KEYWORD_WEIGHT = 0.65
+GROQ_WEIGHT    = 0.35
 
 # Prompt — short, structured, JSON output
 SYSTEM_PROMPT = (
