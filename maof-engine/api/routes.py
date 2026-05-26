@@ -400,9 +400,10 @@ def optimize_weights(req: OptimizeRequest):
 def score_eli5(body: dict):
     """ניתוח ELI5 — מנתח טקסט הסבר ומחזיר ציון"""
     text = body.get("text", "")
+    topic = body.get("topic", "")
     if not text:
         raise HTTPException(status_code=400, detail="חסר שדה 'text'")
-    return analyze_eli5(text)
+    return analyze_eli5(text, topic=topic)
 
 
 @router.post("/eli5/compare")

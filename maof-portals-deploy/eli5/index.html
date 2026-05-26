@@ -1762,8 +1762,9 @@ async function finishTest() {
   if (engineScores) {
     scores.engineScore = engineScores.total_score;
     scores.simplicity = Math.round(scores.simplicity * 0.5 + (engineScores.breakdown?.simplicity || scores.simplicity) * 0.5);
-    scores.analogies  = Math.round(scores.analogies * 0.5 + (engineScores.breakdown?.analogies || scores.analogies) * 0.5);
-    scores.structure   = Math.round(scores.structure * 0.5 + (engineScores.breakdown?.coherence || scores.structure) * 0.5);
+    scores.analogies  = Math.round(scores.analogies * 0.5 + (engineScores.breakdown?.analogies  || scores.analogies)  * 0.5);
+    scores.accuracy   = Math.round(scores.accuracy  * 0.5 + (engineScores.breakdown?.accuracy   || scores.accuracy)   * 0.5);
+    scores.structure  = Math.round(scores.structure * 0.5 + (engineScores.breakdown?.coherence  || scores.structure)  * 0.5);
 
     // Groq layer — override with LLM quality scores when available
     if (engineScores.groq && engineScores.llm_enhanced) {
