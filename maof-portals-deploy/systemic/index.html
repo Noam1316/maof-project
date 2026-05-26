@@ -152,6 +152,39 @@
     .screen { display: none; }
     .screen.active { display: block; }
 
+    /* ── Timer ── */
+    .timer-bar {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 18px; margin-bottom: 16px;
+    }
+    .timer-label { font-size: 13px; color: var(--text2); white-space: nowrap; }
+    .timer-track {
+      flex: 1; height: 6px; background: var(--surface2);
+      border-radius: 3px; overflow: hidden;
+    }
+    .timer-fill {
+      height: 100%; background: var(--teal); border-radius: 3px;
+      transition: width .5s linear, background .5s;
+    }
+    .timer-fill.warning { background: var(--orange); }
+    .timer-fill.danger  { background: #ef4444; }
+    .timer-display {
+      font-size: 15px; font-weight: 700; color: var(--teal);
+      min-width: 36px; text-align: center; white-space: nowrap;
+    }
+    .timer-display.warning { color: var(--orange); }
+    .timer-display.danger  { color: #ef4444; }
+
+    /* ── Extend banner ── */
+    .extend-banner {
+      display: none; background: rgba(20,184,166,.1);
+      border: 1px solid rgba(20,184,166,.35); border-radius: var(--radius);
+      padding: 14px 18px; margin-bottom: 16px;
+      font-size: 14px; color: var(--teal); line-height: 1.5;
+    }
+    .extend-banner.show { display: block; }
+
     /* ── Source badge ── */
     .source-badge {
       font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 8px;
@@ -209,6 +242,16 @@
 
   <!-- ════ SCREEN: TEST ════ -->
   <div class="screen" id="screen-test">
+    <div class="timer-bar">
+      <div class="timer-label" id="timerLabel">⏱ זמן לשאלה</div>
+      <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+      <div class="timer-display" id="timerDisplay">2:00</div>
+    </div>
+
+    <div class="extend-banner" id="extendBanner">
+      🚀 <strong>ביצועים מצוינים!</strong> המבחן מתארך — יש עוד שאלות ברמה גבוהה יותר.
+    </div>
+
     <div class="chain-bar" id="chainBar"></div>
 
     <div class="card" id="questionCard">
@@ -269,6 +312,9 @@
 
 <script>
 const MAOF_API = 'https://maof-project.onrender.com/api/v1';
+const QUESTION_TIME = 120; // שניות לכל שאלה
+const BASE_QUESTIONS = 5;
+const MAX_QUESTIONS  = 7;
 
 const ASPECT_LABELS = {
   foundation: 'בסיס',
@@ -279,9 +325,12 @@ const ASPECT_LABELS = {
 };
 
 let state = {
-  topic:    'סייבר',
-  qaPairs:  [],
-  currentQ: null,
+  topic:      'סייבר',
+  qaPairs:    [],
+  currentQ:   null,
+  maxQ:       BASE_QUESTIONS,   // יכול לעלות ל-7
+  timerSecs:  QUESTION_TIME,
+  timerInt:   null,
 };
 
 // ── Topic selection ──
@@ -291,8 +340,54 @@ function selectTopic(topic, el) {
   el.classList.add('selected');
 }
 
+// ── Timer ──
+function startTimer() {
+  clearInterval(state.timerInt);
+  state.timerSecs = QUESTION_TIME;
+  updateTimerUI();
+  state.timerInt = setInterval(() => {
+    state.timerSecs--;
+    updateTimerUI();
+    if (state.timerSecs <= 0) {
+      clearInterval(state.timerInt);
+      showToast('⏰ הזמן נגמר — שולח תשובה');
+      submitAnswer(true);
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const s = state.timerSecs;
+  const m = Math.floor(s / 60);
+  const sec = String(s % 60).padStart(2, '0');
+  const pct = (s / QUESTION_TIME) * 100;
+
+  const fill    = document.getElementById('timerFill');
+  const display = document.getElementById('timerDisplay');
+
+  fill.style.width = pct + '%';
+  display.textContent = `${m}:${sec}`;
+
+  const cls = s <= 20 ? 'danger' : s <= 45 ? 'warning' : '';
+  fill.className    = 'timer-fill'    + (cls ? ' ' + cls : '');
+  display.className = 'timer-display' + (cls ? ' ' + cls : '');
+}
+
+function stopTimer() { clearInterval(state.timerInt); }
+
+// ── Adaptive extend ──
+function shouldExtend() {
+  if (state.qaPairs.length < 4) return false;
+  const last  = state.qaPairs[state.qaPairs.length - 1].answer;
+  const words = last.trim().split(/\s+/).filter(Boolean).length;
+  const total = state.qaPairs.reduce((s, qa) =>
+    s + qa.answer.trim().split(/\s+/).filter(Boolean).length, 0);
+  return words >= 35 && total >= 160;
+}
+
 // ── Chain bar ──
-function renderChain(current, total = 5) {
+function renderChain(current, total) {
+  total = total || state.maxQ;
   const bar = document.getElementById('chainBar');
   bar.innerHTML = '';
   for (let i = 1; i <= total; i++) {
@@ -315,6 +410,8 @@ function renderChain(current, total = 5) {
 async function startTest() {
   showToast('⌛ טוען שאלה ראשונה...');
   state.qaPairs = [];
+  state.maxQ    = BASE_QUESTIONS;
+  document.getElementById('extendBanner').classList.remove('show');
   goTo('test');
   renderChain(1);
 
@@ -330,7 +427,7 @@ async function startTest() {
 function displayQuestion(q, index) {
   state.currentQ = q;
   document.getElementById('qLabel').innerHTML =
-    `שאלה <strong>${index}</strong> מתוך 5` +
+    `שאלה <strong>${index}</strong> מתוך ${state.maxQ}` +
     (q.source === 'groq'
       ? ' <span class="source-badge">Groq AI</span>'
       : ' <span class="source-badge fallback">קבועה</span>');
@@ -340,6 +437,7 @@ function displayQuestion(q, index) {
   document.getElementById('wordCount').textContent = '0';
   document.getElementById('btnNext').disabled = false;
   renderChain(index);
+  startTimer();
 }
 
 // ── Answer ──
@@ -350,17 +448,32 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-async function submitAnswer() {
+async function submitAnswer(timeout = false) {
+  stopTimer();
   const answer = document.getElementById('answerArea').value.trim();
-  if (!answer || answer.length < 15) {
-    showToast('כתוב תשובה לפני שליחה'); return;
-  }
-  document.getElementById('btnNext').disabled = true;
 
-  state.qaPairs.push({ question: state.currentQ.question, answer });
+  if (!timeout && (!answer || answer.length < 15)) {
+    showToast('כתוב תשובה לפני שליחה');
+    startTimer();
+    return;
+  }
+
+  document.getElementById('btnNext').disabled = true;
+  state.qaPairs.push({
+    question: state.currentQ.question,
+    answer:   answer || '(לא ענה בזמן)'
+  });
 
   const nextIndex = state.qaPairs.length + 1;
-  if (nextIndex > 5) {
+
+  // בדיקת הארכה אחרי שאלה 4
+  if (state.qaPairs.length === 4 && shouldExtend() && state.maxQ === BASE_QUESTIONS) {
+    state.maxQ = MAX_QUESTIONS;
+    document.getElementById('extendBanner').classList.add('show');
+    renderChain(nextIndex);
+  }
+
+  if (nextIndex > state.maxQ) {
     await finishAndScore();
     return;
   }
@@ -374,19 +487,19 @@ async function submitAnswer() {
     });
     const next = await r.json();
 
-    if (next.done) {
-      await finishAndScore(); return;
-    }
+    if (next.done) { await finishAndScore(); return; }
     displayQuestion(next, nextIndex);
     showToast('✅ שאלה הבאה מוכנה');
   } catch {
     showToast('❌ שגיאה — נסה שוב');
     document.getElementById('btnNext').disabled = false;
     state.qaPairs.pop();
+    startTimer();
   }
 }
 
 async function finishEarly() {
+  stopTimer();
   if (state.qaPairs.length === 0) { goTo('start'); return; }
   await finishAndScore();
 }
@@ -440,8 +553,10 @@ function renderResults(data) {
 }
 
 function restartTest() {
-  state.qaPairs = [];
+  stopTimer();
+  state.qaPairs  = [];
   state.currentQ = null;
+  state.maxQ     = BASE_QUESTIONS;
   goTo('start');
 }
 

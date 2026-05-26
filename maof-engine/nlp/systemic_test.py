@@ -29,7 +29,7 @@ from nlp.eli5_analyzer import analyze_eli5, accuracy_score
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 GROQ_MODEL   = "llama-3.3-70b-versatile"
 GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
-MAX_QUESTIONS = 5
+MAX_QUESTIONS = 7  # עד 7 לאדפטיבי
 
 # ──────────────────────────────────────────────
 #  שאלות פתיחה — נועדו לחשוף את המודל המנטלי
