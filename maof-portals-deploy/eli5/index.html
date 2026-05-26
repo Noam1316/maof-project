@@ -498,6 +498,36 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ── CODE TEST ── */
+.code-level-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 20px; margin-bottom: 16px;
+}
+.code-level-bar .level-dots { display: flex; gap: 8px; }
+.level-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--surface2); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  transition: all .3s;
+}
+.level-dot.done  { background: var(--green);  border-color: var(--green);  color: #fff; }
+.level-dot.active{ background: var(--orange); border-color: var(--orange); color: #fff;
+  box-shadow: 0 0 12px rgba(249,115,22,.4); }
+.code-result-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin: 16px 0;
+  text-align: center;
+}
+.code-result-card .code-score { font-size: 48px; font-weight: 900; color: var(--orange); }
+.code-result-card .code-label { color: var(--text2); font-size: 14px; }
+.code-feedback {
+  background: rgba(249,115,22,.08); border: 1px solid rgba(249,115,22,.3);
+  border-radius: 10px; padding: 14px 18px; margin-top: 12px;
+  font-size: 14px; color: var(--text2); line-height: 1.7;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .rounds-preview { grid-template-columns: 1fr; }
@@ -540,7 +570,9 @@ body {
     <div class="step-line" id="line23"></div>
     <div class="step-dot" id="step3">3</div>
     <div class="step-line" id="line34"></div>
-    <div class="step-dot" id="step4">✓</div>
+    <div class="step-dot" id="step4">4</div>
+    <div class="step-line" id="line45"></div>
+    <div class="step-dot" id="step5">✓</div>
   </div>
 </header>
 
@@ -554,7 +586,7 @@ body {
       <p>המבחן בודק את היכולת שלך להסביר מושגים מורכבים בצורה פשוטה, ברורה ומעניינת – כמו שמסבירים לילד בן 5.</p>
     </div>
 
-    <div class="rounds-preview">
+    <div class="rounds-preview" style="grid-template-columns: repeat(4,1fr)">
       <div class="round-card">
         <div class="round-icon">✍️</div>
         <h3>סבב 1 · כתיבה</h3>
@@ -572,6 +604,12 @@ body {
         <h3>סבב 3 · צ'אט</h3>
         <div class="round-time">⏱ 3 דקות</div>
         <p>שאלות המשך מ"תלמיד" AI</p>
+      </div>
+      <div class="round-card">
+        <div class="round-icon">💻</div>
+        <h3>סבב 4 · טכני</h3>
+        <div class="round-time">⏱ 3 דקות</div>
+        <p>מבחן קוד אדפטיבי — עד 5 רמות</p>
       </div>
     </div>
 
@@ -764,7 +802,54 @@ body {
     </div>
   </div>
 
-  <!-- ════════ SCREEN 4: RESULTS ════════ -->
+  <!-- ════════ SCREEN 4: CODE TEST ════════ -->
+  <div class="screen" id="screen-code">
+    <div class="timer-bar">
+      <div class="timer-label">סבב 4 · מבחן טכני</div>
+      <div class="timer-progress">
+        <div class="timer-progress-fill" id="timer4Fill"></div>
+      </div>
+      <div class="timer-display" id="timer4">3:00</div>
+    </div>
+
+    <div class="code-level-bar">
+      <div style="font-size:14px;color:var(--text2)">
+        שאלה <strong id="codeLevelNum" style="color:var(--orange)">1</strong> מתוך 5
+      </div>
+      <div class="level-dots">
+        <div class="level-dot active" id="lvl1">1</div>
+        <div class="level-dot" id="lvl2">2</div>
+        <div class="level-dot" id="lvl3">3</div>
+        <div class="level-dot" id="lvl4">4</div>
+        <div class="level-dot" id="lvl5">5</div>
+      </div>
+      <div style="font-size:13px;color:var(--text2)" id="codeDomain">—</div>
+    </div>
+
+    <div class="question-card" style="border-color:var(--orange)">
+      <div class="q-label" style="color:var(--orange)">שאלה טכנית אדפטיבית</div>
+      <h3 id="codeQuestion">טוען שאלה...</h3>
+      <div class="q-hint" id="codeHint">ענה בצורה מפורטת — הסבר כאילו לאדם שלא בתחום</div>
+    </div>
+
+    <textarea class="writing-area" id="codeAnswerArea"
+      placeholder="כתוב את תשובתך כאן — כולל הסבר, דוגמאות ומבנה..." rows="6"></textarea>
+
+    <div class="writing-stats">
+      <span>📝 מילים: <strong id="codeWordCount">0</strong></span>
+    </div>
+
+    <div class="btn-center" style="margin-top:16px">
+      <button class="btn btn-primary" id="btnSubmitCode" onclick="submitCodeAnswer()">
+        שלח תשובה →
+      </button>
+      <button class="btn btn-secondary" onclick="finishCodeTest()">
+        סיים מבחן
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 5: RESULTS ════════ -->
   <div class="screen" id="screen-results">
     <div class="results-header">
       <div class="results-score-circle">
@@ -793,6 +878,10 @@ body {
       <div class="round-score-row">
         <div class="round-name">💬 <span>סבב 3 · צ'אט</span></div>
         <div class="round-pts" id="round3Score" style="color: var(--purple);">0</div>
+      </div>
+      <div class="round-score-row" id="round4Row" style="display:none">
+        <div class="round-name">💻 <span>סבב 4 · מבחן טכני</span></div>
+        <div class="round-pts" id="round4Score" style="color: var(--orange);">0</div>
       </div>
     </div>
 
@@ -1124,6 +1213,17 @@ const CHAT_ENGINE = {
   _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 };
 
+// נושא אנגלי → עברי לbackend
+const TOPIC_MAP = {
+  cyber: 'סייבר', python: 'פייתון', math: 'מתמטיקה',
+  physics: 'default', ai: 'default', data: 'default'
+};
+// נושא → tech_stack לcode test
+const STACK_MAP = {
+  cyber: 'cyber', python: 'python', data: 'data',
+  physics: '', math: '', ai: ''
+};
+
 let state = {
   topic: null,
   currentScreen: 'welcome',
@@ -1134,8 +1234,13 @@ let state = {
   round2Recorded: false,
   round2Duration: 0,        // seconds actually recorded
   chatHistory: [],
-  chatResponseTexts: [],    // for repeat detection
+  chatAnswers: [],          // תשובות לbackend chatbot
+  chatResult: null,         // תוצאת backend chatbot
+  chatResponseTexts: [],    // for repeat detection (fallback)
   chatResponseIndex: 0,
+  codeAnswers: [],          // תשובות למבחן קוד
+  codeResult: null,         // תוצאת מבחן קוד
+  currentCodeLevel: 1,
   mediaStream: null,
   mediaRecorder: null,
   selectedQuestions: null   // picked randomly at start
@@ -1247,15 +1352,16 @@ function goToScreen(screenId, stepNum) {
   state.currentScreen = screenId;
 
   // Update steps
-  for (let i = 0; i <= 4; i++) {
+  for (let i = 0; i <= 5; i++) {
     const dot = document.getElementById('step' + i);
+    if (!dot) continue;
     dot.classList.remove('active', 'done');
     if (i < stepNum) dot.classList.add('done');
     else if (i === stepNum) dot.classList.add('active');
   }
-  ['line01','line12','line23','line34'].forEach((id, i) => {
+  ['line01','line12','line23','line34','line45'].forEach((id, i) => {
     const line = document.getElementById(id);
-    line.classList.toggle('done', i < stepNum);
+    if (line) line.classList.toggle('done', i < stepNum);
   });
 
   // Update progress bar
@@ -1415,22 +1521,36 @@ function finishRound2() {
 // ══════════════════════════════════════════
 //  ROUND 3: CHAT
 // ══════════════════════════════════════════
-function startChatRound() {
-  const chatQ = state.selectedQuestions.chat;
+async function startChatRound() {
   const messages = document.getElementById('chatMessages');
   messages.innerHTML = '';
-
-  setTimeout(() => {
-    addChatMessage('student', chatQ.opening);
-  }, 800);
-
-  startTimer(180, 'timer3', 'timer3Fill', () => {
-    showToast('⏰ הזמן נגמר! מחשב תוצאות...', 'info');
-    setTimeout(() => finishTest(), 1000);
-  });
-
+  state.chatAnswers = [];
+  state.chatResult = null;
   state.chatResponseIndex = 0;
   state.chatResponseTexts = [];
+
+  startTimer(180, 'timer3', 'timer3Fill', () => {
+    showToast('⏰ הזמן נגמר! עוברים למבחן טכני...', 'info');
+    setTimeout(() => endChatAndContinue(), 1000);
+  });
+
+  // נסה backend — קבל שאלה ראשונה
+  if (eli5EngineOnline) {
+    try {
+      const topicHe = encodeURIComponent(TOPIC_MAP[state.topic] || 'default');
+      const r = await fetch(`${MAOF_API}/eli5/chatbot/question?topic=${topicHe}&level=0`,
+        { signal: AbortSignal.timeout(5000) });
+      if (r.ok) {
+        const q = await r.json();
+        setTimeout(() => addChatMessage('student', q.question), 800);
+        return;
+      }
+    } catch {}
+  }
+
+  // Fallback — שאלה מקומית
+  const chatQ = state.selectedQuestions.chat;
+  setTimeout(() => addChatMessage('student', chatQ.opening), 800);
 }
 
 function addChatMessage(type, text) {
@@ -1443,37 +1563,189 @@ function addChatMessage(type, text) {
   messages.scrollTop = messages.scrollHeight;
 }
 
-function sendChat() {
+async function sendChat() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if (!text) return;
 
   addChatMessage('user', text);
   state.chatHistory.push(text);
+  state.chatAnswers.push(text);
   input.value = '';
 
   const typing = document.getElementById('typingIndicator');
   typing.classList.add('active');
 
-  // Realistic typing delay based on response length
-  const delay = 1000 + Math.random() * 1200;
+  // נסה backend
+  if (eli5EngineOnline) {
+    try {
+      const topicHe = TOPIC_MAP[state.topic] || 'default';
+      const r = await fetch(`${MAOF_API}/eli5/chatbot`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: topicHe, answers: state.chatAnswers }),
+        signal: AbortSignal.timeout(8000)
+      });
+      if (r.ok) {
+        const data = await r.json();
+        state.chatResult = data;
+        typing.classList.remove('active');
+
+        if (data.next_question) {
+          addChatMessage('student', data.next_question);
+        } else {
+          // Session ended
+          const level = data.final_level || 0;
+          const msg = data.passed
+            ? `מגניב! הגעת לרמה ${level}/5 — המשך כך! 🎉`
+            : `סבבה! עצרנו ברמה ${level}/5. בוא נמשיך למבחן הבא 💪`;
+          addChatMessage('student', msg);
+          document.getElementById('chatInput').disabled = true;
+          setTimeout(() => endChatAndContinue(), 1800);
+        }
+        return;
+      }
+    } catch {}
+  }
+
+  // Fallback — JS מקומי
+  const delay = 900 + Math.random() * 1000;
   setTimeout(() => {
     typing.classList.remove('active');
-
     state.chatResponseIndex++;
     const response = CHAT_ENGINE.getResponse(text, state.chatResponseIndex, state.chatResponseTexts);
     state.chatResponseTexts.push(response);
     addChatMessage('student', response);
 
-    if (state.chatResponseIndex >= 6) {
-      // Disable input after chat ends
+    if (state.chatResponseIndex >= 5) {
       document.getElementById('chatInput').disabled = true;
       setTimeout(() => {
-        showToast('🎉 הצ\'אט הסתיים! מחשב תוצאות...', 'success');
-        setTimeout(() => finishTest(), 1500);
-      }, 1000);
+        showToast('🎉 הצ\'אט הסתיים! עוברים למבחן טכני...', 'success');
+        setTimeout(() => endChatAndContinue(), 1200);
+      }, 800);
     }
   }, delay);
+}
+
+// ══════════════════════════════════════════
+//  CHAT → CODE TEST TRANSITION
+// ══════════════════════════════════════════
+function endChatAndContinue() {
+  clearInterval(state.timer);
+  document.getElementById('chatInput').disabled = true;
+  showToast('✅ סבב 3 הושלם! עוברים למבחן טכני...', 'success');
+  setTimeout(() => {
+    goToScreen('code', 4);
+    startCodeTest();
+  }, 900);
+}
+
+// ══════════════════════════════════════════
+//  ROUND 4: CODE TEST
+// ══════════════════════════════════════════
+async function startCodeTest() {
+  state.codeAnswers = [];
+  state.codeResult = null;
+  state.currentCodeLevel = 1;
+  document.getElementById('codeAnswerArea').value = '';
+  document.getElementById('codeWordCount').textContent = '0';
+  document.getElementById('codeAnswerArea').oninput = () => {
+    const w = document.getElementById('codeAnswerArea').value.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('codeWordCount').textContent = w;
+  };
+
+  // עדכן level dots
+  for (let i = 1; i <= 5; i++) {
+    const d = document.getElementById('lvl' + i);
+    if (d) { d.classList.remove('active', 'done'); if (i === 1) d.classList.add('active'); }
+  }
+
+  if (eli5EngineOnline) {
+    try {
+      const stack = STACK_MAP[state.topic] || '';
+      const url = `${MAOF_API}/code/test/first${stack ? '?tech_stack=' + stack : ''}`;
+      const r = await fetch(url, { signal: AbortSignal.timeout(6000) });
+      if (r.ok) {
+        const q = await r.json();
+        displayCodeQuestion(q);
+        document.getElementById('codeDomain').textContent = q.domain || state.topic;
+        startTimer(180, 'timer4', 'timer4Fill', () => {
+          showToast('⏰ הזמן נגמר!', 'info');
+          finishCodeTest();
+        });
+        return;
+      }
+    } catch {}
+  }
+
+  // מנוע לא מחובר — דלג
+  showToast('מנוע לא מחובר — דולג על מבחן טכני', 'info');
+  setTimeout(() => finishTest(), 1200);
+}
+
+function displayCodeQuestion(q) {
+  document.getElementById('codeQuestion').textContent = q.question || q.q || '—';
+  document.getElementById('codeHint').textContent = q.hint || 'ענה בפירוט — הסבר, דוגמאות, מבנה';
+  document.getElementById('codeLevelNum').textContent = state.currentCodeLevel;
+  document.getElementById('codeAnswerArea').value = '';
+  document.getElementById('codeAnswerArea').disabled = false;
+  document.getElementById('btnSubmitCode').disabled = false;
+}
+
+async function submitCodeAnswer() {
+  const answer = document.getElementById('codeAnswerArea').value.trim();
+  if (!answer || answer.length < 10) {
+    showToast('כתוב תשובה לפני שליחה', 'info'); return;
+  }
+
+  state.codeAnswers.push(answer);
+  document.getElementById('btnSubmitCode').disabled = true;
+  document.getElementById('codeAnswerArea').disabled = true;
+  showToast('⌛ מעבד תשובה...', 'info');
+
+  try {
+    const stack = STACK_MAP[state.topic] || '';
+    const r = await fetch(`${MAOF_API}/code/test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers: state.codeAnswers, tech_stack: stack ? [stack] : [] }),
+      signal: AbortSignal.timeout(10000)
+    });
+
+    if (r.ok) {
+      const data = await r.json();
+      state.codeResult = data;
+
+      // עדכן level dot הנוכחי
+      const curDot = document.getElementById('lvl' + state.currentCodeLevel);
+      if (curDot) curDot.classList.replace('active', 'done');
+
+      if (data.next_question && state.currentCodeLevel < 5) {
+        state.currentCodeLevel++;
+        // הפעל dot הבא
+        const nextDot = document.getElementById('lvl' + state.currentCodeLevel);
+        if (nextDot) nextDot.classList.add('active');
+        displayCodeQuestion({ question: data.next_question, hint: '' });
+        showToast(`✅ עברת לרמה ${state.currentCodeLevel}!`, 'success');
+      } else {
+        const sc = Math.round(data.adaptive_score || 0);
+        showToast(`🎉 מבחן טכני הסתיים! ציון: ${sc}/100`, 'success');
+        setTimeout(() => finishCodeTest(), 1800);
+      }
+      return;
+    }
+  } catch {}
+
+  // שגיאת רשת — אפשר לנסות שוב
+  showToast('⚠️ שגיאת תקשורת — נסה שוב', 'info');
+  document.getElementById('btnSubmitCode').disabled = false;
+  document.getElementById('codeAnswerArea').disabled = false;
+  state.codeAnswers.pop(); // הוצא תשובה שנכשלה
+}
+
+function finishCodeTest() {
+  clearInterval(state.timer);
+  finishTest();
 }
 
 // ══════════════════════════════════════════
@@ -1510,7 +1782,7 @@ async function finishTest() {
     scores.engineConnected = true;
   }
 
-  goToScreen('results', 4);
+  goToScreen('results', 5);
   setTimeout(() => animateResults(scores), 500);
   setTimeout(() => renderGroqBadge(scores), 1200);
 }
@@ -1529,13 +1801,13 @@ function calculateScores() {
     else if (recSecs >= 15) videoBonus = 5;   // short but tried
   }
 
-  // ── ROUND 3: Chat quality analysis ──
+  // ── ROUND 3: Chat quality — backend תוצאה או JS fallback ──
   const chatTexts = state.chatHistory.join(' ');
   const chatCount = state.chatHistory.length;
   const r3 = analyzeText(chatTexts);
-
-  // Bonus for having multiple exchanges
   const chatBonus = Math.min(15, chatCount * 3);
+  // אם יש תוצאת backend — השתמש בה
+  const backendChatScore = state.chatResult ? state.chatResult.adaptive_score : null;
 
   // ── COMBINE: weighted blend of R1 + R2 + R3 ──
   const simplicity  = Math.round(r1.simplicity  * 0.6 + r3.simplicity  * 0.4);
@@ -1557,14 +1829,21 @@ function calculateScores() {
   const round1 = Math.min(98, Math.round(r1.simplicity * 0.35 + r1.accuracy * 0.35 + r1.structure * 0.30));
   const round2 = hasVideo
     ? Math.min(98, Math.round(engagement * 0.5 + simplicity * 0.3 + analogies * 0.2 + videoBonus))
-    : Math.round(total * 0.55); // partial credit if skipped
-  const round3 = Math.min(98, Math.round(r3.engagement * 0.3 + r3.analogies * 0.3 + r3.simplicity * 0.2 + r3.accuracy * 0.2 + chatBonus));
+    : Math.round(total * 0.55);
+  // סבב 3 — backend chatbot (אם קיים) גובר על JS מקומי
+  const round3Raw = Math.min(98, Math.round(r3.engagement * 0.3 + r3.analogies * 0.3 + r3.simplicity * 0.2 + r3.accuracy * 0.2 + chatBonus));
+  const round3 = backendChatScore !== null
+    ? Math.min(98, Math.round(backendChatScore * 0.7 + round3Raw * 0.3))
+    : round3Raw;
+
+  // סבב 4 — מבחן קוד (אם בוצע)
+  const round4 = state.codeResult ? Math.round(state.codeResult.adaptive_score || 0) : null;
 
   // ── Dual Scoring Engine impact ──
-  const schoolImpact = Math.round(total * 0.35); // 35% of Score A (Teaching Aptitude)
-  const companyImpact = Math.round(total * 0.25); // 25% of Score B (Soft Skills)
+  const schoolImpact = Math.round(total * 0.35);
+  const companyImpact = Math.round(total * 0.25);
 
-  return { simplicity, accuracy, analogies, engagement, structure, total, round1, round2, round3, schoolImpact, companyImpact };
+  return { simplicity, accuracy, analogies, engagement, structure, total, round1, round2, round3, round4, schoolImpact, companyImpact };
 }
 
 function animateResults(scores) {
@@ -1598,6 +1877,13 @@ function animateResults(scores) {
   animateNumber('round1Score', scores.round1, 1500);
   animateNumber('round2Score', scores.round2, 1500);
   animateNumber('round3Score', scores.round3, 1500);
+
+  // סבב 4 — מבחן קוד (רק אם בוצע)
+  if (scores.round4 !== null && scores.round4 !== undefined) {
+    const row = document.getElementById('round4Row');
+    if (row) row.style.display = '';
+    animateNumber('round4Score', scores.round4, 1500);
+  }
 
   // Metric bars
   setTimeout(() => {
