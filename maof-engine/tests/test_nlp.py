@@ -79,10 +79,10 @@ def test_eli5_fails_minimum_jargon():
 
 
 def test_eli5_breakdown_keys():
-    """breakdown מכיל את כל 5 המדדים"""
+    """breakdown מכיל את כל 6 המדדים"""
     result = analyze_eli5("המחשב כמו מוח — הוא חושב ועושה חישובים.")
     breakdown = result["breakdown"]
-    for key in ["simplicity", "analogies", "creativity", "coherence", "conciseness"]:
+    for key in ["simplicity", "analogies", "narrative_structure", "coherence", "accuracy", "conciseness"]:
         assert key in breakdown, f"Missing breakdown key: {key}"
 
 
@@ -91,6 +91,52 @@ def test_eli5_empty_text():
     result = analyze_eli5("")
     assert result["total_score"] == 0.0
     assert result["passes_minimum"] is False
+
+
+def test_eli5_accuracy_with_topic():
+    """accuracy_score עולה כשהנושא מכוסה"""
+    from nlp.eli5_analyzer import accuracy_score
+    good = accuracy_score(
+        "סייבר זה כמו מנעול שמגן על הבית שלך. אם הסיסמה חלשה — הגנב יכול לפרוץ.",
+        topic="סייבר"
+    )
+    empty = accuracy_score("הנושא מעניין מאוד.", topic="סייבר")
+    assert good > empty
+    assert 0 <= good <= 100
+
+
+def test_eli5_accuracy_without_topic():
+    """accuracy_score ללא topic — מדד סובסטנס"""
+    from nlp.eli5_analyzer import accuracy_score
+    rich = accuracy_score(
+        "דמיין שהמחשב הוא ספרייה ענקית. כל קובץ הוא ספר, "
+        "וה-CPU הוא הספרן שמוצא את הספר הנכון תוך שניות."
+    )
+    thin = accuracy_score("זה מאוד מעניין וחשוב.")
+    assert rich > thin
+
+
+def test_analogy_quality_matters():
+    """אנלוגיה מפותחת (15+ מילים) מקבלת ציון גבוה יותר מאנלוגיה קצרה"""
+    from nlp.eli5_analyzer import analogy_score
+    developed = analogy_score(
+        "דמיין שהמחשב הוא כמו מוח גדול שיכול לחשוב על מיליון דברים בו-זמנית ולזכור הכל."
+    )
+    minimal = analogy_score("זה כמו מוח.")
+    assert developed > minimal
+
+
+def test_coherence_connected_beats_fragmented():
+    """טקסט מקושר מקבל coherence גבוה יותר מרשימת עובדות"""
+    from nlp.eli5_analyzer import coherence_score
+    connected = coherence_score(
+        "המחשב מקבל הוראות. לכן, כל פקודה מעובדת בסדר. "
+        "בנוסף, התוצאה נשמרת בזיכרון. כך המחשב יכול לבצע משימות מורכבות."
+    )
+    fragmented = coherence_score(
+        "המחשב מהיר. הכלב רץ. השמש זורחת. הים כחול. העץ גבוה. הספר אדום."
+    )
+    assert connected > fragmented
 
 
 def test_eli5_short_text():

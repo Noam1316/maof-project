@@ -2,20 +2,20 @@
 ELI5 Analyzer — NLP לניתוח יכולת הסבר
 מעוף Tech-Lead Israel
 
-מנתח טקסט לפי 5 מדדים:
+מנתח טקסט לפי 6 מדדים:
   1. פשטות      — Flesch-like + אורך מילים ומשפטים
-  2. אנלוגיות   — זיהוי "כמו", "דמיין", "זה דומה ל"
-                 שדרוג: מילה סופרת רק אם משמשת בהקשר אמיתי (≥6 מילים במשפט)
+  2. אנלוגיות   — זיהוי "כמו", "דמיין", "זה דומה ל" + איכות (אורך משפט)
   3. נרטיב      — Hook בפתיחה + מסקנה בסיום (מבנה, לא רשימת מילים)
-  4. קוהרנטיות  — קשר בין משפטים
+  4. קוהרנטיות  — מילות חיבור + לכידות לקסיקלית בין משפטים
   5. תמציתיות   — פחות מילים לאותו רעיון + TTR + filler detection
+  6. דיוק       — כיסוי מושגי ליבה (עם topic) + סובסטנס (בלי topic)
 
 ללא API Key — keyword-based analysis בלבד.
 """
 
 import re
 import math
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 # --- מילות אנלוגיה ---
@@ -81,6 +81,26 @@ FILLER_PHRASES_EN = [
     "it is worth noting", "it goes without saying", "first and foremost",
     "last but not least", "at the end of the day",
 ]
+
+# --- מפת מושגי ליבה לפי נושא (לציון דיוק) ---
+CONCEPT_MAP: Dict[str, List[str]] = {
+    "סייבר":      ["הגנה", "מנעול", "בית", "סיסמה", "פריצה", "גנב", "אבטחה", "מגן",
+                   "security", "protection", "password", "hack", "lock", "threat"],
+    "פייתון":     ["מתכון", "הוראות", "שפה", "מחשב", "תכנות", "קוד", "שורה",
+                   "code", "recipe", "instructions", "language", "program"],
+    "מתמטיקה":    ["מספרים", "חשבון", "לספור", "פעולה", "חיבור", "חיסור", "תוצאה",
+                   "numbers", "count", "calculation", "add", "subtract"],
+    "רשתות":      ["כביש", "חיבור", "נתונים", "תקשורת", "כתובת", "נתב",
+                   "connection", "network", "address", "router", "data"],
+    "ai":         ["מוח", "למידה", "דפוסים", "ניסיון", "זיהוי", "תגמול",
+                   "learn", "pattern", "brain", "recognize", "train"],
+    "ענן":        ["שרת", "אחסון", "מרחוק", "גיבוי", "ספרייה", "אינטרנט",
+                   "server", "storage", "remote", "backup", "cloud"],
+    "אלגוריתמים": ["שלבים", "סדר", "חיפוש", "מיון", "פתרון", "בעיה",
+                   "steps", "order", "search", "sort", "solution"],
+    "web":        ["דף", "כתובת", "קישור", "שרת", "בקשה", "תגובה",
+                   "page", "url", "link", "request", "response"],
+}
 
 # --- מילים ז'רגוניסטיות (מורידות ציון) ---
 JARGON_HE = [
@@ -156,29 +176,45 @@ def _keyword_in_real_context(keyword: str, sentences: List[str], min_words: int 
 # --- מדד 2: אנלוגיות ---
 def analogy_score(text: str) -> float:
     """
-    מזהה שימוש במילות אנלוגיה ודוגמאות.
-    שדרוג: מילה סופרת רק אם מופיעה בהקשר אמיתי (משפט עם ≥6 מילים).
-    "לדוגמה." בודד — לא סופר. "לדוגמה, כשאתה לוחץ..." — כן סופר.
+    מדד האנלוגיות — איכות × כמות.
+
+    לכל משפט אנלוגי: ציון איכות לפי אורך (10+ מילים = אנלוגיה מפותחת).
+    בונוס על גיוון (סוגי אנלוגיות שונים).
+    ציון בסיס 20 כשאין כלום — כי היעדר אנלוגיות הוא חסרון אמיתי.
     """
     sentences = split_sentences(text)
     all_keywords = ANALOGY_KEYWORDS_HE + ANALOGY_KEYWORDS_EN
 
-    # סינון: רק מילות אנלוגיה שמשמשות בהקשר משפטי אמיתי
-    qualified = {
-        kw for kw in all_keywords
-        if _keyword_in_real_context(kw, sentences, min_words=6)
-    }
-    unique_found = len(qualified)
+    # אסוף משפטים אנלוגיים + מילות האנלוגיה שהופיעו בהם
+    analogy_sentences = []
+    used_keywords: set = set()
+    for sent in sentences:
+        sent_lower = sent.lower()
+        for kw in all_keywords:
+            if kw.lower() in sent_lower and len(sent.split()) >= 6:
+                analogy_sentences.append(sent)
+                used_keywords.add(kw)
+                break  # משפט נספר פעם אחת
 
-    # ציון: 0 = 20, 1 = 60, 2 = 80, 3+ = 100
-    if unique_found == 0:
+    if not analogy_sentences:
         return 20.0
-    elif unique_found == 1:
-        return 60.0
-    elif unique_found == 2:
-        return 80.0
-    else:
-        return min(100.0, 80 + unique_found * 5)
+
+    # ציון איכות לכל משפט: 6-9 מילים = 55, 10-14 = 75, 15+ = 95
+    def _sentence_quality(s: str) -> float:
+        w = len(s.split())
+        if w >= 15:  return 95.0
+        if w >= 10:  return 75.0
+        return 55.0
+
+    avg_quality = sum(_sentence_quality(s) for s in analogy_sentences) / len(analogy_sentences)
+
+    # בונוס גיוון: שימוש ב-2+ סוגי מילות אנלוגיה שונות
+    diversity_bonus = 10.0 if len(used_keywords) >= 2 else 0.0
+
+    # בונוס כמות: אנלוגיה שנייה מוסיפה 8 נק', שלישית עוד 4
+    count_bonus = min(12.0, (len(analogy_sentences) - 1) * 6)
+
+    return min(100.0, avg_quality + diversity_bonus + count_bonus)
 
 
 # --- מדד 3: מבנה נרטיבי (Hook + Conclusion) ---
@@ -207,10 +243,33 @@ def creativity_score(text: str) -> float:
     return 20.0
 
 
+# --- עזר: לכידות לקסיקלית בין משפטים ---
+def _lexical_cohesion(sentences: List[str]) -> float:
+    """
+    מחשב ממוצע חפיפת מילים בין כל זוג משפטים סמוכים (Jaccard).
+    0.0 = אפס קשר, 1.0 = זהים.
+    """
+    if len(sentences) < 2:
+        return 0.5
+    scores = []
+    for i in range(len(sentences) - 1):
+        s1 = {w.lower() for w in sentences[i].split()   if len(w) > 2}
+        s2 = {w.lower() for w in sentences[i + 1].split() if len(w) > 2}
+        if not s1 or not s2:
+            scores.append(0.0)
+            continue
+        scores.append(len(s1 & s2) / len(s1 | s2))
+    return sum(scores) / len(scores) if scores else 0.0
+
+
 # --- מדד 4: קוהרנטיות ---
 def coherence_score(text: str) -> float:
     """
-    מזהה מילות חיבור ומבנה לוגי
+    שני מרכיבים:
+      1. מילות חיבור לוגיות (לכן, כי, בנוסף...)
+      2. לכידות לקסיקלית — כמה משפטים סמוכים חולקים מילים
+
+    כך טקסט עם 6 משפטים ללא קשר ביניהם לא מקבל ציון גבוה.
     """
     text_lower = text.lower()
     sentences = split_sentences(text)
@@ -218,16 +277,17 @@ def coherence_score(text: str) -> float:
     if len(sentences) < 2:
         return 40.0
 
+    # --- מרכיב 1: מילות חיבור (מקסימום 50 נק') ---
     all_coherence = COHERENCE_KEYWORDS_HE + COHERENCE_KEYWORDS_EN
     found = sum(1 for kw in all_coherence if kw.lower() in text_lower)
+    connective_score = min(50, found * 12)
 
-    # ציון בסיס לפי מספר משפטים
-    structure_score = min(80, len(sentences) * 15)
+    # --- מרכיב 2: לכידות לקסיקלית (מקסימום 50 נק') ---
+    cohesion = _lexical_cohesion(sentences)
+    # cohesion של 0.15+ = טקסט מקושר היטב
+    lexical_score = min(50, cohesion * 300)
 
-    # בונוס מילות חיבור
-    coherence_bonus = min(20, found * 8)
-
-    return round(min(100, structure_score + coherence_bonus), 2)
+    return round(min(100, connective_score + lexical_score), 2)
 
 
 # --- מדד 5: תמציתיות ---
@@ -277,8 +337,60 @@ def conciseness_score(text: str) -> float:
     return round(max(0, min(100, score)), 2)
 
 
+# --- מדד 6: דיוק ---
+def accuracy_score(text: str, topic: str = "") -> float:
+    """
+    בודק שהטקסט מכסה מושגי ליבה הנדרשים להסבר נכון.
+
+    עם topic: נבדק כמה מושגי ליבה מה-CONCEPT_MAP מכוסים.
+    בלי topic: ציון סובסטנס — האם הטקסט מכיל תוכן ממשי (לא רק חזרת הנושא).
+    """
+    words = tokenize(text)
+    text_lower = text.lower()
+
+    if not words:
+        return 0.0
+
+    # --- עם topic: בדוק כיסוי מושגי ליבה ---
+    topic_norm = topic.strip().lower()
+    if topic_norm:
+        # חפש בכל מפת הנושאים (התאמה חלקית לשם הנושא)
+        concepts: List[str] = []
+        for key, vals in CONCEPT_MAP.items():
+            if key in topic_norm or topic_norm in key:
+                concepts = vals
+                break
+
+        if concepts:
+            covered = sum(1 for c in concepts if c.lower() in text_lower)
+            coverage = covered / len(concepts)
+            # 30%+ כיסוי = 80+, 15% = 55, 0% = 30
+            base = min(100.0, coverage * 230 + 30)
+            # עונש אם הטקסט קצר מדי (פחות מ-20 מילים)
+            length_penalty = 20 if len(words) < 20 else 0
+            return round(max(0, base - length_penalty), 2)
+
+    # --- בלי topic: ציון סובסטנס ---
+    # שני גורמים: עושר מילוני (density) + אורך מינימלי
+    content_words = [w for w in words if len(w) > 3]
+    if not content_words:
+        return 30.0
+
+    unique_content = len(set(w.lower() for w in content_words))
+    density = unique_content / len(content_words)  # ייחודיות: 0-1
+
+    # תקרת ציון לפי אורך — טקסט קצר לא יכול לקבל ציון גבוה
+    word_count = len(words)
+    if   word_count < 10:  length_cap = 40
+    elif word_count < 20:  length_cap = 65
+    elif word_count < 30:  length_cap = 80
+    else:                  length_cap = 100
+
+    return round(min(float(length_cap), density * 110), 2)
+
+
 # --- ציון ELI5 מלא ---
-def analyze_eli5(text: str) -> Dict:
+def analyze_eli5(text: str, topic: str = "") -> Dict:
     """
     מנתח טקסט ומחזיר ציון ELI5 מלא.
 
@@ -293,18 +405,20 @@ def analyze_eli5(text: str) -> Dict:
             "feedback": ["הטקסט קצר מדי לניתוח"]
         }
 
-    simplicity = simplicity_score(text)
-    analogies = analogy_score(text)
-    creativity = creativity_score(text)
-    coherence = coherence_score(text)
-    conciseness = conciseness_score(text)
+    simplicity   = simplicity_score(text)
+    analogies    = analogy_score(text)
+    narrative    = creativity_score(text)
+    coherence    = coherence_score(text)
+    conciseness  = conciseness_score(text)
+    accuracy     = accuracy_score(text, topic)
 
-    # ציון משוקלל
+    # ציון משוקלל (6 מדדים)
     total = (
-        simplicity * 0.30 +
-        analogies * 0.30 +
-        creativity * 0.15 +
-        coherence * 0.15 +
+        simplicity  * 0.25 +
+        analogies   * 0.25 +
+        narrative   * 0.15 +
+        coherence   * 0.15 +
+        accuracy    * 0.10 +
         conciseness * 0.10
     )
     total = round(total, 2)
@@ -315,10 +429,12 @@ def analyze_eli5(text: str) -> Dict:
         feedback.append("השתמש במילים פשוטות יותר, הימנע מז'רגון")
     if analogies < 60:
         feedback.append("הוסף אנלוגיות — 'זה כמו...', 'דמיין ש...'")
-    if creativity < 60:
+    if narrative < 60:
         feedback.append("פתח עם שאלה/הזמנה ('דמיין ש...') וסיים עם מסקנה ('לכן', 'כלומר')")
     if coherence < 60:
         feedback.append("הוסף מילות חיבור — 'לכן', 'כי', 'בנוסף'")
+    if accuracy < 50:
+        feedback.append("הסבר שטחי — הוסף פרטים ממשיים על הנושא")
     if conciseness < 60:
         feedback.append("נסה לקצר — פחות מילים לאותו רעיון")
 
@@ -326,11 +442,12 @@ def analyze_eli5(text: str) -> Dict:
         "total_score": total,
         "passes_minimum": total >= 60,
         "breakdown": {
-            "simplicity": simplicity,
-            "analogies": analogies,
-            "narrative_structure": creativity,
-            "coherence": coherence,
-            "conciseness": conciseness,
+            "simplicity":        simplicity,
+            "analogies":         analogies,
+            "narrative_structure": narrative,
+            "coherence":         coherence,
+            "accuracy":          accuracy,
+            "conciseness":       conciseness,
         },
         "feedback": feedback if feedback else ["הסבר טוב! המשך כך"]
     }
