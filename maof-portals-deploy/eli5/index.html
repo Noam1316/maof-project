@@ -528,6 +528,42 @@ body {
   font-size: 14px; color: var(--text2); line-height: 1.7;
 }
 
+/* ── LIVE SCORE PREVIEW ── */
+.live-preview {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 18px; margin-top: 14px;
+  transition: opacity .3s;
+}
+.live-preview.hidden { opacity: 0; pointer-events: none; }
+.live-preview-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.live-preview-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--teal);
+}
+.live-total {
+  font-size: 22px; font-weight: 900; color: var(--teal);
+  transition: color .3s;
+}
+.live-total.low    { color: var(--pink); }
+.live-total.medium { color: var(--orange); }
+.live-bars { display: flex; flex-direction: column; gap: 6px; }
+.live-bar-row {
+  display: flex; align-items: center; gap: 8px; font-size: 12px;
+}
+.live-bar-name { width: 56px; color: var(--text2); flex-shrink: 0; }
+.live-bar-track {
+  flex: 1; height: 5px; background: var(--surface);
+  border-radius: 3px; overflow: hidden;
+}
+.live-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width .6s ease, background .6s;
+}
+.live-bar-val { width: 28px; text-align: left; color: var(--text2); font-size: 11px; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .rounds-preview { grid-template-columns: 1fr; }
@@ -705,6 +741,41 @@ body {
       <span>📝 מילים: <strong id="wordCount">0</strong></span>
       <span>📏 תווים: <strong id="charCount">0</strong></span>
       <span>📊 משפטים: <strong id="sentenceCount">0</strong></span>
+    </div>
+
+    <!-- live score preview -->
+    <div class="live-preview hidden" id="livePreview">
+      <div class="live-preview-header">
+        <span class="live-preview-label">⚡ ניקוד חי</span>
+        <span class="live-total" id="liveTotal">—</span>
+      </div>
+      <div class="live-bars" id="liveBars">
+        <div class="live-bar-row">
+          <span class="live-bar-name">פשטות</span>
+          <div class="live-bar-track"><div class="live-bar-fill" id="lb-simplicity" style="background:var(--teal)"></div></div>
+          <span class="live-bar-val" id="lv-simplicity">—</span>
+        </div>
+        <div class="live-bar-row">
+          <span class="live-bar-name">דיוק</span>
+          <div class="live-bar-track"><div class="live-bar-fill" id="lb-accuracy" style="background:var(--blue)"></div></div>
+          <span class="live-bar-val" id="lv-accuracy">—</span>
+        </div>
+        <div class="live-bar-row">
+          <span class="live-bar-name">אנלוגיות</span>
+          <div class="live-bar-track"><div class="live-bar-fill" id="lb-analogies" style="background:var(--purple)"></div></div>
+          <span class="live-bar-val" id="lv-analogies">—</span>
+        </div>
+        <div class="live-bar-row">
+          <span class="live-bar-name">מעורבות</span>
+          <div class="live-bar-track"><div class="live-bar-fill" id="lb-engagement" style="background:var(--orange)"></div></div>
+          <span class="live-bar-val" id="lv-engagement">—</span>
+        </div>
+        <div class="live-bar-row">
+          <span class="live-bar-name">מבנה</span>
+          <div class="live-bar-track"><div class="live-bar-fill" id="lb-structure" style="background:var(--pink)"></div></div>
+          <span class="live-bar-val" id="lv-structure">—</span>
+        </div>
+      </div>
     </div>
 
     <div class="btn-center">
@@ -1431,6 +1502,13 @@ function startTest() {
   });
 }
 
+// ── Live scoring debounce ──
+let _liveTimer = null;
+const LIVE_COLORS = {
+  simplicity: 'var(--teal)',   accuracy:  'var(--blue)',
+  analogies:  'var(--purple)', engagement:'var(--orange)', structure: 'var(--pink)',
+};
+
 function updateWritingStats() {
   const text = document.getElementById('writingArea').value;
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -1440,6 +1518,74 @@ function updateWritingStats() {
   document.getElementById('wordCount').textContent = words;
   document.getElementById('charCount').textContent = chars;
   document.getElementById('sentenceCount').textContent = sentences;
+
+  // Live preview — show after 15 words, update with debounce
+  const preview = document.getElementById('livePreview');
+  if (words < 10) { preview.classList.add('hidden'); return; }
+  preview.classList.remove('hidden');
+
+  clearTimeout(_liveTimer);
+  _liveTimer = setTimeout(() => updateLiveScore(text), 800);
+}
+
+function updateLiveScore(text) {
+  // ניתוח מקומי מהיר
+  const r = analyzeText(text);
+  const scores = {
+    simplicity: r.simplicity,
+    accuracy:   r.accuracy,
+    analogies:  r.analogies,
+    engagement: r.engagement,
+    structure:  r.structure,
+  };
+  const total = Math.round(
+    r.simplicity * 0.28 + r.accuracy * 0.25 +
+    r.analogies  * 0.22 + r.engagement * 0.15 + r.structure * 0.10
+  );
+
+  // עדכן total
+  const totalEl = document.getElementById('liveTotal');
+  totalEl.textContent = total;
+  totalEl.className = 'live-total' + (total < 50 ? ' low' : total < 70 ? ' medium' : '');
+
+  // עדכן bars
+  Object.entries(scores).forEach(([key, val]) => {
+    const fill = document.getElementById('lb-' + key);
+    const valEl = document.getElementById('lv-' + key);
+    if (!fill) return;
+    fill.style.width = val + '%';
+    fill.style.background = total >= 70 ? LIVE_COLORS[key] : (total >= 50 ? 'var(--orange)' : 'var(--pink)');
+    valEl.textContent = Math.round(val);
+  });
+
+  // אם המנוע מחובר — קרא גם ל-API ברקע וחדד
+  if (eli5EngineOnline && text.length > 80) {
+    fetch(`${MAOF_API}/eli5`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, topic: state.topic || '' }),
+    })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data?.breakdown) return;
+      const b = data.breakdown;
+      const engineScores = {
+        simplicity: b.simplicity, accuracy: b.accuracy,
+        analogies:  b.analogies,  engagement: scores.engagement,
+        structure:  b.coherence  || scores.structure,
+      };
+      const eTotal = Math.round(data.total_score || total);
+      document.getElementById('liveTotal').textContent = eTotal;
+      Object.entries(engineScores).forEach(([key, val]) => {
+        const fill = document.getElementById('lb-' + key);
+        const valEl = document.getElementById('lv-' + key);
+        if (!fill || !val) return;
+        fill.style.width = val + '%';
+        valEl.textContent = Math.round(val);
+      });
+    })
+    .catch(() => {});
+  }
 }
 
 function finishRound1() {
@@ -2150,7 +2296,7 @@ function renderGroqBadge(scores) {
     border-radius: 16px; padding: 16px 20px; margin: 16px 0;
     display: flex; align-items: flex-start; gap: 14px;
   `;
-  badge.innerHTML = \`
+  badge.innerHTML = `
     <div style="font-size:28px">🤖</div>
     <div style="flex:1">
       <div style="font-size:13px;font-weight:700;color:#a855f7;margin-bottom:8px">
@@ -2158,22 +2304,22 @@ function renderGroqBadge(scores) {
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
         <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:10px;padding:10px">
-          <div style="font-size:22px;font-weight:900;color:#a855f7">\${Math.round(g.analogy_quality)}</div>
+          <div style="font-size:22px;font-weight:900;color:#a855f7">${Math.round(g.analogy_quality)}</div>
           <div style="font-size:11px;color:#94a3b8">איכות אנלוגיות</div>
         </div>
         <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:10px;padding:10px">
-          <div style="font-size:22px;font-weight:900;color:#ec4899">\${Math.round(g.conclusion_logic)}</div>
+          <div style="font-size:22px;font-weight:900;color:#ec4899">${Math.round(g.conclusion_logic)}</div>
           <div style="font-size:11px;color:#94a3b8">היגיון מסקנה</div>
         </div>
         <div style="text-align:center;background:rgba(0,0,0,.2);border-radius:10px;padding:10px">
-          <div style="font-size:22px;font-weight:900;color:#3b82f6">\${Math.round(g.audience_fit)}</div>
+          <div style="font-size:22px;font-weight:900;color:#3b82f6">${Math.round(g.audience_fit)}</div>
           <div style="font-size:11px;color:#94a3b8">התאמה לקהל</div>
         </div>
       </div>
-      \${g.reasoning ? \`<div style="font-size:12px;color:#94a3b8;font-style:italic">"</div>\${g.reasoning}"</div>\` : ''}
-      <div style="font-size:11px;color:#475569;margin-top:6px">latency: \${g.latency_ms}ms</div>
+      ${g.reasoning ? `<div style="font-size:12px;color:#94a3b8;font-style:italic">"${g.reasoning}"</div>` : ''}
+      <div style="font-size:11px;color:#475569;margin-top:6px">latency: ${g.latency_ms}ms</div>
     </div>
-  \`;
+  `;
 
   // Insert after tip-box
   const tipsBox = document.getElementById('tipsBox');

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מעוף · הכנת מנוע</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f1117; color: #f0f2ff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; flex-direction: column; gap: 32px;
+    }
+
+    .logo { font-size: 22px; font-weight: 800; color: #f97316; }
+
+    .card {
+      background: #1a1d27; border: 1px solid #2e3350;
+      border-radius: 16px; padding: 36px 48px;
+      text-align: center; max-width: 440px; width: 90%;
+    }
+
+    /* ── Status icon ── */
+    .status-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      margin: 0 auto 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; transition: all .4s;
+    }
+    .status-icon.sleeping  { background: rgba(239,68,68,.15);  border: 2px solid rgba(239,68,68,.4);  }
+    .status-icon.waking    { background: rgba(249,115,22,.15); border: 2px solid rgba(249,115,22,.4); animation: pulse 1s infinite; }
+    .status-icon.ready     { background: rgba(34,197,94,.15);  border: 2px solid rgba(34,197,94,.4);  }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,.4); }
+      50%       { box-shadow: 0 0 0 12px rgba(249,115,22,0); }
+    }
+
+    .status-title {
+      font-size: 20px; font-weight: 700; margin-bottom: 8px;
+    }
+    .status-title.sleeping { color: #ef4444; }
+    .status-title.waking   { color: #f97316; }
+    .status-title.ready    { color: #22c55e; }
+
+    .status-sub {
+      font-size: 14px; color: #8b92b8; line-height: 1.6; margin-bottom: 24px;
+    }
+
+    /* ── Progress bar ── */
+    .progress-track {
+      height: 6px; background: #22263a; border-radius: 3px;
+      overflow: hidden; margin-bottom: 12px;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, #f97316, #14b8a6);
+      transition: width .5s ease; width: 0%;
+    }
+    .progress-label { font-size: 12px; color: #8b92b8; }
+
+    /* ── Attempt log ── */
+    .log {
+      margin-top: 20px; font-size: 12px; color: #8b92b8;
+      max-height: 80px; overflow-y: auto; text-align: right;
+      border-top: 1px solid #2e3350; padding-top: 14px;
+      line-height: 2;
+    }
+    .log-line.ok  { color: #22c55e; }
+    .log-line.err { color: #ef4444; }
+    .log-line.try { color: #f97316; }
+
+    /* ── Ready state ── */
+    .links {
+      display: flex; flex-direction: column; gap: 10px; margin-top: 8px;
+    }
+    .link-btn {
+      display: block; padding: 12px 20px;
+      border: 1px solid #2e3350; border-radius: 10px;
+      color: #f0f2ff; text-decoration: none; font-size: 14px;
+      font-weight: 600; transition: all .2s; background: #22263a;
+    }
+    .link-btn:hover { border-color: #f97316; color: #f97316; }
+    .link-btn.primary {
+      background: linear-gradient(135deg, #f97316, #ea6a0a);
+      border-color: transparent; color: #fff;
+    }
+    .link-btn.primary:hover { opacity: .9; color: #fff; }
+
+    /* ── Tip ── */
+    .tip {
+      font-size: 12px; color: #8b92b8; margin-top: 24px;
+      padding: 10px 14px; border: 1px solid #2e3350;
+      border-radius: 8px; background: #22263a; text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+<div class="logo">מעוף ⚡</div>
+
+<div class="card" id="card">
+  <div class="status-icon sleeping" id="icon">😴</div>
+  <div class="status-title sleeping" id="title">המנוע ישן</div>
+  <div class="status-sub" id="sub">
+    מחמם את שרת ה-API...<br>זה לוקח בד"כ 20–40 שניות
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="fill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">מנסה להתחבר...</div>
+
+  <div class="log" id="log"></div>
+</div>
+
+<div class="tip">
+  💡 פתח דף זה <strong>2 דקות לפני</strong> הדמו — המנוע יהיה מוכן כשתצטרך אותו
+</div>
+
+<script>
+const API = 'https://maof-project.onrender.com/api/v1/health';
+const DEMO_LINKS = [
+  { label: '🎖 פורטל חיילים',     url: 'https://maof-portals.vercel.app/soldiers'    },
+  { label: '📊 סימולציה',          url: 'https://maof-portals.vercel.app/simulation'  },
+  { label: '🧠 מבחן ELI5',         url: 'https://maof-portals.vercel.app/eli5'        },
+  { label: '🏢 פורטל חברות',       url: 'https://maof-portals.vercel.app/companies'   },
+  { label: '🔗 מבחן חשיבה מערכתית',url: 'https://maof-portals.vercel.app/systemic'   },
+];
+
+let attempts = 0;
+let maxAttempts = 12;  // 60 שניות
+let resolved = false;
+const startTime = Date.now();
+
+function log(msg, cls = 'try') {
+  const el = document.getElementById('log');
+  const line = document.createElement('div');
+  line.className = 'log-line ' + cls;
+  line.textContent = msg;
+  el.prepend(line);
+}
+
+function setProgress(pct) {
+  document.getElementById('fill').style.width = pct + '%';
+}
+
+async function tryPing() {
+  if (resolved) return;
+  attempts++;
+  const elapsed = Math.round((Date.now() - startTime) / 1000);
+  log(`ניסיון ${attempts} · ${elapsed}s`);
+
+  try {
+    const r = await fetch(API, { signal: AbortSignal.timeout(8000) });
+    if (r.ok) {
+      const data = await r.json();
+      if (data?.status === 'ok') {
+        resolved = true;
+        onReady(elapsed);
+        return;
+      }
+    }
+    log(`שגיאת HTTP ${r.status}`, 'err');
+  } catch (e) {
+    log(`timeout / רשת`, 'err');
+  }
+
+  setProgress(Math.min(90, (attempts / maxAttempts) * 100));
+
+  if (attempts < maxAttempts) {
+    setTimeout(tryPing, 5000);
+  } else {
+    onFailed();
+  }
+}
+
+function onReady(elapsed) {
+  const icon  = document.getElementById('icon');
+  const title = document.getElementById('title');
+  const sub   = document.getElementById('sub');
+  const label = document.getElementById('progressLabel');
+
+  icon.textContent  = '✅';
+  icon.className    = 'status-icon ready';
+  title.textContent = 'מנוע מוכן!';
+  title.className   = 'status-title ready';
+  sub.innerHTML     = `התחברות הצליחה תוך <strong>${elapsed}</strong> שניות<br>אפשר לפתוח את הדמו`;
+  label.textContent = '100%';
+  setProgress(100);
+  log(`✅ מוכן (${elapsed}s)`, 'ok');
+
+  // הצג קישורים לדמו
+  const linksDiv = document.createElement('div');
+  linksDiv.className = 'links';
+  DEMO_LINKS.forEach((l, i) => {
+    const a = document.createElement('a');
+    a.href = l.url; a.target = '_blank';
+    a.className = 'link-btn' + (i === 0 ? ' primary' : '');
+    a.textContent = l.label;
+    linksDiv.appendChild(a);
+  });
+  document.getElementById('card').appendChild(linksDiv);
+}
+
+function onFailed() {
+  const icon  = document.getElementById('icon');
+  const title = document.getElementById('title');
+  const sub   = document.getElementById('sub');
+  icon.textContent  = '⚠️';
+  icon.className    = 'status-icon sleeping';
+  title.textContent = 'לא הצליח להתחבר';
+  title.className   = 'status-title sleeping';
+  sub.innerHTML     = 'הרנדר לא הגיב — בדוק חיבור אינטרנט<br>או נסה לרענן את הדף';
+  document.getElementById('progressLabel').textContent = 'כשל';
+
+  const btn = document.createElement('button');
+  btn.textContent = '🔄 נסה שוב';
+  btn.style.cssText = 'margin-top:16px;padding:10px 24px;border-radius:8px;border:1px solid #f97316;background:transparent;color:#f97316;font-size:14px;cursor:pointer;font-weight:700';
+  btn.onclick = () => { attempts = 0; resolved = false; setProgress(0); tryPing(); };
+  document.getElementById('card').appendChild(btn);
+}
+
+// התחל
+document.getElementById('icon').className = 'status-icon waking';
+document.getElementById('icon').textContent = '⏳';
+document.getElementById('title').textContent = 'מחמם מנוע...';
+document.getElementById('title').className = 'status-title waking';
+tryPing();
+</script>
+</body>
+</html>
