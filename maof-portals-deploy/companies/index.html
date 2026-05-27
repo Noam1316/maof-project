@@ -1666,7 +1666,7 @@ function renderCandCards(cands, intro) {
            style="background:${cl.bg};border-color:${cl.border}"
            onclick="openModal('${c.id}');stats.opened++;updateStats()">
         <div class="ccc-rank ${cl.rankCls}">${i+1}</div>
-        <div class="cand-av" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${CANDS[c.id]?.g ? `linear-gradient(135deg,${CANDS[c.id].g})` : '#16213e'}">${c.name.split('').slice(0,2).join('')}</div>
+        <div class="cand-av" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${CANDS[c.id]?.g ? `linear-gradient(135deg,${CANDS[c.id].g})` : '#16213e'}">${c.name.split(' ').map(w=>w[0]||'').join('').slice(0,2)}</div>
         <div style="flex:1">
           <div class="ccc-name">${c.name}</div>
           <div class="ccc-unit">${c.unit} · ${c.city}</div>

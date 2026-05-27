@@ -165,7 +165,7 @@ def analyze_eli5_full(text: str, topic: str = "") -> Dict:
     """
     from nlp.eli5_analyzer import analyze_eli5
 
-    base = analyze_eli5(text)
+    base = analyze_eli5(text, topic)
     groq = score_with_groq(text)
 
     if groq is not None:

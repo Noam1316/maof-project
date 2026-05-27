@@ -702,3 +702,60 @@ def simulate_quick():
     """סימולציה מהירה — 5 מועמדים, 3 בתי ספר, 3 חברות"""
     candidates, schools, companies = generate_dataset(5, 3, 3)
     return run_full_matching(candidates, schools, companies)
+
+
+# ══════════════════════════════════════════════
+#  AI Chat — Groq proxy (replaces direct Anthropic calls in portals)
+# ══════════════════════════════════════════════
+
+@router.post("/chat")
+def ai_chat(body: dict):
+    """
+    AI Chat proxy — מעביר הודעות ל-Groq ומחזיר תשובה.
+    מחליף קריאות ישירות ל-Anthropic API בפורטלים (שאין בהן API key).
+
+    body:
+      system   — הוראות מערכת
+      messages — היסטוריית שיחה [{"role": "user"|"assistant", "content": str}]
+    """
+    import os
+    import httpx
+    import json
+
+    system   = body.get("system", "")
+    messages = body.get("messages", [])
+    if not messages:
+        raise HTTPException(status_code=400, detail="חסרות הודעות")
+
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    if not groq_key:
+        raise HTTPException(status_code=503, detail="GROQ_API_KEY לא מוגדר — AI chat לא זמין")
+
+    full_messages = []
+    if system:
+        full_messages.append({"role": "system", "content": system})
+    full_messages.extend(messages[-10:])  # שמור 10 הודעות אחרונות
+
+    try:
+        resp = httpx.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {groq_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "llama-3.3-70b-versatile",
+                "messages": full_messages,
+                "max_tokens": 600,
+                "temperature": 0.7,
+            },
+            timeout=15.0,
+        )
+        if resp.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"Groq החזיר {resp.status_code}")
+        reply = resp.json()["choices"][0]["message"]["content"]
+        return {"reply": reply, "model": "groq/llama-3.3-70b-versatile"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"שגיאת AI chat: {str(e)}")
