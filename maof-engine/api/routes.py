@@ -174,8 +174,10 @@ def complete_assessment(candidate_id: str, body: dict):
             raise HTTPException(status_code=400, detail=f"'{name}' חייב להיות בין 0 ל-100")
 
     # --- חישוב tech_test_score ---
-    c = float(code     or candidate.get("code_score",     0))
-    s = float(systemic or candidate.get("systemic_score", 0))
+    # השתמש בערך שסופק; fallback לערך ב-DB; אם אין — 0
+    # חשוב: לא `code or ...` כי 0.0 (כשל מוחלט) הוא ערך לגיטימי
+    c = float(code     if code     is not None else candidate.get("code_score")     or 0)
+    s = float(systemic if systemic is not None else candidate.get("systemic_score") or 0)
 
     if s > 0 and c > 0:
         tech_test = round(s * 0.55 + c * 0.45, 2)

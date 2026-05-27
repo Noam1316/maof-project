@@ -247,7 +247,7 @@ class FeedbackLoop:
             if actual is not None:
                 with_feedback += 1
                 predicted = r.get("predicted_score", 0)
-                if predicted:
+                if predicted is not None:
                     errors.append(abs(predicted - actual))
 
             if sfb and cfb and canfb:
@@ -282,7 +282,7 @@ class FeedbackLoop:
             canfb = r.get("candidate_feedback")
             actual = _compute_actual_score(sfb, cfb, canfb)
             predicted = r.get("predicted_score")
-            if actual is not None and predicted:
+            if actual is not None and predicted is not None:
                 error = round(predicted - actual, 2)
                 analyzed.append({
                     "placement_id": r.get("id"),
@@ -357,7 +357,7 @@ class FeedbackLoop:
                     "placement_id": r.get("id"),
                     "predicted_score": predicted,
                     "actual_score": actual,
-                    "error": round(predicted - actual, 2) if predicted else None,
+                    "error": round(predicted - actual, 2) if predicted is not None else None,
                     "has_full_feedback": sfb is not None and cfb is not None and canfb is not None,
                 })
         return result

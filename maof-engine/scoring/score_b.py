@@ -60,6 +60,9 @@ def tech_skills_score(candidate: Candidate, company: Company) -> float:
 
 # --- פוטנציאל צמיחה (25%) ---
 def growth_potential_score(candidate: Candidate) -> float:
+    # הערה עיצובית: career_switches כאן חיובי (חברה = adaptability, ניסיון מגוון)
+    # לעומת score_a.retention_score שמענישה career_switches (בית ספר = יציבות)
+    # זה כוונתי — שתי הפרספקטיבות שונות מטבען
     academic = ACADEMIC_SCORES[candidate.academic_background]
     courses = min(100, candidate.independent_courses * 15)
     promotion = candidate.promotion_rate
