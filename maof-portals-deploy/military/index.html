@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מערכת שיבוץ חכמה — אכ"א | IDF HR DSS</title>
+  <style>
+    :root {
+      --bg0: #080c12;
+      --bg1: #0e1421;
+      --bg2: #141b28;
+      --bg3: #1c2535;
+      --bg4: #232e42;
+      --border: #263044;
+      --border2: #324060;
+      --olive: #5c7a2e;
+      --olive2: #73993a;
+      --olive-glow: rgba(92,122,46,0.25);
+      --green: #4ade80;
+      --green-bg: rgba(74,222,128,0.08);
+      --green-border: rgba(74,222,128,0.4);
+      --red: #f87171;
+      --red-bg: rgba(248,113,113,0.08);
+      --red-border: rgba(248,113,113,0.4);
+      --yellow: #fbbf24;
+      --yellow-bg: rgba(251,191,36,0.08);
+      --yellow-border: rgba(251,191,36,0.4);
+      --blue: #60a5fa;
+      --blue-bg: rgba(96,165,250,0.08);
+      --purple: #a78bfa;
+      --purple-bg: rgba(167,139,250,0.08);
+      --text: #dde4ee;
+      --text2: #8fa0b8;
+      --text3: #576880;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg0);
+      color: var(--text);
+      font-family: 'Segoe UI', 'Arial Hebrew', system-ui, sans-serif;
+      min-height: 100vh;
+      font-size: 15px;
+    }
+
+    /* ─── HEADER ─── */
+    .header {
+      background: linear-gradient(180deg, var(--bg1), var(--bg0));
+      border-bottom: 1px solid var(--olive);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-box {
+      width: 44px; height: 44px;
+      background: var(--olive-glow);
+      border: 1px solid var(--olive);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .header h1 { font-size: 1.15rem; font-weight: 700; }
+    .header p  { font-size: 0.73rem; color: var(--text2); margin-top: 2px; }
+    .header-end {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 6px; padding: 5px 10px;
+      font-size: 0.72rem; color: var(--text2);
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--olive2);
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ─── DEMO BAR ─── */
+    .demo-bar {
+      background: linear-gradient(90deg, rgba(92,122,46,0.12), rgba(92,122,46,0.04));
+      border-bottom: 1px solid rgba(92,122,46,0.3);
+      padding: 10px 28px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .demo-label { font-size: 0.8rem; color: var(--text2); flex: 1; min-width: 200px; }
+    .demo-label strong { color: var(--olive2); }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 6px; border: none;
+      cursor: pointer; font-size: 0.8rem; font-weight: 600;
+      font-family: inherit; transition: all 0.18s; white-space: nowrap;
+    }
+    .btn-olive { background: var(--olive); color: #fff; }
+    .btn-olive:hover { background: var(--olive2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(92,122,46,0.3); }
+    .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--text3); }
+
+    /* ─── MAIN LAYOUT ─── */
+    .main { padding: 20px 28px; max-width: 1440px; margin: 0 auto; }
+
+    .grid-top {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 960px) {
+      .grid-top { grid-template-columns: 1fr; }
+      .main { padding: 14px 14px; }
+      .header { padding: 12px 14px; }
+      .demo-bar { padding: 8px 14px; }
+    }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .card-head {
+      display: flex; align-items: center; gap: 10px;
+      padding-bottom: 12px; margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-icon {
+      width: 30px; height: 30px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
+    }
+    .ci-olive  { background: var(--olive-glow); }
+    .ci-blue   { background: var(--blue-bg); }
+    .ci-purple { background: var(--purple-bg); }
+    .ci-green  { background: var(--green-bg); }
+    .card-title { font-size: 0.88rem; font-weight: 700; }
+    .card-sub   { font-size: 0.7rem; color: var(--text2); margin-top: 2px; }
+
+    /* ─── SECTION TITLE ─── */
+    .stitle {
+      font-size: 0.68rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    /* ─── SLIDERS ─── */
+    .sl-group { display: flex; flex-direction: column; gap: 12px; }
+
+    .sl-item { display: flex; flex-direction: column; gap: 5px; }
+    .sl-row {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .sl-name { font-size: 0.77rem; color: var(--text2); }
+    .sl-val  {
+      font-size: 0.82rem; font-weight: 800; color: var(--text);
+      min-width: 28px; text-align: center;
+      background: var(--bg4); border-radius: 4px; padding: 1px 6px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 4px; border-radius: 2px;
+      background: var(--bg4); outline: none; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px; height: 15px; border-radius: 50%;
+      background: var(--olive2); cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+      box-shadow: 0 0 8px var(--olive);
+    }
+
+    select.sl-select {
+      -webkit-appearance: none; appearance: none;
+      background: var(--bg4); border: 1px solid var(--border2);
+      border-radius: 6px; padding: 6px 10px;
+      color: var(--text); font-family: inherit; font-size: 0.8rem;
+      cursor: pointer; width: 100%;
+    }
+
+    /* candidate score strip */
+    .cand-score-strip {
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .score-ring {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 3px solid var(--olive2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 900;
+      color: var(--olive2); flex-shrink: 0;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .mini-bar-wrap { flex: 1; }
+    .mini-bar-track {
+      height: 8px; background: var(--bg4); border-radius: 4px; overflow: hidden;
+    }
+    .mini-bar-fill {
+      height: 100%; border-radius: 4px;
+      background: var(--olive2);
+      transition: width 0.45s ease, background 0.3s;
+    }
+    .mini-bar-hint { font-size: 0.65rem; color: var(--text3); margin-top: 4px; }
+
+    /* ─── ROLES GRID ─── */
+    .roles-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) { .roles-4 { grid-template-columns: 1fr; } }
+
+    .role-card {
+      background: var(--bg3); border: 2px solid var(--border);
+      border-radius: 10px; padding: 12px;
+      cursor: pointer; transition: all 0.18s;
+      position: relative; overflow: hidden;
+    }
+    .role-card:hover { border-color: var(--olive); }
+    .role-card.active { border-color: var(--olive2); background: rgba(92,122,46,0.07); }
+
+    .rc-top { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
+    .rc-emoji { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .rc-name { font-size: 0.8rem; font-weight: 700; line-height: 1.3; }
+    .rc-desc { font-size: 0.68rem; color: var(--text2); margin-top: 2px; }
+
+    .rc-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag {
+      font-size: 0.62rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 4px;
+    }
+    .t-red    { background: rgba(248,113,113,0.15); color: var(--red);    }
+    .t-blue   { background: rgba(96,165,250,0.15);  color: var(--blue);   }
+    .t-olive  { background: var(--olive-glow);       color: var(--olive2); }
+    .t-purple { background: var(--purple-bg);        color: var(--purple); }
+    .t-yellow { background: var(--yellow-bg);        color: var(--yellow); }
+
+    /* score bubble on role card */
+    .rc-badge {
+      position: absolute; top: 9px; left: 9px;
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 2px solid; font-weight: 900; font-size: 0.78rem;
+    }
+    .rcb-blocked { background: var(--red-bg);    border-color: var(--red);    color: var(--red);    font-size: 0.6rem; }
+    .rcb-high    { background: var(--green-bg);  border-color: var(--green);  color: var(--green);  }
+    .rcb-med     { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
+    .rcb-low     { background: var(--red-bg);    border-color: var(--red);    color: var(--red);    }
+
+    /* ─── ENGINE SECTION ─── */
+    .engine-empty {
+      text-align: center; padding: 48px 0;
+      color: var(--text3); font-size: 0.85rem;
+    }
+    .engine-empty span { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+    /* Score 3-grid */
+    .score3 {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 600px) { .score3 { grid-template-columns: 1fr; } }
+
+    .s3-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px; text-align: center;
+    }
+    .s3-label { font-size: 0.7rem; color: var(--text2); margin-bottom: 6px; }
+    .s3-num {
+      font-size: 2.4rem; font-weight: 900; line-height: 1;
+      margin-bottom: 3px; transition: color 0.3s;
+    }
+    .s3-hint { font-size: 0.65rem; color: var(--text3); }
+    .col-green  { color: var(--green);  }
+    .col-yellow { color: var(--yellow); }
+    .col-red    { color: var(--red);    }
+    .col-olive  { color: var(--olive2); }
+    .col-blue   { color: var(--blue);   }
+
+    /* blocking alert */
+    .block-alert {
+      background: var(--red-bg); border: 1px solid var(--red-border);
+      border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;
+    }
+    .block-alert-h {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; color: var(--red); font-size: 0.85rem; margin-bottom: 8px;
+    }
+    .block-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .block-list li {
+      font-size: 0.77rem; color: var(--text2);
+      display: flex; align-items: flex-start; gap: 7px;
+    }
+    .block-list li::before { content: '⛔'; font-size: 0.65rem; margin-top: 2px; flex-shrink: 0; }
+    .block-note { font-size: 0.7rem; color: var(--text3); margin-top: 8px; }
+    .block-note strong { color: var(--red); }
+
+    /* dimension bars */
+    .dim-bars { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+    .dim-bar-item { display: flex; flex-direction: column; gap: 4px; }
+    .dim-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem;
+    }
+    .dim-name { color: var(--text2); }
+    .dim-val  { font-weight: 700; color: var(--text); }
+    .dim-val.blocked { color: var(--red); }
+    .dim-track {
+      height: 5px; background: var(--bg4);
+      border-radius: 3px; overflow: visible; position: relative;
+    }
+    .dim-fill {
+      height: 100%; border-radius: 3px;
+      transition: width 0.45s ease, background 0.3s;
+    }
+    .dim-thresh {
+      position: absolute; top: -3px; bottom: -3px;
+      width: 2px; border-radius: 1px;
+      background: rgba(255,255,255,0.25);
+    }
+    .df-blue   { background: var(--blue);   }
+    .df-green  { background: var(--green);  }
+    .df-purple { background: var(--purple); }
+    .df-olive  { background: var(--olive2); }
+    .df-yellow { background: var(--yellow); }
+    .df-red    { background: var(--red);    }
+    .df-blocked { background: var(--red); opacity: 0.7; }
+
+    /* weights badge */
+    .weights-badge {
+      display: inline-block; background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px; padding: 4px 10px;
+      font-size: 0.67rem; color: var(--text3); margin-bottom: 10px;
+    }
+
+    /* Recommendation */
+    .rec-box {
+      border-radius: 10px; padding: 16px;
+      border: 1px solid; display: flex; align-items: center; gap: 14px;
+      transition: all 0.3s;
+    }
+    .rec-box.blocked { background: var(--red-bg);    border-color: var(--red-border);    }
+    .rec-box.high    { background: var(--green-bg);  border-color: var(--green-border);  }
+    .rec-box.med     { background: var(--yellow-bg); border-color: var(--yellow-border); }
+    .rec-box.low     { background: var(--red-bg);    border-color: var(--red-border);    }
+    .rec-emoji { font-size: 2rem; flex-shrink: 0; }
+    .rec-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+    .rec-sub   { font-size: 0.78rem; color: var(--text2); }
+
+    /* ─── SUMMARY TABLE ─── */
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
+    }
+    @media (max-width: 700px) { .summary-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .sum-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px;
+    }
+    .sum-role { font-size: 0.72rem; font-weight: 700; margin-bottom: 6px; color: var(--text2); }
+    .sum-score {
+      font-size: 1.8rem; font-weight: 900; line-height: 1; margin-bottom: 8px;
+    }
+    .sum-bar-track {
+      height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden;
+    }
+    .sum-bar-fill { height: 100%; border-radius: 2px; transition: width 0.45s ease; }
+    .sum-status { font-size: 0.68rem; margin-top: 5px; }
+
+    /* ─── STRATEGIC PANEL ─── */
+    .strat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    @media (max-width: 600px) { .strat-grid { grid-template-columns: 1fr; } }
+
+    .strat-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px;
+    }
+    .strat-name { font-size: 0.72rem; color: var(--text2); margin-bottom: 6px; }
+    .strat-val  { font-size: 1.5rem; font-weight: 800; color: var(--blue); margin-bottom: 4px; }
+    .strat-hint { font-size: 0.65rem; color: var(--text3); }
+    .strat-bar-track { height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+    .strat-bar-fill  { height: 100%; background: var(--blue); border-radius: 2px; }
+
+    /* ─── MISC ─── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .mt-14 { margin-top: 14px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-10 { margin-bottom: 10px; }
+    .flex-row { display: flex; align-items: center; gap: 8px; }
+    .info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 5px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.77rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .ik { color: var(--text2); }
+    .iv { font-weight: 700; }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg0); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    /* demo highlight blink */
+    @keyframes highlight {
+      0%,100% { box-shadow: none; }
+      50% { box-shadow: 0 0 0 3px var(--olive); }
+    }
+    .demo-highlight { animation: highlight 1s ease 2; }
+
+    /* ─── TABLET 768px ─── */
+    @media (max-width: 768px) {
+      .score3 { grid-template-columns: 1fr 1fr; }
+      .score3 > .s3-card:nth-child(3) { grid-column: 1 / -1; }
+      .strat-grid { grid-template-columns: 1fr 1fr; }
+      .strat-grid > .strat-card:nth-child(3) { grid-column: 1 / -1; }
+    }
+
+    /* ─── PHONE 480px ─── */
+    @media (max-width: 480px) {
+      body { font-size: 14px; }
+
+      /* header */
+      .header { padding: 10px 12px; gap: 10px; }
+      .logo-box { width: 36px; height: 36px; font-size: 18px; }
+      .header h1 { font-size: 0.95rem; line-height: 1.2; }
+      .header > div > p { display: none; }
+      .live-badge { padding: 4px 7px; font-size: 0.62rem; }
+      .dot { width: 5px; height: 5px; }
+
+      /* demo bar */
+      .demo-bar { padding: 8px 12px; gap: 8px; }
+      .demo-label { font-size: 0.72rem; }
+      .btn { padding: 6px 12px; font-size: 0.75rem; }
+
+      /* main layout */
+      .main { padding: 10px 10px; }
+      .grid-top { gap: 12px; margin-bottom: 12px; }
+      .card { padding: 12px; }
+      .card-head { padding-bottom: 9px; margin-bottom: 11px; gap: 8px; }
+      .card-icon { width: 26px; height: 26px; font-size: 13px; }
+      .card-title { font-size: 0.82rem; }
+      .card-sub   { font-size: 0.65rem; }
+
+      /* sliders */
+      .sl-group { gap: 10px; }
+      .sl-name { font-size: 0.72rem; }
+      .sl-val  { font-size: 0.78rem; min-width: 22px; padding: 1px 5px; }
+
+      /* candidate score ring */
+      .cand-score-strip { gap: 10px; }
+      .score-ring { width: 48px; height: 48px; font-size: 1.05rem; }
+      .mini-bar-hint { font-size: 0.6rem; }
+
+      /* role cards */
+      .roles-4 { grid-template-columns: 1fr; gap: 8px; }
+      .rc-badge { width: 36px; height: 36px; font-size: 0.65rem; top: 7px; left: 7px; }
+      .rc-name  { font-size: 0.78rem; }
+      .rc-desc  { font-size: 0.65rem; }
+      .rc-emoji { font-size: 16px; }
+
+      /* summary bars */
+      .stitle { font-size: 0.62rem; }
+
+      /* engine scores */
+      .score3 { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .s3-num { font-size: 1.7rem; }
+      .s3-label { font-size: 0.65rem; }
+      .s3-hint  { font-size: 0.6rem; }
+      #engine-badge { display: none; }
+
+      /* dim bars */
+      .weights-badge { font-size: 0.58rem; white-space: normal; word-break: break-word; line-height: 1.5; }
+      .dim-name { font-size: 0.7rem; }
+      .dim-val  { font-size: 0.72rem; }
+
+      /* blocking alert */
+      .block-alert { padding: 10px 12px; }
+      .block-alert-h { font-size: 0.8rem; }
+      .block-list li { font-size: 0.72rem; }
+      .block-note { font-size: 0.65rem; }
+
+      /* recommendation */
+      .rec-box { padding: 12px; gap: 10px; }
+      .rec-emoji { font-size: 1.5rem; }
+      .rec-title { font-size: 0.82rem; }
+      .rec-sub   { font-size: 0.72rem; }
+
+      /* strategic */
+      .strat-grid { grid-template-columns: 1fr; gap: 8px; }
+      .strat-val  { font-size: 1.2rem; }
+      .strat-name { font-size: 0.68rem; }
+      .strat-hint { font-size: 0.6rem; }
+
+      /* info rows */
+      .info-row { font-size: 0.72rem; }
+    }
+
+    /* ─── VERY SMALL 360px ─── */
+    @media (max-width: 360px) {
+      .header h1 { font-size: 0.85rem; }
+      .header-end .live-badge { display: none; }
+      .main { padding: 8px 8px; }
+      .card { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="header">
+  <div class="logo-box">🎖️</div>
+  <div>
+    <h1>מערכת שיבוץ חכמה — אכ"א</h1>
+    <p>Intelligent Placement DSS for IDF Human Resources | v1.0 Demo</p>
+  </div>
+  <div class="header-end">
+    <div class="live-badge">
+      <span class="dot"></span>
+      מצב הדגמה — נתונים פיקטיביים
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ DEMO BAR ═══════════════ -->
+<div class="demo-bar">
+  <div class="demo-label">
+    🔬 <strong>תרחיש "מלש"ב א'"</strong> — דפ"ר 90, מגמת הנדסת תוכנה, פרופיל רפואי 45 (חולף)
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-olive" onclick="loadDemo()">▶ הפעל תרחיש</button>
+    <button class="btn btn-ghost" onclick="resetAll()">↺ איפוס</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+  <!-- TOP ROW: Candidate + Roles -->
+  <div class="grid-top">
+
+    <!-- ── CANDIDATE PROFILE ── -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-olive">👤</div>
+        <div>
+          <div class="card-title">פרופיל מלש"ב</div>
+          <div class="card-sub">הזן נתוני מועמד — המנוע מחשב בזמן אמת</div>
+        </div>
+      </div>
+
+      <div class="sl-group">
+
+        <!-- DAPAR -->
+        <div class="sl-item">
+          <div class="sl-row">
+            <span class="sl-name">דפ"ר — ציון קוגניטיבי</span>
+            <span class="sl-val" id="v-dapar">70</span>
+          </div>
+          <input type="range" id="sl-dapar" min="20" max="100" value="70"
+                 oninput="slide('dapar',this.value)">
+        </div>
+
+        <!-- MEDICAL PROFILE -->
+        <div class="sl-item">
+          <div class="sl-row">
+            <span class="sl-name">פרופיל רפואי</span>
+            <span class="sl-val" id="v-medical">100</span>
+          </div>
+          <select class="sl-select" id="sl-medical" onchange="selectMedical(this.value)">
+            <option value="97" data-score="100">97 — כשיר לכל תפקיד</option>
+            <option value="82" data-score="82">82 — מגבלה קלה</option>
+            <option value="72" data-score="70">72 — מגבלה בינונית</option>
+            <option value="64" data-score="55">64 — מגבלה משמעותית</option>
+            <option value="45" data-score="30">45 — מגבלה קשה (עורפי)</option>
+            <option value="21" data-score="10">21 — שירות מוגבל מאוד</option>
+          </select>
+        </div>
+
+        <!-- TECH BACKGROUND -->
+        <div class="sl-item">
+          <div class="sl-row">
+            <span class="sl-name">רקע טכנולוגי (STEM / CS / הנדסה)</span>
+            <span class="sl-val" id="v-tech">50</span>
+          </div>
+          <input type="range" id="sl-tech" min="0" max="100" value="50"
+                 oninput="slide('tech',this.value)">
+        </div>
+
+        <!-- MANILA -->
+        <div class="sl-item">
+          <div class="sl-row">
+            <span class="sl-name">מניל"ה — מוטיבציה והעדפות</span>
+            <span class="sl-val" id="v-manila">60</span>
+          </div>
+          <input type="range" id="sl-manila" min="0" max="100" value="60"
+                 oninput="slide('manila',this.value)">
+        </div>
+
+        <!-- MENTAL FITNESS -->
+        <div class="sl-item">
+          <div class="sl-row">
+            <span class="sl-name">כשירות מנטלית ולחץ</span>
+            <span class="sl-val" id="v-mental">70</span>
+          </div>
+          <input type="range" id="sl-mental" min="0" max="100" value="70"
+                 oninput="slide('mental',this.value)">
+        </div>
+
+        <!-- COMBAT BACKGROUND -->
+        <div class="sl-item">
+          <div class="sl-row">
+            <span class="sl-name">רקע לחימתי / יחידה מובחרת</span>
+            <span class="sl-val" id="v-combat">40</span>
+          </div>
+          <input type="range" id="sl-combat" min="0" max="100" value="40"
+                 oninput="slide('combat',this.value)">
+        </div>
+
+      </div><!-- /sl-group -->
+
+      <!-- CANDIDATE SCORE STRIP -->
+      <div class="cand-score-strip">
+        <div class="score-ring" id="cand-ring">70</div>
+        <div class="mini-bar-wrap">
+          <div class="stitle" style="margin-bottom:6px;">ציון מועמד מצרפי</div>
+          <div class="mini-bar-track">
+            <div class="mini-bar-fill" id="cand-bar" style="width:70%"></div>
+          </div>
+          <div class="mini-bar-hint">דפ"ר 35% • טכנולוגי 30% • מניל"ה 20% • מנטלי 15% | רפואי: חסימה בלבד</div>
+        </div>
+      </div>
+
+    </div><!-- /candidate card -->
+
+    <!-- ── ROLES GRID ── -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-blue">🎯</div>
+        <div>
+          <div class="card-title">תפקידים לשיבוץ</div>
+          <div class="card-sub">בחר תפקיד לניתוח מלא — הציון מתעדכן בזמן אמת</div>
+        </div>
+      </div>
+
+      <div class="roles-4" id="roles-grid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- MINI SUMMARY BARS -->
+      <div class="divider"></div>
+      <div class="stitle">השוואת ציוני שיבוץ — כל התפקידים</div>
+      <div id="summary-bars" style="display:flex;flex-direction:column;gap:8px;">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div><!-- /roles card -->
+
+  </div><!-- /grid-top -->
+
+  <!-- ── ENGINE: DETAILED ANALYSIS ── -->
+  <div class="card mb-16" id="engine-card">
+    <div class="card-head">
+      <div class="card-icon ci-purple">⚙️</div>
+      <div>
+        <div class="card-title">מנוע הציון — ניתוח מפורט</div>
+        <div class="card-sub" id="engine-sub">בחר תפקיד מהרשימה למעלה</div>
+      </div>
+      <div id="engine-badge" style="margin-left:auto;"></div>
+    </div>
+    <div id="engine-body">
+      <div class="engine-empty"><span>🎯</span>בחר תפקיד מהרשימה כדי לראות ניתוח מלא</div>
+    </div>
+  </div>
+
+  <!-- ── STRATEGIC PANEL ── -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ci-green">🏛️</div>
+      <div>
+        <div class="card-title">וקטור מערכתי — מטה אכ"א</div>
+        <div class="card-sub">גורמים אסטרטגיים לאופטימיזציה מעל ציוני הפרט</div>
+      </div>
+    </div>
+    <div class="strat-grid" id="strat-grid">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* =====================================================
+   DATA
+===================================================== */
+const ROLES = [
+  {
+    id: 'combat',
+    emoji: '🪖',
+    name: 'מ"כ / מפקד שטח',
+    desc: 'פיקוד יחידת לחימה, שטח קדמי',
+    tags: [{t:'לחימה',c:'t-red'},{t:'שטח קדמי',c:'t-red'},{t:'מנהיגות',c:'t-olive'}],
+    thresh: { medical:70, mental:65, combat:50 },
+    weights: { dapar:0.18, medical:0.25, tech:0.05, manila:0.15, mental:0.22, combat:0.15 },
+    demand:80, proximity:40, economicRisk:65,
+  },
+  {
+    id: 'intel',
+    emoji: '🔭',
+    name: 'קצין מודיעין — שטח',
+    desc: 'איסוף מודיעין מבצעי, סיווג גבוה',
+    tags: [{t:'מודיעין',c:'t-purple'},{t:'סיווג גבוה',c:'t-blue'},{t:'שטח',c:'t-red'}],
+    thresh: { dapar:65, medical:60, mental:55 },
+    weights: { dapar:0.30, medical:0.18, tech:0.18, manila:0.14, mental:0.15, combat:0.05 },
+    demand:65, proximity:50, economicRisk:70,
+  },
+  {
+    id: 'product',
+    emoji: '💡',
+    name: 'מנהל מוצר — מופ"ת/תצפ"י',
+    desc: 'פיתוח מוצרי AI ודאטה, יחידה טכנולוגית עורפית',
+    tags: [{t:'טכנולוגי',c:'t-blue'},{t:'עורפי',c:'t-olive'},{t:'AI/Data',c:'t-purple'}],
+    thresh: { dapar:75, tech:60 },
+    weights: { dapar:0.32, medical:0.04, tech:0.30, manila:0.16, mental:0.12, combat:0.06 },
+    demand:90, proximity:90, economicRisk:85,
+  },
+  {
+    id: 'hr',
+    emoji: '📋',
+    name: 'פקיד שיבוץ — מטה אכ"א',
+    desc: 'ניהול שיבוצים, עבודה עם חיילים ומפקדים',
+    tags: [{t:'עורפי',c:'t-olive'},{t:'ניהול אנשים',c:'t-blue'},{t:'מטה',c:'t-yellow'}],
+    thresh: { dapar:55 },
+    weights: { dapar:0.22, medical:0.04, tech:0.10, manila:0.32, mental:0.20, combat:0.12 },
+    demand:55, proximity:85, economicRisk:75,
+  },
+];
+
+const MEDICAL_SCORES = {97:100, 82:82, 72:70, 64:55, 45:30, 21:10};
+
+/* =====================================================
+   STATE
+===================================================== */
+let C = { dapar:70, medical:97, tech:50, manila:60, mental:70, combat:40 };
+let selected = null;
+
+/* =====================================================
+   SCORING ENGINE
+===================================================== */
+function medScore()    { return MEDICAL_SCORES[C.medical] ?? 0; }
+function candScore()   {
+  // Medical eligibility is enforced via hard blocking — not penalised here
+  return Math.round(C.dapar*0.35 + C.tech*0.30 + C.manila*0.20 + C.mental*0.15);
+}
+
+function getBlocks(role) {
+  const m = medScore();
+  const checks = [
+    ['medical','כשירות רפואית', m],
+    ['dapar','דפ"ר', C.dapar],
+    ['tech','רקע טכנולוגי', C.tech],
+    ['mental','כשירות מנטלית', C.mental],
+    ['combat','רקע לחימתי', C.combat],
+  ];
+  return checks
+    .filter(([k]) => role.thresh[k] !== undefined)
+    .filter(([k,,v]) => v < role.thresh[k])
+    .map(([k,label,v]) => `${label} — ציון ${v} נמוך מסף ${role.thresh[k]}`);
+}
+
+function roleMatchScore(role) {
+  const vals = { dapar:C.dapar, medical:medScore(), tech:C.tech, manila:C.manila, mental:C.mental, combat:C.combat };
+  return Math.round(Object.entries(role.weights).reduce((s,[k,w]) => s + (vals[k]??0)*w, 0));
+}
+
+function placementScore(role) {
+  const blocks = getBlocks(role);
+  if (blocks.length) return {score:0, blocked:true, blocks};
+  const cs = candScore(), rs = roleMatchScore(role);
+  return {score: Math.round(cs*0.38 + rs*0.62), blocked:false, blocks:[]};
+}
+
+function scoreClass(s, blocked) {
+  if (blocked) return 'blocked';
+  if (s >= 80)  return 'high';
+  if (s >= 60)  return 'med';
+  return 'low';
+}
+function scoreColor(s, blocked) {
+  if (blocked) return 'col-red';
+  if (s >= 80) return 'col-green';
+  if (s >= 60) return 'col-yellow';
+  return 'col-red';
+}
+function barClass(s) {
+  if (s >= 80) return 'df-green';
+  if (s >= 60) return 'df-yellow';
+  return 'df-red';
+}
+
+/* =====================================================
+   RENDER
+===================================================== */
+function renderCandidateScore() {
+  const s = candScore();
+  const ring = document.getElementById('cand-ring');
+  const bar  = document.getElementById('cand-bar');
+  ring.textContent = s;
+  bar.style.width = s + '%';
+  const color = s >= 80 ? 'var(--green)' : s >= 60 ? 'var(--olive2)' : 'var(--yellow)';
+  ring.style.borderColor = color;
+  ring.style.color = color;
+  bar.style.background = color;
+}
+
+function renderRolesGrid() {
+  const grid = document.getElementById('roles-grid');
+  grid.innerHTML = '';
+  ROLES.forEach(role => {
+    const {score, blocked} = placementScore(role);
+    const cls = scoreClass(score, blocked);
+    const badgeCls = `rcb-${cls}`;
+    const badgeText = blocked ? 'חסום' : score;
+
+    const el = document.createElement('div');
+    el.className = 'role-card' + (selected?.id === role.id ? ' active' : '');
+    el.onclick = () => selectRole(role);
+
+    const tagsHtml = role.tags.map(t => `<span class="tag ${t.c}">${t.t}</span>`).join('');
+    el.innerHTML = `
+      <div class="rc-badge ${badgeCls}">${badgeText}</div>
+      <div class="rc-top">
+        <div class="rc-emoji">${role.emoji}</div>
+        <div>
+          <div class="rc-name">${role.name}</div>
+          <div class="rc-desc">${role.desc}</div>
+        </div>
+      </div>
+      <div class="rc-tags">${tagsHtml}</div>
+    `;
+    grid.appendChild(el);
+  });
+}
+
+function renderSummaryBars() {
+  const cont = document.getElementById('summary-bars');
+  cont.innerHTML = '';
+  ROLES.forEach(role => {
+    const {score, blocked} = placementScore(role);
+    const pct = blocked ? 0 : score;
+    const bc  = blocked ? 'df-blocked' : barClass(score);
+    const label = blocked ? '<span style="color:var(--red);font-size:0.68rem;">⛔ חסום</span>'
+                          : `<span style="color:${score>=80?'var(--green)':score>=60?'var(--yellow)':'var(--red)'};">${score}</span>`;
+    cont.innerHTML += `
+      <div style="display:grid;grid-template-columns:1fr auto 80px;align-items:center;gap:8px;">
+        <div style="font-size:0.72rem;color:var(--text2);">${role.emoji} ${role.name}</div>
+        <div style="font-size:0.8rem;font-weight:800;min-width:28px;text-align:center;">${label}</div>
+        <div class="mini-bar-track" style="height:6px;">
+          <div class="mini-bar-fill ${bc}" style="width:${pct}%;"></div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function renderEngine() {
+  const body   = document.getElementById('engine-body');
+  const sub    = document.getElementById('engine-sub');
+  const badge  = document.getElementById('engine-badge');
+
+  if (!selected) {
+    body.innerHTML = `<div class="engine-empty"><span>🎯</span>בחר תפקיד מהרשימה כדי לראות ניתוח מלא</div>`;
+    sub.textContent = 'בחר תפקיד מהרשימה למעלה';
+    badge.innerHTML = '';
+    return;
+  }
+
+  const role = selected;
+  const {score, blocked, blocks} = placementScore(role);
+  const cs  = candScore();
+  const rs  = roleMatchScore(role);
+  const cls = scoreClass(score, blocked);
+  const m   = medScore();
+
+  sub.textContent = role.name;
+  badge.innerHTML = `<span class="tag ${role.tags[0]?.c||'t-olive'}">${role.emoji} ${role.name}</span>`;
+
+  // Dimension config
+  const dims = [
+    { key:'dapar',  label:'דפ"ר — ציון קוגניטיבי', val:C.dapar,  bar:'df-blue',   thresh:role.thresh.dapar   },
+    { key:'medical',label:'כשירות רפואית (מנורמל)', val:m,        bar:'df-green',  thresh:role.thresh.medical  },
+    { key:'tech',   label:'רקע טכנולוגי',           val:C.tech,   bar:'df-purple', thresh:role.thresh.tech    },
+    { key:'manila', label:'מניל"ה — מוטיבציה',      val:C.manila, bar:'df-olive',  thresh:undefined            },
+    { key:'mental', label:'כשירות מנטלית',           val:C.mental, bar:'df-yellow', thresh:role.thresh.mental  },
+    { key:'combat', label:'רקע לחימתי',              val:C.combat, bar:'df-red',    thresh:role.thresh.combat  },
+  ];
+
+  const dimHtml = dims.map(d => {
+    const isBlocked = d.thresh !== undefined && d.val < d.thresh;
+    const fillBar   = isBlocked ? 'df-blocked' : d.bar;
+    const threshMark = d.thresh !== undefined
+      ? `<div class="dim-thresh" style="right:${d.thresh}%"></div>` : '';
+    const threshLabel = d.thresh !== undefined
+      ? `<span style="font-size:0.65rem;color:var(--text3);font-weight:400;"> / סף ${d.thresh}</span>` : '';
+    return `
+      <div class="dim-bar-item">
+        <div class="dim-row">
+          <span class="dim-name">${d.label}</span>
+          <span class="dim-val ${isBlocked?'blocked':''}">${d.val}${threshLabel}</span>
+        </div>
+        <div class="dim-track">
+          ${threshMark}
+          <div class="dim-fill ${fillBar}" style="width:${d.val}%"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Weights string
+  const wStr = Object.entries(role.weights)
+    .map(([k,w]) => {
+      const names = {dapar:"דפ\"ר",medical:"רפואי",tech:"טכנולוגי",manila:"מניל\"ה",mental:"מנטלי",combat:"לחימה"};
+      return `${names[k]} ${Math.round(w*100)}%`;
+    }).join(' • ');
+
+  // Blocking section
+  const blockHtml = blocked ? `
+    <div class="block-alert">
+      <div class="block-alert-h">⛔ חסימת פיצוי פעילה — שיבוץ נחסם</div>
+      <ul class="block-list">
+        ${blocks.map(b=>`<li>${b}</li>`).join('')}
+      </ul>
+      <div class="block-note mt-14">
+        <strong>חסימת פיצוי:</strong> ציון קוגניטיבי גבוה לא יכול לפצות על מגבלה רפואית — הסף הוא תנאי הכרחי בלתי-ניתן לעקיפה.
+      </div>
+    </div>` : '';
+
+  // Recommendation
+  const recInfo = blocked
+    ? { cls:'blocked', icon:'⛔', title:'שיבוץ נחסם — לא ניתן לשבץ לתפקיד זה',
+        sub:`${blocks[0]}. הפנה לתפקיד עורפי מתאים.` }
+    : score >= 80
+    ? { cls:'high',    icon:'✅', title:`התאמה מצוינת — ציון שיבוץ ${score}`,
+        sub:'מומלץ לשיבוץ מיידי. הכן הזמנה לקורס.' }
+    : score >= 60
+    ? { cls:'med',     icon:'⚠️', title:`התאמה סבירה — ציון שיבוץ ${score}`,
+        sub:'שיבוץ אפשרי עם הסתייגות. מומלץ לדון עם קצין הקורס.' }
+    : { cls:'low',     icon:'❌', title:`התאמה נמוכה — ציון שיבוץ ${score}`,
+        sub:'לא מומלץ לשיבוץ. שקול תפקיד חלופי.' };
+
+  body.innerHTML = `
+    <div class="score3">
+      <div class="s3-card">
+        <div class="s3-label">ציון מועמד</div>
+        <div class="s3-num ${cs>=80?'col-green':cs>=60?'col-olive':'col-yellow'}">${cs}</div>
+        <div class="s3-hint">כלל הנתונים משוקלל</div>
+      </div>
+      <div class="s3-card">
+        <div class="s3-label">התאמה לתפקיד</div>
+        <div class="s3-num ${blocked?'col-red':rs>=80?'col-green':rs>=60?'col-yellow':'col-red'}">${blocked ? '—' : rs}</div>
+        <div class="s3-hint">לפי משקלות התפקיד</div>
+      </div>
+      <div class="s3-card">
+        <div class="s3-label">ציון שיבוץ סופי</div>
+        <div class="s3-num ${blocked?'col-red':score>=80?'col-green':score>=60?'col-yellow':'col-red'}">${blocked ? '⛔' : score}</div>
+        <div class="s3-hint">${blocked ? 'חסום — לא לשיבוץ' : '38% מועמד + 62% תפקיד'}</div>
+      </div>
+    </div>
+
+    ${blockHtml}
+
+    <div class="stitle">ניתוח לפי מדדים</div>
+    <div class="weights-badge">⚖️ ${wStr}</div>
+    <div class="dim-bars">${dimHtml}</div>
+
+    <div class="info-row"><span class="ik">דחיפות מילוי התפקיד</span><span class="iv col-blue">${role.demand}/100</span></div>
+    <div class="info-row"><span class="ik">סיכון נשירת קורס</span><span class="iv ${role.economicRisk>=70?'col-red':role.economicRisk>=50?'col-yellow':'col-green'}">${blocked?'נמוך — חסום בטרם שיבוץ':role.economicRisk+'/100'}</span></div>
+
+    <div class="rec-box ${recInfo.cls} mt-16">
+      <div class="rec-emoji">${recInfo.icon}</div>
+      <div>
+        <div class="rec-title">${recInfo.title}</div>
+        <div class="rec-sub">${recInfo.sub}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderStrategic() {
+  const role = selected || ROLES[2]; // default: product manager
+  const strat = [
+    { name:'דחיפות מילוי (ביקוש מבצעי)', val:role.demand, hint:'עדיפות לתפקידים עם ביקוש גבוה', bar:role.demand },
+    { name:'פרוקסימיטי (קירבה לבית)',    val:role.proximity, hint:'מניעת נשירה — שיבוץ עורפי קרוב', bar:role.proximity },
+    { name:'יעילות כלכלית (מניעת נפל)', val:role.economicRisk, hint:'הסתברות להשלמת קורס בהצלחה', bar:role.economicRisk },
+  ];
+  document.getElementById('strat-grid').innerHTML = strat.map(s => `
+    <div class="strat-card">
+      <div class="strat-name">${s.name}</div>
+      <div class="strat-val">${s.val}</div>
+      <div class="strat-hint">${s.hint}</div>
+      <div class="strat-bar-track">
+        <div class="strat-bar-fill" style="width:${s.bar}%"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectRole(role) {
+  selected = role;
+  update();
+}
+
+/* =====================================================
+   INTERACTIONS
+===================================================== */
+function slide(field, val) {
+  C[field] = parseInt(val);
+  document.getElementById('v-' + field).textContent = val;
+  update();
+}
+
+function selectMedical(val) {
+  C.medical = parseInt(val);
+  const opt = document.querySelector(`#sl-medical option[value="${val}"]`);
+  const score = opt ? opt.dataset.score : '0';
+  document.getElementById('v-medical').textContent = score;
+  update();
+}
+
+/* =====================================================
+   DEMO SCENARIO
+===================================================== */
+function loadDemo() {
+  C = { dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30 };
+
+  document.getElementById('sl-dapar').value  = 90;
+  document.getElementById('v-dapar').textContent = 90;
+
+  document.getElementById('sl-medical').value = 45;
+  document.getElementById('v-medical').textContent = 30;
+
+  document.getElementById('sl-tech').value   = 85;
+  document.getElementById('v-tech').textContent = 85;
+
+  document.getElementById('sl-manila').value = 80;
+  document.getElementById('v-manila').textContent = 80;
+
+  document.getElementById('sl-mental').value = 75;
+  document.getElementById('v-mental').textContent = 75;
+
+  document.getElementById('sl-combat').value = 30;
+  document.getElementById('v-combat').textContent = 30;
+
+  selected = ROLES.find(r => r.id === 'product');
+  update();
+
+  // Flash the engine card
+  const ec = document.getElementById('engine-card');
+  ec.classList.remove('demo-highlight');
+  void ec.offsetWidth;
+  ec.classList.add('demo-highlight');
+}
+
+function resetAll() {
+  C = { dapar:70, medical:97, tech:50, manila:60, mental:70, combat:40 };
+
+  document.getElementById('sl-dapar').value  = 70;
+  document.getElementById('v-dapar').textContent = 70;
+
+  document.getElementById('sl-medical').value = 97;
+  document.getElementById('v-medical').textContent = 100;
+
+  document.getElementById('sl-tech').value   = 50;
+  document.getElementById('v-tech').textContent = 50;
+
+  document.getElementById('sl-manila').value = 60;
+  document.getElementById('v-manila').textContent = 60;
+
+  document.getElementById('sl-mental').value = 70;
+  document.getElementById('v-mental').textContent = 70;
+
+  document.getElementById('sl-combat').value = 40;
+  document.getElementById('v-combat').textContent = 40;
+
+  selected = null;
+  update();
+}
+
+/* =====================================================
+   UPDATE LOOP
+===================================================== */
+function update() {
+  renderCandidateScore();
+  renderRolesGrid();
+  renderSummaryBars();
+  renderEngine();
+  renderStrategic();
+}
+
+// Init
+update();
+</script>
+</body>
+</html>
