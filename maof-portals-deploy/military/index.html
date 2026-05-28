@@ -116,6 +116,50 @@
     .sc-desc { font-size: 0.58rem; color: var(--text3); }
     .btn-scenario.active .sc-desc { color: var(--text2); }
 
+    /* ─── SCENARIO NARRATIVE ─── */
+    .scenario-story {
+      display: none;
+      padding: 10px 28px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .scenario-story.visible { display: block; }
+    .story-inner {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: rgba(92,122,46,0.05);
+      border: 1px solid rgba(92,122,46,0.2);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .story-profile {
+      flex: 0 0 240px; border-left: 1px solid var(--border2); padding-left: 14px;
+    }
+    .story-soldier { font-size: 0.82rem; font-weight: 800; color: var(--text); margin-bottom: 5px; }
+    .story-bio     { font-size: 0.74rem; color: var(--text2); line-height: 1.55; }
+    .story-fits    { flex: 1; display: flex; gap: 10px; }
+    .story-fit {
+      flex: 1; background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 10px 12px;
+    }
+    .story-fit.sf-primary   { border-color: rgba(74,222,128,0.3); }
+    .story-fit.sf-secondary { border-color: rgba(96,165,250,0.3); }
+    .sf-label {
+      font-size: 0.62rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+    }
+    .sf-role  { font-size: 0.78rem; font-weight: 700; margin-bottom: 5px; }
+    .sf-text  { font-size: 0.73rem; color: var(--text2); line-height: 1.5; }
+    .sf-primary .sf-role   { color: var(--green); }
+    .sf-secondary .sf-role { color: var(--blue); }
+    @media (max-width: 768px) {
+      .story-inner { flex-direction: column; }
+      .story-profile { flex: none; width: 100%; border-left: none; padding-left: 0;
+                       border-bottom: 1px solid var(--border2); padding-bottom: 10px; }
+      .story-fits { flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      .scenario-story { padding: 8px 10px 12px; }
+      .story-inner { padding: 10px 12px; }
+    }
+
     /* ─── MAIN LAYOUT ─── */
     .main { padding: 20px 28px; max-width: 1440px; margin: 0 auto; }
 
@@ -574,6 +618,8 @@
 </div>
 
 <!-- ═══════════════ MAIN ═══════════════ -->
+<div id="scenario-story" class="scenario-story"></div>
+
 <main class="main">
 
   <!-- TOP ROW: Candidate + Roles -->
@@ -1100,6 +1146,57 @@ const SCENARIOS = {
   d: { dapar:75, medical:45, tech:40, manila:62, mental:50, combat:78, role:'hr'      },
 };
 
+const STORY = {
+  a: {
+    soldier: 'אלון ב., גיל 21 — בוגר מגמת הנדסת תוכנה',
+    bio: 'דפ"ר 90, ניסיון בפרויקטים עצמאיים ב-Python ו-React. פרופיל 45 עקב פציעת ספורט חולפת — מגבלה זמנית שאינה רלוונטית לסביבת עבודה עורפית. מוטיבציה גבוהה לתפקיד טכנולוגי.',
+    primary: {
+      role: '💡 מנהל מוצר — מופ"ת/תצפ"י',
+      text: 'שילוב של דפ"ר 90 ורקע הנדסי גבוה מניב ציון 81. המנוע חסם את תפקידי השטח כהלכה — הפגם הרפואי אינו חסם כאן, ומשקלו במנוע עומד על 4% בלבד עבור תפקיד עורפי.',
+    },
+    secondary: {
+      role: '💻 לוחם סייבר — יח\' 8200',
+      text: 'כאשר הפרופיל הרפואי יתרומם חזרה ל-97, ציון שיבוץ ב-8200 צפוי לעלות ל-91. כדאי לעקוב ולשקול מעבר לאחר שחרור הסעיף.',
+    },
+  },
+  b: {
+    soldier: 'יואב מ., גיל 19 — לוחם קרבי מצטיין',
+    bio: 'כשירות מנטלית 92 ורקע לחימתי 96 — מהנתונים הקרביים הגבוהים ביותר במערכת. פרופיל רפואי מלא (97). לא עסק בתחומי טכנולוגיה בתיכון.',
+    primary: {
+      role: '🛡️ לוחם יחידת עילית',
+      text: 'עובר את הסף הגבוה ביותר במערכת: מנטלי 92 ≥ 85 ✓ ולחימה 96 ≥ 80 ✓. ציון שיבוץ 85 — ממוקד ומוצדק, הדגש הוא על עמידות ולא על קוגניציה.',
+    },
+    secondary: {
+      role: '🪖 מ"כ / מפקד שטח',
+      text: 'חלופה קרבית ממשית עם ספים נמוכים יותר. ציון 80. מתאים אם לא עובר את מכלול האיתורים לסיירת/שייטת, או כשיבוץ ביניים.',
+    },
+  },
+  c: {
+    soldier: 'דניאל ש., גיל 20 — גאון מחשוב',
+    bio: 'דפ"ר 97, רקע טכנולוגי 97 — ניצח בתחרויות תכנות לאומיות. לחלוטין חסר רקע קרבי (לחימה=18). פרופיל רפואי 82, כשירות מנטלית 78.',
+    primary: {
+      role: '💻 לוחם סייבר — יח\' 8200',
+      text: 'דפ"ר ו-tech שניהם 97 — עוברים בקלות את הסף הגבוה (85/75). ציון שיבוץ 91, ה-peak של הפלטפורמה. תפקיד ייחודי שאינו דורש שום רקע לחימתי ומתגמל אינטליגנציה טכנית.',
+    },
+    secondary: {
+      role: '🔭 קצין מודיעין — שטח',
+      text: 'הרקע הטכנולוגי הגבוה מעלה את ציון ההתאמה ל-88. מתאים אם נדרש תפקיד עם קומפוננטה שטחית — אם כי ייאלץ לפתח כשרים לחימתיים שאין לו כרגע.',
+    },
+  },
+  d: {
+    soldier: 'רן כ., גיל 22 — לוחם קרבי פצוע',
+    bio: 'לוחם ותיק עם פציעה קרבית — פרופיל 45, כשירות מנטלית 50. חסמים כפולים שחוסמים 5 מתוך 6 תפקידים. רקע לחימתי עשיר (78) שאינו מנוצל עקב המגבלה.',
+    primary: {
+      role: '📋 פקיד שיבוץ — מטה אכ"א',
+      text: 'היחיד שאינו נחסם בפרופיל הנוכחי. הניסיון הקרבי מהווה יתרון בהבנת צרכי חיילים אחרים. ציון 60 — שיבוץ שולי אך אפשרי. חשוב מהבחינה האנושית.',
+    },
+    secondary: {
+      role: '⏳ המתן לשיפור הפרופיל',
+      text: 'אין תפקיד שני ממשי כרגע. עם שיפור הפרופיל הרפואי ל-72+ ומנטלי ל-60+, ייפתח גישה ל"מנהל מוצר" (ציון ~72) ו"קצין מודיעין" (ציון ~68).',
+    },
+  },
+};
+
 let activeScenario = null;
 
 function applyCandidate(s) {
@@ -1126,6 +1223,32 @@ function updateScenarioBtns() {
   });
 }
 
+function renderStory(key) {
+  const el = document.getElementById('scenario-story');
+  if (!key || !STORY[key]) { el.classList.remove('visible'); return; }
+  const s = STORY[key];
+  el.classList.add('visible');
+  el.innerHTML = `
+    <div class="story-inner">
+      <div class="story-profile">
+        <div class="story-soldier">👤 ${s.soldier}</div>
+        <div class="story-bio">${s.bio}</div>
+      </div>
+      <div class="story-fits">
+        <div class="story-fit sf-primary">
+          <div class="sf-label">✅ תפקיד מומלץ ראשון</div>
+          <div class="sf-role">${s.primary.role}</div>
+          <div class="sf-text">${s.primary.text}</div>
+        </div>
+        <div class="story-fit sf-secondary">
+          <div class="sf-label">⚡ תפקיד שני / חלופה</div>
+          <div class="sf-role">${s.secondary.role}</div>
+          <div class="sf-text">${s.secondary.text}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
 function loadDemo(key) {
   const s = SCENARIOS[key];
   if (!s) return;
@@ -1133,6 +1256,7 @@ function loadDemo(key) {
   applyCandidate(s);
   selected = ROLES.find(r => r.id === s.role);
   updateScenarioBtns();
+  renderStory(key);
   update();
   const ec = document.getElementById('engine-card');
   ec.classList.remove('demo-highlight');
@@ -1157,6 +1281,7 @@ function resetAll() {
   document.getElementById('v-combat').textContent    = 40;
   selected = null;
   updateScenarioBtns();
+  renderStory(null);
   update();
 }
 
