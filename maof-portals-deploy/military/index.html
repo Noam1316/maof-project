@@ -834,7 +834,7 @@
             <span class="sl-name">דפ"ר — ציון קוגניטיבי</span>
             <span class="sl-val" id="v-dapar">70</span>
           </div>
-          <input type="range" id="sl-dapar" min="20" max="100" value="70"
+          <input type="range" id="sl-dapar" min="10" max="90" step="10" value="70"
                  oninput="slide('dapar',this.value)">
         </div>
 
@@ -1054,9 +1054,9 @@ const ROLES = [
     id: 'intel',
     emoji: '🔭',
     name: 'קצין מודיעין — שטח',
-    desc: 'איסוף מודיעין מבצעי, סיווג גבוה',
+    desc: 'איסוף מודיעין מבצעי, סיווג ביטחוני גבוה',
     tags: [{t:'מודיעין',c:'t-purple'},{t:'סיווג גבוה',c:'t-blue'},{t:'שטח',c:'t-red'}],
-    thresh: { dapar:65, medical:60, mental:55 },
+    thresh: { dapar:70, medical:60, mental:55 },
     weights: { dapar:0.30, medical:0.18, tech:0.18, manila:0.14, mental:0.15, combat:0.05 },
     demand:65, proximity:50, economicRisk:70,
   },
@@ -1066,25 +1066,25 @@ const ROLES = [
     name: 'מנהל מוצר — מופ"ת/תצפ"י',
     desc: 'פיתוח מוצרי AI ודאטה, יחידה טכנולוגית עורפית',
     tags: [{t:'טכנולוגי',c:'t-blue'},{t:'עורפי',c:'t-olive'},{t:'AI/Data',c:'t-purple'}],
-    thresh: { dapar:75, tech:60 },
+    thresh: { dapar:80, tech:60 },
     weights: { dapar:0.32, medical:0.04, tech:0.30, manila:0.16, mental:0.12, combat:0.06 },
     demand:90, proximity:90, economicRisk:85,
   },
   {
-    id: 'hr',
-    emoji: '📋',
-    name: 'פקיד שיבוץ — מטה אכ"א',
-    desc: 'ניהול שיבוצים, עבודה עם חיילים ומפקדים',
-    tags: [{t:'עורפי',c:'t-olive'},{t:'ניהול אנשים',c:'t-blue'},{t:'מטה',c:'t-yellow'}],
-    thresh: { dapar:55 },
-    weights: { dapar:0.22, medical:0.04, tech:0.10, manila:0.32, mental:0.20, combat:0.12 },
-    demand:55, proximity:85, economicRisk:75,
+    id: 'elint',
+    emoji: '🚁',
+    name: 'לוחמה אלקטרונית',
+    desc: 'הפעלת רחפנים ומערכות לוחמה אלקטרונית בשטח',
+    tags: [{t:'רחפנים',c:'t-blue'},{t:'לחימה',c:'t-red'},{t:'טכנולוגי',c:'t-olive'}],
+    thresh: { dapar:50, medical:72, tech:40 },
+    weights: { dapar:0.20, medical:0.22, tech:0.28, manila:0.12, mental:0.13, combat:0.05 },
+    demand:60, proximity:55, economicRisk:70,
   },
   {
     id: 'elite',
     emoji: '🛡️',
     name: 'לוחם יחידת עילית',
-    desc: 'סיירת / שייטת — קרי עצים, ספי כשירות גבוהים',
+    desc: 'סיירת / שייטת — קרבי עצים, ספי כשירות גבוהים',
     tags: [{t:'עילית',c:'t-red'},{t:'קרבי',c:'t-red'},{t:'גוף+נפש',c:'t-yellow'}],
     thresh: { medical:85, mental:85, combat:80 },
     weights: { dapar:0.10, medical:0.25, tech:0.03, manila:0.10, mental:0.30, combat:0.22 },
@@ -1093,10 +1093,10 @@ const ROLES = [
   {
     id: 'cyber',
     emoji: '💻',
-    name: 'לוחם סייבר — יח\' 8200',
-    desc: 'סייבר התקפי ומודיעין טכנולוגי — ללא דרישת שטח',
-    tags: [{t:'8200',c:'t-purple'},{t:'סייבר',c:'t-blue'},{t:'ללא שטח',c:'t-olive'}],
-    thresh: { dapar:85, tech:75 },
+    name: 'קצין מחשב/סייבר — 8200',
+    desc: 'מחשוב קרבי, סייבר, מודיעין טכנולוגי — תפקיד פקודותי',
+    tags: [{t:'8200',c:'t-purple'},{t:'סייבר',c:'t-blue'},{t:'פקודותי',c:'t-olive'}],
+    thresh: { dapar:90, tech:70 },
     weights: { dapar:0.38, medical:0.02, tech:0.36, manila:0.10, mental:0.09, combat:0.05 },
     demand:95, proximity:80, economicRisk:90,
   },
@@ -1117,7 +1117,7 @@ const CORPS = [
   {
     id: 'air', emoji: '✈️', name: 'חיל האוויר',
     desc: 'טיס, בקרה, מערכות נשק',
-    thresh: { medical:82, dapar:75 },
+    thresh: { medical:82, dapar:80 },
     weights: { dapar:0.28, medical:0.30, tech:0.16, manila:0.12, mental:0.10, combat:0.04 },
   },
   {
@@ -1130,14 +1130,14 @@ const CORPS = [
     id: 'aman', emoji: '🔎', name: "אמ\"ן",
     desc: 'מודיעין, איסוף, ניתוח',
     thresh: { dapar:70 },
-    weights: { dapar:0.38, medical:0.08, tech:0.24, manila:0.14, mental:0.12, combat:0.04 },
+    weights: { dapar:0.38, medical:0.08, tech:0.22, manila:0.14, mental:0.14, combat:0.04 },
   },
 ];
 
 // Default corps per role
 const ROLE_CORPS = {
   combat:'ground', intel:'aman', product:'tech',
-  hr:'tech', elite:'ground', cyber:'tech',
+  elint:'ground', elite:'ground', cyber:'tech',
 };
 
 /* =====================================================
@@ -1484,7 +1484,7 @@ const ROLE_META = {
   combat:  { demand:8,   level:'low',  label:'8 מקומות',   cost:45000,  duration:'4 חודשים' },
   intel:   { demand:18,  level:'med',  label:'18 מקומות',  cost:60000,  duration:'6 חודשים' },
   product: { demand:40,  level:'high', label:'40 מקומות',  cost:35000,  duration:'3 חודשים' },
-  hr:      { demand:5,   level:'low',  label:'5 מקומות',   cost:15000,  duration:'6 שבועות' },
+  elint:   { demand:60,  level:'high', label:'60 מקומות',  cost:80000,  duration:'5 חודשים' },
   elite:   { demand:25,  level:'med',  label:'25 מקומות',  cost:120000, duration:'8 חודשים' },
   cyber:   { demand:150, level:'crit', label:'150 מקומות', cost:180000, duration:'10 חודשים' },
 };
@@ -1596,11 +1596,11 @@ const SCENARIOS = {
   // א' — tech profile, temporary medical limitation
   a: { dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30, role:'product' },
   // ב' — elite fighter, weak in tech
-  b: { dapar:75, medical:97, tech:22, manila:65, mental:92, combat:96, role:'elite'   },
+  b: { dapar:70, medical:97, tech:22, manila:65, mental:92, combat:96, role:'elite'   },
   // ג' — cyber genius 8200, zero combat background
-  c: { dapar:97, medical:82, tech:97, manila:85, mental:78, combat:18, role:'cyber'   },
-  // ד' — injured combat veteran, near-total block
-  d: { dapar:75, medical:45, tech:40, manila:62, mental:50, combat:78, role:'hr'      },
+  c: { dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20, role:'cyber'   },
+  // ד' — injured combat veteran, full block (all 6 roles)
+  d: { dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78, role:'combat'  },
 };
 
 const STORY = {
@@ -1642,14 +1642,14 @@ const STORY = {
   },
   d: {
     soldier: 'רן כ., גיל 22 — לוחם קרבי פצוע',
-    bio: 'לוחם ותיק עם פציעה קרבית — פרופיל 45, כשירות מנטלית 50. חסמים כפולים שחוסמים 5 מתוך 6 תפקידים. רקע לחימתי עשיר (78) שאינו מנוצל עקב המגבלה.',
+    bio: 'לוחם ותיק עם פציעה קרבית — פרופיל 45, כשירות מנטלית 50. חסמים רפואיים ומנטליים שחוסמים את כל 6 התפקידים.',
     primary: {
-      role: '📋 פקיד שיבוץ — מטה אכ"א',
-      text: 'היחיד שאינו נחסם בפרופיל הנוכחי. הניסיון הקרבי מהווה יתרון בהבנת צרכי חיילים אחרים. ציון 60 — שיבוץ שולי אך אפשרי. חשוב מהבחינה האנושית.',
+      role: '⛔ שיבוץ דחוי — כל 6 התפקידים חסומים',
+      text: 'המנוע מזהה שאין שיבוץ אפשרי ברגע זה. הערך: הקצין יודע זאת מראש — ולא אחרי קורס של ₪80K–180K שנגמר בנשירה.',
     },
     secondary: {
-      role: '⏳ המתן לשיפור הפרופיל',
-      text: 'אין תפקיד שני ממשי כרגע. עם שיפור הפרופיל הרפואי ל-72+ ומנטלי ל-60+, ייפתח גישה ל"מנהל מוצר" (ציון ~72) ו"קצין מודיעין" (ציון ~68).',
+      role: '🔄 נתיב שיקום',
+      text: 'עם שיפור הפרופיל ל-72, תיפתח לוחמה אלקטרונית (ציון ~60). עם דפ"ר 80 + מנטלי 60, ייפתח מנהל מוצר. המנוע מחשב מחדש בזמן אמת.',
     },
   },
 };
