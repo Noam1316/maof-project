@@ -225,6 +225,16 @@ header{
    DATA
 ───────────────────────────────────────── */
 // פרופיל רפואי — קטגוריות IDF (שער זכאות, לא ציון)
+// מילוי תקנים — teken=תקן מאושר, miluy=% מולא
+const MANNING = {
+  admin:   { teken:50,  miluy:88 },
+  intel:   { teken:80,  miluy:62 },
+  product: { teken:120, miluy:45 },
+  elint:   { teken:200, miluy:58 },
+  elite:   { teken:300, miluy:78 },
+  cyber:   { teken:500, miluy:38 },
+};
+
 const PROFILE_LABELS = {
   97:'כשיר לכל יחידה',
   82:'כשיר לחי"ר — לא עילית',
@@ -369,6 +379,9 @@ function render(sc){
   const best = results.filter(r=>!r.blocked).sort((a,b)=>b.score-a.score)[0];
 
   document.getElementById('roles').innerHTML = results.map(r=>{
+    const mn = MANNING[r.role.id] || {teken:0,miluy:0};
+    const miluyCol = mn.miluy<50?'#f87171':mn.miluy<75?'#fbbf24':'#4ade80';
+
     if(r.blocked) return `
       <div class="rc rc-blocked">
         <div class="rc-top">
@@ -380,6 +393,7 @@ function render(sc){
         </div>
         <div class="rc-bar"><div class="rc-bar-fill" style="width:0%"></div></div>
         <div class="rc-reason" style="color:#f87171cc">${r.reason}</div>
+        <div style="font-size:0.6rem;color:var(--text3);margin-top:4px;">תקן: ${mn.teken} | מולא: <span style="color:${miluyCol}">${mn.miluy}%</span></div>
       </div>`;
     const isBest = r.role.id === best?.role.id;
     const sc2 = r.score>=80?'sGreen':r.score>=60?'sYellow':'sRed';
@@ -395,6 +409,7 @@ function render(sc){
         </div>
         <div class="rc-bar"><div class="rc-bar-fill" style="width:${r.score}%;background:${bc}"></div></div>
         <div class="rc-reason">${r.reason}</div>
+        <div style="font-size:0.6rem;color:var(--text3);margin-top:4px;">תקן: ${mn.teken} | מולא: <span style="color:${miluyCol};font-weight:700;">${mn.miluy}%</span></div>
       </div>`;
   }).join('');
 

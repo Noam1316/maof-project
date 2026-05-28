@@ -1423,8 +1423,17 @@ function renderEngine() {
     <div class="weights-badge">⚖️ ${wStr}</div>
     <div class="dim-bars">${dimHtml}</div>
 
-    <div class="info-row"><span class="ik">דחיפות מילוי התפקיד</span><span class="iv col-blue">${role.demand}/100</span></div>
-    <div class="info-row"><span class="ik">סיכון נשירת קורס</span><span class="iv ${role.economicRisk>=70?'col-red':role.economicRisk>=50?'col-yellow':'col-green'}">${blocked?'נמוך — חסום בטרם שיבוץ':role.economicRisk+'/100'}</span></div>
+    ${(() => {
+      const rm = ROLE_META[role.id];
+      if (!rm) return '';
+      const miluy = rm.miluy;
+      const chaser = Math.round((1 - miluy/100) * rm.teken);
+      const miluyCol = miluy<50?'col-red':miluy<70?'col-yellow':'col-green';
+      return `
+        <div class="info-row"><span class="ik">תקן מאושר</span><span class="iv">${rm.teken} חיילים</span></div>
+        <div class="info-row"><span class="ik">מילוי תקן נוכחי</span><span class="iv ${miluyCol}">${miluy}%</span></div>
+        <div class="info-row"><span class="ik">חסר למילוי מלא</span><span class="iv col-red">${chaser} חיילים</span></div>`;
+    })()}
 
     <div class="rec-box ${recInfo.cls} mt-16">
       <div class="rec-emoji">${recInfo.icon}</div>
@@ -1433,16 +1442,19 @@ function renderEngine() {
         <div class="rec-sub">${recInfo.sub}</div>
       </div>
     </div>
-    ${getMismatchHtml(role, score, blocked)}
   `;
 }
 
 function renderStrategic() {
-  const role = selected || ROLES[2]; // default: product manager
+  const role = selected || ROLES[2];
+  const rm   = ROLE_META[role.id] || {};
+  const miluy  = rm.miluy  ?? 0;
+  const teken  = rm.teken  ?? 0;
+  const chaser = Math.round((1 - miluy/100) * teken);
   const strat = [
-    { name:'דחיפות מילוי (ביקוש מבצעי)', val:role.demand, hint:'עדיפות לתפקידים עם ביקוש גבוה', bar:role.demand },
-    { name:'פרוקסימיטי (קירבה לבית)',    val:role.proximity, hint:'מניעת נשירה — שיבוץ עורפי קרוב', bar:role.proximity },
-    { name:'יעילות כלכלית (מניעת נפל)', val:role.economicRisk, hint:'הסתברות להשלמת קורס בהצלחה', bar:role.economicRisk },
+    { name:'דחיפות מבצעית (ביקוש)', val:role.demand, hint:'עדיפות לתפקידים עם ביקוש גבוה', bar:role.demand },
+    { name:'מילוי תקן נוכחי',        val:miluy,       hint:`תקן: ${teken} חיילים | חסר: ${chaser}`, bar:miluy },
+    { name:'קרבה לבית (שימור)',       val:role.proximity, hint:'קרבה גיאוגרפית — מפחיתה נשירה', bar:role.proximity },
   ];
   document.getElementById('strat-grid').innerHTML = strat.map(s => `
     <div class="strat-card">
@@ -1488,12 +1500,13 @@ function selectMedical(val) {
    ROLE META — demand + course costs
 ===================================================== */
 const ROLE_META = {
-  admin:   { demand:20,  level:'low',  label:'20 מקומות',  cost:10000,  duration:'2 שבועות' },
-  intel:   { demand:18,  level:'med',  label:'18 מקומות',  cost:60000,  duration:'6 חודשים' },
-  product: { demand:40,  level:'high', label:'40 מקומות',  cost:35000,  duration:'3 חודשים' },
-  elint:   { demand:60,  level:'high', label:'60 מקומות',  cost:80000,  duration:'5 חודשים' },
-  elite:   { demand:25,  level:'med',  label:'25 מקומות',  cost:120000, duration:'8 חודשים' },
-  cyber:   { demand:150, level:'crit', label:'150 מקומות', cost:180000, duration:'10 חודשים' },
+  // teken = תקן מאושר | miluy = % מילוי נוכחי
+  admin:   { demand:20,  level:'low',  label:'20 מקומות',  teken:50,  miluy:88 },
+  intel:   { demand:18,  level:'med',  label:'18 מקומות',  teken:80,  miluy:62 },
+  product: { demand:40,  level:'high', label:'40 מקומות',  teken:120, miluy:45 },
+  elint:   { demand:60,  level:'high', label:'60 מקומות',  teken:200, miluy:58 },
+  elite:   { demand:25,  level:'med',  label:'25 מקומות',  teken:300, miluy:78 },
+  cyber:   { demand:150, level:'crit', label:'150 מקומות', teken:500, miluy:38 },
 };
 
 function renderDemandRow() {
@@ -1502,12 +1515,14 @@ function renderDemandRow() {
   const order = ['cyber','product','elite','intel','combat','hr'];
   const icons = { crit:'🔴', high:'🟠', med:'🟡', low:'🟢' };
   const classes = { crit:'dp-crit', high:'dp-high', med:'dp-med', low:'dp-low' };
-  el.innerHTML = `<span class="demand-title">📊 ביקוש גיוס נוכחי:</span>` +
+  el.innerHTML = `<span class="demand-title">📊 מילוי תקנים:</span>` +
     ROLES.filter(r=>ROLE_META[r.id])
       .sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id))
       .map(r => {
         const m = ROLE_META[r.id];
-        return `<span class="demand-pill ${classes[m.level]}">${icons[m.level]} ${r.name.split('—')[0].trim()}: ${m.label}</span>`;
+        const miluyColor = m.miluy < 50 ? 'crit' : m.miluy < 70 ? 'high' : m.miluy < 85 ? 'med' : 'low';
+        const miluyIcon  = m.miluy < 50 ? '🔴' : m.miluy < 70 ? '🟠' : m.miluy < 85 ? '🟡' : '🟢';
+        return `<span class="demand-pill dp-${miluyColor}">${miluyIcon} ${r.name.split('—')[0].trim()}: ${m.miluy}% מולא</span>`;
       }).join('');
 }
 
@@ -1545,23 +1560,10 @@ function runWhatIf(newVal) {
 }
 
 /* =====================================================
-   MISMATCH COST
+   MISMATCH COST — removed (replaced by manning metrics)
 ===================================================== */
 function getMismatchHtml(role, score, blocked) {
-  const m = ROLE_META[role.id];
-  if (!m || (!blocked && score >= 72)) return '';
-  const dropout = blocked ? 87 : Math.max(20, Math.round(90 - score));
-  const waste   = Math.round((dropout/100) * m.cost);
-  return `
-    <div class="mismatch-cost">
-      <div class="mc-head">💸 עלות שיבוץ שגוי לתפקיד זה</div>
-      <div class="mc-3grid">
-        <div class="mc-cell"><div class="mc-num">₪${m.cost.toLocaleString()}</div><div class="mc-lbl">עלות קורס מלא<br>${m.duration}</div></div>
-        <div class="mc-cell"><div class="mc-num">${dropout}%</div><div class="mc-lbl">סיכון נשירה<br>צפוי</div></div>
-        <div class="mc-cell"><div class="mc-num">₪${waste.toLocaleString()}</div><div class="mc-lbl">עלות ממוצעת<br>לבזבוז</div></div>
-      </div>
-      <div class="mc-note">שיבוץ נכון חוסך עלות זו + מגדיל retention ב-${Math.round(dropout*0.7)}%</div>
-    </div>`;
+  return ''; // נמחק — הוחלף באחוזי מילוי תקן
 }
 
 /* =====================================================
