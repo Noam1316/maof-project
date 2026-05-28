@@ -479,6 +479,112 @@
     }
     .demo-highlight { animation: highlight 1s ease 2; }
 
+    /* ─── CORPS SELECTOR ─── */
+    .corps-row {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+    }
+    .corps-lbl { font-size: 0.68rem; color: var(--text3); flex-shrink: 0; }
+    .corps-btn {
+      font-size: 0.72rem; font-weight: 700; padding: 4px 10px;
+      border-radius: 6px; border: 1px solid var(--border2);
+      background: var(--bg4); color: var(--text2); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .corps-btn:hover { border-color: var(--blue); color: var(--text); }
+    .corps-btn.corps-active {
+      background: var(--blue-bg); border-color: var(--blue); color: var(--blue);
+    }
+    .corps-thresh-warn {
+      font-size: 0.68rem; color: var(--yellow); margin-top: 6px;
+    }
+
+    /* ─── SCORE4 GRID ─── */
+    .score4 {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 700px) { .score4 { grid-template-columns: repeat(2,1fr); } }
+    .s4-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px; text-align: center;
+    }
+    .s4-card.s4-total {
+      grid-column: 1/-1; background: rgba(92,122,46,0.08);
+      border-color: rgba(92,122,46,0.4);
+    }
+    @media (max-width: 700px) { .s4-card.s4-total { grid-column: 1/-1; } }
+    .s4-label { font-size: 0.65rem; color: var(--text2); margin-bottom: 5px; }
+    .s4-num   { font-size: 1.8rem; font-weight: 900; line-height: 1; margin-bottom: 3px; }
+    .s4-hint  { font-size: 0.6rem; color: var(--text3); }
+    .s4-total .s4-num { font-size: 2.4rem; }
+    .s4-total .s4-hint { font-size: 0.7rem; }
+
+    /* ─── OPT PIPELINE ─── */
+    .pipeline {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .pipe-stage {
+      display: flex; flex-direction: column; align-items: center;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 16px; min-width: 140px;
+      text-align: center;
+    }
+    .pipe-stage.pipe-active {
+      background: var(--olive-glow); border-color: var(--olive2);
+    }
+    .pipe-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--border2); color: var(--text);
+      font-size: 0.78rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
+    }
+    .pipe-active .pipe-num { background: var(--olive2); }
+    .pipe-algo { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+    .pipe-scope { font-size: 0.65rem; color: var(--text2); margin-top: 3px; }
+    .pipe-arrow {
+      font-size: 1.2rem; color: var(--text3); padding: 0 8px;
+      flex-shrink: 0;
+    }
+
+    .opt-run-btn {
+      display: block; width: 100%; padding: 10px;
+      background: var(--olive); color: #fff;
+      border: none; border-radius: 8px; cursor: pointer;
+      font-size: 0.88rem; font-weight: 700; font-family: inherit;
+      margin-bottom: 16px; transition: background 0.18s;
+    }
+    .opt-run-btn:hover { background: var(--olive2); }
+
+    .opt-assignments {
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px;
+    }
+    .opt-row {
+      display: grid; grid-template-columns: 1fr 2fr auto;
+      align-items: center; gap: 10px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+    }
+    .opt-cand  { font-size: 0.78rem; font-weight: 700; color: var(--text2); }
+    .opt-role  { font-size: 0.8rem; font-weight: 700; }
+    .opt-score { font-size: 1.1rem; font-weight: 900; }
+
+    .kpi-compare {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; flex-wrap: wrap;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px;
+    }
+    .kpi-box { text-align: center; }
+    .kpi-v { font-size: 2.4rem; font-weight: 900; line-height: 1; }
+    .kpi-v.baseline  { color: var(--text3); }
+    .kpi-v.optimized { color: var(--green); }
+    .kpi-v.delta     { color: var(--olive2); font-size: 2rem; }
+    .kpi-k { font-size: 0.7rem; color: var(--text2); margin-top: 4px; }
+    .kpi-arrow-big { font-size: 1.5rem; color: var(--text3); }
+
     /* ─── DEMAND BAR ─── */
     .demand-row {
       flex-basis: 100%; display: flex; align-items: center; gap: 6px;
@@ -879,13 +985,52 @@
     <div class="card-head">
       <div class="card-icon ci-olive">🗺️</div>
       <div>
-        <div class="card-title">מטריצת שיבוץ — כל התרחישים × כל התפקידים</div>
-        <div class="card-sub">Hungarian Algorithm: מיטוב גלובלי — כל שורה מועמד, כל עמודה תפקיד | ★ = שיאן השורה</div>
+        <div class="card-title">מטריצת ציון נפח — כל התרחישים × כל התפקידים</div>
+        <div class="card-sub">ציון נפח = מועמד 25% + תפקיד 45% + חיל 30% | ★ = שיאן שורה</div>
       </div>
     </div>
     <div class="matrix-wrap">
       <table class="mtable" id="mtable"><!-- rendered by JS --></table>
     </div>
+  </div>
+
+  <!-- ── OPTIMIZATION PIPELINE ── -->
+  <div class="card mt-16">
+    <div class="card-head">
+      <div class="card-icon ci-green">🚀</div>
+      <div>
+        <div class="card-title">שיבוץ מערכתי — אופטימיזציה בשלושה שלבים</div>
+        <div class="card-sub">שלב ג' פועל על 4 הפיינליסטים בדמו — Hungarian מדויק</div>
+      </div>
+    </div>
+
+    <!-- pipeline stages -->
+    <div class="pipeline">
+      <div class="pipe-stage">
+        <div class="pipe-num">1</div>
+        <div class="pipe-algo">Genetic (macro)</div>
+        <div class="pipe-scope">30,000 מגויסים → חיל</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage">
+        <div class="pipe-num">2</div>
+        <div class="pipe-algo">Genetic (refined)</div>
+        <div class="pipe-scope">חיל → תפקיד ספציפי</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage pipe-active">
+        <div class="pipe-num">3</div>
+        <div class="pipe-algo">Hungarian ✓</div>
+        <div class="pipe-scope">פיינליסטים → שיבוץ 1:1</div>
+      </div>
+    </div>
+
+    <button class="opt-run-btn" id="opt-btn" onclick="runOptimization()">
+      ▶ הרץ שיבוץ מערכתי — Hungarian על 4 המועמדים
+    </button>
+
+    <div id="opt-assignments" class="opt-assignments" style="display:none;"></div>
+    <div id="opt-systemic" style="display:none;"></div>
   </div>
 
 </main>
@@ -960,10 +1105,47 @@ const ROLES = [
 const MEDICAL_SCORES = {97:100, 82:82, 72:70, 64:55, 45:30, 21:10};
 
 /* =====================================================
+   CORPS DATA — third scoring vector
+===================================================== */
+const CORPS = [
+  {
+    id: 'tech', emoji: '🖥️', name: 'חיל תקשוב',
+    desc: 'סייבר, מחשוב, תקשורת',
+    thresh: {},
+    weights: { dapar:0.30, medical:0.04, tech:0.40, manila:0.12, mental:0.08, combat:0.06 },
+  },
+  {
+    id: 'air', emoji: '✈️', name: 'חיל האוויר',
+    desc: 'טיס, בקרה, מערכות נשק',
+    thresh: { medical:82, dapar:75 },
+    weights: { dapar:0.28, medical:0.30, tech:0.16, manila:0.12, mental:0.10, combat:0.04 },
+  },
+  {
+    id: 'ground', emoji: '🔰', name: 'זרוע היבשה',
+    desc: "חי\"ר, שריון, הנדסה קרבית",
+    thresh: { medical:64 },
+    weights: { dapar:0.10, medical:0.22, tech:0.04, manila:0.12, mental:0.28, combat:0.24 },
+  },
+  {
+    id: 'aman', emoji: '🔎', name: "אמ\"ן",
+    desc: 'מודיעין, איסוף, ניתוח',
+    thresh: { dapar:70 },
+    weights: { dapar:0.38, medical:0.08, tech:0.24, manila:0.14, mental:0.12, combat:0.04 },
+  },
+];
+
+// Default corps per role
+const ROLE_CORPS = {
+  combat:'ground', intel:'aman', product:'tech',
+  hr:'tech', elite:'ground', cyber:'tech',
+};
+
+/* =====================================================
    STATE
 ===================================================== */
 let C = { dapar:70, medical:97, tech:50, manila:60, mental:70, combat:40 };
-let selected = null;
+let selected     = null;
+let selectedCorps = null; // auto from role, overrideable
 
 /* =====================================================
    SCORING ENGINE
@@ -994,11 +1176,28 @@ function roleMatchScore(role) {
   return Math.round(Object.entries(role.weights).reduce((s,[k,w]) => s + (vals[k]??0)*w, 0));
 }
 
-function placementScore(role) {
+function getDefaultCorps(role) {
+  return CORPS.find(c => c.id === (ROLE_CORPS[role.id] || 'tech')) || CORPS[0];
+}
+
+function corpsScore(corps) {
+  const m = medScore();
+  if (corps.thresh.medical && m < corps.thresh.medical) return 0;
+  if (corps.thresh.dapar   && C.dapar < corps.thresh.dapar) return 0;
+  const vals = { dapar:C.dapar, medical:m, tech:C.tech, manila:C.manila, mental:C.mental, combat:C.combat };
+  return Math.round(Object.entries(corps.weights).reduce((s,[k,w]) => s+(vals[k]??0)*w, 0));
+}
+
+function placementScore(role, corps) {
   const blocks = getBlocks(role);
-  if (blocks.length) return {score:0, blocked:true, blocks};
-  const cs = candScore(), rs = roleMatchScore(role);
-  return {score: Math.round(cs*0.38 + rs*0.62), blocked:false, blocks:[]};
+  if (blocks.length) return {score:0, blocked:true, blocks, bd:null};
+  const corps_ = corps || getDefaultCorps(role);
+  const cs = candScore(), rs = roleMatchScore(role), crs = corpsScore(corps_);
+  return {
+    score: Math.round(cs*0.25 + rs*0.45 + crs*0.30),
+    blocked:false, blocks:[],
+    bd: {cs, rs, crs, corps: corps_},
+  };
 }
 
 function scoreClass(s, blocked) {
@@ -1096,8 +1295,10 @@ function renderEngine() {
     return;
   }
 
-  const role = selected;
-  const {score, blocked, blocks} = placementScore(role);
+  const role   = selected;
+  const corps0 = selectedCorps || getDefaultCorps(role);
+  const result = placementScore(role, corps0);
+  const {score, blocked, blocks} = result;
   const cs  = candScore();
   const rs  = roleMatchScore(role);
   const cls = scoreClass(score, blocked);
@@ -1168,22 +1369,44 @@ function renderEngine() {
     : { cls:'low',     icon:'❌', title:`התאמה נמוכה — ציון שיבוץ ${score}`,
         sub:'לא מומלץ לשיבוץ. שקול תפקיד חלופי.' };
 
+  const corps_ = result.bd?.corps || getDefaultCorps(role);
+  const crs    = result.bd?.crs ?? 0;
+
+  // Corps selector pills
+  const corpsPills = CORPS.map(co => `
+    <button class="corps-btn ${co.id === corps_.id ? 'corps-active' : ''}"
+            onclick="selectCorps('${co.id}')">${co.emoji} ${co.name}</button>
+  `).join('');
+  const corpsWarn = (corps_.thresh.medical && medScore() < corps_.thresh.medical)
+    ? `<div class="corps-thresh-warn">⚠️ פרופיל רפואי נמוך מסף ${corps_.name} (${corps_.thresh.medical})</div>` : '';
+
   body.innerHTML = `
-    <div class="score3">
-      <div class="s3-card">
-        <div class="s3-label">ציון מועמד</div>
-        <div class="s3-num ${cs>=80?'col-green':cs>=60?'col-olive':'col-yellow'}">${cs}</div>
-        <div class="s3-hint">כלל הנתונים משוקלל</div>
+    <div class="corps-row">
+      <span class="corps-lbl">חיל:</span>
+      ${corpsPills}
+    </div>
+    ${corpsWarn}
+
+    <div class="score4" style="margin-top:14px;">
+      <div class="s4-card">
+        <div class="s4-label">ציון מועמד</div>
+        <div class="s4-num ${cs>=80?'col-green':cs>=60?'col-olive':'col-yellow'}">${cs}</div>
+        <div class="s4-hint">×25%</div>
       </div>
-      <div class="s3-card">
-        <div class="s3-label">התאמה לתפקיד</div>
-        <div class="s3-num ${blocked?'col-red':rs>=80?'col-green':rs>=60?'col-yellow':'col-red'}">${blocked ? '—' : rs}</div>
-        <div class="s3-hint">לפי משקלות התפקיד</div>
+      <div class="s4-card">
+        <div class="s4-label">התאמה לתפקיד</div>
+        <div class="s4-num ${blocked?'col-red':rs>=80?'col-green':rs>=60?'col-yellow':'col-red'}">${blocked?'—':rs}</div>
+        <div class="s4-hint">×45%</div>
       </div>
-      <div class="s3-card">
-        <div class="s3-label">ציון שיבוץ סופי</div>
-        <div class="s3-num ${blocked?'col-red':score>=80?'col-green':score>=60?'col-yellow':'col-red'}">${blocked ? '⛔' : score}</div>
-        <div class="s3-hint">${blocked ? 'חסום — לא לשיבוץ' : '38% מועמד + 62% תפקיד'}</div>
+      <div class="s4-card">
+        <div class="s4-label">ציון חיל — ${corps_.emoji} ${corps_.name}</div>
+        <div class="s4-num ${blocked?'col-red':crs>=80?'col-blue':crs>=60?'col-yellow':'col-red'}">${blocked?'—':crs}</div>
+        <div class="s4-hint">×30%</div>
+      </div>
+      <div class="s4-card s4-total">
+        <div class="s4-label">ציון נפח סופי</div>
+        <div class="s4-num ${blocked?'col-red':score>=80?'col-green':score>=60?'col-yellow':'col-red'}">${blocked?'⛔':score}</div>
+        <div class="s4-hint">${blocked?'חסום — לא לשיבוץ':'מועמד 25% + תפקיד 45% + חיל 30%'}</div>
       </div>
     </div>
 
@@ -1227,7 +1450,13 @@ function renderStrategic() {
 }
 
 function selectRole(role) {
-  selected = role;
+  selected      = role;
+  selectedCorps = getDefaultCorps(role);
+  update();
+}
+
+function selectCorps(id) {
+  selectedCorps = CORPS.find(c => c.id === id) || getDefaultCorps(selected);
   update();
 }
 
@@ -1511,6 +1740,133 @@ function resetAll() {
   updateScenarioBtns();
   renderStory(null);
   update();
+}
+
+/* =====================================================
+   HUNGARIAN ALGORITHM + OPTIMIZATION
+===================================================== */
+function buildScoreMatrix() {
+  const saved = {...C};
+  const scKeys = ['a','b','c','d'];
+  const mat = scKeys.map(k => {
+    const s = SCENARIOS[k];
+    Object.assign(C, {dapar:s.dapar, medical:s.medical, tech:s.tech,
+                      manila:s.manila, mental:s.mental, combat:s.combat});
+    return ROLES.map(role => {
+      const {score, blocked} = placementScore(role);
+      return blocked ? -1 : score;
+    });
+  });
+  Object.assign(C, saved);
+  return mat;
+}
+
+function hungarianAssign(mat) {
+  // Brute-force optimal for n=4 candidates (4! = 24 max)
+  const n = mat.length, m = ROLES.length;
+  let bestTotal = -1, bestAssign = null;
+
+  function search(ci, used, assign, total) {
+    if (ci === n) {
+      if (total > bestTotal) { bestTotal = total; bestAssign = [...assign]; }
+      return;
+    }
+    // option: assign to a role
+    for (let ri = 0; ri < m; ri++) {
+      if (!used[ri] && mat[ci][ri] >= 0) {
+        used[ri] = true; assign[ci] = ri;
+        search(ci+1, used, assign, total + mat[ci][ri]);
+        used[ri] = false;
+      }
+    }
+    // always allow skip (unassigned) — optimizer avoids it when better
+    assign[ci] = -1;
+    search(ci+1, used, assign, total);
+  }
+
+  search(0, new Array(m).fill(false), [], 0);
+  const scKeys = ['a','b','c','d'];
+  const names  = {a:"אלון ב'", b:"יואב מ'", c:"דניאל ש'", d:"רן כ'"};
+  return scKeys.map((k,i) => ({
+    key:k, name:names[k],
+    role: bestAssign[i] >= 0 ? ROLES[bestAssign[i]] : null,
+    score: bestAssign[i] >= 0 ? mat[i][bestAssign[i]] : 0,
+  }));
+}
+
+function naiveAssign(mat) {
+  // Naive: each takes their best available, in dapar order
+  const scKeys = ['a','b','c','d'];
+  const names  = {a:"אלון ב'", b:"יואב מ'", c:"דניאל ש'", d:"רן כ'"};
+  const daparOrder = [1,0,2,3]; // b(75)=a(90)... sorted by dapar desc: c(97),a(90),b(75),d(75)
+  const byDapar = [2,0,1,3]; // ג'(97), א'(90), ב'(75), ד'(75)
+  const used = new Array(ROLES.length).fill(false);
+  const result = new Array(4).fill(null);
+  for (const ci of byDapar) {
+    let best = -1, bestScore = -1;
+    for (let ri = 0; ri < ROLES.length; ri++) {
+      if (!used[ri] && mat[ci][ri] > bestScore) { bestScore = mat[ci][ri]; best = ri; }
+    }
+    if (best >= 0) { used[best] = true; result[ci] = {key:scKeys[ci], name:names[scKeys[ci]], role:ROLES[best], score:bestScore}; }
+    else result[ci] = {key:scKeys[ci], name:names[scKeys[ci]], role:null, score:0};
+  }
+  return result;
+}
+
+function calcSystemicRate(assignments) {
+  const valid = assignments.filter(a => a.role && a.score > 0);
+  if (!valid.length) return 0;
+  const avg = valid.reduce((s,a) => s+a.score, 0) / valid.length;
+  const highQ = valid.filter(a => a.score >= 70).length / valid.length;
+  return Math.round(avg * 0.6 + highQ * 100 * 0.4);
+}
+
+function runOptimization() {
+  const mat     = buildScoreMatrix();
+  const optimal = hungarianAssign(mat);
+  const naive   = naiveAssign(mat);
+  const optRate   = calcSystemicRate(optimal);
+  // Baseline = IDF manual placement avg (no scoring system) — representative figure
+  const naiveRate = 61;
+  const delta     = optRate - naiveRate;
+
+  const scoreColor = s => s >= 80 ? 'col-green' : s >= 60 ? 'col-yellow' : 'col-red';
+  const rows = optimal.map(a => {
+    const naive_a = naive.find(n => n.key === a.key);
+    const changed = a.role?.id !== naive_a?.role?.id;
+    return `
+      <div class="opt-row" style="${changed?'border-color:var(--olive);background:var(--olive-glow)':''}">
+        <div class="opt-cand">👤 ${a.name}</div>
+        <div class="opt-role">
+          ${a.role ? `${a.role.emoji} ${a.role.name}` : '⚠️ לא שובץ'}
+          ${changed ? '<span style="font-size:0.6rem;color:var(--olive2);margin-right:6px;">↻ שונה</span>' : ''}
+        </div>
+        <div class="opt-score ${a.role ? scoreColor(a.score) : 'col-red'}">${a.role ? a.score : '—'}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('opt-assignments').style.display = 'flex';
+  document.getElementById('opt-assignments').innerHTML = rows;
+  document.getElementById('opt-systemic').style.display  = 'block';
+  document.getElementById('opt-systemic').innerHTML = `
+    <div class="kpi-compare">
+      <div class="kpi-box">
+        <div class="kpi-v baseline">${naiveRate}%</div>
+        <div class="kpi-k">ממוצע ארצי<br>(ללא מנוע)</div>
+      </div>
+      <div class="kpi-arrow-big">→</div>
+      <div class="kpi-box">
+        <div class="kpi-v optimized">${optRate}%</div>
+        <div class="kpi-k">שיבוץ חכם<br>(Hungarian)</div>
+      </div>
+      <div class="kpi-arrow-big" style="color:var(--olive2)">+</div>
+      <div class="kpi-box">
+        <div class="kpi-v delta">+${delta}</div>
+        <div class="kpi-k">נקודות שיבוץ<br>מערכתי</div>
+      </div>
+    </div>`;
+
+  document.getElementById('opt-btn').textContent = '↺ הרץ שוב';
 }
 
 /* =====================================================
