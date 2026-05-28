@@ -102,6 +102,20 @@
     .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
     .btn-ghost:hover { color: var(--text); border-color: var(--text3); }
 
+    /* scenario chips */
+    .btn-scenario {
+      background: var(--bg3); border: 1px solid var(--border2);
+      color: var(--text2); display: flex; flex-direction: column;
+      align-items: flex-start; padding: 6px 12px; border-radius: 7px; gap: 1px;
+    }
+    .btn-scenario:hover { border-color: var(--olive); color: var(--text); }
+    .btn-scenario.active {
+      background: var(--olive-glow); border-color: var(--olive2); color: var(--text);
+    }
+    .sc-id   { font-size: 0.82rem; font-weight: 800; }
+    .sc-desc { font-size: 0.58rem; color: var(--text3); }
+    .btn-scenario.active .sc-desc { color: var(--text2); }
+
     /* ─── MAIN LAYOUT ─── */
     .main { padding: 20px 28px; max-width: 1440px; margin: 0 auto; }
 
@@ -537,12 +551,25 @@
 
 <!-- ═══════════════ DEMO BAR ═══════════════ -->
 <div class="demo-bar">
-  <div class="demo-label">
-    🔬 <strong>תרחיש "מלש"ב א'"</strong> — דפ"ר 90, מגמת הנדסת תוכנה, פרופיל רפואי 45 (חולף)
-  </div>
-  <div style="display:flex;gap:8px;">
-    <button class="btn btn-olive" onclick="loadDemo()">▶ הפעל תרחיש</button>
-    <button class="btn btn-ghost" onclick="resetAll()">↺ איפוס</button>
+  <div class="demo-label">🔬 <strong>בחר תרחיש:</strong></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+    <button class="btn btn-scenario" id="sc-a" onclick="loadDemo('a')">
+      <span class="sc-id">מלש"ב א'</span>
+      <span class="sc-desc">מגבלה רפואית · tech גבוה</span>
+    </button>
+    <button class="btn btn-scenario" id="sc-b" onclick="loadDemo('b')">
+      <span class="sc-id">מלש"ב ב'</span>
+      <span class="sc-desc">לוחם עילית · חלש בטכנולוגיה</span>
+    </button>
+    <button class="btn btn-scenario" id="sc-c" onclick="loadDemo('c')">
+      <span class="sc-id">מלש"ב ג'</span>
+      <span class="sc-desc">גאון סייבר 8200</span>
+    </button>
+    <button class="btn btn-scenario" id="sc-d" onclick="loadDemo('d')">
+      <span class="sc-id">מלש"ב ד'</span>
+      <span class="sc-desc">פצוע קרב · בלוק רוחבי</span>
+    </button>
+    <button class="btn btn-ghost" onclick="resetAll()" style="align-self:stretch;">↺</button>
   </div>
 </div>
 
@@ -746,6 +773,26 @@ const ROLES = [
     thresh: { dapar:55 },
     weights: { dapar:0.22, medical:0.04, tech:0.10, manila:0.32, mental:0.20, combat:0.12 },
     demand:55, proximity:85, economicRisk:75,
+  },
+  {
+    id: 'elite',
+    emoji: '🛡️',
+    name: 'לוחם יחידת עילית',
+    desc: 'סיירת / שייטת — קרי עצים, ספי כשירות גבוהים',
+    tags: [{t:'עילית',c:'t-red'},{t:'קרבי',c:'t-red'},{t:'גוף+נפש',c:'t-yellow'}],
+    thresh: { medical:85, mental:85, combat:80 },
+    weights: { dapar:0.10, medical:0.25, tech:0.03, manila:0.10, mental:0.30, combat:0.22 },
+    demand:70, proximity:20, economicRisk:80,
+  },
+  {
+    id: 'cyber',
+    emoji: '💻',
+    name: 'לוחם סייבר — יח\' 8200',
+    desc: 'סייבר התקפי ומודיעין טכנולוגי — ללא דרישת שטח',
+    tags: [{t:'8200',c:'t-purple'},{t:'סייבר',c:'t-blue'},{t:'ללא שטח',c:'t-olive'}],
+    thresh: { dapar:85, tech:75 },
+    weights: { dapar:0.38, medical:0.02, tech:0.36, manila:0.10, mental:0.09, combat:0.05 },
+    demand:95, proximity:80, economicRisk:90,
   },
 ];
 
@@ -1040,33 +1087,53 @@ function selectMedical(val) {
 }
 
 /* =====================================================
-   DEMO SCENARIO
+   DEMO SCENARIOS
 ===================================================== */
-function loadDemo() {
-  C = { dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30 };
+const SCENARIOS = {
+  // א' — tech profile, temporary medical limitation
+  a: { dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30, role:'product' },
+  // ב' — elite fighter, weak in tech
+  b: { dapar:75, medical:97, tech:22, manila:65, mental:92, combat:96, role:'elite'   },
+  // ג' — cyber genius 8200, zero combat background
+  c: { dapar:97, medical:82, tech:97, manila:85, mental:78, combat:18, role:'cyber'   },
+  // ד' — injured combat veteran, near-total block
+  d: { dapar:75, medical:45, tech:40, manila:62, mental:50, combat:78, role:'hr'      },
+};
 
-  document.getElementById('sl-dapar').value  = 90;
-  document.getElementById('v-dapar').textContent = 90;
+let activeScenario = null;
 
-  document.getElementById('sl-medical').value = 45;
-  document.getElementById('v-medical').textContent = 30;
+function applyCandidate(s) {
+  C = { dapar:s.dapar, medical:s.medical, tech:s.tech,
+        manila:s.manila, mental:s.mental, combat:s.combat };
+  document.getElementById('sl-dapar').value          = s.dapar;
+  document.getElementById('v-dapar').textContent     = s.dapar;
+  document.getElementById('sl-medical').value        = s.medical;
+  document.getElementById('v-medical').textContent   = MEDICAL_SCORES[s.medical] ?? 0;
+  document.getElementById('sl-tech').value           = s.tech;
+  document.getElementById('v-tech').textContent      = s.tech;
+  document.getElementById('sl-manila').value         = s.manila;
+  document.getElementById('v-manila').textContent    = s.manila;
+  document.getElementById('sl-mental').value         = s.mental;
+  document.getElementById('v-mental').textContent    = s.mental;
+  document.getElementById('sl-combat').value         = s.combat;
+  document.getElementById('v-combat').textContent    = s.combat;
+}
 
-  document.getElementById('sl-tech').value   = 85;
-  document.getElementById('v-tech').textContent = 85;
+function updateScenarioBtns() {
+  ['a','b','c','d'].forEach(k => {
+    const el = document.getElementById('sc-' + k);
+    if (el) el.classList.toggle('active', k === activeScenario);
+  });
+}
 
-  document.getElementById('sl-manila').value = 80;
-  document.getElementById('v-manila').textContent = 80;
-
-  document.getElementById('sl-mental').value = 75;
-  document.getElementById('v-mental').textContent = 75;
-
-  document.getElementById('sl-combat').value = 30;
-  document.getElementById('v-combat').textContent = 30;
-
-  selected = ROLES.find(r => r.id === 'product');
+function loadDemo(key) {
+  const s = SCENARIOS[key];
+  if (!s) return;
+  activeScenario = key;
+  applyCandidate(s);
+  selected = ROLES.find(r => r.id === s.role);
+  updateScenarioBtns();
   update();
-
-  // Flash the engine card
   const ec = document.getElementById('engine-card');
   ec.classList.remove('demo-highlight');
   void ec.offsetWidth;
@@ -1074,27 +1141,22 @@ function loadDemo() {
 }
 
 function resetAll() {
+  activeScenario = null;
   C = { dapar:70, medical:97, tech:50, manila:60, mental:70, combat:40 };
-
-  document.getElementById('sl-dapar').value  = 70;
-  document.getElementById('v-dapar').textContent = 70;
-
-  document.getElementById('sl-medical').value = 97;
-  document.getElementById('v-medical').textContent = 100;
-
-  document.getElementById('sl-tech').value   = 50;
-  document.getElementById('v-tech').textContent = 50;
-
-  document.getElementById('sl-manila').value = 60;
-  document.getElementById('v-manila').textContent = 60;
-
-  document.getElementById('sl-mental').value = 70;
-  document.getElementById('v-mental').textContent = 70;
-
-  document.getElementById('sl-combat').value = 40;
-  document.getElementById('v-combat').textContent = 40;
-
+  document.getElementById('sl-dapar').value          = 70;
+  document.getElementById('v-dapar').textContent     = 70;
+  document.getElementById('sl-medical').value        = 97;
+  document.getElementById('v-medical').textContent   = 100;
+  document.getElementById('sl-tech').value           = 50;
+  document.getElementById('v-tech').textContent      = 50;
+  document.getElementById('sl-manila').value         = 60;
+  document.getElementById('v-manila').textContent    = 60;
+  document.getElementById('sl-mental').value         = 70;
+  document.getElementById('v-mental').textContent    = 70;
+  document.getElementById('sl-combat').value         = 40;
+  document.getElementById('v-combat').textContent    = 40;
   selected = null;
+  updateScenarioBtns();
   update();
 }
 
