@@ -159,6 +159,12 @@ header{
   html,body{overflow:auto; height:auto;}
 }
 
+/* holistic note */
+.holistic-note{
+  font-size:.63rem; color:var(--olive2);
+  background:var(--olive-glow); border:1px solid rgba(92,122,46,.3);
+  border-radius:5px; padding:4px 10px; margin-bottom:6px;
+}
 /* ── MOBILE 600px ── */
 @media(max-width:600px){
   html,body{overflow:auto; height:auto; min-height:100vh;}
@@ -279,6 +285,7 @@ header{
   <!-- RIGHT: Roles + Rec -->
   <div class="right">
     <div class="panel-title">ניתוח שיבוץ — 6 תפקידים</div>
+    <div class="holistic-note">⚡ ציון הוליסטי = התאמה אישית (55%) + דחיפות מילוי תקן (45%) — הצבא קודם</div>
     <div class="roles" id="roles"><!-- JS --></div>
     <div class="rec" id="rec"><!-- JS --></div>
   </div>
@@ -368,23 +375,32 @@ function score(sc){
     if(role.th.mental     && sc.mental < role.th.mental)       blocks.push(`מנטלי ${sc.mental} < סף ${role.th.mental}`);
     if(role.th.combat     && sc.combat < role.th.combat)       blocks.push(`כושר לחימה ${sc.combat} < סף ${role.th.combat}`);
 
-    if(blocks.length) return {role, blocked:true, reason:blocks[0], score:0};
+    if(blocks.length){
+      const mn2 = MANNING[role.id]||{miluy:50};
+      return {role, blocked:true, reason:blocks[0], score:0, holistic:0, urgency:100-mn2.miluy};
+    }
 
-    // ציון — ללא פרופיל רפואי (רק אם עברת את שער הזכאות)
+    // ציון התאמה אישית
     const rs = Math.round(
       sc.dapar*role.w.dapar + sc.tech*role.w.tech +
       sc.manila*role.w.manila + sc.mental*role.w.mental + sc.combat*role.w.combat
     );
     const ps = Math.round(cs*.38 + rs*.62);
+
+    // ציון הוליסטי = התאמה אישית × 55% + דחיפות מילוי תקן × 45%
+    const mn = MANNING[role.id]||{miluy:50};
+    const urgency = 100 - mn.miluy;
+    const holistic = Math.round(ps * 0.55 + urgency * 0.45);
+
     const reasons = {
-      admin:  `מניל"ה + דפ"ר — מתאים לתפקיד מינהלי`,
+      admin:  `מניל"ה + דפ"ר מספיקים | תקן: ${mn.teken}`,
       intel:  `דפ"ר + מנטלי מעל ספי מינימום`,
       product:`דפ"ר ${sc.dapar} + טכנולוגי ${sc.tech} — קומבינציה חזקה`,
-      elint:  `טכנולוגי + כשירות רפואית מינימלית עמידים`,
-      elite:  `גוף ונפש — שיאי הפלטפורמה`,
-      cyber:  `דפ"ר + טכנולוגי שניהם בשיא — ייעוד 8200`,
+      elint:  `פרופיל + טכנולוגי — מתאים לרחפנים`,
+      elite:  `מנטלי + כושר לחימה — שיאי הפלטפורמה`,
+      cyber:  `דפ"ר + טכנולוגי שניהם בשיא — מועמד מובהק`,
     };
-    return {role, blocked:false, reason:reasons[role.id]||'', score:ps};
+    return {role, blocked:false, reason:reasons[role.id]||'', score:ps, holistic, urgency};
   });
 }
 
@@ -441,11 +457,12 @@ function render(sc){
 
   // Roles
   const results = score(s);
-  const best = results.filter(r=>!r.blocked).sort((a,b)=>b.score-a.score)[0];
+  // best נבחר לפי ציון הוליסטי — לא לפי התאמה אישית
+  const best = results.filter(r=>!r.blocked).sort((a,b)=>b.holistic-a.holistic)[0];
 
   document.getElementById('roles').innerHTML = results.map(r=>{
     const mn = MANNING[r.role.id] || {teken:0,miluy:0};
-    const miluyCol = mn.miluy<50?'#f87171':mn.miluy<75?'#fbbf24':'#4ade80';
+    const urgCol = r.urgency>60?'#f87171':r.urgency>30?'#fbbf24':'#4ade80';
 
     if(r.blocked) return `
       <div class="rc rc-blocked">
@@ -458,11 +475,15 @@ function render(sc){
         </div>
         <div class="rc-bar"><div class="rc-bar-fill" style="width:0%"></div></div>
         <div class="rc-reason" style="color:#f87171cc">${r.reason}</div>
-        <div style="font-size:0.6rem;color:var(--text3);margin-top:4px;">תקן: ${mn.teken} | מולא: <span style="color:${miluyCol}">${mn.miluy}%</span></div>
+        <div style="font-size:0.58rem;color:var(--text3);margin-top:3px;">
+          תקן: ${mn.teken} | <span style="color:${urgCol}">דחיפות: ${r.urgency}%</span>
+        </div>
       </div>`;
+
     const isBest = r.role.id === best?.role.id;
-    const sc2 = r.score>=80?'sGreen':r.score>=60?'sYellow':'sRed';
-    const bc  = r.score>=80?'#4ade80':r.score>=60?'#fbbf24':'#f87171';
+    const h = r.holistic;
+    const hCol = h>=70?'#4ade80':h>=50?'#fbbf24':'#f87171';
+    const hCls = h>=70?'sGreen':h>=50?'sYellow':'sRed';
     return `
       <div class="rc${isBest?' rc-best':''}">
         <div class="rc-top">
@@ -470,11 +491,17 @@ function render(sc){
             <div class="rc-emoji">${r.role.e}</div>
             <div class="rc-name">${r.role.n}</div>
           </div>
-          <div class="rc-score ${sc2}">${r.score}${isBest?' ★':''}</div>
+          <div style="text-align:center;">
+            <div class="rc-score ${hCls}">${h}${isBest?' ★':''}</div>
+            <div style="font-size:0.52rem;color:var(--text3);">הוליסטי</div>
+          </div>
         </div>
-        <div class="rc-bar"><div class="rc-bar-fill" style="width:${r.score}%;background:${bc}"></div></div>
+        <div class="rc-bar"><div class="rc-bar-fill" style="width:${h}%;background:${hCol}"></div></div>
         <div class="rc-reason">${r.reason}</div>
-        <div style="font-size:0.6rem;color:var(--text3);margin-top:4px;">תקן: ${mn.teken} | מולא: <span style="color:${miluyCol};font-weight:700;">${mn.miluy}%</span></div>
+        <div style="font-size:0.58rem;color:var(--text3);margin-top:3px;">
+          התאמה: <span style="color:var(--text2)">${r.score}</span> |
+          דחיפות: <span style="color:${urgCol};font-weight:700;">${r.urgency}%</span>
+        </div>
       </div>`;
   }).join('');
 
@@ -489,18 +516,24 @@ function render(sc){
         <div class="rec-why">המנוע מזהה חסמים בכל 6 התפקידים. הקצין יודע זאת לפני שמתחיל קורס.</div>
       </div>`;
   } else {
-    const cls = best.score>=80?'rec-high':best.score>=60?'rec-med':'rec-warn';
-    const icon = best.score>=80?'✅':best.score>=60?'⚠️':'❌';
+    const h   = best.holistic;
+    const cls = h>=70?'rec-high':h>=50?'rec-med':'rec-warn';
+    const icon= h>=70?'✅':h>=50?'⚠️':'❌';
+    const mn  = MANNING[best.role.id]||{teken:0,miluy:50};
+    const chaser = Math.round((1-mn.miluy/100)*mn.teken);
+    const armyWhy = best.urgency < 20
+      ? `שיבוץ שיקומי — זה הפתרון הקיים. ציון הוליסטי ${h} — המנוע ישנה המלצה כשהפרופיל ישתפר`
+      : `מולא ${mn.miluy}% — הצבא מחפש עוד ${chaser} אנשים. התאמה אישית: ${best.score}`;
     rec.className=`rec ${cls}`;
     rec.innerHTML=`
       <div class="rec-icon">${icon}</div>
       <div class="rec-main">
-        <div class="rec-role">המלצה: ${best.role.e} ${best.role.n}</div>
-        <div class="rec-why">${best.reason}</div>
+        <div class="rec-role">המלצה מערכתית: ${best.role.e} ${best.role.n}</div>
+        <div class="rec-why">${armyWhy}</div>
       </div>
       <div class="rec-num">
-        <div class="rec-big" style="color:${best.score>=80?'var(--green)':best.score>=60?'var(--yellow)':'var(--red)'}">${best.score}</div>
-        <div class="rec-lbl">ציון שיבוץ</div>
+        <div class="rec-big" style="color:${h>=70?'var(--green)':h>=50?'var(--yellow)':'var(--red)'}">${h}</div>
+        <div class="rec-lbl">ציון הוליסטי</div>
       </div>`;
   }
 }
