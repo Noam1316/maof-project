@@ -1056,8 +1056,8 @@ const ROLES = [
     name: 'קצין מודיעין — שטח',
     desc: 'איסוף מודיעין מבצעי, סיווג ביטחוני גבוה',
     tags: [{t:'מודיעין',c:'t-purple'},{t:'סיווג גבוה',c:'t-blue'},{t:'שטח',c:'t-red'}],
-    thresh: { dapar:70, medical:60, mental:55 },
-    weights: { dapar:0.30, medical:0.18, tech:0.18, manila:0.14, mental:0.15, combat:0.05 },
+    thresh: { dapar:70, medProfile:72, mental:55 }, // פרופיל מינ' 72
+    weights: { dapar:0.37, medical:0, tech:0.22, manila:0.17, mental:0.18, combat:0.06 },
     demand:65, proximity:50, economicRisk:70,
   },
   {
@@ -1066,8 +1066,8 @@ const ROLES = [
     name: 'מנהל מוצר — מופ"ת/תצפ"י',
     desc: 'פיתוח מוצרי AI ודאטה, יחידה טכנולוגית עורפית',
     tags: [{t:'טכנולוגי',c:'t-blue'},{t:'עורפי',c:'t-olive'},{t:'AI/Data',c:'t-purple'}],
-    thresh: { dapar:80, tech:60 },
-    weights: { dapar:0.32, medical:0.04, tech:0.30, manila:0.16, mental:0.12, combat:0.06 },
+    thresh: { dapar:80, tech:60, medProfile:45 }, // פרופיל מינ' 45 (עורפי)
+    weights: { dapar:0.33, medical:0, tech:0.31, manila:0.17, mental:0.13, combat:0.06 },
     demand:90, proximity:90, economicRisk:85,
   },
   {
@@ -1076,8 +1076,8 @@ const ROLES = [
     name: 'לוחמה אלקטרונית',
     desc: 'הפעלת רחפנים ומערכות לוחמה אלקטרונית בשטח',
     tags: [{t:'רחפנים',c:'t-blue'},{t:'לחימה',c:'t-red'},{t:'טכנולוגי',c:'t-olive'}],
-    thresh: { dapar:50, medical:72, tech:40 },
-    weights: { dapar:0.20, medical:0.22, tech:0.28, manila:0.12, mental:0.13, combat:0.05 },
+    thresh: { dapar:50, medProfile:64, tech:40 }, // פרופיל מינ' 64 (תומך לחימה)
+    weights: { dapar:0.26, medical:0, tech:0.36, manila:0.15, mental:0.17, combat:0.06 },
     demand:60, proximity:55, economicRisk:70,
   },
   {
@@ -1086,8 +1086,8 @@ const ROLES = [
     name: 'לוחם יחידת עילית',
     desc: 'סיירת / שייטת — קרבי עצים, ספי כשירות גבוהים',
     tags: [{t:'עילית',c:'t-red'},{t:'קרבי',c:'t-red'},{t:'גוף+נפש',c:'t-yellow'}],
-    thresh: { medical:85, mental:85, combat:80 },
-    weights: { dapar:0.10, medical:0.25, tech:0.03, manila:0.10, mental:0.30, combat:0.22 },
+    thresh: { medProfile:97, mental:85, combat:80 }, // פרופיל 97 בלבד
+    weights: { dapar:0.13, medical:0, tech:0.04, manila:0.13, mental:0.41, combat:0.29 },
     demand:70, proximity:20, economicRisk:80,
   },
   {
@@ -1096,8 +1096,8 @@ const ROLES = [
     name: 'קצין מחשב/סייבר — 8200',
     desc: 'מחשוב קרבי, סייבר, מודיעין טכנולוגי — תפקיד פקודותי',
     tags: [{t:'8200',c:'t-purple'},{t:'סייבר',c:'t-blue'},{t:'פקודותי',c:'t-olive'}],
-    thresh: { dapar:90, tech:70 },
-    weights: { dapar:0.38, medical:0.02, tech:0.36, manila:0.10, mental:0.09, combat:0.05 },
+    thresh: { dapar:90, tech:70, medProfile:45 }, // פרופיל מינ' 45 (עורפי)
+    weights: { dapar:0.39, medical:0, tech:0.37, manila:0.10, mental:0.09, combat:0.05 },
     demand:95, proximity:80, economicRisk:90,
   },
 ];
@@ -1163,18 +1163,19 @@ function candScore()   {
 }
 
 function getBlocks(role) {
-  const m = medScore();
-  const checks = [
-    ['medical','כשירות רפואית', m],
-    ['dapar','דפ"ר', C.dapar],
-    ['tech','רקע טכנולוגי', C.tech],
-    ['mental','כשירות מנטלית', C.mental],
-    ['combat','רקע לחימתי', C.combat],
-  ];
-  return checks
-    .filter(([k]) => role.thresh[k] !== undefined)
-    .filter(([k,,v]) => v < role.thresh[k])
-    .map(([k,label,v]) => `${label} — ציון ${v} נמוך מסף ${role.thresh[k]}`);
+  const blocks = [];
+  // פרופיל רפואי: שער זכאות — מספר פרופיל גולמי בלבד
+  if (role.thresh.medProfile !== undefined && C.medical < role.thresh.medProfile)
+    blocks.push(`פרופיל ${C.medical} — נדרש פרופיל ${role.thresh.medProfile} לפחות`);
+  if (role.thresh.dapar  !== undefined && C.dapar  < role.thresh.dapar)
+    blocks.push(`דפ"ר ${C.dapar} — נדרש ${role.thresh.dapar}`);
+  if (role.thresh.tech   !== undefined && C.tech   < role.thresh.tech)
+    blocks.push(`טכנולוגי ${C.tech} — נדרש ${role.thresh.tech}`);
+  if (role.thresh.mental !== undefined && C.mental < role.thresh.mental)
+    blocks.push(`מנטלי ${C.mental} — נדרש ${role.thresh.mental}`);
+  if (role.thresh.combat !== undefined && C.combat < role.thresh.combat)
+    blocks.push(`כושר לחימה ${C.combat} — נדרש ${role.thresh.combat}`);
+  return blocks;
 }
 
 function roleMatchScore(role) {

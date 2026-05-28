@@ -224,27 +224,36 @@ header{
 /* ─────────────────────────────────────────
    DATA
 ───────────────────────────────────────── */
-const MED = {97:100,82:82,72:70,64:55,45:30,21:10};
+// פרופיל רפואי — קטגוריות IDF (שער זכאות, לא ציון)
+const PROFILE_LABELS = {
+  97:'כשיר לכל יחידה',
+  82:'כשיר לחי"ר — לא עילית',
+  72:'כשיר קרבי — לא חי"ר',
+  64:'תומך לחימה בלבד',
+  45:'שירות עורפי בלבד',
+  21:'פטור מגיוס',
+};
 
 const ROLES = [
+  // medProfile = מספר פרופיל מינימלי הנדרש (גולמי, לא ציון)
   {id:'admin', e:'🗂️', n:'פקיד לשכה / דובר',
-   th:{dapar:40},
-   w:{dapar:.18,med:.04,tech:.08,manila:.40,mental:.22,combat:.08}},
+   th:{dapar:40},                           // ללא דרישת פרופיל
+   w:{dapar:.19,tech:.08,manila:.42,mental:.23,combat:.08}},
   {id:'intel', e:'🔭', n:'קצין מודיעין',
-   th:{dapar:70,med:60,mental:55},
-   w:{dapar:.30,med:.18,tech:.18,manila:.14,mental:.15,combat:.05}},
+   th:{dapar:70,medProfile:72,mental:55},   // מינ' פרופיל 72
+   w:{dapar:.37,tech:.22,manila:.17,mental:.18,combat:.06}},
   {id:'product', e:'💡', n:'מנהל מוצר — מופ"ת',
-   th:{dapar:80,tech:60},
-   w:{dapar:.32,med:.04,tech:.30,manila:.16,mental:.12,combat:.06}},
+   th:{dapar:80,tech:60,medProfile:45},     // מינ' פרופיל 45
+   w:{dapar:.33,tech:.31,manila:.17,mental:.13,combat:.06}},
   {id:'elint', e:'🚁', n:'לוחמה אלקטרונית',
-   th:{dapar:50,med:72,tech:40},
-   w:{dapar:.20,med:.22,tech:.28,manila:.12,mental:.13,combat:.05}},
+   th:{dapar:50,medProfile:64,tech:40},     // מינ' פרופיל 64
+   w:{dapar:.26,tech:.36,manila:.15,mental:.17,combat:.06}},
   {id:'elite', e:'🛡️', n:'לוחם יחידת עילית',
-   th:{med:85,mental:85,combat:80},
-   w:{dapar:.10,med:.25,tech:.03,manila:.10,mental:.30,combat:.22}},
+   th:{medProfile:97,mental:85,combat:80},  // מינ' פרופיל 97 בלבד
+   w:{dapar:.13,tech:.04,manila:.13,mental:.41,combat:.29}},
   {id:'cyber', e:'💻', n:'קצין מחשב — 8200',
-   th:{dapar:90,tech:70},
-   w:{dapar:.38,med:.02,tech:.36,manila:.10,mental:.09,combat:.05}},
+   th:{dapar:90,tech:70,medProfile:45},     // מינ' פרופיל 45
+   w:{dapar:.39,tech:.37,manila:.10,mental:.09,combat:.05}},
 ];
 
 const SCENARIOS = {
@@ -272,22 +281,23 @@ const SCENARIOS = {
    SCORING
 ───────────────────────────────────────── */
 function score(sc){
-  const m = MED[sc.medical]??0;
+  // פרופיל רפואי הוא שער זכאות בלבד — לא נכנס לנוסחת הציון
   const cs = Math.round(sc.dapar*.35 + sc.tech*.30 + sc.manila*.20 + sc.mental*.15);
 
   return ROLES.map(role=>{
-    // blocking
+    // blocking — פרופיל נבדק גולמי מול סף גולמי
     const blocks=[];
-    if(role.th.dapar  && sc.dapar   < role.th.dapar)  blocks.push(`דפ"ר ${sc.dapar} < סף ${role.th.dapar}`);
-    if(role.th.med    && m          < role.th.med)    blocks.push(`פרופיל (${m}) < סף ${role.th.med}`);
-    if(role.th.tech   && sc.tech    < role.th.tech)   blocks.push(`טכנולוגי ${sc.tech} < סף ${role.th.tech}`);
-    if(role.th.mental && sc.mental  < role.th.mental) blocks.push(`מנטלי ${sc.mental} < סף ${role.th.mental}`);
-    if(role.th.combat && sc.combat  < role.th.combat) blocks.push(`לחימה ${sc.combat} < סף ${role.th.combat}`);
+    if(role.th.dapar      && sc.dapar  < role.th.dapar)      blocks.push(`דפ"ר ${sc.dapar} < סף ${role.th.dapar}`);
+    if(role.th.medProfile && sc.medical< role.th.medProfile)  blocks.push(`פרופיל ${sc.medical} — נדרש ${role.th.medProfile} לפחות`);
+    if(role.th.tech       && sc.tech   < role.th.tech)        blocks.push(`טכנולוגי ${sc.tech} < סף ${role.th.tech}`);
+    if(role.th.mental     && sc.mental < role.th.mental)       blocks.push(`מנטלי ${sc.mental} < סף ${role.th.mental}`);
+    if(role.th.combat     && sc.combat < role.th.combat)       blocks.push(`כושר לחימה ${sc.combat} < סף ${role.th.combat}`);
 
     if(blocks.length) return {role, blocked:true, reason:blocks[0], score:0};
 
+    // ציון — ללא פרופיל רפואי (רק אם עברת את שער הזכאות)
     const rs = Math.round(
-      sc.dapar*role.w.dapar + m*role.w.med + sc.tech*role.w.tech +
+      sc.dapar*role.w.dapar + sc.tech*role.w.tech +
       sc.manila*role.w.manila + sc.mental*role.w.mental + sc.combat*role.w.combat
     );
     const ps = Math.round(cs*.38 + rs*.62);
@@ -322,16 +332,25 @@ function render(sc){
   cp.style.color = s.pill.col;
 
   // Stats
-  const medScore = MED[s.medical]??0;
+  const profileLabel = PROFILE_LABELS[s.medical] ?? '—';
+  const profileColor = s.medical>=82?'#4ade80':s.medical>=64?'#fbbf24':'#f87171';
+
   const stats=[
-    {k:`דפ"ר`,           v:s.dapar,    max:90,  c:barColor(s.dapar/90*100)},
-    {k:'פרופיל רפואי',   v:medScore,   max:100, c:barColor(medScore)},
-    {k:'רקע טכנולוגי',   v:s.tech,     max:100, c:barColor(s.tech)},
-    {k:'מניל"ה',          v:s.manila,   max:100, c:barColor(s.manila)},
-    {k:'כשירות מנטלית',  v:s.mental,   max:100, c:barColor(s.mental)},
-    {k:'כושר לחימה',     v:s.combat,   max:100, c:barColor(s.combat)},
+    {k:`דפ"ר`,          v:s.dapar,  max:90,  c:barColor(s.dapar/90*100)},
+    {k:'רקע טכנולוגי',  v:s.tech,   max:100, c:barColor(s.tech)},
+    {k:'מניל"ה',         v:s.manila, max:100, c:barColor(s.manila)},
+    {k:'כשירות מנטלית', v:s.mental, max:100, c:barColor(s.mental)},
+    {k:'כושר לחימה',    v:s.combat, max:100, c:barColor(s.combat)},
   ];
-  document.getElementById('stats').innerHTML = stats.map(x=>`
+  const profileHtml = `
+    <div class="stat">
+      <div class="stat-row">
+        <span class="stat-k">פרופיל רפואי</span>
+        <span class="stat-v" style="color:${profileColor}">${s.medical}</span>
+      </div>
+      <div style="font-size:0.65rem;color:${profileColor};margin-top:1px;">${profileLabel}</div>
+    </div>`;
+  document.getElementById('stats').innerHTML = profileHtml + stats.map(x=>`
     <div class="stat">
       <div class="stat-row">
         <span class="stat-k">${x.k}</span>
