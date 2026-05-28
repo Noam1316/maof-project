@@ -479,6 +479,90 @@
     }
     .demo-highlight { animation: highlight 1s ease 2; }
 
+    /* ─── DEMAND BAR ─── */
+    .demand-row {
+      flex-basis: 100%; display: flex; align-items: center; gap: 6px;
+      flex-wrap: wrap; padding-top: 8px; margin-top: 2px;
+      border-top: 1px solid var(--border);
+    }
+    .demand-title { font-size: 0.68rem; color: var(--text3); flex-shrink: 0; }
+    .demand-pill {
+      font-size: 0.68rem; font-weight: 700; padding: 3px 9px;
+      border-radius: 5px; border: 1px solid;
+    }
+    .dp-crit { background: rgba(248,113,113,0.10); border-color: rgba(248,113,113,0.35); color: var(--red); }
+    .dp-high { background: rgba(251,191,36,0.10);  border-color: rgba(251,191,36,0.35);  color: var(--yellow); }
+    .dp-med  { background: rgba(96,165,250,0.10);  border-color: rgba(96,165,250,0.35);  color: var(--blue); }
+    .dp-low  { background: rgba(74,222,128,0.10);  border-color: rgba(74,222,128,0.35);  color: var(--green); }
+
+    /* ─── WHAT-IF BOX ─── */
+    .whatif-box {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .whatif-head {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+    }
+    .whatif-title { font-size: 0.78rem; font-weight: 700; color: var(--purple); }
+    .whatif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .wi-item {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.71rem; padding: 5px 8px;
+      background: var(--bg3); border-radius: 6px; border: 1px solid var(--border);
+    }
+    .wi-name  { color: var(--text2); }
+    .wi-delta { font-weight: 800; }
+    .wd-open { color: var(--green); }
+    .wd-pos  { color: var(--green); }
+    .wd-neg  { color: var(--red); }
+    .wd-neu  { color: var(--text3); }
+
+    /* ─── MISMATCH COST ─── */
+    .mismatch-cost {
+      background: rgba(251,191,36,0.05);
+      border: 1px solid rgba(251,191,36,0.25);
+      border-radius: 8px; padding: 12px 14px; margin-top: 14px;
+    }
+    .mc-head { display: flex; align-items: center; gap: 8px;
+      font-weight: 700; color: var(--yellow); font-size: 0.82rem; margin-bottom: 10px; }
+    .mc-3grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .mc-cell {
+      background: var(--bg3); border-radius: 6px;
+      padding: 8px 10px; text-align: center;
+    }
+    .mc-num   { font-size: 1.15rem; font-weight: 900; color: var(--red); }
+    .mc-lbl   { font-size: 0.62rem; color: var(--text3); margin-top: 2px; }
+    .mc-note  { font-size: 0.67rem; color: var(--text3); margin-top: 8px; }
+    @media (max-width: 480px) { .mc-3grid { grid-template-columns: 1fr 1fr; } }
+
+    /* ─── PLACEMENT MATRIX ─── */
+    .matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .mtable {
+      width: 100%; border-collapse: collapse; font-size: 0.74rem; min-width: 560px;
+    }
+    .mtable th, .mtable td {
+      padding: 7px 10px; text-align: center;
+      border: 1px solid var(--border);
+    }
+    .mtable thead th {
+      background: var(--bg3); color: var(--text2);
+      font-size: 0.67rem; font-weight: 700; white-space: nowrap; line-height: 1.4;
+    }
+    .mtable td:first-child {
+      background: var(--bg3); color: var(--text2); font-weight: 700;
+      text-align: right; padding-right: 14px; white-space: nowrap; font-size: 0.72rem;
+    }
+    .mce-blocked { background: rgba(248,113,113,0.09); color: var(--red);    font-weight: 700; font-size: 0.7rem; }
+    .mce-high    { background: rgba(74,222,128,0.10);  color: var(--green);  font-weight: 800; }
+    .mce-med     { background: rgba(251,191,36,0.10);  color: var(--yellow); font-weight: 800; }
+    .mce-low     { background: rgba(248,113,113,0.07); color: var(--red);    font-weight: 700; }
+    .mrow-active td { box-shadow: inset 0 0 0 2px var(--olive); }
+    .mbest { position: relative; }
+    .mbest::after {
+      content: '★'; font-size: 0.5rem; position: absolute;
+      top: 2px; left: 50%; transform: translateX(-50%); color: inherit;
+    }
+
     /* ─── TABLET 768px ─── */
     @media (max-width: 768px) {
       .score3 { grid-template-columns: 1fr 1fr; }
@@ -615,6 +699,7 @@
     </button>
     <button class="btn btn-ghost" onclick="resetAll()" style="align-self:stretch;">↺</button>
   </div>
+  <div class="demand-row" id="demand-row"><!-- populated by JS --></div>
 </div>
 
 <!-- ═══════════════ MAIN ═══════════════ -->
@@ -706,7 +791,7 @@
       </div><!-- /sl-group -->
 
       <!-- CANDIDATE SCORE STRIP -->
-      <div class="cand-score-strip">
+      <div class="cand-score-strip" id="cand-score-strip">
         <div class="score-ring" id="cand-ring">70</div>
         <div class="mini-bar-wrap">
           <div class="stitle" style="margin-bottom:6px;">ציון מועמד מצרפי</div>
@@ -715,6 +800,22 @@
           </div>
           <div class="mini-bar-hint">דפ"ר 35% • טכנולוגי 30% • מניל"ה 20% • מנטלי 15% | רפואי: חסימה בלבד</div>
         </div>
+      </div>
+
+      <!-- WHAT-IF BOX -->
+      <div class="whatif-box">
+        <div class="whatif-head">
+          <span class="whatif-title">🔮 מה-אם: שיפור פרופיל רפואי</span>
+          <select class="sl-select" id="whatif-select"
+                  style="width:auto;font-size:0.73rem;padding:4px 8px;"
+                  onchange="runWhatIf(this.value)">
+            <option value="">בחר...</option>
+            <option value="72">שיפור ל-72</option>
+            <option value="82">שיפור ל-82</option>
+            <option value="97">מלא — 97</option>
+          </select>
+        </div>
+        <div class="whatif-grid" id="whatif-results" style="display:none;"></div>
       </div>
 
     </div><!-- /candidate card -->
@@ -770,6 +871,20 @@
     </div>
     <div class="strat-grid" id="strat-grid">
       <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ── PLACEMENT MATRIX ── -->
+  <div class="card mt-16">
+    <div class="card-head">
+      <div class="card-icon ci-olive">🗺️</div>
+      <div>
+        <div class="card-title">מטריצת שיבוץ — כל התרחישים × כל התפקידים</div>
+        <div class="card-sub">Hungarian Algorithm: מיטוב גלובלי — כל שורה מועמד, כל עמודה תפקיד | ★ = שיאן השורה</div>
+      </div>
+    </div>
+    <div class="matrix-wrap">
+      <table class="mtable" id="mtable"><!-- rendered by JS --></table>
     </div>
   </div>
 
@@ -1088,6 +1203,7 @@ function renderEngine() {
         <div class="rec-sub">${recInfo.sub}</div>
       </div>
     </div>
+    ${getMismatchHtml(role, score, blocked)}
   `;
 }
 
@@ -1130,6 +1246,118 @@ function selectMedical(val) {
   const score = opt ? opt.dataset.score : '0';
   document.getElementById('v-medical').textContent = score;
   update();
+}
+
+/* =====================================================
+   ROLE META — demand + course costs
+===================================================== */
+const ROLE_META = {
+  combat:  { demand:8,   level:'low',  label:'8 מקומות',   cost:45000,  duration:'4 חודשים' },
+  intel:   { demand:18,  level:'med',  label:'18 מקומות',  cost:60000,  duration:'6 חודשים' },
+  product: { demand:40,  level:'high', label:'40 מקומות',  cost:35000,  duration:'3 חודשים' },
+  hr:      { demand:5,   level:'low',  label:'5 מקומות',   cost:15000,  duration:'6 שבועות' },
+  elite:   { demand:25,  level:'med',  label:'25 מקומות',  cost:120000, duration:'8 חודשים' },
+  cyber:   { demand:150, level:'crit', label:'150 מקומות', cost:180000, duration:'10 חודשים' },
+};
+
+function renderDemandRow() {
+  const el = document.getElementById('demand-row');
+  if (!el) return;
+  const order = ['cyber','product','elite','intel','combat','hr'];
+  const icons = { crit:'🔴', high:'🟠', med:'🟡', low:'🟢' };
+  const classes = { crit:'dp-crit', high:'dp-high', med:'dp-med', low:'dp-low' };
+  el.innerHTML = `<span class="demand-title">📊 ביקוש גיוס נוכחי:</span>` +
+    ROLES.filter(r=>ROLE_META[r.id])
+      .sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id))
+      .map(r => {
+        const m = ROLE_META[r.id];
+        return `<span class="demand-pill ${classes[m.level]}">${icons[m.level]} ${r.name.split('—')[0].trim()}: ${m.label}</span>`;
+      }).join('');
+}
+
+/* =====================================================
+   WHAT-IF SIMULATION
+===================================================== */
+function runWhatIf(newVal) {
+  const res = document.getElementById('whatif-results');
+  if (!newVal) { res.style.display='none'; return; }
+  const newMedical = parseInt(newVal);
+  const savedMedical = C.medical;
+
+  const items = ROLES.map(role => {
+    C.medical = savedMedical;
+    const {score:oldScore, blocked:oldBlocked} = placementScore(role);
+    C.medical = newMedical;
+    const {score:newScore, blocked:newBlocked} = placementScore(role);
+    C.medical = savedMedical;
+
+    let deltaHtml;
+    if (oldBlocked && !newBlocked) {
+      deltaHtml = `<span class="wi-delta wd-open">🔓 ${newScore}</span>`;
+    } else if (!newBlocked && !oldBlocked) {
+      const d = newScore - oldScore;
+      const cls = d>0?'wd-pos':d<0?'wd-neg':'wd-neu';
+      deltaHtml = `<span class="wi-delta ${cls}">${d>=0?'+':''}${d}</span>`;
+    } else {
+      deltaHtml = `<span class="wi-delta wd-neu">⛔</span>`;
+    }
+    return `<div class="wi-item"><span class="wi-name">${role.emoji} ${role.name.split('—')[0].trim()}</span>${deltaHtml}</div>`;
+  }).join('');
+
+  res.style.display = 'grid';
+  res.innerHTML = items;
+}
+
+/* =====================================================
+   MISMATCH COST
+===================================================== */
+function getMismatchHtml(role, score, blocked) {
+  const m = ROLE_META[role.id];
+  if (!m || (!blocked && score >= 72)) return '';
+  const dropout = blocked ? 87 : Math.max(20, Math.round(90 - score));
+  const waste   = Math.round((dropout/100) * m.cost);
+  return `
+    <div class="mismatch-cost">
+      <div class="mc-head">💸 עלות שיבוץ שגוי לתפקיד זה</div>
+      <div class="mc-3grid">
+        <div class="mc-cell"><div class="mc-num">₪${m.cost.toLocaleString()}</div><div class="mc-lbl">עלות קורס מלא<br>${m.duration}</div></div>
+        <div class="mc-cell"><div class="mc-num">${dropout}%</div><div class="mc-lbl">סיכון נשירה<br>צפוי</div></div>
+        <div class="mc-cell"><div class="mc-num">₪${waste.toLocaleString()}</div><div class="mc-lbl">עלות ממוצעת<br>לבזבוז</div></div>
+      </div>
+      <div class="mc-note">שיבוץ נכון חוסך עלות זו + מגדיל retention ב-${Math.round(dropout*0.7)}%</div>
+    </div>`;
+}
+
+/* =====================================================
+   PLACEMENT MATRIX
+===================================================== */
+function renderMatrix() {
+  const tbl = document.getElementById('mtable');
+  if (!tbl) return;
+  const scenarios = [
+    { key:'a', label:"א' — אלון ב." },
+    { key:'b', label:"ב' — יואב מ." },
+    { key:'c', label:"ג' — דניאל ש." },
+    { key:'d', label:"ד' — רן כ." },
+  ];
+  const saved = {...C};
+  const header = `<thead><tr><th>מלש"ב \\ תפקיד</th>${ROLES.map(r=>`<th>${r.emoji}<br>${r.name.split('—')[0].trim()}</th>`).join('')}</tr></thead>`;
+  const body = scenarios.map(sc => {
+    const s = SCENARIOS[sc.key];
+    Object.assign(C, {dapar:s.dapar,medical:s.medical,tech:s.tech,manila:s.manila,mental:s.mental,combat:s.combat});
+    const scores = ROLES.map(role => placementScore(role));
+    const best = Math.max(...scores.filter(x=>!x.blocked).map(x=>x.score));
+    const cells = scores.map((ps,i) => {
+      if (ps.blocked) return `<td class="mce-blocked">⛔</td>`;
+      const cls = ps.score>=80?'mce-high':ps.score>=60?'mce-med':'mce-low';
+      const star = ps.score===best?' mbest':'';
+      return `<td class="${cls}${star}">${ps.score}</td>`;
+    }).join('');
+    const rowCls = sc.key===activeScenario ? ' class="mrow-active"' : '';
+    return `<tr${rowCls}><td>${sc.label}</td>${cells}</tr>`;
+  }).join('');
+  Object.assign(C, saved);
+  tbl.innerHTML = header + `<tbody>${body}</tbody>`;
 }
 
 /* =====================================================
@@ -1294,9 +1522,11 @@ function update() {
   renderSummaryBars();
   renderEngine();
   renderStrategic();
+  renderMatrix();
 }
 
 // Init
+renderDemandRow();
 update();
 </script>
 </body>
