@@ -1041,14 +1041,14 @@
 ===================================================== */
 const ROLES = [
   {
-    id: 'combat',
-    emoji: '🪖',
-    name: 'מ"כ / מפקד שטח',
-    desc: 'פיקוד יחידת לחימה, שטח קדמי',
-    tags: [{t:'לחימה',c:'t-red'},{t:'שטח קדמי',c:'t-red'},{t:'מנהיגות',c:'t-olive'}],
-    thresh: { medical:70, mental:65, combat:50 },
-    weights: { dapar:0.18, medical:0.25, tech:0.05, manila:0.15, mental:0.22, combat:0.15 },
-    demand:80, proximity:40, economicRisk:65,
+    id: 'admin',
+    emoji: '🗂️',
+    name: 'פקיד לשכה / דובר',
+    desc: 'תפקיד משרדי — דובר, ניהול מינהלה, לשכה',
+    tags: [{t:'משרדי',c:'t-olive'},{t:'שיקום',c:'t-yellow'},{t:'עורפי',c:'t-blue'}],
+    thresh: { dapar:40 },
+    weights: { dapar:0.18, medical:0.04, tech:0.08, manila:0.40, mental:0.22, combat:0.08 },
+    demand:20, proximity:90, economicRisk:35,
   },
   {
     id: 'intel',
@@ -1132,11 +1132,17 @@ const CORPS = [
     thresh: { dapar:70 },
     weights: { dapar:0.38, medical:0.08, tech:0.22, manila:0.14, mental:0.14, combat:0.04 },
   },
+  {
+    id: 'hq', emoji: '🏛️', name: 'מטה / אגפים',
+    desc: 'תפקידים מינהליים, לשכות, דוברות',
+    thresh: {},
+    weights: { dapar:0.20, medical:0.04, tech:0.08, manila:0.42, mental:0.20, combat:0.06 },
+  },
 ];
 
 // Default corps per role
 const ROLE_CORPS = {
-  combat:'ground', intel:'aman', product:'tech',
+  admin:'hq', intel:'aman', product:'tech',
   elint:'ground', elite:'ground', cyber:'tech',
 };
 
@@ -1481,7 +1487,7 @@ function selectMedical(val) {
    ROLE META — demand + course costs
 ===================================================== */
 const ROLE_META = {
-  combat:  { demand:8,   level:'low',  label:'8 מקומות',   cost:45000,  duration:'4 חודשים' },
+  admin:   { demand:20,  level:'low',  label:'20 מקומות',  cost:10000,  duration:'2 שבועות' },
   intel:   { demand:18,  level:'med',  label:'18 מקומות',  cost:60000,  duration:'6 חודשים' },
   product: { demand:40,  level:'high', label:'40 מקומות',  cost:35000,  duration:'3 חודשים' },
   elint:   { demand:60,  level:'high', label:'60 מקומות',  cost:80000,  duration:'5 חודשים' },
@@ -1599,8 +1605,8 @@ const SCENARIOS = {
   b: { dapar:70, medical:97, tech:22, manila:65, mental:92, combat:96, role:'elite'   },
   // ג' — cyber genius 8200, zero combat background
   c: { dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20, role:'cyber'   },
-  // ד' — injured combat veteran, full block (all 6 roles)
-  d: { dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78, role:'combat'  },
+  // ד' — injured combat veteran, reassignment to desk role
+  d: { dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78, role:'admin'  },
 };
 
 const STORY = {
@@ -1624,8 +1630,8 @@ const STORY = {
       text: 'עובר את הסף הגבוה ביותר במערכת: מנטלי 92 ≥ 85 ✓ ולחימה 96 ≥ 80 ✓. ציון שיבוץ 85 — ממוקד ומוצדק, הדגש הוא על עמידות ולא על קוגניציה.',
     },
     secondary: {
-      role: '🪖 מ"כ / מפקד שטח',
-      text: 'חלופה קרבית ממשית עם ספים נמוכים יותר. ציון 80. מתאים אם לא עובר את מכלול האיתורים לסיירת/שייטת, או כשיבוץ ביניים.',
+      role: '🔭 קצין מודיעין — שטח',
+      text: 'אם לא עובר מכלול יחידת עילית — מודיעין שטח מנצל את הכשירות המנטלית הגבוהה (92). ספי מינימום עמידים בנוחות. ציון צפוי ~75.',
     },
   },
   c: {
@@ -1642,14 +1648,14 @@ const STORY = {
   },
   d: {
     soldier: 'רן כ., גיל 22 — לוחם קרבי פצוע',
-    bio: 'לוחם ותיק עם פציעה קרבית — פרופיל 45, כשירות מנטלית 50. חסמים רפואיים ומנטליים שחוסמים את כל 6 התפקידים.',
+    bio: 'לוחם קרבי שנפצע בפעילות — עובר שיבוץ מחדש (לא גיוס ראשוני). פרופיל 45, מנטלי 50. 5 מתוך 6 תפקידים מבצעיים חסומים. המנוע מחפש תפקיד משרדי-שיקומי.',
     primary: {
-      role: '⛔ שיבוץ דחוי — כל 6 התפקידים חסומים',
-      text: 'המנוע מזהה שאין שיבוץ אפשרי ברגע זה. הערך: הקצין יודע זאת מראש — ולא אחרי קורס של ₪80K–180K שנגמר בנשירה.',
+      role: '🗂️ פקיד לשכה / דובר',
+      text: 'רקע לחימתי עשיר + מניל"ה גבוה = יתרון אמיתי בתפקיד פנים-צבאי. הוא מכיר את המציאות המבצעית ויכול לתרגם אותה לתקשורת ולניהול. ציון ~65.',
     },
     secondary: {
-      role: '🔄 נתיב שיקום',
-      text: 'עם שיפור הפרופיל ל-72, תיפתח לוחמה אלקטרונית (ציון ~60). עם דפ"ר 80 + מנטלי 60, ייפתח מנהל מוצר. המנוע מחשב מחדש בזמן אמת.',
+      role: '🔄 נתיב שיקום — פרופיל 72',
+      text: 'עם שיפור הפרופיל ל-72 תיפתח לוחמה אלקטרונית (ציון ~62). המנוע עוקב ומעדכן בזמן אמת — ברגע שהפרופיל עולה, ההמלצה מתעדכנת.',
     },
   },
 };
