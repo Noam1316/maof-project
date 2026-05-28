@@ -249,16 +249,16 @@ const ROLES = [
 
 const SCENARIOS = {
   c:{
-    avatar:'👨‍💻', name:'דניאל ש.', sub:'גיל 20 · מגמת CS',
+    avatar:'👨‍💻', name:'דניאל ש.', sub:'גיל 18 · מגמת CS · ממתין לגיוס',
     pill:{text:'מועמד 8200', bg:'rgba(96,165,250,.15)', col:'#60a5fa'},
     dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20,
-    bio:['מגמת מדעי המחשב, ציון מגן 10/10','ניצח 3 תחרויות תכנות ארציות','אפס ניסיון קרבי — שירות בסיסי בלבד'],
+    bio:['מגמת מדעי המחשב, ציון מגן 10/10','ניצח 3 תחרויות תכנות לאומיות','ניקוד כושר גופני נמוך — לא עסק בספורט קרבי'],
   },
   a:{
-    avatar:'🧑‍💻', name:'אלון ב.', sub:'גיל 21 · הנדסת תוכנה',
+    avatar:'🧑‍💻', name:'אלון ב.', sub:'גיל 18 · מגמת הנדסת תוכנה · ממתין לגיוס',
     pill:{text:'מגבלה רפואית', bg:'rgba(251,191,36,.12)', col:'#fbbf24'},
     dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30,
-    bio:['מגמת הנדסת תוכנה, פרויקטים ב-Python','פרופיל 45 — פציעת ספורט חולפת','מוטיבציה גבוהה לתפקיד טכנולוגי'],
+    bio:['מגמת הנדסת תוכנה, פרויקטים עצמאיים ב-Python','פרופיל 45 — פציעת ספורט חולפת (לפני הגיוס)','מוטיבציה גבוהה לתפקיד טכנולוגי'],
   },
   d:{
     avatar:'🪖', name:'רן כ.', sub:'גיל 22 · שיבוץ מחדש',
@@ -329,7 +329,7 @@ function render(sc){
     {k:'רקע טכנולוגי',   v:s.tech,     max:100, c:barColor(s.tech)},
     {k:'מניל"ה',          v:s.manila,   max:100, c:barColor(s.manila)},
     {k:'כשירות מנטלית',  v:s.mental,   max:100, c:barColor(s.mental)},
-    {k:'רקע לחימתי',     v:s.combat,   max:100, c:barColor(s.combat)},
+    {k:'כושר לחימה',     v:s.combat,   max:100, c:barColor(s.combat)},
   ];
   document.getElementById('stats').innerHTML = stats.map(x=>`
     <div class="stat">
