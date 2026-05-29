@@ -911,6 +911,16 @@
       <span class="sc-desc">פרופיל 45 · שיבוץ מחדש · מנטלי 50</span>
       <span class="sc-kaba">קב"א משוער 47</span>
     </button>
+    <button class="btn btn-scenario" id="sc-e" onclick="loadDemo('e')">
+      <span class="sc-id">👩 מאיה ל. — לוחמת עילית</span>
+      <span class="sc-desc">מנטלי 88 · לחימה 82 · פרופיל 97</span>
+      <span class="sc-kaba">קב"א משוער 48</span>
+    </button>
+    <button class="btn btn-scenario" id="sc-f" onclick="loadDemo('f')">
+      <span class="sc-id">📚 אמיר מ. — פריפריה</span>
+      <span class="sc-desc">דפ"ר 60 · תוכנית ייעוד · בגרות חלקית</span>
+      <span class="sc-kaba">קב"א משוער 44</span>
+    </button>
     <button class="btn btn-ghost" onclick="resetAll()" style="align-self:stretch;" title="איפוס">↺</button>
   </div>
   <div class="flow-guide">
@@ -1133,7 +1143,7 @@
       <div class="card-icon ci-green">🚀</div>
       <div>
         <div class="card-title">שיבוץ מערכתי — אופטימיזציה בשלושה שלבים</div>
-        <div class="card-sub">שלב ג' פועל על 4 הפיינליסטים בדמו — Hungarian מדויק</div>
+        <div class="card-sub">שלב ג' פועל על 6 הפיינליסטים בדמו — Hungarian מדויק (6! = 720 אפשרויות)</div>
       </div>
     </div>
 
@@ -1159,7 +1169,7 @@
     </div>
 
     <button class="opt-run-btn" id="opt-btn" onclick="runOptimization()">
-      ▶ הרץ שיבוץ מערכתי — Hungarian על 4 המועמדים
+      ▶ הרץ שיבוץ מערכתי — Hungarian על 6 המועמדים
     </button>
 
     <div id="opt-assignments" class="opt-assignments" style="display:none;"></div>
@@ -1774,6 +1784,8 @@ function renderMatrix() {
     { key:'b', label:"ב' — יואב מ." },
     { key:'c', label:"ג' — דניאל ש." },
     { key:'d', label:"ד' — רן כ." },
+    { key:'e', label:"ה' — מאיה ל." },
+    { key:'f', label:"ו' — אמיר מ." },
   ];
   const saved = {...C};
   const header = `<thead><tr><th>מלש"ב \\ תפקיד</th>${ROLES.map(r=>`<th>${r.emoji}<br>${r.name.split('—')[0].trim()}</th>`).join('')}</tr></thead>`;
@@ -1807,6 +1819,10 @@ const SCENARIOS = {
   c: { dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20, role:'cyber'   },
   // ד' — injured combat veteran, reassignment to desk role
   d: { dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78, role:'admin'  },
+  // ה' — female combat candidate, passes elite thresholds
+  e: { dapar:70, medical:97, tech:30, manila:75, mental:88, combat:82, role:'elite'  },
+  // ו' — periphery candidate, partial bagrut, IDF outreach program
+  f: { dapar:60, medical:82, tech:55, manila:70, mental:65, combat:45, role:'elint'  },
 };
 
 const STORY = {
@@ -1858,6 +1874,30 @@ const STORY = {
       text: 'עם שיפור הפרופיל ל-72 תיפתח לוחמה אלקטרונית (ציון ~62). המנוע עוקב ומעדכן בזמן אמת — ברגע שהפרופיל עולה, ההמלצה מתעדכנת.',
     },
   },
+  e: {
+    soldier: 'מאיה ל., גיל 18 — ספורטאית ומועמדת ליחידה קרבית',
+    bio: 'פרופיל רפואי מלא 97, כשירות מנטלית 88 וניקוד לחימה 82 — עוברת את שלושת ספי יחידת העילית. מגמת ספורט, השתתפות בקורסי הכנה קרביים לבנות. דפ"ר 70 מספיק למרבית התפקידים. רקע טכנולוגי נמוך — המנוע לא מתבלבל, מוצא את ההתאמה הנכונה.',
+    primary: {
+      role: '🛡️ לוחמת יחידת עילית',
+      text: 'עוברת את שלושת הספים המחמירים: פרופיל 97 ✓, מנטלי 88 ≥ 85 ✓, לחימה 82 ≥ 80 ✓. המנוע עיוור למגדר — הציון מדבר. נשים בלחימה: מ-547 ב-2012 ל-5,200+ ב-2025. ציון ~79.',
+    },
+    secondary: {
+      role: '🔭 קצין מודיעין — שטח',
+      text: 'אם לא בוחרת נתיב קרבי עצים — מודיעין שטח מנצל את הכשירות המנטלית הגבוהה (88). עוברת ספי מינימום בנוחות. ציון צפוי ~72.',
+    },
+  },
+  f: {
+    soldier: 'אמיר מ., גיל 18 — מפריפריה, תוכנית ייעוד אכ"א',
+    bio: 'גדל בבאר שבע. בגרות חלקית (5 יחידות). השתתף בתוכנית "ייעוד" של אכ"א לחיזוק גיוס מהפריפריה — תוכנית שהעלתה קבלה לטכנולוגיה ב-22% (2023–2025). דפ"ר 60 חוסם 8200 ומנהל מוצר. פרופיל 82 + tech 55 פותחים פתרון לא-מובן-מאליו.',
+    primary: {
+      role: '🚁 לוחמה אלקטרונית',
+      text: 'דפ"ר 60 ≥ 50 ✓, פרופיל 82 ≥ 64 ✓, טכנולוגי 55 ≥ 40 ✓ — עובר את שלושת הספים. רחפנים ולוחמה אלקטרונית = שילוב שמנצל את הפרופיל הקיים. המנוע מצא פתרון שקצין ידני עלול לפספס. ציון ~63.',
+    },
+    secondary: {
+      role: '🔭 קצין מודיעין — שטח',
+      text: 'אם דפ"ר יעלה ל-70 במיון חוזר (אפשרי לאחר תוכנית ייעוד) — מודיעין נפתח. המנוע ימליץ אוטומטית. תוכנית ייעוד של אכ"א נועדה בדיוק לפתוח מסלולים כאלו.',
+    },
+  },
 };
 
 let activeScenario = null;
@@ -1880,7 +1920,7 @@ function applyCandidate(s) {
 }
 
 function updateScenarioBtns() {
-  ['a','b','c','d'].forEach(k => {
+  ['a','b','c','d','e','f'].forEach(k => {
     const el = document.getElementById('sc-' + k);
     if (el) el.classList.toggle('active', k === activeScenario);
   });
@@ -1891,6 +1931,8 @@ const SCENARIO_META = {
   b: { avatar:'🪖',   kaba:48, tags:['פרופיל 97','מנטלי 92','לחימה 96','כשיר לכל'] },
   c: { avatar:'🧑‍💻', kaba:54, tags:['פרופיל 82','דפ"ר 90','tech 90','מועמד 8200'] },
   d: { avatar:'🩹',   kaba:47, tags:['פרופיל 45','שיבוץ מחדש','פצוע קרב','5 תפקידים חסומים'] },
+  e: { avatar:'👩',   kaba:48, tags:['פרופיל 97','מנטלי 88','לחימה 82','עוברת ספי עילית'] },
+  f: { avatar:'📚',   kaba:44, tags:['דפ"ר 60','פריפריה','תוכנית ייעוד','בגרות חלקית'] },
 };
 
 function renderStory(key) {
@@ -1972,7 +2014,7 @@ function resetAll() {
 ===================================================== */
 function buildScoreMatrix() {
   const saved = {...C};
-  const scKeys = ['a','b','c','d'];
+  const scKeys = ['a','b','c','d','e','f'];
   const mat = scKeys.map(k => {
     const s = SCENARIOS[k];
     Object.assign(C, {dapar:s.dapar, medical:s.medical, tech:s.tech,
@@ -2010,8 +2052,8 @@ function hungarianAssign(mat) {
   }
 
   search(0, new Array(m).fill(false), [], 0);
-  const scKeys = ['a','b','c','d'];
-  const names  = {a:"אלון ב'", b:"יואב מ'", c:"דניאל ש'", d:"רן כ'"};
+  const scKeys = ['a','b','c','d','e','f'];
+  const names  = {a:"אלון ב'", b:"יואב מ'", c:"דניאל ש'", d:"רן כ'", e:"מאיה ל'", f:"אמיר מ'"};
   return scKeys.map((k,i) => ({
     key:k, name:names[k],
     role: bestAssign[i] >= 0 ? ROLES[bestAssign[i]] : null,
@@ -2020,13 +2062,15 @@ function hungarianAssign(mat) {
 }
 
 function naiveAssign(mat) {
-  // Naive: each takes their best available, in dapar order
-  const scKeys = ['a','b','c','d'];
-  const names  = {a:"אלון ב'", b:"יואב מ'", c:"דניאל ש'", d:"רן כ'"};
-  const daparOrder = [1,0,2,3]; // b(75)=a(90)... sorted by dapar desc: c(97),a(90),b(75),d(75)
-  const byDapar = [2,0,1,3]; // ג'(97), א'(90), ב'(75), ד'(75)
-  const used = new Array(ROLES.length).fill(false);
-  const result = new Array(4).fill(null);
+  // Naive: each takes their best available, sorted by dapar desc
+  const scKeys = ['a','b','c','d','e','f'];
+  const names  = {a:"אלון ב'", b:"יואב מ'", c:"דניאל ש'", d:"רן כ'", e:"מאיה ל'", f:"אמיר מ'"};
+  const saved  = {...C};
+  const dapars = scKeys.map(k => SCENARIOS[k].dapar);
+  // sort indices by dapar desc
+  const byDapar = scKeys.map((_,i)=>i).sort((a,b)=>dapars[b]-dapars[a]);
+  const used   = new Array(ROLES.length).fill(false);
+  const result = new Array(scKeys.length).fill(null);
   for (const ci of byDapar) {
     let best = -1, bestScore = -1;
     for (let ri = 0; ri < ROLES.length; ri++) {
@@ -2035,6 +2079,7 @@ function naiveAssign(mat) {
     if (best >= 0) { used[best] = true; result[ci] = {key:scKeys[ci], name:names[scKeys[ci]], role:ROLES[best], score:bestScore}; }
     else result[ci] = {key:scKeys[ci], name:names[scKeys[ci]], role:null, score:0};
   }
+  Object.assign(C, saved);
   return result;
 }
 
