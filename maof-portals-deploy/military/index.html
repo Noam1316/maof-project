@@ -774,12 +774,19 @@
     .flow-step {
       display: flex; align-items: center; gap: 5px;
       font-size: 0.7rem; font-weight: 700;
-      padding: 4px 10px; border-radius: 6px;
+      padding: 5px 12px; border-radius: 6px;
       border: 1px solid var(--border2); color: var(--text3);
       background: var(--bg3);
+      cursor: pointer; user-select: none;
+      transition: all .15s;
     }
+    .flow-step:hover { border-color: var(--olive); color: var(--text); background: var(--bg4); }
     .flow-step.fs-done  { color: var(--olive2); border-color: var(--olive); background: var(--olive-glow); }
+    .flow-step.fs-done:hover  { background: rgba(92,122,46,.28); }
     .flow-step.fs-next  { color: var(--blue);   border-color: rgba(96,165,250,.4); background: rgba(96,165,250,.07); }
+    .flow-step.fs-next:hover  { background: rgba(96,165,250,.14); }
+    .flow-step.fs-active { animation: flowPulse .6s ease 2; }
+    @keyframes flowPulse { 0%,100%{box-shadow:none} 50%{box-shadow:0 0 0 3px rgba(92,122,46,.4)} }
     .flow-arrow { font-size: 0.8rem; color: var(--text3); }
 
     /* ─── KABA ROW ─── */
@@ -969,13 +976,13 @@
     <button class="btn btn-ghost" onclick="resetAll()" style="align-self:stretch;" title="איפוס">↺</button>
   </div>
   <div class="flow-guide">
-    <span class="flow-step" id="flow-1">📋 א. בחר תרחיש</span>
+    <span class="flow-step" id="flow-1" onclick="flowStep1()" title="מחזר בין המועמדים">📋 א. מועמד הבא</span>
     <span class="flow-arrow">→</span>
-    <span class="flow-step" id="flow-2">🎯 ב. לחץ על תפקיד</span>
+    <span class="flow-step" id="flow-2" onclick="flowStep2()" title="שבץ אוטומטית לתפקיד המיטבי">🎯 ב. שבץ לתפקיד מיטבי</span>
     <span class="flow-arrow">→</span>
-    <span class="flow-step" id="flow-3">⚙️ ג. ניתוח מפורט</span>
+    <span class="flow-step" id="flow-3" onclick="flowStep3()" title="גלול לניתוח המנוע">⚙️ ג. ניתוח מפורט</span>
     <span class="flow-arrow">→</span>
-    <span class="flow-step" id="flow-4">🚀 ד. הרץ אופטימיזציה</span>
+    <span class="flow-step" id="flow-4" onclick="flowStep4()" title="הרץ אופטימיזציה מערכתית">🚀 ד. הרץ אופטימיזציה</span>
   </div>
 </div>
 
@@ -2408,17 +2415,81 @@ function renderBatchOverview() {
 }
 
 /* =====================================================
+   FLOW GUIDE ACTIONS — presentation controller
+===================================================== */
+const FLOW_KEYS = ['a','b','c','d','e','f'];
+
+// א — cycle to next candidate
+function flowStep1() {
+  const idx = activeScenario ? FLOW_KEYS.indexOf(activeScenario) : -1;
+  const next = FLOW_KEYS[(idx + 1) % FLOW_KEYS.length];
+  loadDemo(next);
+  document.getElementById('batch-card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  flashStep('flow-1');
+}
+
+// ב — auto-select best holistic role for current candidate
+function flowStep2() {
+  if (!activeScenario) { flowStep1(); return; }
+  const results = ROLES.map(role => ({ role, ...placementScore(role) }));
+  const unblocked = results.filter(r => !r.blocked);
+  if (!unblocked.length) return;
+  const best = unblocked.sort((a, b) => {
+    const uA = 100 - (ROLE_META[a.role.id]||{miluy:50}).miluy;
+    const uB = 100 - (ROLE_META[b.role.id]||{miluy:50}).miluy;
+    return (b.score*0.55+uB*0.45) - (a.score*0.55+uA*0.45);
+  })[0];
+  selectRole(best.role);
+  document.getElementById('roles-grid')?.scrollIntoView({ behavior:'smooth', block:'center' });
+  flashStep('flow-2');
+}
+
+// ג — scroll to engine analysis
+function flowStep3() {
+  if (!selected && activeScenario) { flowStep2(); return; }
+  document.getElementById('engine-card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  flashStep('flow-3');
+}
+
+// ד — run optimization + scroll to results
+function flowStep4() {
+  runOptimization();
+  setTimeout(() => {
+    document.getElementById('opt-systemic')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 150);
+  flashStep('flow-4');
+}
+
+function flashStep(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('fs-active');
+  void el.offsetWidth; // reflow
+  el.classList.add('fs-active');
+  setTimeout(() => el.classList.remove('fs-active'), 1200);
+}
+
+/* =====================================================
    FLOW GUIDE UPDATE
 ===================================================== */
 function updateFlowGuide() {
   const steps = ['flow-1','flow-2','flow-3','flow-4'];
-  const done  = activeScenario ? 1 : 0;
-  const done2 = selected ? 2 : 0;
-  const progress = Math.max(done, done2);
+  const progress = !activeScenario ? 0 : !selected ? 1 : 2;
+  const labels = [
+    activeScenario
+      ? '📋 א. מועמד הבא (' + (FLOW_KEYS.indexOf(activeScenario)+2 <= FLOW_KEYS.length ? FLOW_KEYS.indexOf(activeScenario)+2 : 1) + '/' + FLOW_KEYS.length + ')'
+      : '📋 א. מועמד הבא',
+    '🎯 ב. שבץ לתפקיד מיטבי',
+    '⚙️ ג. ניתוח מפורט',
+    '🚀 ד. הרץ אופטימיזציה',
+  ];
   steps.forEach((id,i) => {
     const el = document.getElementById(id);
     if (!el) return;
+    const wasPulse = el.classList.contains('fs-active');
     el.className = 'flow-step' + (i < progress ? ' fs-done' : i === progress ? ' fs-next' : '');
+    if (wasPulse) el.classList.add('fs-active');
+    el.textContent = labels[i];
   });
 }
 
