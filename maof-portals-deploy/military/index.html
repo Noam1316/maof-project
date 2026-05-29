@@ -2228,14 +2228,31 @@ function renderBatchOverview() {
     Object.assign(C, {dapar:sc.dapar, medical:sc.medical, tech:sc.tech,
                       manila:sc.manila, mental:sc.mental, combat:sc.combat});
     const results   = ROLES.map(role => ({role, ...placementScore(role)}));
-    const unblocked = results.filter(r => !r.blocked).sort((a,b) => b.score - a.score);
-    const best      = unblocked[0];
-    const fitScore  = best?.score ?? 0;
-    const rm        = best ? (ROLE_META[best.role.id] || {miluy:50, teken:0}) : {miluy:50, teken:0};
-    const urgency   = best ? (100 - rm.miluy) : 0;
-    const holistic  = best ? Math.round(fitScore * 0.55 + urgency * 0.45) : 0;
+    const unblocked = results.filter(r => !r.blocked);
+
+    // naive: best by personal fit only (ignores urgency)
+    const naiveBest = [...unblocked].sort((a,b) => b.score - a.score)[0];
+
+    // smart: best by holistic = fit×55% + urgency×45%
+    const smartBest = [...unblocked].sort((a,b) => {
+      const urgA = 100 - (ROLE_META[a.role.id]||{miluy:50}).miluy;
+      const urgB = 100 - (ROLE_META[b.role.id]||{miluy:50}).miluy;
+      return (b.score*0.55 + urgB*0.45) - (a.score*0.55 + urgA*0.45);
+    })[0];
+
+    const best     = smartBest; // row shows smart recommendation
+    const fitScore = best?.score ?? 0;
+    const rm       = best ? (ROLE_META[best.role.id] || {miluy:50, teken:0}) : {miluy:50, teken:0};
+    const urgency  = best ? (100 - rm.miluy) : 0;
+    const holistic = best ? Math.round(fitScore * 0.55 + urgency * 0.45) : 0;
+
+    const naiveRm      = naiveBest ? (ROLE_META[naiveBest.role.id] || {miluy:50}) : {miluy:50};
+    const naiveManning = naiveRm.miluy;
+    const roleChanged  = naiveBest && best && naiveBest.role.id !== best.role.id;
+
     Object.assign(C, saved);
-    return { key, sc, best, fitScore, urgency, holistic, rm,
+    return { key, sc, best, naiveBest, fitScore, urgency, holistic, rm,
+             naiveManning, roleChanged,
              availCount: unblocked.length, results,
              roleId: best?.role.id || null };
   });
@@ -2275,7 +2292,10 @@ function renderBatchOverview() {
         <td style="font-weight:800;color:${kc};">${sm.kaba||'—'}</td>
         <td style="font-weight:700;">
           ${d.best
-            ? `${d.best.role.emoji} ${d.best.role.name.split('—')[0].trim()}${hasConflict?' <span style="color:var(--yellow);font-size:.65rem;" title="תחרות">⚠️</span>':''}`
+            ? `${d.best.role.emoji} ${d.best.role.name.split('—')[0].trim()}
+               ${hasConflict?'<span style="color:var(--yellow);font-size:.65rem;" title="תחרות על תפקיד">⚠️</span>':''}
+               ${d.roleChanged?`<div style="font-size:0.6rem;color:var(--olive2);margin-top:2px;" title="מנוע שינה מהבחירה הנאיבית">↻ שונה מ: ${d.naiveBest?.role.emoji||''} ${d.naiveBest?.role.name.split('—')[0].trim()||''}</div>`:''}
+              `
             : '<span style="color:var(--red)">⛔ אין שיבוץ</span>'}
         </td>
         <td style="font-weight:800;color:${fitCol};">${d.fitScore||'—'}</td>
@@ -2292,36 +2312,64 @@ function renderBatchOverview() {
       </tr>`;
   }).join('');
 
-  // ── summary footer ──
+  // ── summary footer: naive vs smart comparison ──
   if (!tfoot) return;
   const valid = data.filter(d => d.holistic > 0);
-  const avgFit  = valid.length ? Math.round(valid.reduce((s,d)=>s+d.fitScore,0)/valid.length) : 0;
-  const avgUrg  = valid.length ? Math.round(valid.reduce((s,d)=>s+d.urgency,0)/valid.length) : 0;
-  const avgHol  = valid.length ? Math.round(valid.reduce((s,d)=>s+d.holistic,0)/valid.length) : 0;
-  const uniqR   = new Set(valid.map(d=>d.roleId)).size;
-  const hc      = avgHol>=70?'var(--green)':avgHol>=50?'var(--yellow)':'var(--red)';
+
+  // naive: each candidate goes to best-FIT role
+  const naiveAvgManning = valid.length
+    ? Math.round(valid.reduce((s,d) => s + d.naiveManning, 0) / valid.length) : 0;
+  // smart: each candidate goes to best-HOLISTIC role
+  const smartAvgManning = valid.length
+    ? Math.round(valid.reduce((s,d) => s + d.rm.miluy, 0) / valid.length) : 0;
+  const manningDelta = naiveAvgManning - smartAvgManning; // positive = smart fills more urgent roles
+  const changedCount = data.filter(d => d.roleChanged).length;
+  const uniqR = new Set(valid.map(d=>d.roleId)).size;
+  const avgHol = valid.length ? Math.round(valid.reduce((s,d)=>s+d.holistic,0)/valid.length) : 0;
+
+  const deltaColor = manningDelta >= 10 ? 'var(--green)' : manningDelta >= 5 ? 'var(--yellow)' : 'var(--text2)';
+  const naiveColor = naiveAvgManning >= 70 ? 'var(--red)' : naiveAvgManning >= 55 ? 'var(--yellow)' : 'var(--green)';
+  const smartColor = smartAvgManning >= 70 ? 'var(--red)' : smartAvgManning >= 55 ? 'var(--yellow)' : 'var(--green)';
 
   const conflictNote = conflictRoles.size ? `
     <div class="conflict-note">
-      ⚠️ <strong>קונפליקט:</strong>
+      ⚠️ <strong>קונפליקט תפקיד:</strong>
       ${[...conflictRoles].map(id=>{
         const r = ROLES.find(r=>r.id===id);
         const ns = data.filter(d=>d.roleId===id).map(d=>(STORY[d.key]||{}).soldier?.split(',')[0]||d.key);
         return `${r?.emoji||''} ${r?.name?.split('—')[0].trim()||id} — ${ns.join(' ו-')}`;
       }).join(' | ')}
-      → לחץ "הרץ אופטימיזציה" לפתרון אוטומטי
+      → הרץ אופטימיזציה לפתרון אוטומטי
     </div>` : '';
 
   tfoot.innerHTML = `<tr><td colspan="9" style="padding:8px 10px 4px;">
     <div class="batch-summary">
-      <div class="bsum-item"><span class="bsum-num" style="color:var(--text2);">${avgFit}</span><span class="bsum-lbl">ממוצע התאמה</span></div>
-      <span style="color:var(--border2);font-size:1rem;">+</span>
-      <div class="bsum-item"><span class="bsum-num" style="color:var(--yellow);">${avgUrg}%</span><span class="bsum-lbl">ממוצע דחיפות</span></div>
-      <span style="color:var(--border2);font-size:1rem;">=</span>
-      <div class="bsum-item"><span class="bsum-num" style="color:${hc};">${avgHol}</span><span class="bsum-lbl">הוליסטי ממוצע</span></div>
-      <div style="width:1px;height:28px;background:var(--border);margin:0 6px;"></div>
-      <div class="bsum-item"><span class="bsum-num" style="color:var(--blue);">${uniqR}/6</span><span class="bsum-lbl">תפקידים שונים</span></div>
-      <div style="font-size:0.65rem;color:var(--text3);margin-right:auto;">הוליסטי = התאמה ×55% + דחיפות תקן ×45%</div>
+      <div class="bsum-item" title="ממוצע מילוי התקן של התפקידים שנבחרו ללא שיקול עדיפות — אנשים ממוקמים בתפקידים מלאים">
+        <span class="bsum-num" style="color:${naiveColor};">${naiveAvgManning}% מולא</span>
+        <span class="bsum-lbl">ממוצע תקנים ללא מנוע</span>
+      </div>
+      <span style="font-size:1.1rem;color:var(--text3);">→</span>
+      <div class="bsum-item" title="ממוצע מילוי התקן של התפקידים שנבחרו עם ציון הוליסטי — מנוע מכוון לתפקידים עם מחסור">
+        <span class="bsum-num" style="color:${smartColor};">${smartAvgManning}% מולא</span>
+        <span class="bsum-lbl">ממוצע תקנים עם מנוע</span>
+      </div>
+      <div style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);border-radius:6px;padding:5px 12px;text-align:center;">
+        <span class="bsum-num" style="color:${deltaColor};">-${manningDelta}%</span>
+        <div class="bsum-lbl" style="color:var(--green);">מנוע ממלא תפקידים<br>פחות מכוסים</div>
+      </div>
+      <div style="width:1px;height:36px;background:var(--border);margin:0 4px;"></div>
+      <div class="bsum-item">
+        <span class="bsum-num" style="color:var(--blue);">${changedCount}/6</span>
+        <span class="bsum-lbl">שיבוץ שונה מנאיבי</span>
+      </div>
+      <div class="bsum-item">
+        <span class="bsum-num" style="color:var(--olive2);">${uniqR}/6</span>
+        <span class="bsum-lbl">תפקידים שונים</span>
+      </div>
+      <div style="font-size:0.63rem;color:var(--text3);margin-right:auto;line-height:1.5;">
+        הוליסטי = התאמה ×55% + דחיפות תקן ×45%<br>
+        <span style="color:var(--text3);">המנוע מוכן לוותר על כמה נקודות fit כדי למלא תפקידים דחופים</span>
+      </div>
     </div>
     ${conflictNote}
   </td></tr>`;
