@@ -2088,6 +2088,8 @@ function resetAll() {
    HUNGARIAN ALGORITHM + OPTIMIZATION
 ===================================================== */
 function buildScoreMatrix() {
+  // Matrix uses HOLISTIC scores = fit×55% + urgency(100-manning%)×45%
+  // Hungarian optimises for army needs, not individual fit alone
   const saved = {...C};
   const scKeys = ['a','b','c','d','e','f'];
   const mat = scKeys.map(k => {
@@ -2096,7 +2098,9 @@ function buildScoreMatrix() {
                       manila:s.manila, mental:s.mental, combat:s.combat});
     return ROLES.map(role => {
       const {score, blocked} = placementScore(role);
-      return blocked ? -1 : score;
+      if (blocked) return -1;
+      const urgency = 100 - (ROLE_META[role.id]||{miluy:50}).miluy;
+      return Math.round(score * 0.55 + urgency * 0.45);
     });
   });
   Object.assign(C, saved);
@@ -2159,56 +2163,84 @@ function naiveAssign(mat) {
 }
 
 function calcSystemicRate(assignments) {
+  // assignments.score is now holistic — return avg holistic + critical placements
   const valid = assignments.filter(a => a.role && a.score > 0);
-  if (!valid.length) return 0;
-  const avg = valid.reduce((s,a) => s+a.score, 0) / valid.length;
-  const highQ = valid.filter(a => a.score >= 70).length / valid.length;
-  return Math.round(avg * 0.6 + highQ * 100 * 0.4);
+  if (!valid.length) return { avg: 0, crit: 0, filled: 0 };
+  const avg = Math.round(valid.reduce((s,a) => s + a.score, 0) / valid.length);
+  const crit = valid.filter(a => (ROLE_META[a.role.id]||{miluy:50}).miluy < 55).length; // urgency >45%
+  const filledSlots = valid.reduce((s,a) => {
+    const rm = ROLE_META[a.role.id] || {miluy:50, teken:0};
+    return s + Math.round((1 - rm.miluy/100) * rm.teken);
+  }, 0);
+  return { avg, crit, filled: filledSlots };
 }
 
 function runOptimization() {
   const mat     = buildScoreMatrix();
   const optimal = hungarianAssign(mat);
   const naive   = naiveAssign(mat);
-  const optRate   = calcSystemicRate(optimal);
-  // Baseline = IDF manual placement avg (no scoring system) — representative figure
-  const naiveRate = 61;
-  const delta     = optRate - naiveRate;
+  const optStats   = calcSystemicRate(optimal);
+  const naiveStats = calcSystemicRate(naive);
+  const deltaAvg   = optStats.avg - naiveStats.avg;
+  const deltaCrit  = optStats.crit - naiveStats.crit;
+  const changedCount = optimal.filter((a,i) => a.role?.id !== naive[i]?.role?.id).length;
 
-  const scoreColor = s => s >= 80 ? 'col-green' : s >= 60 ? 'col-yellow' : 'col-red';
+  const scoreColor = s => s >= 70 ? 'col-green' : s >= 50 ? 'col-yellow' : 'col-red';
+
+  // rows — show holistic score + naive comparison
   const rows = optimal.map(a => {
     const naive_a = naive.find(n => n.key === a.key);
     const changed = a.role?.id !== naive_a?.role?.id;
+    const rm = a.role ? (ROLE_META[a.role.id]||{miluy:50}) : {miluy:50};
+    const urgency = a.role ? (100 - rm.miluy) : 0;
     return `
       <div class="opt-row" style="${changed?'border-color:var(--olive);background:var(--olive-glow)':''}">
         <div class="opt-cand">👤 ${a.name}</div>
         <div class="opt-role">
           ${a.role ? `${a.role.emoji} ${a.role.name}` : '⚠️ לא שובץ'}
-          ${changed ? '<span style="font-size:0.6rem;color:var(--olive2);margin-right:6px;">↻ שונה</span>' : ''}
+          ${changed ? `<span style="font-size:0.6rem;color:var(--olive2);margin-right:6px;">↻ שונה מ: ${naive_a?.role?.emoji||''} ${naive_a?.role?.name?.split('—')[0]?.trim()||'—'}</span>` : ''}
+          ${a.role ? `<div style="font-size:0.58rem;color:var(--text3);margin-top:2px;">דחיפות: ${urgency}% | תקן מולא ${rm.miluy}%</div>` : ''}
         </div>
-        <div class="opt-score ${a.role ? scoreColor(a.score) : 'col-red'}">${a.role ? a.score : '—'}</div>
+        <div class="opt-score ${a.role ? scoreColor(a.score) : 'col-red'}" title="ציון הוליסטי">${a.role ? a.score : '—'}</div>
       </div>`;
   }).join('');
 
   document.getElementById('opt-assignments').style.display = 'flex';
   document.getElementById('opt-assignments').innerHTML = rows;
   document.getElementById('opt-systemic').style.display  = 'block';
+
+  const dColor = deltaAvg >= 8 ? 'var(--green)' : deltaAvg >= 4 ? 'var(--olive2)' : 'var(--yellow)';
   document.getElementById('opt-systemic').innerHTML = `
-    <div class="kpi-compare">
+    <div class="kpi-compare" style="gap:10px;flex-wrap:wrap;">
       <div class="kpi-box">
-        <div class="kpi-v baseline">${naiveRate}%</div>
-        <div class="kpi-k">ממוצע ארצי<br>(ללא מנוע)</div>
+        <div class="kpi-v baseline">${naiveStats.avg}</div>
+        <div class="kpi-k">הוליסטי נאיבי<br><span style="font-size:0.62rem;color:var(--text3);">שיבוץ greedy</span></div>
       </div>
       <div class="kpi-arrow-big">→</div>
       <div class="kpi-box">
-        <div class="kpi-v optimized">${optRate}%</div>
-        <div class="kpi-k">שיבוץ חכם<br>(Hungarian)</div>
+        <div class="kpi-v optimized">${optStats.avg}</div>
+        <div class="kpi-k">הוליסטי Hungarian<br><span style="font-size:0.62rem;color:var(--text3);">אופטימל מלא</span></div>
       </div>
-      <div class="kpi-arrow-big" style="color:var(--olive2)">+</div>
+      <div class="kpi-box" style="background:rgba(92,122,46,.08);border:1px solid rgba(92,122,46,.3);border-radius:8px;padding:12px 18px;">
+        <div class="kpi-v delta" style="font-size:1.8rem;color:${dColor};">+${deltaAvg}</div>
+        <div class="kpi-k">נקודות הוליסטי<br>מעל נאיבי</div>
+      </div>
+      <div style="width:1px;height:60px;background:var(--border);margin:0 4px;align-self:center;"></div>
       <div class="kpi-box">
-        <div class="kpi-v delta">+${delta}</div>
-        <div class="kpi-k">נקודות שיבוץ<br>מערכתי</div>
+        <div class="kpi-v" style="font-size:1.8rem;color:var(--blue);">${optStats.crit}<span style="font-size:1rem;color:var(--text3);">/6</span></div>
+        <div class="kpi-k">תפקידים קריטיים<br><span style="font-size:0.62rem;color:var(--text3);">מולא &lt;55%</span></div>
       </div>
+      <div class="kpi-box">
+        <div class="kpi-v" style="font-size:1.8rem;color:var(--olive2);">${changedCount}<span style="font-size:1rem;color:var(--text3);">/6</span></div>
+        <div class="kpi-k">שיבוצים שונו<br><span style="font-size:0.62rem;color:var(--text3);">vs נאיבי greedy</span></div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-v" style="font-size:1.5rem;color:var(--yellow);">${optStats.filled.toLocaleString()}</div>
+        <div class="kpi-k">חיילים חסרים<br><span style="font-size:0.62rem;color:var(--text3);">בתפקידים שמולאו</span></div>
+      </div>
+    </div>
+    <div style="font-size:0.67rem;color:var(--text3);text-align:center;margin-top:8px;">
+      הוליסטי = fit ×55% + דחיפות תקן ×45% | ×720 שילובים נבדקו
     </div>`;
 
   document.getElementById('opt-btn').textContent = '↺ הרץ שוב';
