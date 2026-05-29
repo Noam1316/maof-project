@@ -170,6 +170,28 @@ header{
 .rec-big{font-size:2rem;font-weight:900;line-height:1;}
 .rec-lbl{font-size:0.62rem;color:var(--text2);margin-top:2px;}
 
+/* ── DECISION LOG ── */
+.dec-log{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;
+  display:flex;flex-direction:column;gap:7px;
+  flex-shrink:0;
+}
+.dec-log-title{
+  font-size:0.62rem;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:1px;
+}
+.dec-step{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:0.72rem;color:var(--text2);line-height:1.4;
+}
+.dec-icon{font-size:0.85rem;flex-shrink:0;width:18px;text-align:center;}
+.dec-body{flex:1;}
+.dec-body strong{color:var(--text);}
+.dec-sep{border:none;border-top:1px dashed var(--border);margin:1px 0;}
+.naive-diff{color:var(--yellow);}
+.naive-same{color:var(--olive2);}
+
 /* ── CONTEXT PANEL ── */
 .ctx-panel{
   flex:1; min-height:0; overflow-y:auto;
@@ -335,6 +357,10 @@ header{
   .ctx-panel{padding:14px 12px;}
   .ctx-card{padding:16px;}
   .ctx-metric-num{font-size:1.2rem;}
+
+  .dec-log{padding:8px 10px;gap:5px;}
+  .dec-step{font-size:0.66rem;}
+  .dec-icon{font-size:0.75rem;width:14px;}
 }
 
 /* ── SMALL PHONE 350px ── */
@@ -588,6 +614,7 @@ header{
     <div class="holistic-note">⚡ ציון הוליסטי = התאמה אישית (55%) + דחיפות מילוי תקן (45%) — הצבא קודם</div>
     <div class="roles" id="roles"><!-- JS --></div>
     <div class="rec" id="rec"><!-- JS --></div>
+    <div class="dec-log" id="decision-log"><!-- JS --></div>
   </div>
 
 </div>
@@ -819,25 +846,44 @@ function render(sc){
       </div>`;
   }).join('');
 
-  // Recommendation
+  // ── RECOMMENDATION ──
   const rec = document.getElementById('rec');
+  const dl  = document.getElementById('decision-log');
+
+  const blockedCount   = results.filter(r=>r.blocked).length;
+  const unblockedCount = results.length - blockedCount;
+
+  // naiveBest = best by personal fit only (no urgency weighting)
+  const naiveBest = results.filter(r=>!r.blocked).sort((a,b)=>b.score-a.score)[0];
+
   if(!best){
     rec.className='rec rec-warn';
     rec.innerHTML=`
       <div class="rec-icon">⛔</div>
       <div class="rec-main">
         <div class="rec-role">שיבוץ נחסם — כל התפקידים אינם מתאימים</div>
-        <div class="rec-why">המנוע מזהה חסמים בכל 6 התפקידים. הקצין יודע זאת לפני שמתחיל קורס.</div>
+        <div class="rec-why">המנוע מזהה חסמים בכל ${ROLES.length} התפקידים. הקצין יודע זאת לפני שמתחיל קורס.</div>
+      </div>`;
+    dl.innerHTML=`
+      <div class="dec-log-title">יומן החלטה</div>
+      <div class="dec-step">
+        <span class="dec-icon">✂️</span>
+        <span class="dec-body"><strong>${ROLES.length} תפקידים נבדקו</strong> — כל ${blockedCount} נחסמו (פרופיל / דפ"ר / מנטלי)</span>
+      </div>
+      <div class="dec-step">
+        <span class="dec-icon">⛔</span>
+        <span class="dec-body"><strong>אין שיבוץ אפשרי</strong> — מועמד מיועד להערכה חוזרת / ועדה רפואית</span>
       </div>`;
   } else {
-    const h   = best.holistic;
-    const cls = h>=70?'rec-high':h>=50?'rec-med':'rec-warn';
-    const icon= h>=70?'✅':h>=50?'⚠️':'❌';
-    const mn  = MANNING[best.role.id]||{teken:0,miluy:50};
+    const h    = best.holistic;
+    const cls  = h>=70?'rec-high':h>=50?'rec-med':'rec-warn';
+    const icon = h>=70?'✅':h>=50?'⚠️':'❌';
+    const mn   = MANNING[best.role.id]||{teken:0,miluy:50};
     const chaser = Math.round((1-mn.miluy/100)*mn.teken);
     const armyWhy = best.urgency < 20
       ? `שיבוץ שיקומי — זה הפתרון הקיים. ציון הוליסטי ${h} — המנוע ישנה המלצה כשהפרופיל ישתפר`
       : `מולא ${mn.miluy}% — הצבא מחפש עוד ${chaser} אנשים. התאמה אישית: ${best.score}`;
+
     rec.className=`rec ${cls}`;
     rec.innerHTML=`
       <div class="rec-icon">${icon}</div>
@@ -849,6 +895,72 @@ function render(sc){
         <div class="rec-big" style="color:${h>=70?'var(--green)':h>=50?'var(--yellow)':'var(--red)'}">${h}</div>
         <div class="rec-lbl">ציון הוליסטי</div>
       </div>`;
+
+    // ── DECISION LOG (א') ──
+    const fitContrib    = Math.round(best.score * 0.55);
+    const urgContrib    = Math.round(best.urgency * 0.45);
+    const blockedNames  = results.filter(r=>r.blocked).map(r=>r.role.n).join(' · ');
+
+    // ── BEFORE/AFTER (ג') ──
+    let naiveHtml;
+    if(!naiveBest){
+      naiveHtml = '';
+    } else if(naiveBest.role.id === best.role.id){
+      naiveHtml = `
+        <hr class="dec-sep">
+        <div class="dec-step">
+          <span class="dec-icon">🔄</span>
+          <span class="dec-body naive-same">
+            <strong>ללא המנוע:</strong> אותו תפקיד — ${best.role.n} (fit ${naiveBest.score}).
+            <strong>עם המנוע:</strong> אותה המלצה, סיבה שונה —
+            מחסור <strong>${100-mn.miluy}%</strong> שקול כ-${urgContrib} נקודות על ציון הוליסטי
+          </span>
+        </div>`;
+    } else {
+      const naiveMn = MANNING[naiveBest.role.id]||{miluy:50};
+      naiveHtml = `
+        <hr class="dec-sep">
+        <div class="dec-step">
+          <span class="dec-icon">🔄</span>
+          <span class="dec-body naive-diff">
+            <strong>ללא המנוע:</strong> ${naiveBest.role.e} ${naiveBest.role.n} (fit ${naiveBest.score}) —
+            נבחר על fit אישי בלבד, מולא ${naiveMn.miluy}%<br>
+            <strong>עם המנוע:</strong> ${best.role.e} ${best.role.n} (הוליסטי ${h}) —
+            מחסור ${100-mn.miluy}% הפך גורם מכריע
+          </span>
+        </div>`;
+    }
+
+    dl.innerHTML=`
+      <div class="dec-log-title">יומן החלטה — שקיפות מלאה</div>
+      <div class="dec-step">
+        <span class="dec-icon">✂️</span>
+        <span class="dec-body">
+          <strong>שלב א' — סינון:</strong>
+          ${ROLES.length} תפקידים נבדקו →
+          <span style="color:var(--red);">${blockedCount} נחסמו</span>
+          (${blockedNames}) ·
+          <span style="color:var(--green);">${unblockedCount} עברו לדירוג</span>
+        </span>
+      </div>
+      <div class="dec-step">
+        <span class="dec-icon">📊</span>
+        <span class="dec-body">
+          <strong>שלב ב' — דירוג:</strong>
+          ציון הוליסטי = התאמה ×55% + דחיפות תקן ×45%
+          <span style="color:var(--text3);"> (לא fit בלבד — צרכי הצבא קודמים)</span>
+        </span>
+      </div>
+      <div class="dec-step">
+        <span class="dec-icon">🎯</span>
+        <span class="dec-body">
+          <strong>המלצה:</strong> ${best.role.n} —
+          הוליסטי <strong>${h}</strong> =
+          התאמה ${best.score}×55%→<span style="color:var(--blue);">${fitContrib}</span> +
+          דחיפות ${best.urgency}%×45%→<span style="color:var(--yellow);">${urgContrib}</span>
+        </span>
+      </div>
+      ${naiveHtml}`;
   }
 }
 
