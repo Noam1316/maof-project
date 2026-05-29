@@ -226,6 +226,31 @@ header{
 .ctx-align-title{font-size:0.8rem;font-weight:800;color:var(--blue);}
 .ctx-align-desc{font-size:0.73rem;color:var(--text2);line-height:1.4;}
 
+/* ── COMPARISON TABLE ── */
+.ctx-compare{border-color:rgba(251,191,36,.35);}
+.cmp-table{width:100%;border-collapse:collapse;font-size:0.76rem;}
+.cmp-table th{
+  padding:7px 10px;text-align:right;font-size:0.67rem;font-weight:700;
+  color:var(--text3);text-transform:uppercase;letter-spacing:.07em;
+  border-bottom:1px solid var(--border);
+}
+.cmp-table th:not(:first-child){text-align:center;}
+.cmp-table td{
+  padding:7px 10px;border-bottom:1px solid var(--border2);
+  line-height:1.35;color:var(--text2);
+}
+.cmp-table td:not(:first-child){text-align:center;font-weight:700;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table .col-feat{color:var(--text);font-weight:600;}
+.cmp-table .col-idf{color:var(--red);}
+.cmp-table .col-ours{color:var(--green);}
+.cmp-badge{
+  display:inline-block;font-size:0.62rem;font-weight:800;
+  padding:2px 8px;border-radius:4px;
+  background:rgba(251,191,36,.12);color:var(--yellow);
+  border:1px solid rgba(251,191,36,.3);margin-bottom:6px;
+}
+
 .ctx-cta{
   text-align:center;margin-top:16px;max-width:980px;margin-left:auto;margin-right:auto;
 }
@@ -380,6 +405,10 @@ header{
           <span class="ctx-bullet">❌</span>
           <span><strong>ביקורת מבקר המדינה:</strong> הטיות בשיבוץ ואי-מיצוי פוטנציאל בוגרי מגמות טכנולוגיות</span>
         </div>
+        <div class="ctx-row">
+          <span class="ctx-bullet">⚠️</span>
+          <span><strong>הרפורמה (דצמ' 2025, אוג' 2026):</strong> שינו את הטיימינג בלבד — שיבוץ כבר ביי"א. לא שינו את האלגוריתם.</span>
+        </div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <div class="ctx-metric">
@@ -429,6 +458,66 @@ header{
       </div>
     </div>
 
+    <!-- COMPARISON TABLE -->
+    <div class="ctx-card ctx-compare" style="grid-column:1/-1;">
+      <div class="ctx-heading">
+        <span class="ctx-icon">📊</span>
+        <span>השוואה — רפורמת אוגוסט 2026 מול מנוע השיבוץ</span>
+      </div>
+      <div class="cmp-badge">🔍 מחקר שוק — דצמבר 2025: צה"ל הכריז על "מהפכת גיוס 2026"</div>
+      <div style="font-size:0.73rem;color:var(--text2);margin-bottom:10px;line-height:1.5;">
+        הרפורמה של אכ"א שינתה את <strong style="color:var(--text);">הטיימינג</strong> — מלש"בים יקבלו שיבוץ כבר בכיתה י"א.
+        מה שלא השתנה: <strong style="color:var(--yellow);">הבסיס להחלטה עצמה — עדיין קצין + שיקול דעת אישי.</strong>
+        מנוע השיבוץ פותר בדיוק את מה שהרפורמה לא פתרה.
+      </div>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>תכונה</th>
+            <th>מערכת קיימת (אוג' 2026)</th>
+            <th>מנוע השיבוץ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-feat">בסיס ההחלטה</td>
+            <td class="col-idf">קצין + שיקול דעת אישי</td>
+            <td class="col-ours">3 וקטורים אלגוריתמיים</td>
+          </tr>
+          <tr>
+            <td class="col-feat">מדד קב"א בשיבוץ</td>
+            <td class="col-idf">❌ לא משולב פורמלית</td>
+            <td class="col-ours">✅ integrated + מוצג</td>
+          </tr>
+          <tr>
+            <td class="col-feat">חסימות פרופיל רפואי</td>
+            <td class="col-idf">❌ שיקול דעת ידני</td>
+            <td class="col-ours">✅ אוטומטי, קטגוריאלי</td>
+          </tr>
+          <tr>
+            <td class="col-feat">אופטימיזציה מילוי תקן</td>
+            <td class="col-idf">❌ אין</td>
+            <td class="col-ours">✅ ציון הוליסטי 45%</td>
+          </tr>
+          <tr>
+            <td class="col-feat">זמן לתיק</td>
+            <td class="col-idf">~15 דקות</td>
+            <td class="col-ours">~3 שניות</td>
+          </tr>
+          <tr>
+            <td class="col-feat">שיבוץ שיקומי (לוחם פצוע)</td>
+            <td class="col-idf">❌ ad hoc, לא מובנה</td>
+            <td class="col-ours">✅ תרחיש מובנה</td>
+          </tr>
+          <tr>
+            <td class="col-feat">AI בשלב ההחלטה</td>
+            <td class="col-idf" style="color:var(--yellow);">⚠️ AI רק בתהליכי גיוס</td>
+            <td class="col-ours">✅ DSS מלא עם scoring</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- ALIGNMENT -->
     <div class="ctx-card ctx-align">
       <div class="ctx-heading">
@@ -442,7 +531,7 @@ header{
         </div>
         <div class="ctx-align-item">
           <div class="ctx-align-title">🤖 אגף AI "בינה" — הוקם 2025</div>
-          <div class="ctx-align-desc">האגף החדש של צה"ל לבינה מלאכותית. הוקם ב-2025 עם מנדט לייעול תהליכי HR ומבצעים. מנוע השיבוץ הוא use-case מוכן ליישום.</div>
+          <div class="ctx-align-desc">אגף ה-AI החדש של צה"ל. כיום AI משמש לסיכום מסמכים רפואיים בגיוס — קיצור משלב 15 ל-10 דקות. מנוע השיבוץ הוא הצעד הבא: AI בשלב ההחלטה עצמה.</div>
         </div>
         <div class="ctx-align-item">
           <div class="ctx-align-title">📊 מדד קב"א כשפה משותפת</div>
