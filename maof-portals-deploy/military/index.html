@@ -2216,38 +2216,64 @@ function runOptimization() {
   document.getElementById('opt-assignments').innerHTML = rows;
   document.getElementById('opt-systemic').style.display  = 'block';
 
-  const dColor = deltaAvg >= 8 ? 'var(--green)' : deltaAvg >= 4 ? 'var(--olive2)' : 'var(--yellow)';
+  // ── conflicts: roles claimed by 2+ naive-best candidates ──
+  const naiveRoleCount = {};
+  naive.forEach(a => { if(a.role) naiveRoleCount[a.role.id] = (naiveRoleCount[a.role.id]||0)+1; });
+  const naiveConflicts = Object.entries(naiveRoleCount).filter(([,c])=>c>1);
+  const conflictCount  = naiveConflicts.length;
+  const conflictNames  = naiveConflicts.map(([id])=>{
+    const r=ROLES.find(r=>r.id===id); return r?r.emoji+' '+r.name.split('—')[0].trim():'';
+  }).join(' · ');
+
+  // ── worst-case candidate in each scheme ──
+  const optMin   = Math.min(...optimal.filter(a=>a.role).map(a=>a.score));
+  const naiveMin = Math.min(...naive.filter(a=>a.role).map(a=>a.score));
+  const worstImprove = optMin - naiveMin;
+  const wColor = worstImprove > 0 ? 'var(--green)' : worstImprove === 0 ? 'var(--olive2)' : 'var(--red)';
+
+  // ── scale extrapolation ──
+  const annualDraft = 30000;
+  const combos720 = 720; // 6!
+  const combosAnnual = '> 10⁶⁸'; // absurdly large for 30k
+
   document.getElementById('opt-systemic').innerHTML = `
-    <div class="kpi-compare" style="gap:10px;flex-wrap:wrap;">
-      <div class="kpi-box">
-        <div class="kpi-v baseline">${naiveStats.avg}</div>
-        <div class="kpi-k">הוליסטי נאיבי<br><span style="font-size:0.62rem;color:var(--text3);">שיבוץ greedy</span></div>
+    <div class="kpi-compare" style="gap:10px;flex-wrap:wrap;justify-content:flex-start;">
+
+      <div class="kpi-box" style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.3);border-radius:8px;padding:12px 18px;text-align:center;">
+        <div class="kpi-v" style="font-size:1.7rem;font-weight:900;color:var(--green);">✓ ${optStats.avg}</div>
+        <div class="kpi-k" style="margin-top:4px;">ציון הוליסטי מוכח<br><span style="font-size:0.62rem;color:var(--green);">מקסימום גלובלי מ-720 שילובים</span></div>
       </div>
-      <div class="kpi-arrow-big">→</div>
-      <div class="kpi-box">
-        <div class="kpi-v optimized">${optStats.avg}</div>
-        <div class="kpi-k">הוליסטי Hungarian<br><span style="font-size:0.62rem;color:var(--text3);">אופטימל מלא</span></div>
+
+      <div style="width:1px;height:56px;background:var(--border);align-self:center;flex-shrink:0;"></div>
+
+      <div class="kpi-box" style="text-align:center;">
+        <div class="kpi-v" style="font-size:1.7rem;font-weight:900;color:${conflictCount>0?'var(--yellow)':'var(--green)'};">${conflictCount}</div>
+        <div class="kpi-k" style="margin-top:4px;">קונפליקטים שנפתרו<br><span style="font-size:0.62rem;color:var(--text3);">${conflictCount>0?conflictNames:'אין — שיבוץ נקי'}</span></div>
       </div>
-      <div class="kpi-box" style="background:rgba(92,122,46,.08);border:1px solid rgba(92,122,46,.3);border-radius:8px;padding:12px 18px;">
-        <div class="kpi-v delta" style="font-size:1.8rem;color:${dColor};">+${deltaAvg}</div>
-        <div class="kpi-k">נקודות הוליסטי<br>מעל נאיבי</div>
+
+      <div class="kpi-box" style="text-align:center;">
+        <div class="kpi-v" style="font-size:1.7rem;font-weight:900;color:var(--olive2);">${changedCount}<span style="font-size:0.95rem;color:var(--text3);">/6</span></div>
+        <div class="kpi-k" style="margin-top:4px;">שיבוצים שונו<br><span style="font-size:0.62rem;color:var(--text3);">Hungarian vs greedy נאיבי</span></div>
       </div>
-      <div style="width:1px;height:60px;background:var(--border);margin:0 4px;align-self:center;"></div>
-      <div class="kpi-box">
-        <div class="kpi-v" style="font-size:1.8rem;color:var(--blue);">${optStats.crit}<span style="font-size:1rem;color:var(--text3);">/6</span></div>
-        <div class="kpi-k">תפקידים קריטיים<br><span style="font-size:0.62rem;color:var(--text3);">מולא &lt;55%</span></div>
+
+      <div class="kpi-box" style="text-align:center;">
+        <div class="kpi-v" style="font-size:1.7rem;font-weight:900;color:${wColor};">${worstImprove>=0?'+':''}${worstImprove}</div>
+        <div class="kpi-k" style="margin-top:4px;">שיפור מועמד חלש ביותר<br><span style="font-size:0.62rem;color:var(--text3);">min holistic: נאיבי ${naiveMin} → Hungarian ${optMin}</span></div>
       </div>
-      <div class="kpi-box">
-        <div class="kpi-v" style="font-size:1.8rem;color:var(--olive2);">${changedCount}<span style="font-size:1rem;color:var(--text3);">/6</span></div>
-        <div class="kpi-k">שיבוצים שונו<br><span style="font-size:0.62rem;color:var(--text3);">vs נאיבי greedy</span></div>
+
+      <div class="kpi-box" style="text-align:center;">
+        <div class="kpi-v" style="font-size:1.7rem;font-weight:900;color:var(--blue);">${optStats.crit}<span style="font-size:0.95rem;color:var(--text3);">/6</span></div>
+        <div class="kpi-k" style="margin-top:4px;">תפקידים קריטיים<br><span style="font-size:0.62rem;color:var(--text3);">מולאו תפקידים עם מחסור &gt;45%</span></div>
       </div>
-      <div class="kpi-box">
-        <div class="kpi-v" style="font-size:1.5rem;color:var(--yellow);">${optStats.filled.toLocaleString()}</div>
-        <div class="kpi-k">חיילים חסרים<br><span style="font-size:0.62rem;color:var(--text3);">בתפקידים שמולאו</span></div>
+
+      <div class="kpi-box" style="text-align:center;">
+        <div class="kpi-v" style="font-size:1.7rem;font-weight:900;color:var(--yellow);">${combos720.toLocaleString()}</div>
+        <div class="kpi-k" style="margin-top:4px;">שילובים נבדקו (6!)<br><span style="font-size:0.62rem;color:var(--text3);">30K גיוסים → ${combosAnnual} — לכן Genetic</span></div>
       </div>
+
     </div>
-    <div style="font-size:0.67rem;color:var(--text3);text-align:center;margin-top:8px;">
-      הוליסטי = fit ×55% + דחיפות תקן ×45% | ×720 שילובים נבדקו
+    <div style="font-size:0.65rem;color:var(--text3);text-align:center;margin-top:10px;line-height:1.6;">
+      Hungarian = ודאות מתמטית שזה המקסימום הגלובלי, לא רק "טוב" — greedy נאיבי עלול להחמיץ פתרון טוב יותר בקונפליקטים
     </div>`;
 
   document.getElementById('opt-btn').textContent = '↺ הרץ שוב';
