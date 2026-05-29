@@ -764,6 +764,110 @@
       .main { padding: 8px 8px; }
       .card { padding: 10px; }
     }
+
+    /* ─── FLOW GUIDE ─── */
+    .flow-guide {
+      flex-basis: 100%; display: flex; align-items: center;
+      gap: 6px; padding-top: 8px; margin-top: 2px;
+      border-top: 1px solid var(--border); flex-wrap: wrap;
+    }
+    .flow-step {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.7rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px;
+      border: 1px solid var(--border2); color: var(--text3);
+      background: var(--bg3);
+    }
+    .flow-step.fs-done  { color: var(--olive2); border-color: var(--olive); background: var(--olive-glow); }
+    .flow-step.fs-next  { color: var(--blue);   border-color: rgba(96,165,250,.4); background: rgba(96,165,250,.07); }
+    .flow-arrow { font-size: 0.8rem; color: var(--text3); }
+
+    /* ─── KABA ROW ─── */
+    .kaba-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 8px 12px; margin-top: 14px;
+    }
+    .kaba-left { display: flex; flex-direction: column; gap: 2px; }
+    .kaba-title { font-size: 0.65rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; }
+    .kaba-formula { font-size: 0.6rem; color: var(--text3); }
+    .kaba-right-v { display: flex; align-items: baseline; gap: 6px; }
+    .kaba-num { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+    .kaba-label-txt { font-size: 0.68rem; font-weight: 700; }
+    .kaba-bar-wrap { margin-top: 4px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+    .kaba-bar-inner { height: 100%; border-radius: 2px; transition: width .4s ease, background .3s; }
+
+    /* ─── CASE BRIEFING (story) ─── */
+    .case-card {
+      margin: 0 28px 0; border-radius: 12px;
+      background: rgba(92,122,46,0.05);
+      border: 1px solid rgba(92,122,46,0.25);
+      padding: 16px 20px; display: none;
+    }
+    .case-card.visible { display: block; }
+    .case-header {
+      display: flex; align-items: center; gap: 14px;
+      padding-bottom: 12px; margin-bottom: 12px;
+      border-bottom: 1px solid rgba(92,122,46,0.2);
+    }
+    .case-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--bg3); border: 2px solid var(--olive);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+    }
+    .case-name { font-size: 1.05rem; font-weight: 900; }
+    .case-sub  { font-size: 0.75rem; color: var(--text2); margin-top: 3px; }
+    .case-tags { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+    .case-tag  {
+      font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+      background: var(--olive-glow); border: 1px solid rgba(92,122,46,.3); color: var(--olive2);
+    }
+    .case-bio { font-size: 0.77rem; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+    .case-recs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .case-rec {
+      background: var(--bg2); border-radius: 8px; padding: 12px 14px;
+      border: 1px solid var(--border2);
+    }
+    .case-rec.cr-primary   { border-color: rgba(74,222,128,.35); }
+    .case-rec.cr-secondary { border-color: rgba(96,165,250,.25); }
+    .cr-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+    .cr-primary .cr-label   { color: var(--green); }
+    .cr-secondary .cr-label { color: var(--blue); }
+    .cr-role { font-size: 0.85rem; font-weight: 800; margin-bottom: 5px; }
+    .cr-text { font-size: 0.73rem; color: var(--text2); line-height: 1.5; }
+    @media (max-width: 768px) { .case-recs { grid-template-columns: 1fr; } .case-card { margin: 0 14px 0; } }
+    @media (max-width: 480px) { .case-card { margin: 0 10px 0; padding: 12px 14px; }
+      .case-name { font-size: 0.9rem; } .case-avatar { width: 42px; height: 42px; font-size: 20px; } }
+
+    /* ─── HOLISTIC NOTE ─── */
+    .holistic-note-eng {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.7rem; color: var(--olive2);
+      background: var(--olive-glow); border: 1px solid rgba(92,122,46,.3);
+      border-radius: 6px; padding: 6px 12px; margin-bottom: 14px;
+    }
+
+    /* ─── DECISION LOG (engine) ─── */
+    .eng-dec-log {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px; margin-top: 14px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .eng-dec-title {
+      font-size: 0.62rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 2px;
+    }
+    .eng-dec-step {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.72rem; color: var(--text2); line-height: 1.4;
+    }
+    .eng-dec-icon { font-size: 0.85rem; flex-shrink: 0; width: 18px; text-align: center; }
+    .eng-dec-body { flex: 1; }
+    .eng-dec-body strong { color: var(--text); }
+
+    /* ─── SCENARIO LABELS ─── */
+    .sc-kaba { font-size: 0.6rem; color: var(--olive2); font-weight: 700; margin-top: 1px; }
   </style>
 </head>
 <body>
@@ -788,28 +892,40 @@
   <div class="demo-label">🔬 <strong>בחר תרחיש:</strong></div>
   <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
     <button class="btn btn-scenario" id="sc-a" onclick="loadDemo('a')">
-      <span class="sc-id">מלש"ב א'</span>
-      <span class="sc-desc">מגבלה רפואית · tech גבוה</span>
+      <span class="sc-id">👨‍💻 אלון ב. — מגבלה רפואית</span>
+      <span class="sc-desc">דפ"ר 90 · פרופיל 45 · tech גבוה</span>
+      <span class="sc-kaba">קב"א משוער 53</span>
     </button>
     <button class="btn btn-scenario" id="sc-b" onclick="loadDemo('b')">
-      <span class="sc-id">מלש"ב ב'</span>
-      <span class="sc-desc">לוחם עילית · חלש בטכנולוגיה</span>
+      <span class="sc-id">🪖 יואב מ. — לוחם עילית</span>
+      <span class="sc-desc">מנטלי 92 · לחימה 96 · פרופיל 97</span>
+      <span class="sc-kaba">קב"א משוער 48</span>
     </button>
     <button class="btn btn-scenario" id="sc-c" onclick="loadDemo('c')">
-      <span class="sc-id">מלש"ב ג'</span>
-      <span class="sc-desc">גאון סייבר 8200</span>
+      <span class="sc-id">🧑‍💻 דניאל ש. — גאון סייבר</span>
+      <span class="sc-desc">דפ"ר 90 · tech 90 · מועמד 8200</span>
+      <span class="sc-kaba">קב"א משוער 54</span>
     </button>
     <button class="btn btn-scenario" id="sc-d" onclick="loadDemo('d')">
-      <span class="sc-id">מלש"ב ד'</span>
-      <span class="sc-desc">פצוע קרב · בלוק רוחבי</span>
+      <span class="sc-id">🩹 רן כ. — לוחם פצוע</span>
+      <span class="sc-desc">פרופיל 45 · שיבוץ מחדש · מנטלי 50</span>
+      <span class="sc-kaba">קב"א משוער 47</span>
     </button>
-    <button class="btn btn-ghost" onclick="resetAll()" style="align-self:stretch;">↺</button>
+    <button class="btn btn-ghost" onclick="resetAll()" style="align-self:stretch;" title="איפוס">↺</button>
   </div>
-  <div class="demand-row" id="demand-row"><!-- populated by JS --></div>
+  <div class="flow-guide">
+    <span class="flow-step" id="flow-1">📋 א. בחר תרחיש</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step" id="flow-2">🎯 ב. לחץ על תפקיד</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step" id="flow-3">⚙️ ג. ניתוח מפורט</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step" id="flow-4">🚀 ד. הרץ אופטימיזציה</span>
+  </div>
 </div>
 
 <!-- ═══════════════ MAIN ═══════════════ -->
-<div id="scenario-story" class="scenario-story"></div>
+<div id="scenario-story" class="case-card"></div>
 
 <main class="main">
 
@@ -822,7 +938,7 @@
         <div class="card-icon ci-olive">👤</div>
         <div>
           <div class="card-title">פרופיל מלש"ב</div>
-          <div class="card-sub">הזן נתוני מועמד — המנוע מחשב בזמן אמת</div>
+          <div class="card-sub">שנה ערכים — המנוע מחשב 6 תפקידים בזמן אמת</div>
         </div>
       </div>
 
@@ -842,7 +958,7 @@
         <div class="sl-item">
           <div class="sl-row">
             <span class="sl-name">פרופיל רפואי</span>
-            <span class="sl-val" id="v-medical">100</span>
+            <span class="sl-val" id="v-medical">97</span>
           </div>
           <select class="sl-select" id="sl-medical" onchange="selectMedical(this.value)">
             <option value="97" data-score="100">97 — כשיר לכל תפקיד</option>
@@ -896,15 +1012,32 @@
 
       </div><!-- /sl-group -->
 
+      <!-- KABA ROW -->
+      <div class="kaba-row" id="kaba-row">
+        <div class="kaba-left">
+          <div class="kaba-title">מדד קב"א — ציון איכות IDF</div>
+          <div class="kaba-formula">דפ"ר 50% · השכלה 17% · ראיון 33% · סקאלה 41–56</div>
+          <div class="kaba-bar-wrap" style="width:140px;margin-top:6px;">
+            <div class="kaba-bar-inner" id="kaba-bar" style="width:50%;background:var(--olive2);"></div>
+          </div>
+        </div>
+        <div>
+          <div class="kaba-right-v">
+            <span class="kaba-num" id="kaba-num" style="color:var(--olive2);">48</span>
+            <span class="kaba-label-txt" id="kaba-lbl" style="color:var(--olive2);">מעל הממוצע</span>
+          </div>
+        </div>
+      </div>
+
       <!-- CANDIDATE SCORE STRIP -->
       <div class="cand-score-strip" id="cand-score-strip">
         <div class="score-ring" id="cand-ring">70</div>
         <div class="mini-bar-wrap">
-          <div class="stitle" style="margin-bottom:6px;">ציון מועמד מצרפי</div>
+          <div class="stitle" style="margin-bottom:6px;">ציון בסיסי — פרמטרים אישיים</div>
           <div class="mini-bar-track">
             <div class="mini-bar-fill" id="cand-bar" style="width:70%"></div>
           </div>
-          <div class="mini-bar-hint">דפ"ר 35% • טכנולוגי 30% • מניל"ה 20% • מנטלי 15% | רפואי: חסימה בלבד</div>
+          <div class="mini-bar-hint">דפ"ר ×35% + טכנולוגי ×30% + מניל"ה ×20% + מנטלי ×15% | פרופיל: שער זכאות בלבד</div>
         </div>
       </div>
 
@@ -1207,6 +1340,13 @@ function placementScore(role, corps) {
   };
 }
 
+/* ─── KABA ─── */
+function kabaScore() {
+  return Math.min(56, Math.max(41, Math.round(41 + (C.dapar / 90) * 15)));
+}
+function kabaLabel(k) { return k>=52?'גבוה מאוד':k>=47?'מעל הממוצע':'ממוצע'; }
+function kabaColor(k) { return k>=52?'var(--green)':k>=47?'var(--olive2)':'var(--yellow)'; }
+
 function scoreClass(s, blocked) {
   if (blocked) return 'blocked';
   if (s >= 80)  return 'high';
@@ -1238,6 +1378,19 @@ function renderCandidateScore() {
   ring.style.borderColor = color;
   ring.style.color = color;
   bar.style.background = color;
+
+  // kaba
+  const k  = kabaScore();
+  const kc = kabaColor(k);
+  const kl = kabaLabel(k);
+  const kPct = Math.round((k - 41) / 15 * 100);
+  document.getElementById('kaba-num').textContent = k;
+  document.getElementById('kaba-num').style.color = kc;
+  document.getElementById('kaba-lbl').textContent = kl;
+  document.getElementById('kaba-lbl').style.color = kc;
+  document.getElementById('kaba-bar').style.width = kPct + '%';
+  document.getElementById('kaba-bar').style.background = kc;
+  document.getElementById('kaba-row').style.borderColor = kc.replace('var(--','').replace(')','');
 }
 
 function renderRolesGrid() {
@@ -1435,6 +1588,11 @@ function renderEngine() {
         <div class="info-row"><span class="ik">חסר למילוי מלא</span><span class="iv col-red">${chaser} חיילים</span></div>`;
     })()}
 
+    <div class="holistic-note-eng">
+      ⚡ <strong>מנוע השיבוץ:</strong>
+      ציון נפח = מועמד ×25% + תפקיד ×45% + חיל ×30% | פרופיל רפואי = שער זכאות בלבד (לא ציון)
+    </div>
+
     <div class="rec-box ${recInfo.cls} mt-16">
       <div class="rec-emoji">${recInfo.icon}</div>
       <div>
@@ -1442,6 +1600,47 @@ function renderEngine() {
         <div class="rec-sub">${recInfo.sub}</div>
       </div>
     </div>
+
+    ${!blocked ? (() => {
+      const rm2 = ROLE_META[role.id] || {};
+      const blockedRoles = ROLES.filter(r => getBlocks(r).length > 0);
+      const unblockedRoles = ROLES.filter(r => !getBlocks(r).length);
+      const fitContrib  = Math.round(score * 100 / 100);
+      const bestByFit   = ROLES.filter(r=>!getBlocks(r).length)
+                               .map(r=>({r,s:placementScore(r).score}))
+                               .sort((a,b)=>b.s-a.s)[0];
+      const naiveName   = bestByFit ? bestByFit.r.name : '—';
+      const isSame      = bestByFit?.r.id === role.id;
+      const naiveNote   = isSame
+        ? `גם ללא מנוע: אותו תפקיד (ציון ${bestByFit?.s}) — עם המנוע: מנוסחת 3 וקטורים`
+        : `ללא מנוע: <strong>${naiveName}</strong> (fit גבוה יותר) — עם המנוע: ${role.name} (ציון נפח גבוה יותר)`;
+      return `
+        <div class="eng-dec-log">
+          <div class="eng-dec-title">יומן החלטה — שקיפות מלאה</div>
+          <div class="eng-dec-step">
+            <span class="eng-dec-icon">✂️</span>
+            <span class="eng-dec-body"><strong>סינון:</strong>
+              ${ROLES.length} תפקידים נבדקו →
+              <span style="color:var(--red)">${blockedRoles.length} נחסמו</span>
+              (${blockedRoles.map(r=>r.name.split('—')[0].trim()).join(' · ')}) ·
+              <span style="color:var(--green)">${unblockedRoles.length} עברו לדירוג</span>
+            </span>
+          </div>
+          <div class="eng-dec-step">
+            <span class="eng-dec-icon">📊</span>
+            <span class="eng-dec-body"><strong>ציון נפח:</strong>
+              מועמד ${cs}×25%→<span style="color:var(--blue)">${Math.round(cs*0.25)}</span> +
+              תפקיד ${rs}×45%→<span style="color:var(--blue)">${Math.round(rs*0.45)}</span> +
+              חיל ${crs}×30%→<span style="color:var(--blue)">${Math.round(crs*0.30)}</span> =
+              <strong style="color:var(--green)">${score}</strong>
+            </span>
+          </div>
+          <div class="eng-dec-step">
+            <span class="eng-dec-icon">🔄</span>
+            <span class="eng-dec-body">${naiveNote}</span>
+          </div>
+        </div>`;
+    })() : ''}
   `;
 }
 
@@ -1490,9 +1689,7 @@ function slide(field, val) {
 
 function selectMedical(val) {
   C.medical = parseInt(val);
-  const opt = document.querySelector(`#sl-medical option[value="${val}"]`);
-  const score = opt ? opt.dataset.score : '0';
-  document.getElementById('v-medical').textContent = score;
+  document.getElementById('v-medical').textContent = val; // מציג מספר פרופיל גולמי (97/82/72...)
   update();
 }
 
@@ -1689,28 +1886,47 @@ function updateScenarioBtns() {
   });
 }
 
+const SCENARIO_META = {
+  a: { avatar:'👨‍💻', kaba:53, tags:['פרופיל 45','דפ"ר 90','tech גבוה','עורפי בלבד'] },
+  b: { avatar:'🪖',   kaba:48, tags:['פרופיל 97','מנטלי 92','לחימה 96','כשיר לכל'] },
+  c: { avatar:'🧑‍💻', kaba:54, tags:['פרופיל 82','דפ"ר 90','tech 90','מועמד 8200'] },
+  d: { avatar:'🩹',   kaba:47, tags:['פרופיל 45','שיבוץ מחדש','פצוע קרב','5 תפקידים חסומים'] },
+};
+
 function renderStory(key) {
   const el = document.getElementById('scenario-story');
   if (!key || !STORY[key]) { el.classList.remove('visible'); return; }
-  const s = STORY[key];
+  const s  = STORY[key];
+  const sm = SCENARIO_META[key] || {};
+  const kc = sm.kaba>=52?'var(--green)':sm.kaba>=47?'var(--olive2)':'var(--yellow)';
+  const tagsHtml = (sm.tags||[]).map(t=>`<span class="case-tag">${t}</span>`).join('');
   el.classList.add('visible');
   el.innerHTML = `
-    <div class="story-inner">
-      <div class="story-profile">
-        <div class="story-soldier">👤 ${s.soldier}</div>
-        <div class="story-bio">${s.bio}</div>
+    <div class="case-header">
+      <div class="case-avatar">${sm.avatar||'👤'}</div>
+      <div style="flex:1;">
+        <div class="case-name">${s.soldier.split(',')[0]}</div>
+        <div class="case-sub">${s.soldier.split(',').slice(1).join(',').trim()}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+          <div class="case-tags">${tagsHtml}</div>
+          ${sm.kaba ? `<span style="font-size:0.72rem;font-weight:800;color:${kc};">קב"א ${sm.kaba}</span>` : ''}
+        </div>
       </div>
-      <div class="story-fits">
-        <div class="story-fit sf-primary">
-          <div class="sf-label">✅ תפקיד מומלץ ראשון</div>
-          <div class="sf-role">${s.primary.role}</div>
-          <div class="sf-text">${s.primary.text}</div>
-        </div>
-        <div class="story-fit sf-secondary">
-          <div class="sf-label">⚡ תפקיד שני / חלופה</div>
-          <div class="sf-role">${s.secondary.role}</div>
-          <div class="sf-text">${s.secondary.text}</div>
-        </div>
+      <div style="font-size:0.68rem;color:var(--text3);text-align:center;flex-shrink:0;padding-right:4px;">
+        🎖️ תיק מלש"ב<br><span style="color:var(--olive2);font-weight:700;">פעיל</span>
+      </div>
+    </div>
+    <div class="case-bio">${s.bio}</div>
+    <div class="case-recs">
+      <div class="case-rec cr-primary">
+        <div class="cr-label">✅ המלצה ראשונה</div>
+        <div class="cr-role">${s.primary.role}</div>
+        <div class="cr-text">${s.primary.text}</div>
+      </div>
+      <div class="case-rec cr-secondary">
+        <div class="cr-label">⚡ חלופה / תרחיש שני</div>
+        <div class="cr-role">${s.secondary.role}</div>
+        <div class="cr-text">${s.secondary.text}</div>
       </div>
     </div>`;
 }
@@ -1879,6 +2095,21 @@ function runOptimization() {
 }
 
 /* =====================================================
+   FLOW GUIDE UPDATE
+===================================================== */
+function updateFlowGuide() {
+  const steps = ['flow-1','flow-2','flow-3','flow-4'];
+  const done  = activeScenario ? 1 : 0;
+  const done2 = selected ? 2 : 0;
+  const progress = Math.max(done, done2);
+  steps.forEach((id,i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'flow-step' + (i < progress ? ' fs-done' : i === progress ? ' fs-next' : '');
+  });
+}
+
+/* =====================================================
    UPDATE LOOP
 ===================================================== */
 function update() {
@@ -1888,6 +2119,7 @@ function update() {
   renderEngine();
   renderStrategic();
   renderMatrix();
+  updateFlowGuide();
 }
 
 // Init
