@@ -868,6 +868,38 @@
 
     /* ─── SCENARIO LABELS ─── */
     .sc-kaba { font-size: 0.6rem; color: var(--olive2); font-weight: 700; margin-top: 1px; }
+
+    /* ─── BATCH OVERVIEW ─── */
+    .batch-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .batch-table th {
+      text-align: right; padding: 7px 10px;
+      font-size: 0.63rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .08em;
+      border-bottom: 2px solid var(--border); white-space: nowrap;
+    }
+    .batch-table td {
+      padding: 9px 10px; border-bottom: 1px solid var(--border2);
+      vertical-align: middle; white-space: nowrap;
+    }
+    .batch-row { cursor: pointer; transition: background .15s; }
+    .batch-row:hover { background: var(--bg3); }
+    .batch-active { background: var(--olive-glow) !important; border-right: 3px solid var(--olive2); }
+    .batch-table tr:last-child td { border-bottom: none; }
+    .batch-avail { display: flex; gap: 3px; align-items: center; margin-top: 3px; }
+    .b-dot { width: 9px; height: 9px; border-radius: 2px; }
+    .batch-vs {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      background: var(--bg3); border-radius: 8px; padding: 8px 14px;
+      margin-bottom: 12px; font-size: 0.75rem;
+    }
+    .batch-vs-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .batch-vs-num { font-size: 1.2rem; font-weight: 900; line-height: 1; }
+    .batch-vs-lbl { font-size: 0.62rem; color: var(--text3); }
+    .batch-vs-sep { font-size: 1.2rem; color: var(--text3); }
+    @media (max-width: 600px) {
+      .batch-table { font-size: 0.7rem; }
+      .batch-table td, .batch-table th { padding: 6px 7px; }
+    }
   </style>
 </head>
 <body>
@@ -938,6 +970,52 @@
 <div id="scenario-story" class="case-card"></div>
 
 <main class="main">
+
+  <!-- ── BATCH OVERVIEW ── -->
+  <div class="card mb-16" id="batch-card">
+    <div class="card-head">
+      <div class="card-icon ci-green">📊</div>
+      <div>
+        <div class="card-title">סריקה מהירה — כל המועמדים בבת אחת</div>
+        <div class="card-sub">לחץ על שורה לניתוח מלא | ⚡ 6 × 6 = 36 חישובים במקביל</div>
+      </div>
+      <div style="margin-left:auto;">
+        <div class="batch-vs">
+          <div class="batch-vs-item">
+            <span class="batch-vs-num" style="color:var(--red);">90 דק'</span>
+            <span class="batch-vs-lbl">ידני (6 × 15)</span>
+          </div>
+          <span class="batch-vs-sep">→</span>
+          <div class="batch-vs-item">
+            <span class="batch-vs-num" style="color:var(--green);">0.003 שנ'</span>
+            <span class="batch-vs-lbl">עם המנוע</span>
+          </div>
+          <span class="batch-vs-sep" style="color:var(--olive2);">✕</span>
+          <div class="batch-vs-item">
+            <span class="batch-vs-num" style="color:var(--olive2);">×1,800,000</span>
+            <span class="batch-vs-lbl">יחס מהירות</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="batch-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>מועמד</th>
+            <th>פרופיל</th>
+            <th>קב"א</th>
+            <th>המלצה מיטבית</th>
+            <th>ציון</th>
+            <th>תפקידים זמינים</th>
+            <th>סטטוס</th>
+          </tr>
+        </thead>
+        <tbody id="batch-tbody"><!-- JS --></tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- TOP ROW: Candidate + Roles -->
   <div class="grid-top">
@@ -2140,6 +2218,62 @@ function runOptimization() {
 }
 
 /* =====================================================
+   BATCH OVERVIEW
+===================================================== */
+function renderBatchOverview() {
+  const tbody = document.getElementById('batch-tbody');
+  if (!tbody) return;
+  const saved = {...C};
+
+  const rows = Object.entries(SCENARIOS).map(([key, sc]) => {
+    Object.assign(C, {dapar:sc.dapar, medical:sc.medical, tech:sc.tech,
+                      manila:sc.manila, mental:sc.mental, combat:sc.combat});
+    const results = ROLES.map(role => ({role, ...placementScore(role)}));
+    const unblocked = results.filter(r => !r.blocked);
+    const best = unblocked.sort((a,b) => b.score - a.score)[0];
+    const availCount = unblocked.length;
+    Object.assign(C, saved);
+
+    const sm = SCENARIO_META[key] || {};
+    const st = STORY[key] || {};
+    const name = (st.soldier || '').split(',')[0] || key;
+    const bestScore = best?.score ?? 0;
+    const scoreColor = bestScore >= 80 ? 'var(--green)' : bestScore >= 60 ? 'var(--yellow)' : 'var(--red)';
+    const kc = (sm.kaba||44) >= 52 ? 'var(--green)' : (sm.kaba||44) >= 47 ? 'var(--olive2)' : 'var(--yellow)';
+    const statusIcon = bestScore >= 80 ? '✅' : bestScore >= 60 ? '⚠️' : '❌';
+    const isActive = activeScenario === key;
+
+    // dots for available/blocked roles
+    const dots = ROLES.map((role, i) => {
+      const r = results[i];
+      const col = r.blocked ? 'var(--border2)' : r.score >= 80 ? 'var(--green)' : r.score >= 60 ? 'var(--yellow)' : 'var(--red)';
+      const title = r.blocked ? `${role.name}: חסום` : `${role.name}: ${r.score}`;
+      return `<div class="b-dot" style="background:${col}" title="${title}"></div>`;
+    }).join('');
+
+    return `
+      <tr class="batch-row${isActive ? ' batch-active' : ''}" onclick="loadDemo('${key}')">
+        <td style="font-size:1.3rem;">${sm.avatar || '👤'}</td>
+        <td><strong>${name}</strong></td>
+        <td style="font-weight:700;color:${sc.medical>=82?'var(--green)':sc.medical>=64?'var(--yellow)':'var(--red)'};">${sc.medical}</td>
+        <td style="font-weight:800;color:${kc};">${sm.kaba || '—'}</td>
+        <td style="font-weight:700;">${best ? `${best.role.emoji} ${best.role.name.split('—')[0].trim()}` : '<span style="color:var(--red)">⛔ אין שיבוץ</span>'}</td>
+        <td style="font-size:1.1rem;font-weight:900;color:${scoreColor};">${bestScore || '—'}</td>
+        <td>
+          <div style="font-size:0.8rem;font-weight:700;color:${availCount>=4?'var(--green)':availCount>=2?'var(--yellow)':'var(--red)'};">
+            ${availCount}/${ROLES.length}
+          </div>
+          <div class="batch-avail">${dots}</div>
+        </td>
+        <td style="font-size:1.1rem;">${statusIcon}</td>
+      </tr>`;
+  });
+
+  Object.assign(C, saved);
+  tbody.innerHTML = rows.join('');
+}
+
+/* =====================================================
    FLOW GUIDE UPDATE
 ===================================================== */
 function updateFlowGuide() {
@@ -2165,6 +2299,7 @@ function update() {
   renderStrategic();
   renderMatrix();
   updateFlowGuide();
+  renderBatchOverview();
 }
 
 // Init
