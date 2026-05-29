@@ -887,15 +887,28 @@
     .batch-table tr:last-child td { border-bottom: none; }
     .batch-avail { display: flex; gap: 3px; align-items: center; margin-top: 3px; }
     .b-dot { width: 9px; height: 9px; border-radius: 2px; }
-    .batch-vs {
-      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-      background: var(--bg3); border-radius: 8px; padding: 8px 14px;
-      margin-bottom: 12px; font-size: 0.75rem;
+    .batch-conflict { background: rgba(251,191,36,.07) !important; }
+    .batch-conflict td:first-child::before {
+      content: '⚠️'; font-size: 0.7rem; margin-left: 4px;
     }
-    .batch-vs-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .batch-vs-num { font-size: 1.2rem; font-weight: 900; line-height: 1; }
-    .batch-vs-lbl { font-size: 0.62rem; color: var(--text3); }
-    .batch-vs-sep { font-size: 1.2rem; color: var(--text3); }
+    .urgency-bar {
+      height: 4px; border-radius: 2px; margin-top: 3px;
+      background: var(--border2); overflow: hidden; width: 60px;
+    }
+    .urgency-fill { height: 100%; border-radius: 2px; }
+    .batch-summary {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      background: var(--bg3); border-radius: 8px; padding: 9px 14px;
+      margin-top: 10px; font-size: 0.73rem; align-items: center;
+    }
+    .bsum-item { display: flex; flex-direction: column; gap: 1px; }
+    .bsum-num { font-size: 1.05rem; font-weight: 900; }
+    .bsum-lbl { font-size: 0.6rem; color: var(--text3); }
+    .conflict-note {
+      font-size: 0.7rem; color: var(--yellow); margin-top: 8px;
+      background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.25);
+      border-radius: 6px; padding: 6px 10px;
+    }
     @media (max-width: 600px) {
       .batch-table { font-size: 0.7rem; }
       .batch-table td, .batch-table th { padding: 6px 7px; }
@@ -979,24 +992,6 @@
         <div class="card-title">סריקה מהירה — כל המועמדים בבת אחת</div>
         <div class="card-sub">לחץ על שורה לניתוח מלא | ⚡ 6 × 6 = 36 חישובים במקביל</div>
       </div>
-      <div style="margin-left:auto;">
-        <div class="batch-vs">
-          <div class="batch-vs-item">
-            <span class="batch-vs-num" style="color:var(--red);">90 דק'</span>
-            <span class="batch-vs-lbl">ידני (6 × 15)</span>
-          </div>
-          <span class="batch-vs-sep">→</span>
-          <div class="batch-vs-item">
-            <span class="batch-vs-num" style="color:var(--green);">0.003 שנ'</span>
-            <span class="batch-vs-lbl">עם המנוע</span>
-          </div>
-          <span class="batch-vs-sep" style="color:var(--olive2);">✕</span>
-          <div class="batch-vs-item">
-            <span class="batch-vs-num" style="color:var(--olive2);">×1,800,000</span>
-            <span class="batch-vs-lbl">יחס מהירות</span>
-          </div>
-        </div>
-      </div>
     </div>
     <div style="overflow-x:auto;">
       <table class="batch-table">
@@ -1007,12 +1002,14 @@
             <th>פרופיל</th>
             <th>קב"א</th>
             <th>המלצה מיטבית</th>
-            <th>ציון</th>
-            <th>תפקידים זמינים</th>
-            <th>סטטוס</th>
+            <th>התאמה</th>
+            <th>דחיפות תקן</th>
+            <th>ציון הוליסטי</th>
+            <th>זמין</th>
           </tr>
         </thead>
         <tbody id="batch-tbody"><!-- JS --></tbody>
+        <tfoot id="batch-tfoot"><!-- JS --></tfoot>
       </table>
     </div>
   </div>
@@ -2222,55 +2219,112 @@ function runOptimization() {
 ===================================================== */
 function renderBatchOverview() {
   const tbody = document.getElementById('batch-tbody');
+  const tfoot = document.getElementById('batch-tfoot');
   if (!tbody) return;
   const saved = {...C};
 
-  const rows = Object.entries(SCENARIOS).map(([key, sc]) => {
+  // ── compute all rows ──
+  const data = Object.entries(SCENARIOS).map(([key, sc]) => {
     Object.assign(C, {dapar:sc.dapar, medical:sc.medical, tech:sc.tech,
                       manila:sc.manila, mental:sc.mental, combat:sc.combat});
-    const results = ROLES.map(role => ({role, ...placementScore(role)}));
-    const unblocked = results.filter(r => !r.blocked);
-    const best = unblocked.sort((a,b) => b.score - a.score)[0];
-    const availCount = unblocked.length;
+    const results   = ROLES.map(role => ({role, ...placementScore(role)}));
+    const unblocked = results.filter(r => !r.blocked).sort((a,b) => b.score - a.score);
+    const best      = unblocked[0];
+    const fitScore  = best?.score ?? 0;
+    const rm        = best ? (ROLE_META[best.role.id] || {miluy:50, teken:0}) : {miluy:50, teken:0};
+    const urgency   = best ? (100 - rm.miluy) : 0;
+    const holistic  = best ? Math.round(fitScore * 0.55 + urgency * 0.45) : 0;
     Object.assign(C, saved);
+    return { key, sc, best, fitScore, urgency, holistic, rm,
+             availCount: unblocked.length, results,
+             roleId: best?.role.id || null };
+  });
+  Object.assign(C, saved);
 
-    const sm = SCENARIO_META[key] || {};
-    const st = STORY[key] || {};
-    const name = (st.soldier || '').split(',')[0] || key;
-    const bestScore = best?.score ?? 0;
-    const scoreColor = bestScore >= 80 ? 'var(--green)' : bestScore >= 60 ? 'var(--yellow)' : 'var(--red)';
-    const kc = (sm.kaba||44) >= 52 ? 'var(--green)' : (sm.kaba||44) >= 47 ? 'var(--olive2)' : 'var(--yellow)';
-    const statusIcon = bestScore >= 80 ? '✅' : bestScore >= 60 ? '⚠️' : '❌';
-    const isActive = activeScenario === key;
+  // ── detect conflicts (2+ candidates pointing at same best role) ──
+  const roleCounts = {};
+  data.forEach(d => { if (d.roleId) roleCounts[d.roleId] = (roleCounts[d.roleId]||0)+1; });
+  const conflictRoles = new Set(Object.entries(roleCounts).filter(([,c])=>c>1).map(([id])=>id));
 
-    // dots for available/blocked roles
+  // ── render rows ──
+  tbody.innerHTML = data.map(d => {
+    const sm  = SCENARIO_META[d.key] || {};
+    const st  = STORY[d.key] || {};
+    const name = (st.soldier||'').split(',')[0] || d.key;
+    const isActive    = activeScenario === d.key;
+    const hasConflict = conflictRoles.has(d.roleId);
+    const kc     = (sm.kaba||44)>=52?'var(--green)':(sm.kaba||44)>=47?'var(--olive2)':'var(--yellow)';
+    const fitCol = d.fitScore>=80?'var(--green)':d.fitScore>=60?'var(--yellow)':'var(--red)';
+    const hCol   = d.holistic>=70?'var(--green)':d.holistic>=50?'var(--yellow)':'var(--red)';
+    const urgCol = d.urgency>60?'var(--red)':d.urgency>30?'var(--yellow)':'var(--green)';
+    const pCol   = d.sc.medical>=82?'var(--green)':d.sc.medical>=64?'var(--yellow)':'var(--red)';
+
     const dots = ROLES.map((role, i) => {
-      const r = results[i];
-      const col = r.blocked ? 'var(--border2)' : r.score >= 80 ? 'var(--green)' : r.score >= 60 ? 'var(--yellow)' : 'var(--red)';
-      const title = r.blocked ? `${role.name}: חסום` : `${role.name}: ${r.score}`;
-      return `<div class="b-dot" style="background:${col}" title="${title}"></div>`;
+      const r   = d.results[i];
+      const col = r.blocked ? 'var(--border2)' : r.score>=80?'var(--green)':r.score>=60?'var(--yellow)':'var(--red)';
+      return `<div class="b-dot" style="background:${col}" title="${role.name}: ${r.blocked?'חסום':r.score}"></div>`;
     }).join('');
 
+    const rowClass = ['batch-row', isActive?'batch-active':'', hasConflict?'batch-conflict':''].filter(Boolean).join(' ');
+
     return `
-      <tr class="batch-row${isActive ? ' batch-active' : ''}" onclick="loadDemo('${key}')">
-        <td style="font-size:1.3rem;">${sm.avatar || '👤'}</td>
+      <tr class="${rowClass}" onclick="loadDemo('${d.key}')">
+        <td style="font-size:1.3rem;padding-right:12px;">${sm.avatar||'👤'}</td>
         <td><strong>${name}</strong></td>
-        <td style="font-weight:700;color:${sc.medical>=82?'var(--green)':sc.medical>=64?'var(--yellow)':'var(--red)'};">${sc.medical}</td>
-        <td style="font-weight:800;color:${kc};">${sm.kaba || '—'}</td>
-        <td style="font-weight:700;">${best ? `${best.role.emoji} ${best.role.name.split('—')[0].trim()}` : '<span style="color:var(--red)">⛔ אין שיבוץ</span>'}</td>
-        <td style="font-size:1.1rem;font-weight:900;color:${scoreColor};">${bestScore || '—'}</td>
+        <td style="font-weight:700;color:${pCol};">${d.sc.medical}</td>
+        <td style="font-weight:800;color:${kc};">${sm.kaba||'—'}</td>
+        <td style="font-weight:700;">
+          ${d.best
+            ? `${d.best.role.emoji} ${d.best.role.name.split('—')[0].trim()}${hasConflict?' <span style="color:var(--yellow);font-size:.65rem;" title="תחרות">⚠️</span>':''}`
+            : '<span style="color:var(--red)">⛔ אין שיבוץ</span>'}
+        </td>
+        <td style="font-weight:800;color:${fitCol};">${d.fitScore||'—'}</td>
         <td>
-          <div style="font-size:0.8rem;font-weight:700;color:${availCount>=4?'var(--green)':availCount>=2?'var(--yellow)':'var(--red)'};">
-            ${availCount}/${ROLES.length}
-          </div>
+          <span style="font-weight:800;color:${urgCol};">${d.urgency}%</span>
+          <div class="urgency-bar"><div class="urgency-fill" style="width:${d.urgency}%;background:${urgCol};"></div></div>
+          <div style="font-size:0.58rem;color:var(--text3);">תקן: ${d.rm.teken||'—'}</div>
+        </td>
+        <td style="font-size:1.15rem;font-weight:900;color:${hCol};">${d.holistic||'—'}</td>
+        <td>
+          <div style="font-size:0.78rem;font-weight:700;color:${d.availCount>=4?'var(--green)':d.availCount>=2?'var(--yellow)':'var(--red)'};">${d.availCount}/${ROLES.length}</div>
           <div class="batch-avail">${dots}</div>
         </td>
-        <td style="font-size:1.1rem;">${statusIcon}</td>
       </tr>`;
-  });
+  }).join('');
 
-  Object.assign(C, saved);
-  tbody.innerHTML = rows.join('');
+  // ── summary footer ──
+  if (!tfoot) return;
+  const valid = data.filter(d => d.holistic > 0);
+  const avgFit  = valid.length ? Math.round(valid.reduce((s,d)=>s+d.fitScore,0)/valid.length) : 0;
+  const avgUrg  = valid.length ? Math.round(valid.reduce((s,d)=>s+d.urgency,0)/valid.length) : 0;
+  const avgHol  = valid.length ? Math.round(valid.reduce((s,d)=>s+d.holistic,0)/valid.length) : 0;
+  const uniqR   = new Set(valid.map(d=>d.roleId)).size;
+  const hc      = avgHol>=70?'var(--green)':avgHol>=50?'var(--yellow)':'var(--red)';
+
+  const conflictNote = conflictRoles.size ? `
+    <div class="conflict-note">
+      ⚠️ <strong>קונפליקט:</strong>
+      ${[...conflictRoles].map(id=>{
+        const r = ROLES.find(r=>r.id===id);
+        const ns = data.filter(d=>d.roleId===id).map(d=>(STORY[d.key]||{}).soldier?.split(',')[0]||d.key);
+        return `${r?.emoji||''} ${r?.name?.split('—')[0].trim()||id} — ${ns.join(' ו-')}`;
+      }).join(' | ')}
+      → לחץ "הרץ אופטימיזציה" לפתרון אוטומטי
+    </div>` : '';
+
+  tfoot.innerHTML = `<tr><td colspan="9" style="padding:8px 10px 4px;">
+    <div class="batch-summary">
+      <div class="bsum-item"><span class="bsum-num" style="color:var(--text2);">${avgFit}</span><span class="bsum-lbl">ממוצע התאמה</span></div>
+      <span style="color:var(--border2);font-size:1rem;">+</span>
+      <div class="bsum-item"><span class="bsum-num" style="color:var(--yellow);">${avgUrg}%</span><span class="bsum-lbl">ממוצע דחיפות</span></div>
+      <span style="color:var(--border2);font-size:1rem;">=</span>
+      <div class="bsum-item"><span class="bsum-num" style="color:${hc};">${avgHol}</span><span class="bsum-lbl">הוליסטי ממוצע</span></div>
+      <div style="width:1px;height:28px;background:var(--border);margin:0 6px;"></div>
+      <div class="bsum-item"><span class="bsum-num" style="color:var(--blue);">${uniqR}/6</span><span class="bsum-lbl">תפקידים שונים</span></div>
+      <div style="font-size:0.65rem;color:var(--text3);margin-right:auto;">הוליסטי = התאמה ×55% + דחיפות תקן ×45%</div>
+    </div>
+    ${conflictNote}
+  </td></tr>`;
 }
 
 /* =====================================================
