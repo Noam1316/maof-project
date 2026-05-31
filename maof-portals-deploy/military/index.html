@@ -873,6 +873,22 @@
     .eng-dec-body { flex: 1; }
     .eng-dec-body strong { color: var(--text); }
 
+    /* ─── OFFICER POTENTIAL ─── */
+    .officer-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 8px 12px; margin-top: 10px;
+    }
+    .officer-left { display: flex; flex-direction: column; gap: 2px; }
+    .officer-title { font-size: 0.65rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; }
+    .officer-formula { font-size: 0.6rem; color: var(--text3); }
+    .officer-right { display: flex; align-items: baseline; gap: 6px; }
+    .officer-num { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+    .officer-lbl { font-size: 0.68rem; font-weight: 700; }
+    .officer-bar-wrap { margin-top: 4px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+    .officer-bar-inner { height: 100%; border-radius: 2px; transition: width .4s ease, background .3s; }
+    .officer-block-note { font-size: 0.6rem; color: var(--red); margin-top: 4px; }
+
     /* ─── SCENARIO LABELS ─── */
     .sc-kaba { font-size: 0.6rem; color: var(--olive2); font-weight: 700; margin-top: 1px; }
 
@@ -1118,6 +1134,22 @@
             <span class="kaba-num" id="kaba-num" style="color:var(--olive2);">48</span>
             <span class="kaba-label-txt" id="kaba-lbl" style="color:var(--olive2);">מעל הממוצע</span>
           </div>
+        </div>
+      </div>
+
+      <!-- OFFICER POTENTIAL -->
+      <div class="officer-row" id="officer-row">
+        <div class="officer-left">
+          <div class="officer-title">⭐ סיכוי יציאה לקצונה</div>
+          <div class="officer-formula">דפ"ר 40% · מנטלי 30% · מניל"ה 20% · לחימה 10% | פרופיל 72+ = שער</div>
+          <div class="officer-bar-wrap" style="width:140px;">
+            <div class="officer-bar-inner" id="officer-bar" style="width:50%;background:var(--olive2);"></div>
+          </div>
+          <div class="officer-block-note" id="officer-block" style="display:none;"></div>
+        </div>
+        <div class="officer-right">
+          <span class="officer-num" id="officer-num" style="color:var(--olive2);">65</span>
+          <span class="officer-lbl" id="officer-lbl" style="color:var(--olive2);">בינוני</span>
         </div>
       </div>
 
@@ -1483,6 +1515,53 @@ function renderCandidateScore() {
   document.getElementById('kaba-bar').style.width = kPct + '%';
   document.getElementById('kaba-bar').style.background = kc;
   document.getElementById('kaba-row').style.borderColor = kc.replace('var(--','').replace(')','');
+
+  // officer potential
+  renderOfficerPotential();
+}
+
+function officerScore() {
+  const raw = Math.round(C.dapar*0.40 + C.mental*0.30 + C.manila*0.20 + C.combat*0.10);
+  const blocked = C.medical < 72;
+  const capped  = C.medical < 45;
+  if (capped) return { score: Math.min(raw, 15), blocked: true, reason: `פרופיל ${C.medical} — קורס קצינים דורש 72+` };
+  if (blocked) return { score: Math.min(raw, 35), blocked: true, reason: `פרופיל ${C.medical} — קורס קצינים דורש 72+` };
+  return { score: raw, blocked: false, reason: '' };
+}
+
+function officerLabel(s, blocked) {
+  if (blocked) return 'חסום';
+  if (s >= 75) return 'גבוה';
+  if (s >= 60) return 'בינוני';
+  if (s >= 45) return 'נמוך';
+  return 'לא צפוי';
+}
+
+function officerColor(s, blocked) {
+  if (blocked) return 'var(--red)';
+  if (s >= 75) return 'var(--green)';
+  if (s >= 60) return 'var(--yellow)';
+  return 'var(--red)';
+}
+
+function renderOfficerPotential() {
+  const o = officerScore();
+  const oc = officerColor(o.score, o.blocked);
+  const ol = officerLabel(o.score, o.blocked);
+  document.getElementById('officer-num').textContent = o.score;
+  document.getElementById('officer-num').style.color = oc;
+  document.getElementById('officer-lbl').textContent = ol;
+  document.getElementById('officer-lbl').style.color = oc;
+  document.getElementById('officer-bar').style.width = o.score + '%';
+  document.getElementById('officer-bar').style.background = oc;
+  document.getElementById('officer-row').style.borderColor = oc.includes('var(') ? '' : oc;
+  const blockEl = document.getElementById('officer-block');
+  if (o.blocked) {
+    blockEl.style.display = 'block';
+    blockEl.textContent = '⛔ ' + o.reason;
+  } else {
+    blockEl.style.display = 'none';
+  }
 }
 
 function renderRolesGrid() {

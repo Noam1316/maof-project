@@ -97,6 +97,19 @@ header{
 .kaba-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:3px;width:120px;}
 .kaba-bar-fill{height:100%;border-radius:3px;transition:width .45s ease;}
 
+/* ── Officer Potential ── */
+.officer-badge{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:8px;padding:8px 12px;
+}
+.officer-score-num{font-size:1.65rem;font-weight:900;line-height:1;}
+.officer-right-col{display:flex;flex-direction:column;gap:2px;}
+.officer-label{font-size:0.65rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;}
+.officer-sub{font-size:0.6rem;color:var(--text3);line-height:1.35;}
+.officer-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:3px;width:120px;}
+.officer-bar-fill{height:100%;border-radius:3px;transition:width .45s ease;}
+
 .stats{display:flex;flex-direction:column;gap:8px;}
 .stat{display:flex;flex-direction:column;gap:3px;}
 .stat-row{display:flex;justify-content:space-between;font-size:0.75rem;}
@@ -639,6 +652,19 @@ header{
       </div>
     </div>
 
+    <!-- סיכוי קצונה -->
+    <div class="officer-badge" id="officer-badge">
+      <div class="officer-score-num" id="officer-score-num" style="color:var(--olive2);">—</div>
+      <div class="officer-right-col">
+        <div class="officer-label">סיכוי קצונה</div>
+        <div class="officer-sub" id="officer-sub">דפ"ר 40% · מנטלי 30% · מניל"ה 20% · לחימה 10%</div>
+        <div class="officer-bar">
+          <div class="officer-bar-fill" id="officer-bar-fill" style="width:0%;background:var(--olive2);"></div>
+        </div>
+        <div id="officer-block" style="font-size:0.6rem;color:var(--red);margin-top:3px;display:none;"></div>
+      </div>
+    </div>
+
     <div class="stats" id="stats"><!-- JS --></div>
 
     <hr class="divider">
@@ -799,6 +825,51 @@ function kabaBarW(k){ return Math.round(Math.max(0,Math.min(1,(k-41)/15))*100)+'
 function kabaColor(k){ return k>=52?'#4ade80':k>=47?'#fbbf24':'#f87171'; }
 function kabaLabel(k){ return k>=52?'גבוה מאוד':k>=47?'מעל הממוצע':'ממוצע–נמוך'; }
 
+/* ─────────────────────────────────────────
+   OFFICER POTENTIAL
+───────────────────────────────────────── */
+function officerScore(s) {
+  const raw = Math.round(s.dapar*0.40 + s.mental*0.30 + s.manila*0.20 + s.combat*0.10);
+  const blocked = s.medical < 72;
+  const capped  = s.medical < 45;
+  if (capped)  return { score: Math.min(raw, 15), blocked: true, reason: `פרופיל ${s.medical} — קורס קצינים דורש 72+` };
+  if (blocked) return { score: Math.min(raw, 35), blocked: true, reason: `פרופיל ${s.medical} — קורס קצינים דורש 72+` };
+  return { score: raw, blocked: false, reason: '' };
+}
+function officerLabel(s, blocked) {
+  if (blocked) return 'חסום';
+  if (s >= 75) return 'גבוה';
+  if (s >= 60) return 'בינוני';
+  if (s >= 45) return 'נמוך';
+  return 'לא צפוי';
+}
+function officerColor(s, blocked) {
+  if (blocked) return '#f87171';
+  if (s >= 75) return '#4ade80';
+  if (s >= 60) return '#fbbf24';
+  return '#f87171';
+}
+function renderOfficer(s) {
+  const o  = officerScore(s);
+  const oc = officerColor(o.score, o.blocked);
+  const ol = officerLabel(o.score, o.blocked);
+  document.getElementById('officer-score-num').textContent = o.score;
+  document.getElementById('officer-score-num').style.color = oc;
+  document.getElementById('officer-badge').style.borderColor = oc + '44';
+  const obf = document.getElementById('officer-bar-fill');
+  obf.style.width = o.score + '%';
+  obf.style.background = oc;
+  document.getElementById('officer-sub').innerHTML =
+    `דפ"ר 40% · מנטלי 30% · מניל"ה 20% · לחימה 10%<br><span style="color:${oc};font-weight:700;">${ol}</span>`;
+  const blockEl = document.getElementById('officer-block');
+  if (o.blocked) {
+    blockEl.style.display = 'block';
+    blockEl.textContent = '⛔ ' + o.reason;
+  } else {
+    blockEl.style.display = 'none';
+  }
+}
+
 function render(sc){
   const s = SCENARIOS[sc];
 
@@ -822,6 +893,9 @@ function render(sc){
   // update sub label
   document.querySelector('.kaba-sub').innerHTML =
     `דפ"ר 50% · השכלה 17% · ראיון 33%<br><span style="color:${kc};font-weight:700;">${kabaLabel(s.kaba)}</span> · סקאלה 41–56`;
+
+  // Officer Potential
+  renderOfficer(s);
 
   // Stats (without kaba — shown above)
   const profileLabel = PROFILE_LABELS[s.medical] ?? '—';
