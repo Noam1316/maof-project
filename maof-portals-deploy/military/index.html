@@ -889,6 +889,24 @@
     .officer-bar-inner { height: 100%; border-radius: 2px; transition: width .4s ease, background .3s; }
     .officer-block-note { font-size: 0.6rem; color: var(--red); margin-top: 4px; }
 
+    /* ─── Preferences & Priority Courses ─── */
+    .pref-priority-row{display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--text2);margin-top:2px;}
+    .pp-label{font-size:0.6rem;color:var(--text3);font-weight:700;min-width:44px;}
+    .pp-match{color:var(--green);font-weight:700;}
+    .priority-pill{
+      display:inline-flex;align-items:center;gap:3px;
+      font-size:0.58rem;font-weight:700;
+      padding:2px 6px;border-radius:4px;
+      background:rgba(96,165,250,.1);color:var(--blue);
+      border:1px solid rgba(96,165,250,.25);
+    }
+    .priority-none{font-size:0.6rem;color:var(--text3);font-style:italic;}
+    .act-tag{font-size:0.52rem;font-weight:700;padding:1px 4px;border-radius:3px;margin-right:3px;white-space:nowrap;}
+    .act-high{background:rgba(248,113,113,.15);color:var(--red);}
+    .act-med{background:rgba(251,191,36,.1);color:var(--yellow);}
+    .act-low{background:rgba(74,222,128,.1);color:var(--green);}
+    .pref-heart{font-size:0.5rem;margin-right:2px;opacity:0.8;}
+
     /* ─── SCENARIO LABELS ─── */
     .sc-kaba { font-size: 0.6rem; color: var(--olive2); font-weight: 700; margin-top: 1px; }
 
@@ -1567,11 +1585,15 @@ function renderOfficerPotential() {
 function renderRolesGrid() {
   const grid = document.getElementById('roles-grid');
   grid.innerHTML = '';
+  const sc = activeScenario ? SCENARIOS[activeScenario] : null;
   ROLES.forEach(role => {
     const {score, blocked} = placementScore(role);
     const cls = scoreClass(score, blocked);
     const badgeCls = `rcb-${cls}`;
     const badgeText = blocked ? 'חסום' : score;
+    const act = ACTIVITY[role.id]||{label:'—',cls:'act-med'};
+    const prefIdx = sc ? (sc.pref||[]).indexOf(role.id) : -1;
+    const prefTag = prefIdx===0?'<span class="pref-heart">❤️</span>':prefIdx===1?'<span class="pref-heart">🔵</span>':'';
 
     const el = document.createElement('div');
     el.className = 'role-card' + (selected?.id === role.id ? ' active' : '');
@@ -1583,7 +1605,7 @@ function renderRolesGrid() {
       <div class="rc-top">
         <div class="rc-emoji">${role.emoji}</div>
         <div>
-          <div class="rc-name">${role.name}</div>
+          <div class="rc-name">${prefTag}${role.name} <span class="act-tag ${act.cls}">${act.label}</span></div>
           <div class="rc-desc">${role.desc}</div>
         </div>
       </div>
@@ -1971,19 +1993,49 @@ function renderMatrix() {
 /* =====================================================
    DEMO SCENARIOS
 ===================================================== */
+/* ── Activity Level per unit ── */
+const ACTIVITY = {
+  admin:{label:'נמוך',cls:'act-low',mult:0.8},
+  intel:{label:'בינוני',cls:'act-med',mult:1.0},
+  product:{label:'נמוך',cls:'act-low',mult:0.8},
+  elint:{label:'גבוה',cls:'act-high',mult:1.3},
+  elite:{label:'גבוה',cls:'act-high',mult:1.3},
+  cyber:{label:'בינוני',cls:'act-med',mult:1.0},
+};
+
+/* ── Priority Courses ── */
+const PRIORITY_COURSES = [
+  {id:'pilot',   name:'מיון לטייס',   emoji:'✈️', thresh:{medical:97, kaba:48, mental:85, combat:80}},
+  {id:'aman',    name:'קצינים אמ"ן',  emoji:'🔭', thresh:{medical:72, dapar:80, mental:70, kaba:50}},
+  {id:'talpiot', name:'תלפיות',       emoji:'🎓', thresh:{medical:72, dapar:88, tech:85, kaba:52}},
+];
+
+function checkPriorityCourses(sc, kaba){
+  return PRIORITY_COURSES.map(pc=>{
+    const fails=[];
+    if(pc.thresh.medical && sc.medical < pc.thresh.medical) fails.push(`פרופיל ${sc.medical}<${pc.thresh.medical}`);
+    if(pc.thresh.dapar   && sc.dapar   < pc.thresh.dapar)   fails.push(`דפ"ר ${sc.dapar}<${pc.thresh.dapar}`);
+    if(pc.thresh.tech    && sc.tech    < pc.thresh.tech)     fails.push(`טכנולוגי ${sc.tech}<${pc.thresh.tech}`);
+    if(pc.thresh.mental  && sc.mental  < pc.thresh.mental)   fails.push(`מנטלי ${sc.mental}<${pc.thresh.mental}`);
+    if(pc.thresh.combat  && sc.combat  < pc.thresh.combat)   fails.push(`לחימה ${sc.combat}<${pc.thresh.combat}`);
+    if(pc.thresh.kaba    && kaba       < pc.thresh.kaba)     fails.push(`קב"א ${kaba}<${pc.thresh.kaba}`);
+    return {id:pc.id, name:pc.name, emoji:pc.emoji, eligible:fails.length===0, reason:fails[0]||''};
+  });
+}
+
 const SCENARIOS = {
   // א' — tech profile, temporary medical limitation
-  a: { dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30, role:'product' },
+  a: { dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30, role:'product', pref:['cyber','product'] },
   // ב' — elite fighter, weak in tech
-  b: { dapar:70, medical:97, tech:22, manila:65, mental:92, combat:96, role:'elite'   },
+  b: { dapar:70, medical:97, tech:22, manila:65, mental:92, combat:96, role:'elite',   pref:['elite','elint'] },
   // ג' — cyber genius 8200, zero combat background
-  c: { dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20, role:'cyber'   },
+  c: { dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20, role:'cyber',   pref:['cyber','product'] },
   // ד' — injured combat veteran, reassignment to desk role
-  d: { dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78, role:'admin'  },
+  d: { dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78, role:'admin',   pref:['elite','intel'] },
   // ה' — female combat candidate, passes elite thresholds
-  e: { dapar:70, medical:97, tech:30, manila:75, mental:88, combat:82, role:'elite'  },
+  e: { dapar:70, medical:97, tech:30, manila:75, mental:88, combat:82, role:'elite',   pref:['elite','intel'] },
   // ו' — periphery candidate, partial bagrut, IDF outreach program
-  f: { dapar:60, medical:82, tech:55, manila:70, mental:65, combat:45, role:'elint'  },
+  f: { dapar:60, medical:82, tech:55, manila:70, mental:65, combat:45, role:'elint',   pref:['intel','elint'] },
 };
 
 const STORY = {
@@ -2103,6 +2155,15 @@ function renderStory(key) {
   const sm = SCENARIO_META[key] || {};
   const kc = sm.kaba>=52?'var(--green)':sm.kaba>=47?'var(--olive2)':'var(--yellow)';
   const tagsHtml = (sm.tags||[]).map(t=>`<span class="case-tag">${t}</span>`).join('');
+  // Preferences and priority courses
+  const sc = SCENARIOS[key]||{};
+  const roleMap = {};
+  ROLES.forEach(r=>roleMap[r.id]={emoji:r.emoji, name:r.name});
+  const pref1 = roleMap[sc.pref?.[0]];
+  const pref2 = roleMap[sc.pref?.[1]];
+  const courses = checkPriorityCourses(sc, sm.kaba||0);
+  const eligible = courses.filter(c=>c.eligible);
+
   el.classList.add('visible');
   el.innerHTML = `
     <div class="case-header">
@@ -2113,6 +2174,14 @@ function renderStory(key) {
         <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
           <div class="case-tags">${tagsHtml}</div>
           ${sm.kaba ? `<span style="font-size:0.72rem;font-weight:800;color:${kc};">קב"א ${sm.kaba}</span>` : ''}
+        </div>
+        <div class="pref-priority-row" style="margin-top:6px;">
+          <span class="pp-label">העדפות</span>
+          <span>1️⃣ ${pref1?pref1.emoji+' '+pref1.name:'—'} · 2️⃣ ${pref2?pref2.emoji+' '+pref2.name:'—'}</span>
+        </div>
+        <div class="pref-priority-row">
+          <span class="pp-label">עדיפות</span>
+          ${eligible.length ? eligible.map(c=>`<span class="priority-pill">${c.emoji} ${c.name}</span>`).join('') : '<span class="priority-none">אין כשירות לקורסי עדיפות</span>'}
         </div>
       </div>
       <div style="font-size:0.68rem;color:var(--text3);text-align:center;flex-shrink:0;padding-right:4px;">

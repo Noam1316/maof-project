@@ -110,6 +110,26 @@ header{
 .officer-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:3px;width:120px;}
 .officer-bar-fill{height:100%;border-radius:3px;transition:width .45s ease;}
 
+/* ── Preferences & Priority Courses ── */
+.pref-priority{display:flex;flex-direction:column;gap:5px;font-size:0.7rem;}
+.pp-row{display:flex;align-items:center;gap:6px;color:var(--text2);}
+.pp-label{font-size:0.6rem;color:var(--text3);font-weight:700;min-width:44px;}
+.pp-match{color:var(--green);font-weight:700;}
+.priority-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;}
+.priority-pill{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:0.6rem;font-weight:700;
+  padding:2px 7px;border-radius:4px;
+  background:rgba(96,165,250,.1);color:var(--blue);
+  border:1px solid rgba(96,165,250,.25);
+}
+.priority-none{font-size:0.62rem;color:var(--text3);font-style:italic;}
+.act-tag{font-size:0.52rem;font-weight:700;padding:1px 5px;border-radius:3px;margin-right:3px;white-space:nowrap;}
+.act-high{background:rgba(248,113,113,.15);color:#f87171;}
+.act-med{background:rgba(251,191,36,.1);color:#fbbf24;}
+.act-low{background:rgba(74,222,128,.1);color:#4ade80;}
+.pref-heart{font-size:0.55rem;margin-right:3px;}
+
 .stats{display:flex;flex-direction:column;gap:8px;}
 .stat{display:flex;flex-direction:column;gap:3px;}
 .stat-row{display:flex;justify-content:space-between;font-size:0.75rem;}
@@ -665,6 +685,9 @@ header{
       </div>
     </div>
 
+    <!-- העדפות + קורסי עדיפות -->
+    <div class="pref-priority" id="pref-priority"><!-- JS --></div>
+
     <div class="stats" id="stats"><!-- JS --></div>
 
     <hr class="divider">
@@ -728,47 +751,77 @@ const ROLES = [
 
 // kaba = מדד קב"א (41–56): ציון האיכות הרשמי של אכ"א
 // נוסחה: דפ"ר 50% + השכלה 17% + ראיון 33%
+/* ── Activity Level per unit ── */
+const ACTIVITY = {
+  admin:  {label:'נמוך',  cls:'act-low',  mult:0.8},
+  intel:  {label:'בינוני',cls:'act-med',  mult:1.0},
+  product:{label:'נמוך',  cls:'act-low',  mult:0.8},
+  elint:  {label:'גבוה',  cls:'act-high', mult:1.3},
+  elite:  {label:'גבוה',  cls:'act-high', mult:1.3},
+  cyber:  {label:'בינוני',cls:'act-med',  mult:1.0},
+};
+
+/* ── Priority Courses ── */
+const PRIORITY_COURSES = [
+  {id:'pilot',   name:'מיון לטייס',   emoji:'✈️', thresh:{medical:97, kaba:48, mental:85, combat:80}},
+  {id:'aman',    name:'קצינים אמ"ן',  emoji:'🔭', thresh:{medical:72, dapar:80, mental:70, kaba:50}},
+  {id:'talpiot', name:'תלפיות',       emoji:'🎓', thresh:{medical:72, dapar:88, tech:85, kaba:52}},
+];
+
+function checkPriorityCourses(sc){
+  return PRIORITY_COURSES.map(pc=>{
+    const fails=[];
+    if(pc.thresh.medical && sc.medical < pc.thresh.medical) fails.push(`פרופיל ${sc.medical}<${pc.thresh.medical}`);
+    if(pc.thresh.dapar   && sc.dapar   < pc.thresh.dapar)   fails.push(`דפ"ר ${sc.dapar}<${pc.thresh.dapar}`);
+    if(pc.thresh.tech    && sc.tech    < pc.thresh.tech)     fails.push(`טכנולוגי ${sc.tech}<${pc.thresh.tech}`);
+    if(pc.thresh.mental  && sc.mental  < pc.thresh.mental)   fails.push(`מנטלי ${sc.mental}<${pc.thresh.mental}`);
+    if(pc.thresh.combat  && sc.combat  < pc.thresh.combat)   fails.push(`לחימה ${sc.combat}<${pc.thresh.combat}`);
+    if(pc.thresh.kaba    && sc.kaba    < pc.thresh.kaba)     fails.push(`קב"א ${sc.kaba}<${pc.thresh.kaba}`);
+    return {id:pc.id, name:pc.name, emoji:pc.emoji, eligible:fails.length===0, reason:fails[0]||''};
+  });
+}
+
 const SCENARIOS = {
   c:{
     avatar:'👨‍💻', name:'דניאל ש.', sub:'גיל 18 · מגמת CS · ממתין לגיוס',
     pill:{text:'מועמד 8200', bg:'rgba(96,165,250,.15)', col:'#60a5fa'},
-    kaba:54,  // דפ"ר 90 → תרומת דפ"ר גבוהה; בגרות מלאה; ראיון מצטיין
-    dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20,
+    kaba:54, dapar:90, medical:82, tech:90, manila:85, mental:78, combat:20,
+    pref:['cyber','product'],
     bio:['מגמת מדעי המחשב, ציון מגן 10/10','ניצח 3 תחרויות תכנות לאומיות','ניקוד כושר גופני נמוך — לא עסק בספורט קרבי'],
   },
   a:{
     avatar:'🧑‍💻', name:'אלון ב.', sub:'גיל 18 · מגמת הנדסת תוכנה · ממתין לגיוס',
     pill:{text:'מגבלה רפואית', bg:'rgba(251,191,36,.12)', col:'#fbbf24'},
-    kaba:53,  // דפ"ר 90 → זהה לדניאל; פרופיל 45 לא משפיע על קב"א
-    dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30,
+    kaba:53, dapar:90, medical:45, tech:85, manila:80, mental:75, combat:30,
+    pref:['cyber','product'],
     bio:['מגמת הנדסת תוכנה, פרויקטים עצמאיים ב-Python','פרופיל 45 — פציעת ספורט חולפת (לפני הגיוס)','מוטיבציה גבוהה לתפקיד טכנולוגי'],
   },
   d:{
     avatar:'🪖', name:'רן כ.', sub:'גיל 22 · שיבוץ מחדש',
     pill:{text:'לוחם פצוע', bg:'rgba(248,113,113,.12)', col:'#f87171'},
-    kaba:47,
-    dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78,
+    kaba:47, dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78,
+    pref:['elite','intel'],
     bio:['לוחם קרבי ותיק — 2 שנות מבצעים','נפצע בפעילות — שיבוץ מחדש','פרופיל 45, מנטלי 50 — לא מיועד לשטח'],
   },
   b:{
     avatar:'🪖', name:'יואב מ.', sub:'גיל 18 · ספורט קרבי · ממתין לגיוס',
     pill:{text:'לוחם עילית', bg:'rgba(74,222,128,.12)', col:'#4ade80'},
-    kaba:48,
-    dapar:70, medical:97, tech:22, manila:65, mental:92, combat:96,
+    kaba:48, dapar:70, medical:97, tech:22, manila:65, mental:92, combat:96,
+    pref:['elite','elint'],
     bio:['כושר גופני יוצא דופן — ספורט קרבי','מנטלי 92, לחימה 96 — מהגבוהים במערכת','רקע טכנולוגי מינימלי — לא עסק ב-STEM'],
   },
   e:{
     avatar:'👩', name:'מאיה ל.', sub:'גיל 18 · ספורטאית · ממתינה לגיוס',
     pill:{text:'לוחמת עילית', bg:'rgba(167,139,250,.12)', col:'#a78bfa'},
-    kaba:48,
-    dapar:70, medical:97, tech:30, manila:75, mental:88, combat:82,
+    kaba:48, dapar:70, medical:97, tech:30, manila:75, mental:88, combat:82,
+    pref:['elite','intel'],
     bio:['פרופיל 97, מנטלי 88, לחימה 82 — עוברת 3 ספי עילית','מגמת ספורט + קורסי הכנה קרביים','מ-547 לוחמות ב-2012 ל-5,200+ ב-2025'],
   },
   f:{
     avatar:'📚', name:'אמיר מ.', sub:'גיל 18 · באר שבע · ממתין לגיוס',
     pill:{text:'פריפריה — תוכנית ייעוד', bg:'rgba(251,191,36,.12)', col:'#fbbf24'},
-    kaba:44,
-    dapar:60, medical:82, tech:55, manila:70, mental:65, combat:45,
+    kaba:44, dapar:60, medical:82, tech:55, manila:70, mental:65, combat:45,
+    pref:['intel','elint'],
     bio:['בגרות חלקית (5 יח\') — פריפריה','תוכנית "ייעוד" אכ"א — העלתה קבלה לטכנולוגיה ב-22%','דפ"ר 60 חוסם 8200 ומנהל מוצר — המנוע מוצא חלופה'],
   },
 };
@@ -787,9 +840,13 @@ function score(sc){
     if(role.th.mental     && sc.mental < role.th.mental)       blocks.push(`מנטלי ${sc.mental} < סף ${role.th.mental}`);
     if(role.th.combat     && sc.combat < role.th.combat)       blocks.push(`כושר לחימה ${sc.combat} < סף ${role.th.combat}`);
 
+    const mn = MANNING[role.id]||{miluy:50};
+    const act = ACTIVITY[role.id]||{mult:1.0};
+    const rawUrg = 100 - mn.miluy;
+    const urgency = Math.min(100, Math.round(rawUrg * act.mult));
+
     if(blocks.length){
-      const mn2 = MANNING[role.id]||{miluy:50};
-      return {role, blocked:true, reason:blocks[0], score:0, holistic:0, urgency:100-mn2.miluy};
+      return {role, blocked:true, reason:blocks[0], score:0, holistic:0, urgency, prefRank:-1};
     }
 
     const rs = Math.round(
@@ -798,9 +855,12 @@ function score(sc){
     );
     const ps = Math.round(cs*.38 + rs*.62);
 
-    const mn = MANNING[role.id]||{miluy:50};
-    const urgency = 100 - mn.miluy;
-    const holistic = Math.round(ps * 0.55 + urgency * 0.45);
+    // Preference bonus: +6 if 1st choice, +3 if 2nd choice
+    const prefIdx = (sc.pref||[]).indexOf(role.id);
+    const prefBonus = prefIdx===0 ? 6 : prefIdx===1 ? 3 : 0;
+    const adjustedFit = Math.min(100, ps + prefBonus);
+
+    const holistic = Math.round(adjustedFit * 0.55 + urgency * 0.45);
 
     const reasons = {
       admin:  `מניל"ה + דפ"ר מספיקים | תקן: ${mn.teken}`,
@@ -810,7 +870,7 @@ function score(sc){
       elite:  `מנטלי + כושר לחימה — שיאי הפלטפורמה`,
       cyber:  `דפ"ר + טכנולוגי שניהם בשיא — מועמד מובהק`,
     };
-    return {role, blocked:false, reason:reasons[role.id]||'', score:ps, holistic, urgency};
+    return {role, blocked:false, reason:reasons[role.id]||'', score:ps, holistic, urgency, prefRank:prefIdx};
   });
 }
 
@@ -897,6 +957,24 @@ function render(sc){
   // Officer Potential
   renderOfficer(s);
 
+  // Preferences + Priority Courses
+  const roleMap = {};
+  ROLES.forEach(r=>roleMap[r.id]={e:r.e, n:r.n});
+  const pref1 = roleMap[s.pref?.[0]];
+  const pref2 = roleMap[s.pref?.[1]];
+  const courses = checkPriorityCourses(s);
+  const eligible = courses.filter(c=>c.eligible);
+  const ppEl = document.getElementById('pref-priority');
+  ppEl.innerHTML = `
+    <div class="pp-row">
+      <span class="pp-label">העדפות</span>
+      <span>1️⃣ ${pref1?pref1.e+' '+pref1.n:'—'} · 2️⃣ ${pref2?pref2.e+' '+pref2.n:'—'}</span>
+    </div>
+    <div class="pp-row">
+      <span class="pp-label">עדיפות</span>
+      ${eligible.length ? eligible.map(c=>`<span class="priority-pill">${c.emoji} ${c.name}</span>`).join('') : '<span class="priority-none">אין כשירות לקורסי עדיפות</span>'}
+    </div>`;
+
   // Stats (without kaba — shown above)
   const profileLabel = PROFILE_LABELS[s.medical] ?? '—';
   const profileColor = s.medical>=82?'#4ade80':s.medical>=64?'#fbbf24':'#f87171';
@@ -936,14 +1014,17 @@ function render(sc){
 
   document.getElementById('roles').innerHTML = results.map(r=>{
     const mn = MANNING[r.role.id] || {teken:0,miluy:0};
+    const act = ACTIVITY[r.role.id]||{label:'—',cls:'act-med'};
     const urgCol = r.urgency>60?'#f87171':r.urgency>30?'#fbbf24':'#4ade80';
+    const prefIdx = (s.pref||[]).indexOf(r.role.id);
+    const prefTag = prefIdx===0?'<span class="pref-heart">❤️ 1st</span>':prefIdx===1?'<span class="pref-heart">🔵 2nd</span>':'';
 
     if(r.blocked) return `
       <div class="rc rc-blocked">
         <div class="rc-top">
           <div class="rc-left">
             <div class="rc-emoji">${r.role.e}</div>
-            <div class="rc-name">${r.role.n}</div>
+            <div class="rc-name">${r.role.n} <span class="act-tag ${act.cls}">${act.label}</span>${prefTag}</div>
           </div>
           <div class="sBl">⛔<br>חסום</div>
         </div>
@@ -963,7 +1044,7 @@ function render(sc){
         <div class="rc-top">
           <div class="rc-left">
             <div class="rc-emoji">${r.role.e}</div>
-            <div class="rc-name">${r.role.n}</div>
+            <div class="rc-name">${r.role.n} <span class="act-tag ${act.cls}">${act.label}</span>${prefTag}</div>
           </div>
           <div style="text-align:center;">
             <div class="rc-score ${hCls}">${h}${isBest?' ★':''}</div>
@@ -975,6 +1056,7 @@ function render(sc){
         <div style="font-size:0.58rem;color:var(--text3);margin-top:3px;">
           התאמה: <span style="color:var(--text2)">${r.score}</span> |
           דחיפות: <span style="color:${urgCol};font-weight:700;">${r.urgency}%</span>
+          ${prefIdx>=0?' | <span class="pp-match">✓ רצון מועמד</span>':''}
         </div>
       </div>`;
   }).join('');
@@ -1013,9 +1095,11 @@ function render(sc){
     const icon = h>=70?'✅':h>=50?'⚠️':'❌';
     const mn   = MANNING[best.role.id]||{teken:0,miluy:50};
     const chaser = Math.round((1-mn.miluy/100)*mn.teken);
+    const bestPrefIdx = (s.pref||[]).indexOf(best.role.id);
+    const prefNote = bestPrefIdx===0?' · ❤️ העדפה ראשונה':bestPrefIdx===1?' · 🔵 העדפה שנייה':'';
     const armyWhy = best.urgency < 20
-      ? `שיבוץ שיקומי — זה הפתרון הקיים. ציון הוליסטי ${h} — המנוע ישנה המלצה כשהפרופיל ישתפר`
-      : `מולא ${mn.miluy}% — הצבא מחפש עוד ${chaser} אנשים. התאמה אישית: ${best.score}`;
+      ? `שיבוץ שיקומי — זה הפתרון הקיים. ציון הוליסטי ${h}${prefNote}`
+      : `מולא ${mn.miluy}% — הצבא מחפש עוד ${chaser} אנשים${prefNote}`;
 
     rec.className=`rec ${cls}`;
     rec.innerHTML=`
@@ -1029,12 +1113,32 @@ function render(sc){
         <div class="rec-lbl">ציון הוליסטי</div>
       </div>`;
 
-    // ── DECISION LOG (א') ──
+    // ── DECISION LOG ──
     const fitContrib    = Math.round(best.score * 0.55);
     const urgContrib    = Math.round(best.urgency * 0.45);
     const blockedNames  = results.filter(r=>r.blocked).map(r=>r.role.n).join(' · ');
+    const bestAct = ACTIVITY[best.role.id]||{label:'—'};
 
-    // ── BEFORE/AFTER (ג') ──
+    // preference info
+    const prefInfo = bestPrefIdx===0
+      ? '<span style="color:var(--green);">✓ תואם העדפה ראשונה (+6 fit)</span>'
+      : bestPrefIdx===1
+      ? '<span style="color:var(--blue);">✓ תואם העדפה שנייה (+3 fit)</span>'
+      : '<span style="color:var(--text3);">✗ לא תואם העדפה — צרכי הצבא קודמים</span>';
+
+    // priority course info
+    const eligibleCourses = courses.filter(c=>c.eligible);
+    const pcHtml = eligibleCourses.length ? `
+      <div class="dec-step">
+        <span class="dec-icon">🏅</span>
+        <span class="dec-body">
+          <strong>קורסי עדיפות:</strong>
+          כשיר ל${eligibleCourses.map(c=>c.emoji+' '+c.name).join(' · ')}
+          <span style="color:var(--text3);"> — מומלץ לשקול מסלול מקביל</span>
+        </span>
+      </div>` : '';
+
+    // ── BEFORE/AFTER ──
     let naiveHtml;
     if(!naiveBest){
       naiveHtml = '';
@@ -1046,7 +1150,7 @@ function render(sc){
           <span class="dec-body naive-same">
             <strong>ללא המנוע:</strong> אותו תפקיד — ${best.role.n} (fit ${naiveBest.score}).
             <strong>עם המנוע:</strong> אותה המלצה, סיבה שונה —
-            מחסור <strong>${100-mn.miluy}%</strong> שקול כ-${urgContrib} נקודות על ציון הוליסטי
+            מחסור <strong>${100-mn.miluy}%</strong> שקול כ-${urgContrib} נקודות + פעילות ${bestAct.label}
           </span>
         </div>`;
     } else {
@@ -1059,7 +1163,7 @@ function render(sc){
             <strong>ללא המנוע:</strong> ${naiveBest.role.e} ${naiveBest.role.n} (fit ${naiveBest.score}) —
             נבחר על fit אישי בלבד, מולא ${naiveMn.miluy}%<br>
             <strong>עם המנוע:</strong> ${best.role.e} ${best.role.n} (הוליסטי ${h}) —
-            מחסור ${100-mn.miluy}% הפך גורם מכריע
+            מחסור ${100-mn.miluy}% + פעילות ${bestAct.label} הפכו גורם מכריע
           </span>
         </div>`;
     }
@@ -1072,7 +1176,7 @@ function render(sc){
           <strong>שלב א' — סינון:</strong>
           ${ROLES.length} תפקידים נבדקו →
           <span style="color:var(--red);">${blockedCount} נחסמו</span>
-          (${blockedNames}) ·
+          ${blockedNames?'('+blockedNames+')':''} ·
           <span style="color:var(--green);">${unblockedCount} עברו לדירוג</span>
         </span>
       </div>
@@ -1080,8 +1184,13 @@ function render(sc){
         <span class="dec-icon">📊</span>
         <span class="dec-body">
           <strong>שלב ב' — דירוג:</strong>
-          ציון הוליסטי = התאמה ×55% + דחיפות תקן ×45%
-          <span style="color:var(--text3);"> (לא fit בלבד — צרכי הצבא קודמים)</span>
+          הוליסטי = (התאמה + רצון מועמד) ×55% + (דחיפות × רמת פעילות) ×45%
+        </span>
+      </div>
+      <div class="dec-step">
+        <span class="dec-icon">❤️</span>
+        <span class="dec-body">
+          <strong>רצון מועמד:</strong> ${prefInfo}
         </span>
       </div>
       <div class="dec-step">
@@ -1089,10 +1198,11 @@ function render(sc){
         <span class="dec-body">
           <strong>המלצה:</strong> ${best.role.n} —
           הוליסטי <strong>${h}</strong> =
-          התאמה ${best.score}×55%→<span style="color:var(--blue);">${fitContrib}</span> +
-          דחיפות ${best.urgency}%×45%→<span style="color:var(--yellow);">${urgContrib}</span>
+          fit ${best.score}×55%→<span style="color:var(--blue);">${fitContrib}</span> +
+          דחיפות ${best.urgency}% (${bestAct.label})×45%→<span style="color:var(--yellow);">${urgContrib}</span>
         </span>
       </div>
+      ${pcHtml}
       ${naiveHtml}`;
   }
 }
