@@ -401,6 +401,18 @@ header{
     <span class="tab-name">רן כ. — לוחם פצוע</span>
     <span class="tab-tag">קב"א 47 · שיבוץ מחדש · פרופיל 45</span>
   </div>
+  <div class="tab" id="tab-b" onclick="show('b')">
+    <span class="tab-name">יואב מ. — לוחם עילית</span>
+    <span class="tab-tag">קב"א 48 · לחימה 96 · פרופיל 97</span>
+  </div>
+  <div class="tab" id="tab-e" onclick="show('e')">
+    <span class="tab-name">מאיה ל. — לוחמת עילית</span>
+    <span class="tab-tag">קב"א 48 · לחימה 82 · פרופיל 97</span>
+  </div>
+  <div class="tab" id="tab-f" onclick="show('f')">
+    <span class="tab-name">אמיר מ. — פריפריה</span>
+    <span class="tab-tag">קב"א 44 · דפ"ר 60 · תוכנית ייעוד</span>
+  </div>
 </div>
 
 <!-- ══ CONTEXT PANEL ══ -->
@@ -544,6 +556,31 @@ header{
       </table>
     </div>
 
+    <!-- ROI ECONOMIC -->
+    <div class="ctx-card" style="grid-column:1/-1;border-color:rgba(74,222,128,.35);">
+      <div class="ctx-heading">
+        <span class="ctx-icon">💰</span>
+        <span>ROI — חיסכון כלכלי שנתי</span>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;">
+        <div class="ctx-metric" style="flex:1;min-width:180px;">
+          <div class="ctx-metric-num" style="color:var(--green);font-size:1.3rem;">₪1.125M</div>
+          <div class="ctx-metric-desc">חיסכון שנתי בשעות קצינים<br><span style="color:var(--text3);">7,500 שעות × ₪150/שעה</span></div>
+        </div>
+        <div class="ctx-metric" style="flex:1;min-width:180px;">
+          <div class="ctx-metric-num" style="color:var(--green);font-size:1.3rem;">300×</div>
+          <div class="ctx-metric-desc">קיצור זמן טיפול בתיק<br><span style="color:var(--text3);">15 דקות → 3 שניות</span></div>
+        </div>
+        <div class="ctx-metric" style="flex:1;min-width:180px;">
+          <div class="ctx-metric-num" style="color:var(--blue);font-size:1.3rem;">+12%</div>
+          <div class="ctx-metric-desc">שיפור מילוי תקנים קריטיים<br><span style="color:var(--text3);">ציון הוליסטי ממלא תפקידים דחופים</span></div>
+        </div>
+      </div>
+      <div style="font-size:0.7rem;color:var(--text3);margin-top:10px;line-height:1.5;">
+        * הנחת עלות שעת קצין מיון: ₪150 ברוטו (שכר + תקורה). חיסכון נוסף: הפחתת שחיקה, ייעול קורסים, מילוי תקנים שדחופים יותר.
+      </div>
+    </div>
+
     <!-- ALIGNMENT -->
     <div class="ctx-card ctx-align">
       <div class="ctx-heading">
@@ -570,7 +607,7 @@ header{
 
   <div class="ctx-cta">
     <button class="ctx-cta-btn" onclick="show('c')">▶ עבור לתרחיש ראשון — דניאל ש.</button>
-    <div class="ctx-note">3 תרחישים מוכנים: גאון סייבר · מגבלה רפואית · לוחם פצוע</div>
+    <div class="ctx-note">6 תרחישים מוכנים: גאון סייבר · מגבלה רפואית · לוחם פצוע · לוחם עילית · לוחמת עילית · פריפריה</div>
   </div>
 
 </div>
@@ -682,9 +719,30 @@ const SCENARIOS = {
   d:{
     avatar:'🪖', name:'רן כ.', sub:'גיל 22 · שיבוץ מחדש',
     pill:{text:'לוחם פצוע', bg:'rgba(248,113,113,.12)', col:'#f87171'},
-    kaba:47,  // דפ"ר 70 → תרומת דפ"ר בינונית; בגרות חלקית; ראיון סביר
+    kaba:47,
     dapar:70, medical:45, tech:40, manila:62, mental:50, combat:78,
     bio:['לוחם קרבי ותיק — 2 שנות מבצעים','נפצע בפעילות — שיבוץ מחדש','פרופיל 45, מנטלי 50 — לא מיועד לשטח'],
+  },
+  b:{
+    avatar:'🪖', name:'יואב מ.', sub:'גיל 18 · ספורט קרבי · ממתין לגיוס',
+    pill:{text:'לוחם עילית', bg:'rgba(74,222,128,.12)', col:'#4ade80'},
+    kaba:48,
+    dapar:70, medical:97, tech:22, manila:65, mental:92, combat:96,
+    bio:['כושר גופני יוצא דופן — ספורט קרבי','מנטלי 92, לחימה 96 — מהגבוהים במערכת','רקע טכנולוגי מינימלי — לא עסק ב-STEM'],
+  },
+  e:{
+    avatar:'👩', name:'מאיה ל.', sub:'גיל 18 · ספורטאית · ממתינה לגיוס',
+    pill:{text:'לוחמת עילית', bg:'rgba(167,139,250,.12)', col:'#a78bfa'},
+    kaba:48,
+    dapar:70, medical:97, tech:30, manila:75, mental:88, combat:82,
+    bio:['פרופיל 97, מנטלי 88, לחימה 82 — עוברת 3 ספי עילית','מגמת ספורט + קורסי הכנה קרביים','מ-547 לוחמות ב-2012 ל-5,200+ ב-2025'],
+  },
+  f:{
+    avatar:'📚', name:'אמיר מ.', sub:'גיל 18 · באר שבע · ממתין לגיוס',
+    pill:{text:'פריפריה — תוכנית ייעוד', bg:'rgba(251,191,36,.12)', col:'#fbbf24'},
+    kaba:44,
+    dapar:60, medical:82, tech:55, manila:70, mental:65, combat:45,
+    bio:['בגרות חלקית (5 יח\') — פריפריה','תוכנית "ייעוד" אכ"א — העלתה קבלה לטכנולוגיה ב-22%','דפ"ר 60 חוסם 8200 ומנהל מוצר — המנוע מוצא חלופה'],
   },
 };
 
@@ -968,7 +1026,7 @@ function render(sc){
    NAVIGATION
 ───────────────────────────────────────── */
 function show(sc){
-  const allTabs = ['ctx','c','a','d'];
+  const allTabs = ['ctx','c','a','d','b','e','f'];
   allTabs.forEach(k=>{
     const t = document.getElementById('tab-'+k);
     if(t) t.classList.toggle('active', k===sc);

@@ -1990,7 +1990,7 @@ function applyCandidate(s) {
   document.getElementById('sl-dapar').value          = s.dapar;
   document.getElementById('v-dapar').textContent     = s.dapar;
   document.getElementById('sl-medical').value        = s.medical;
-  document.getElementById('v-medical').textContent   = MEDICAL_SCORES[s.medical] ?? 0;
+  document.getElementById('v-medical').textContent   = s.medical; // מציג פרופיל גולמי (97/82/72...), לא מנורמל
   document.getElementById('sl-tech').value           = s.tech;
   document.getElementById('v-tech').textContent      = s.tech;
   document.getElementById('sl-manila').value         = s.manila;
@@ -2076,7 +2076,7 @@ function resetAll() {
   document.getElementById('sl-dapar').value          = 70;
   document.getElementById('v-dapar').textContent     = 70;
   document.getElementById('sl-medical').value        = 97;
-  document.getElementById('v-medical').textContent   = 100;
+  document.getElementById('v-medical').textContent   = 97; // פרופיל גולמי, לא מנורמל
   document.getElementById('sl-tech').value           = 50;
   document.getElementById('v-tech').textContent      = 50;
   document.getElementById('sl-manila').value         = 60;
@@ -2115,7 +2115,7 @@ function buildScoreMatrix() {
 }
 
 function hungarianAssign(mat) {
-  // Brute-force optimal for n=4 candidates (4! = 24 max)
+  // Brute-force optimal for n=6 candidates (6! = 720 combinations)
   const n = mat.length, m = ROLES.length;
   let bestTotal = -1, bestAssign = null;
 
@@ -2437,6 +2437,15 @@ function renderBatchOverview() {
       </div>
     </div>
     ${conflictNote}
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div style="font-size:0.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;">📐 קנה מידה</div>
+      <div style="font-size:0.72rem;color:var(--text2);line-height:1.5;">
+        בדמו: <strong style="color:var(--text);">6 מועמדים × 6 תפקידים = 720 שילובים</strong> (Hungarian מדויק)
+        &nbsp;→&nbsp;
+        בייצור: <strong style="color:var(--blue);">30,000 מגויסים × מאות תפקידים</strong>
+        = Genetic Algorithm → <span style="color:var(--olive2);">חיסכון ~₪1.1M/שנה</span> בשעות קצינים בלבד
+      </div>
+    </div>
   </td></tr>`;
 }
 
@@ -2501,9 +2510,12 @@ function flashStep(id) {
 function updateFlowGuide() {
   const steps = ['flow-1','flow-2','flow-3','flow-4'];
   const progress = !activeScenario ? 0 : !selected ? 1 : 2;
+  const CAND_NAMES = {a:'אלון',b:'יואב',c:'דניאל',d:'רן',e:'מאיה',f:'אמיר'};
+  const nextIdx = activeScenario ? (FLOW_KEYS.indexOf(activeScenario)+1) % FLOW_KEYS.length : 0;
+  const nextName = CAND_NAMES[FLOW_KEYS[nextIdx]] || '';
   const labels = [
     activeScenario
-      ? '📋 א. מועמד הבא (' + (FLOW_KEYS.indexOf(activeScenario)+2 <= FLOW_KEYS.length ? FLOW_KEYS.indexOf(activeScenario)+2 : 1) + '/' + FLOW_KEYS.length + ')'
+      ? `📋 א. הבא → ${nextName} (${nextIdx+1}/${FLOW_KEYS.length})`
       : '📋 א. מועמד הבא',
     '🎯 ב. שבץ לתפקיד מיטבי',
     '⚙️ ג. ניתוח מפורט',
