@@ -41,9 +41,19 @@ def calculate_volume_score(score_a: float, score_b: float, score_c: float) -> di
     # חישוב נפח
     volume = (score_a - 60) * (score_b - 60) * (score_c - 60)
 
-    # ציון נפח — שורש שלישי מנורמל
-    volume_score = (volume ** (1/3)) / 40 * 100
-    volume_score = round(min(100.0, max(0.0, volume_score)), 2)
+    if volume == 0:
+        # Fallback: מועמד מצוין בשניים אבל צד שלישי בדיוק בסף —
+        # עונש של volume=0 קשה מדי. משתמשים בממוצע גיאומטרי של
+        # שני הציונים הגבוהים, עם תקרה 50 (פחות מ-balance מלא).
+        margins = sorted(
+            [score_a - 60, score_b - 60, score_c - 60], reverse=True
+        )
+        two_dim = (margins[0] * margins[1]) ** 0.5
+        volume_score = round(min(50.0, two_dim / 40 * 100), 2)
+    else:
+        # ציון נפח — שורש שלישי מנורמל
+        volume_score = (volume ** (1/3)) / 40 * 100
+        volume_score = round(min(100.0, max(0.0, volume_score)), 2)
 
     # ציון סופי
     final_score = (
