@@ -12,6 +12,9 @@
 from models.candidate import Candidate, AcademicBackground, MilitaryRole
 from models.company import Company
 from nlp.semantic_match import tech_stack_semantic_score
+from feedback.weight_store import load_weights
+
+_W = load_weights()["score_b"]
 
 
 # --- טבלת רקע אקדמי ---
@@ -124,10 +127,10 @@ def calculate_score_b(candidate: Candidate, company: Company) -> float:
     cultural = cultural_fit_score(candidate, company)
 
     score = (
-        tech * 0.35 +
-        growth * 0.25 +
-        soft * 0.25 +
-        cultural * 0.15
+        tech     * _W["tech"] +
+        growth   * _W["growth"] +
+        soft     * _W["soft"] +
+        cultural * _W["culture"]
     )
 
     return round(score, 2)
@@ -139,7 +142,12 @@ def calculate_score_b_detailed(candidate: Candidate, company: Company) -> dict:
     soft = soft_skills_score(candidate)
     cultural = cultural_fit_score(candidate, company)
 
-    total = round(tech * 0.35 + growth * 0.25 + soft * 0.25 + cultural * 0.15, 2)
+    total = round(
+        tech     * _W["tech"] +
+        growth   * _W["growth"] +
+        soft     * _W["soft"] +
+        cultural * _W["culture"],
+    2)
 
     return {
         "total": total,

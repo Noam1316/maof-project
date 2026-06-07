@@ -343,6 +343,72 @@ class FeedbackLoop:
             "note": "הרץ Genetic Algorithm מחדש עם הנתונים האמיתיים לאחר 50+ שיבוצים"
         }
 
+    def apply_feedback_weights(self) -> Dict:
+        """
+        מחשב עדכון משקלות מ-Feedback Loop ושומר ל-weights.json.
+
+        מעדכן את משקלות volume/A/B בנוסחה הסופית בלבד.
+        לעדכון משקלות רכיבים (eli5, subject, ...) השתמש ב-apply_ga_weights().
+        """
+        from feedback.weight_store import load_weights, save_weights
+
+        suggestion = self.suggest_weight_update()
+        if "message" in suggestion:
+            return suggestion
+
+        records = self._load_records()
+        n_completed = sum(
+            1 for r in records
+            if _compute_actual_score(
+                r.get("school_feedback"),
+                r.get("company_feedback"),
+                r.get("candidate_feedback"),
+            ) is not None
+        )
+
+        weights = load_weights()
+        adj = suggestion["suggested_adjustments"]
+        weights["volume"] = {
+            "volume_score": adj["volume_weight_in_final"],
+            "score_a":      adj["score_a_weight_in_final"],
+            "score_b":      adj["score_b_weight_in_final"],
+        }
+        weights["n_records_used"] = n_completed
+        save_weights(weights, source="feedback_loop")
+
+        return {**suggestion, "saved": True, "n_records_used": n_completed}
+
+    def apply_ga_weights(
+        self,
+        candidates,
+        schools,
+        companies,
+        population_size: int = 20,
+        generations: int = 30,
+    ) -> Dict:
+        """
+        מריץ Genetic Algorithm ושומר את משקלות הרכיבים שנמצאו ל-weights.json.
+
+        מיועד להרצה לאחר 50+ שיבוצים כשיש נתונים אמיתיים.
+        """
+        from genetic.optimizer import run_genetic_optimizer
+        from feedback.weight_store import load_weights, save_weights
+
+        result = run_genetic_optimizer(
+            candidates, schools, companies,
+            population_size=population_size,
+            generations=generations,
+            verbose=True,
+        )
+
+        weights = load_weights()
+        weights["score_a"] = result["best_weights"]["score_a"]
+        weights["score_b"] = result["best_weights"]["score_b"]
+        weights["n_records_used"] = weights.get("n_records_used", 0)
+        save_weights(weights, source="genetic_algorithm")
+
+        return result
+
     def export_for_retraining(self) -> List[Dict]:
         records = self._load_records()
         result = []

@@ -12,6 +12,10 @@
 from models.candidate import Candidate, AcademicBackground
 from models.school import School
 from nlp.semantic_match import subject_semantic_score
+from nlp.eli5_scorer import compute_eli5_score
+from feedback.weight_store import load_weights
+
+_W = load_weights()["score_a"]
 
 
 # --- טבלת מרחק ---
@@ -84,28 +88,33 @@ def impact_score(school: School) -> float:
 
 # --- ציון A סופי ---
 def calculate_score_a(candidate: Candidate, school: School) -> float:
-    eli5 = candidate.eli5_score
+    eli5 = compute_eli5_score(candidate.eli5_text, candidate.eli5_topic, candidate.eli5_score)
     subject = subject_match_score(candidate, school)
     retention = retention_score(candidate, school)
     impact = impact_score(school)
 
     score = (
-        eli5 * 0.35 +
-        subject * 0.25 +
-        retention * 0.25 +
-        impact * 0.15
+        eli5      * _W["eli5"] +
+        subject   * _W["subject"] +
+        retention * _W["retention"] +
+        impact    * _W["impact"]
     )
 
     return round(score, 2)
 
 
 def calculate_score_a_detailed(candidate: Candidate, school: School) -> dict:
-    eli5 = candidate.eli5_score
+    eli5 = compute_eli5_score(candidate.eli5_text, candidate.eli5_topic, candidate.eli5_score)
     subject = subject_match_score(candidate, school)
     retention = retention_score(candidate, school)
     impact = impact_score(school)
 
-    total = round(eli5 * 0.35 + subject * 0.25 + retention * 0.25 + impact * 0.15, 2)
+    total = round(
+        eli5      * _W["eli5"] +
+        subject   * _W["subject"] +
+        retention * _W["retention"] +
+        impact    * _W["impact"],
+    2)
 
     return {
         "total": total,

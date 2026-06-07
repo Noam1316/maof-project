@@ -24,3 +24,6 @@ class School(BaseModel):
 
     # תקציב
     budget_available: bool = Field(default=True, description="תקציב גפ\"ן זמין")
+
+    # קיבולת — כמה מורים יכול בית הספר לקלוט בו-זמנית
+    capacity: int = Field(default=1, ge=1, description="מספר מורים שניתן לשבץ")

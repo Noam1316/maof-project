@@ -30,7 +30,9 @@ class Candidate(BaseModel):
     name: str
 
     # --- ציון A: כושר הוראה ---
-    eli5_score: float = Field(ge=0, le=100, description="ציון ELI5 — 3 שלבים")
+    eli5_score: float = Field(ge=0, le=100, description="ציון ELI5 גולמי — fallback כשאין טקסט")
+    eli5_text: Optional[str] = Field(default=None, description="טקסט הסבר ELI5 גולמי — אם קיים, מחשב ציון מהטקסט")
+    eli5_topic: str = Field(default="", description="נושא ההסבר לציון דיוק")
     subject: str = Field(description="מקצוע הוראה עיקרי")
     additional_subjects: List[str] = Field(default=[], description="מקצועות נוספים")
     distance_km: float = Field(ge=0, description="מרחק מגורים מבית הספר בק\"מ")

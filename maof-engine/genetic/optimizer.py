@@ -192,11 +192,13 @@ def precompute_matrices(
     proximity_v = np.zeros(n_c)
 
     # -- ציון A: (candidate × school) --
+    from nlp.eli5_scorer import compute_eli5_score
     for i, cand in enumerate(candidates):
         proximity_v[i] = proximity_score(cand)
+        eli5 = compute_eli5_score(cand.eli5_text, cand.eli5_topic, cand.eli5_score)
         for j, school in enumerate(schools):
             a_mat[i, j] = [
-                cand.eli5_score,
+                eli5,
                 subject_match_score(cand, school),
                 retention_score(cand, school),
                 impact_score(school),
@@ -223,6 +225,11 @@ def precompute_matrices(
     return a_mat, b_mat, urgency_mat, proximity_v
 
 
+def _soft_gate_np(x: np.ndarray, threshold: float = 60.0, steepness: float = 0.25) -> np.ndarray:
+    """Numpy soft gate — זהה ל-soft_gate() ב-volume.py אבל פועל על מערכים."""
+    return 1.0 / (1.0 + np.exp(-steepness * (x - threshold)))
+
+
 def evaluate_fitness_vectorized(
     weights: Chromosome,
     a_mat: np.ndarray,
@@ -233,6 +240,7 @@ def evaluate_fitness_vectorized(
 ) -> float:
     """
     Fitness וקטורי — numpy בלבד, אפס לולאות Python.
+    משתמש ב-soft_gate (כמו volume.py) לגרדיאנט חלק לאלגוריתם הגנטי.
 
     Args:
         weights      — הכרומוזום הנוכחי
@@ -243,37 +251,36 @@ def evaluate_fitness_vectorized(
         willingness  — ציון נכונות קבוע (100 = כולם מוכנים, phase 1)
 
     Returns:
-        float — ממוצע ציוני-נפח של כל השיבוצים שעברו סף 60.
+        float — ממוצע ציוני-נפח של כל השיבוצים שעברו soft threshold.
     """
     a_w = np.array([weights.w_eli5, weights.w_subject, weights.w_retention, weights.w_impact])
     b_w = np.array([weights.w_tech, weights.w_growth, weights.w_soft, weights.w_culture])
 
-    # ציוני A ו-B: matmul על ציר האחרון → [n_c, n_s] ו-[n_c, n_k]
     scores_a = a_mat @ a_w  # [n_c, n_s]
     scores_b = b_mat @ b_w  # [n_c, n_k]
 
-    # הרחבה ל-3D לשידור משולש: [n_c, n_s, n_k]
     sa = scores_a[:, :, np.newaxis]   # [n_c, n_s, 1]
     sb = scores_b[:, np.newaxis, :]   # [n_c, 1, n_k]
 
     # score_c = (min(A,B) + urgency + proximity + willingness) / 4
-    min_ab = np.minimum(sa, sb)                             # [n_c, n_s, n_k]
-    urg = urgency_mat[np.newaxis, :, :]                     # [1, n_s, n_k]
-    prox = proximity_v[:, np.newaxis, np.newaxis]           # [n_c, 1, 1]
-    scores_c = (min_ab + urg + prox + willingness) / 4.0   # [n_c, n_s, n_k]
+    min_ab = np.minimum(sa, sb)
+    urg    = urgency_mat[np.newaxis, :, :]
+    prox   = proximity_v[:, np.newaxis, np.newaxis]
+    scores_c = (min_ab + urg + prox + willingness) / 4.0
 
-    # סף מינימום — 60 בכל ציון
-    passes = (sa >= 60.0) & (sb >= 60.0) & (scores_c >= 60.0)  # bool [n_c, n_s, n_k]
+    # Soft gate — גרדיאנט חלק, מחליף hard cutoff
+    gate = _soft_gate_np(sa) * _soft_gate_np(sb) * _soft_gate_np(scores_c)
 
-    # ציון נפח = ∛((A-60)(B-60)(C-60)) / 40 × 100
-    vol = (sa - 60.0) * (sb - 60.0) * (scores_c - 60.0)
-    # np.cbrt עמיד בפני 0 ומספרים שליליים (passes מסנן)
+    # נפח עם בסיס 50 (תואם volume.py)
+    raw_vol = (sa - 50.0) * (sb - 50.0) * (scores_c - 50.0)
+    vol = gate * np.maximum(raw_vol, 0.0)
     vol_score = np.clip(np.cbrt(vol) / 40.0 * 100.0, 0.0, 100.0)
 
-    # ציון סופי = vol×0.5 + A×0.25 + B×0.25
     final_score = np.clip(vol_score * 0.5 + sa * 0.25 + sb * 0.25, 0.0, 100.0)
 
-    # ממוצע רק על שיבוצים שעברו סף
+    # passes = hard floor בלבד (55), כמו volume.py
+    passes = (sa >= 55.0) & (sb >= 55.0) & (scores_c >= 55.0)
+
     valid = np.where(passes, final_score, 0.0)
     count = int(passes.sum())
 
@@ -379,8 +386,10 @@ def run_genetic_optimizer(
     if verbose:
         print(f"  ✓ precompute סיים | מתחיל {generations} דורות")
 
-    # אוכלוסיה התחלתית — כולל ברירת המחדל
-    population = [default_chromosome()] + [
+    # אוכלוסיה התחלתית — כולל ברירת המחדל (מוערכת מיד לשמירת baseline)
+    default = default_chromosome()
+    default.fitness = evaluate_fitness_vectorized(default, a_mat, b_mat, urgency_mat, proximity_v)
+    population = [default] + [
         random_chromosome() for _ in range(population_size - 1)
     ]
 
@@ -429,8 +438,8 @@ def run_genetic_optimizer(
 
     return {
         "best_weights": best_ever.to_dict(),
-        "default_weights": default_chromosome().to_dict(),
-        "improvement_abs": round(best_ever.fitness - default_chromosome().fitness, 4),
+        "default_weights": default.to_dict(),
+        "improvement_abs": round(best_ever.fitness - default.fitness, 4),
         "history": history,
         "generations": generations,
         "population_size": population_size,
