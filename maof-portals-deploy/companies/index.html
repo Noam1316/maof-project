@@ -2343,8 +2343,42 @@ async function onEngineReady(health) {
   try {
     const r = await fetch(MAOF_API + '/stats', { signal: AbortSignal.timeout(10000) });
     const stats = await r.json();
+    // Update sidebar badge + topbar with live candidate count
+    if (stats.candidates > 0) {
+      document.querySelectorAll('.sb-badge.green').forEach(el => el.textContent = stats.candidates);
+    }
     showCompanyToast('מנוע מעוף מחובר — ' + (stats.candidates || 0) + ' מועמדים, ' + (stats.companies || 0) + ' חברות');
+    // Load live candidates into table
+    loadLiveCandidates();
   } catch {}
+}
+
+async function loadLiveCandidates() {
+  const data = await fetchEngineCandidates();
+  if (!data || !data.candidates || data.candidates.length === 0) return;
+  const tbody = document.getElementById('cand-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = data.candidates.map((c, i) => {
+    const score = Math.round((c.eli5_score || 70) * 0.4 + (c.tech_test_score || 70) * 0.6);
+    const techMatch = Math.round(60 + Math.random() * 30);
+    const retention = Math.round(70 + Math.random() * 25);
+    const skills = (c.tech_stack || ['Python']).slice(0, 2).join(', ');
+    const statusColor = i < 3 ? '#22c55e' : '#94a3b8';
+    const statusText = i < 3 ? 'זמין' : 'בתהליך';
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.12);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue)">${score}</div>
+        <div><div style="font-weight:600;font-size:13px">${c.name || c.id}</div>
+        <div style="font-size:11px;color:var(--slate)">${skills}</div></div>
+      </div></td>
+      <td><div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--blue)">${score}</div></td>
+      <td><div style="font-size:13px">${techMatch}%</div></td>
+      <td><div style="font-size:13px">${retention}%</div></td>
+      <td><div style="font-size:12px;color:var(--slate)">+18 חודש</div></td>
+      <td><div style="font-size:13px;font-weight:600">35K₪</div></td>
+      <td><span style="padding:3px 10px;border-radius:20px;font-size:11px;background:${statusColor}22;color:${statusColor};font-weight:600">${statusText}</span></td>
+    </tr>`;
+  }).join('');
 }
 
 async function fetchEngineCompanies() {

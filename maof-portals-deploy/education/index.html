@@ -876,17 +876,17 @@ body{max-width:100vw;}  * {box-sizing:border-box;}
       <div class="kpi-grid">
         <div class="kpi-card teal">
           <div class="kpi-label">מועמדים פעילים</div>
-          <div class="kpi-value teal">247</div>
+          <div class="kpi-value teal" id="edu-kpi-candidates">247</div>
           <div class="kpi-delta up">▲ +23 החודש</div>
         </div>
         <div class="kpi-card amber">
           <div class="kpi-label">פלייסמנטים שנפתחו</div>
-          <div class="kpi-value amber">38</div>
+          <div class="kpi-value amber" id="edu-kpi-placements">38</div>
           <div class="kpi-delta">12 ממתינים לאישור</div>
         </div>
         <div class="kpi-card red">
           <div class="kpi-label">בתי ספר ללא כיסוי</div>
-          <div class="kpi-value red">19</div>
+          <div class="kpi-value red" id="edu-kpi-schools">19</div>
           <div class="kpi-delta down">▲ +3 מהשבוע שעבר</div>
         </div>
         <div class="kpi-card green">
@@ -4113,6 +4113,19 @@ async function onEduEngineReady(health) {
   try {
     const r = await fetch(MAOF_API + '/stats', { signal: AbortSignal.timeout(10000) });
     const stats = await r.json();
+    // Update live KPIs
+    if (stats.candidates > 0) {
+      const el = document.getElementById('edu-kpi-candidates');
+      if (el) el.textContent = stats.candidates;
+    }
+    if (stats.placements >= 0) {
+      const el = document.getElementById('edu-kpi-placements');
+      if (el) el.textContent = stats.placements;
+    }
+    if (stats.schools > 0) {
+      const el = document.getElementById('edu-kpi-schools');
+      if (el) el.textContent = stats.schools;
+    }
     showEduToast('מנוע מעוף מחובר — ' + (stats.candidates || 0) + ' מועמדים, ' + (stats.schools || 0) + ' בתי ספר');
   } catch {}
 }
