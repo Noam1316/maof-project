@@ -701,7 +701,40 @@ def export_feedback():
 def simulate_quick():
     """סימולציה מהירה — 5 מועמדים, 3 בתי ספר, 3 חברות"""
     candidates, schools, companies = generate_dataset(5, 3, 3)
-    return run_full_matching(candidates, schools, companies)
+    result = run_full_matching(candidates, schools, companies)
+
+    cand_map   = {c.id: c  for c in candidates}
+    school_map = {s.id: s  for s in schools}
+    co_map     = {co.id: co for co in companies}
+    score_map  = {
+        (sc["candidate_id"], sc["school_id"], sc["company_id"]): sc
+        for sc in result.get("all_scores", [])
+    }
+
+    placements = []
+    for a in result.get("assignments", []):
+        parts      = a["placement_id"].split("__")
+        school_id  = parts[0]
+        company_id = parts[1]
+        cid        = a["candidate_id"]
+        sc         = score_map.get((cid, school_id, company_id), {})
+        placements.append({
+            "candidate_id":     cid,
+            "candidate":        getattr(cand_map.get(cid),   "name", cid),
+            "school":           getattr(school_map.get(school_id), "name", school_id),
+            "company":          getattr(co_map.get(company_id),    "name", company_id),
+            "score_a":          sc.get("score_a",  0),
+            "score_b":          sc.get("score_b",  0),
+            "final_score":      a["final_score"],
+            "volume_score":     sc.get("volume_score", 0),
+            "passes_threshold": sc.get("passes_threshold", False),
+        })
+
+    return {
+        "placements":  placements,
+        "total_value": result.get("total_value", 0),
+        "stats":       result.get("stats", {}),
+    }
 
 
 # ══════════════════════════════════════════════
