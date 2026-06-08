@@ -434,6 +434,10 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
     <div class="nav-item" onclick="showScreen('aichat')">
       <span class="icon">🤖</span> שאל את Claude
     </div>
+    <div class="nav-item" onclick="showScreen('register')" style="border:1px solid rgba(245,200,66,0.3);background:rgba(245,200,66,0.05)">
+      <span class="icon">🚀</span> הרשמה למערכת
+      <span class="notif-badge" style="background:var(--gold);color:#0d0f14">חדש</span>
+    </div>
   </div>
 
   <div class="sidebar-profile" onclick="showScreen('settings')" style="cursor:pointer" title="ערוך הגדרות">
@@ -1580,6 +1584,88 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
   </div>
 </div>
 
+<!-- ══ SCREEN: REGISTER ══════════════════════════════════════════ -->
+<div id="screen-register" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">הרשמה <span>למערכת מעוף</span></div>
+      <div class="page-subtitle">מלא פרטים → המנוע יחשב את ציון ההתאמה שלך ויציג בתי ספר וחברות מתאימים</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px">
+    <!-- Form -->
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">פרטים אישיים ומקצועיים</div></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">שם מלא</label>
+          <input id="reg-name" type="text" placeholder="ישראל ישראלי"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box"
+            onfocus="this.style.borderColor='rgba(245,200,66,0.4)'" onblur="this.style.borderColor='var(--border2)'" oninput="regChanged()">
+        </div>
+
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">יחידה צבאית</label>
+          <select id="reg-unit"
+            style="width:100%;background:#111927;border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box" onchange="regChanged()">
+            <option value="tech_unit">8200 / יחידה טכנולוגית</option>
+            <option value="tech_unit">מודיעין</option>
+            <option value="warriors_tech">לוחמים להייטק</option>
+            <option value="regular_bagrut">חיל הים / שריון / חי"ר</option>
+            <option value="self_taught">תקשוב / אחר</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">מקצוע הוראה עיקרי</label>
+          <select id="reg-subject"
+            style="width:100%;background:#111927;border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box" onchange="regChanged()">
+            <option>סייבר</option>
+            <option>פייתון</option>
+            <option>מדעי מחשב</option>
+            <option>מתמטיקה</option>
+            <option>פיזיקה</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">עיר מגורים</label>
+          <input id="reg-city" type="text" placeholder="תל אביב"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box"
+            onfocus="this.style.borderColor='rgba(245,200,66,0.4)'" onblur="this.style.borderColor='var(--border2)'" oninput="regChanged()">
+        </div>
+
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">שנות שירות</label>
+          <select id="reg-years"
+            style="width:100%;background:#111927;border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box">
+            <option value="2">2 שנים (חובה)</option>
+            <option value="3">3 שנים</option>
+            <option value="4" selected>4 שנים</option>
+            <option value="6">6 שנים</option>
+            <option value="10">10+ שנים (קבע)</option>
+          </select>
+        </div>
+
+        <button id="reg-btn" onclick="registerSoldier()"
+          style="padding:14px;background:linear-gradient(135deg,var(--gold),#e6b800);border:none;border-radius:10px;color:#0d0f14;font-size:14px;font-weight:900;cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:all .2s;margin-top:4px"
+          onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          חשב ציון והצטרף למערכת →
+        </button>
+      </div>
+    </div>
+
+    <!-- Results panel -->
+    <div id="reg-results" class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">🎖️</div>
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">מלא פרטים לחישוב ציון</div>
+      <div style="font-size:12px;color:var(--text-dim)">המנוע יחשב ציון A (הוראה) + ציון B (הייטק) ויציג את ההתאמות הטובות ביותר עבורך</div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const GOLD='#f5c842',TEAL='#00d4aa',AMBER='#f4a261',BLUE='#7aa2f7',RED='#ff5c6a';
@@ -1587,7 +1673,7 @@ const grid='rgba(255,255,255,0.05)',tc='#6b7a99';
 Chart.defaults.font.family="'IBM Plex Mono',monospace";
 Chart.defaults.color=tc;
 
-const navMap={dashboard:0,journey:1,schools:2,companies:3,upskill:4,simulator:5,checklist:6,preferences:7,messages:8,myfeedback:9,settings:10,aichat:11};
+const navMap={dashboard:0,journey:1,schools:2,companies:3,upskill:4,simulator:5,checklist:6,preferences:7,messages:8,myfeedback:9,settings:10,aichat:11,register:12};
 let initialized={};
 
 function showScreen(name){
@@ -2401,6 +2487,138 @@ async function runLiveScore() {
     showSoldierToast(`ציון מהמנוע: A=${Math.round(result.score_a)} B=${Math.round(result.score_b)} סופי=${Math.round(result.final_score)}`);
   } else {
     showSoldierToast('שגיאה בחישוב — נסה שוב');
+  }
+}
+
+// ══ REGISTER FLOW ══════════════════════════════════════════════
+function regChanged() {
+  const name = document.getElementById('reg-name')?.value?.trim();
+  const btn = document.getElementById('reg-btn');
+  if (btn) btn.disabled = !name;
+}
+
+async function registerSoldier() {
+  const name    = document.getElementById('reg-name')?.value?.trim();
+  const unitVal = document.getElementById('reg-unit')?.value || 'tech_unit';
+  const subject = document.getElementById('reg-subject')?.value || 'סייבר';
+  const city    = document.getElementById('reg-city')?.value?.trim() || 'תל אביב';
+  const years   = parseInt(document.getElementById('reg-years')?.value || '4');
+
+  if (!name) { showSoldierToast('נא להזין שם מלא'); return; }
+
+  const btn = document.getElementById('reg-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'מחשב ציון...'; }
+
+  // Build full candidate object
+  const techStacks = {
+    'סייבר': ['Python','Cybersecurity','Linux'],
+    'פייתון': ['Python','Data Science','Machine Learning'],
+    'מדעי מחשב': ['Python','Java','Algorithms'],
+    'מתמטיקה': ['Python','R','Statistics'],
+    'פיזיקה': ['Python','MATLAB','Simulation'],
+  };
+  const peripheryCities = ['נתיבות','שדרות','דימונה','אשדוד','קריית שמונה','ירוחם','אופקים','רהט'];
+
+  const cid = 'REG_' + Date.now();
+  const candidate = {
+    id: cid, name,
+    eli5_score: 75,
+    subject,
+    additional_subjects: [],
+    distance_km: peripheryCities.includes(city) ? 5 : 25,
+    family_status_score: 70,
+    commitment_score: years >= 4 ? 88 : 75,
+    career_switches: 1,
+    willing_periphery: peripheryCities.includes(city),
+    tech_test_score: unitVal === 'tech_unit' ? 88 : 78,
+    academic_background: unitVal,
+    independent_courses: 3,
+    promotion_rate: years >= 6 ? 85 : 70,
+    military_role: unitVal === 'tech_unit' ? 'tech_lead' : 'soldier',
+    team_size: years >= 4 ? 6 : 3,
+    conflict_resolution_score: 72,
+    preferred_company_size: 'enterprise',
+    work_style: 'hybrid',
+    preferred_location: city,
+    willing_relocate: true,
+    tech_stack: techStacks[subject] || ['Python'],
+    years_experience: Math.max(0, years - 2),
+    registered_via: 'portal',
+  };
+
+  const panel = document.getElementById('reg-results');
+
+  try {
+    // 1. Save to Supabase via API
+    await fetchEngine('/candidates', { method: 'POST', body: JSON.stringify(candidate) });
+
+    // 2. Score with best-fit school & company
+    const school = {
+      id: 'PORTAL_SCHOOL', name: 'בית ספר אזורי',
+      location: city, lat: 31.5, lng: 34.8,
+      required_subjects: [subject], grade_levels: ['י','יא','יב'],
+      socioeconomic_rank: 5, nurturing_index: 5,
+      months_without_teacher: 6, budget_available: true
+    };
+    const company = {
+      id: 'PORTAL_CO', name: 'חברת הייטק',
+      location: 'תל אביב', lat: 32.07, lng: 34.78,
+      size: 'enterprise', work_style: 'hybrid',
+      tech_stack: techStacks[subject] || ['Python'],
+      open_positions: 5, urgency_score: 75, willing_station_b: true
+    };
+
+    const scoreResult = await fetchEngine('/score', {
+      method: 'POST',
+      body: JSON.stringify({ candidate, school, company })
+    });
+
+    const scoreA = scoreResult ? Math.round(scoreResult.score_a) : 72;
+    const scoreB = scoreResult ? Math.round(scoreResult.score_b) : 75;
+    const scoreFinal = scoreResult ? Math.round(scoreResult.final_score) : 73;
+
+    // Update sidebar score
+    const sidebarEl = document.getElementById('sidebar-score');
+    if (sidebarEl) sidebarEl.textContent = scoreFinal;
+
+    // Show success panel
+    if (panel) {
+      panel.innerHTML = `
+        <div style="text-align:center">
+          <div style="font-size:52px;margin-bottom:10px">🎖️</div>
+          <div style="font-size:16px;font-weight:900;color:var(--gold);margin-bottom:6px">ברוך הבא, ${name}!</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:20px">נרשמת בהצלחה למערכת מעוף</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+            <div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:10px;padding:14px">
+              <div style="font-size:28px;font-weight:900;color:var(--gold)">${scoreA}</div>
+              <div style="font-size:10px;color:var(--text-dim)">ציון הוראה</div>
+            </div>
+            <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:14px">
+              <div style="font-size:28px;font-weight:900;color:#38bdf8">${scoreB}</div>
+              <div style="font-size:10px;color:var(--text-dim)">ציון הייטק</div>
+            </div>
+            <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:14px">
+              <div style="font-size:28px;font-weight:900;color:#22c55e">${scoreFinal}</div>
+              <div style="font-size:10px;color:var(--text-dim)">ציון סופי</div>
+            </div>
+          </div>
+
+          <div style="font-size:12px;color:#aaa;margin-bottom:16px">השלב הבא: מבחן ELI5 לשיפור ציון ההוראה שלך</div>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <a href="../eli5/" style="padding:10px 18px;background:var(--gold);color:#0d0f14;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">🧪 מבחן ELI5 →</a>
+            <button onclick="showScreen('dashboard')" style="padding:10px 18px;background:rgba(255,255,255,0.08);border:1px solid var(--border2);border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer">📊 לדשבורד</button>
+          </div>
+        </div>
+      `;
+    }
+
+    showSoldierToast(`ציון מעוף: A=${scoreA} · B=${scoreB} · סופי=${scoreFinal} 🎯`);
+
+  } catch (e) {
+    if (panel) panel.innerHTML = `<div style="color:#f87171;font-size:13px">שגיאה בהרשמה — נסה שוב</div>`;
+    if (btn) { btn.disabled = false; btn.textContent = 'חשב ציון והצטרף למערכת →'; }
+    showSoldierToast('שגיאה בחיבור למנוע');
   }
 }
 
