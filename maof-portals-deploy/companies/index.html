@@ -620,6 +620,14 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
     </div>
   </div>
 
+  <div style="padding:0 14px 12px">
+    <button onclick="nav('register')"
+      style="width:100%;padding:11px 14px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:900;cursor:pointer;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;gap:8px">
+      🏢 הצטרף כחברה מאמצת
+      <span style="background:rgba(255,255,255,0.15);font-size:9px;padding:2px 6px;border-radius:4px;font-weight:900">חדש</span>
+    </button>
+  </div>
+
   <div class="sb-nav">
     <div class="sb-section">
       <div class="sb-section-label">ניהול</div>
@@ -1391,13 +1399,81 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
   </div>
 </div>
 
+<!-- ══ SCREEN: REGISTER COMPANY ══════════════════════════════════════ -->
+<div id="s-register" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="page-title">הצטרף <em>כחברה מאמצת</em></div>
+      <div class="page-sub">רשום את החברה → קבל גישה למועמדים מדורגים + עמלת השמה 35K ₪ בלבד</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:820px">
+    <div class="card card-p">
+      <div class="sf-section">
+        <div class="sf-sec-title">🏢 פרטי החברה</div>
+        <div class="sf-row">
+          <label class="sf-label">שם החברה</label>
+          <input id="creg-name" type="text" placeholder="Microsoft, Mobileye, Check Point..." class="sf-input" oninput="cregChanged()">
+        </div>
+        <div class="sf-row">
+          <label class="sf-label">מיקום</label>
+          <select id="creg-location" class="sf-input">
+            <option>תל אביב</option><option>הרצליה</option><option>ירושלים</option>
+            <option>חיפה</option><option>באר שבע</option><option>נתניה</option>
+          </select>
+        </div>
+        <div class="sf-row">
+          <label class="sf-label">גודל חברה</label>
+          <select id="creg-size" class="sf-input">
+            <option value="startup">Startup (&lt;50)</option>
+            <option value="mid">Mid-size (50–500)</option>
+            <option value="enterprise" selected>Enterprise (500+)</option>
+          </select>
+        </div>
+        <div class="sf-row">
+          <label class="sf-label">סגנון עבודה</label>
+          <select id="creg-style" class="sf-input">
+            <option value="agile">Agile</option>
+            <option value="hybrid" selected>Hybrid</option>
+            <option value="waterfall">Waterfall</option>
+          </select>
+        </div>
+        <div class="sf-row">
+          <label class="sf-label">Tech Stack עיקרי</label>
+          <select id="creg-tech" class="sf-input" multiple size="4" style="height:auto">
+            <option selected>Python</option><option>TypeScript</option><option>C++</option>
+            <option>Java</option><option>Cybersecurity</option><option>AI/ML</option>
+            <option>React</option><option>Cloud/Azure</option>
+          </select>
+          <div style="font-size:10px;color:#64748b;margin-top:4px">Ctrl+לחיצה לבחירה מרובה</div>
+        </div>
+        <div class="sf-row">
+          <label class="sf-label">משרות פתוחות</label>
+          <input id="creg-positions" type="number" value="3" min="1" max="50" class="sf-input">
+        </div>
+      </div>
+      <button id="creg-btn" onclick="registerCompany()"
+        style="width:100%;padding:13px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:900;cursor:pointer;font-family:'DM Mono',monospace;margin-top:8px">
+        הצטרף למערכת מעוף →
+      </button>
+    </div>
+
+    <div id="creg-result" class="card card-p" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">🏢</div>
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">מלא פרטים להצטרפות</div>
+      <div style="font-size:12px;color:#64748b">לאחר הרישום תקבל גישה מיידית למועמדים מדורגים — עמלת השמה 35,000 ₪ בלבד לתחנה ב׳</div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const BLUE='#2563eb', GREEN='#059669', AMBER='#d97706', RED='#dc2626';
 Chart.defaults.font.family = "'DM Mono', monospace";
 Chart.defaults.color = '#94a3b8';
 
-const navMap = {dashboard:0,candidates:1,placements:2,finance:3,aichat:4,notifications:5,agreement:6,feedback:7,settings:8};
+const navMap = {dashboard:0,candidates:1,placements:2,finance:3,aichat:4,notifications:5,agreement:6,feedback:7,settings:8,register:9};
 let inited = {};
 
 function nav(name) {
@@ -2398,6 +2474,82 @@ async function fetchEngineCandidates() {
 }
 
 window.addEventListener('load', () => setTimeout(checkCompanyEngine, 500));
+
+// ══ REGISTER COMPANY ══════════════════════════════════════════
+function cregChanged() {
+  const name = document.getElementById('creg-name')?.value?.trim();
+  const btn  = document.getElementById('creg-btn');
+  if (btn) btn.disabled = !name;
+}
+
+async function registerCompany() {
+  const name      = document.getElementById('creg-name')?.value?.trim();
+  const location  = document.getElementById('creg-location')?.value || 'תל אביב';
+  const size      = document.getElementById('creg-size')?.value || 'enterprise';
+  const style     = document.getElementById('creg-style')?.value || 'hybrid';
+  const positions = parseInt(document.getElementById('creg-positions')?.value || '3');
+  const techSel   = document.getElementById('creg-tech');
+  const techStack = techSel ? Array.from(techSel.selectedOptions).map(o => o.value) : ['Python'];
+
+  if (!name) { showCompanyToast('נא להזין שם חברה'); return; }
+
+  const btn = document.getElementById('creg-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'רושם...'; }
+
+  const locationCoords = {
+    'תל אביב':{lat:32.07,lng:34.78}, 'הרצליה':{lat:32.16,lng:34.84},
+    'ירושלים':{lat:31.78,lng:35.22}, 'חיפה':{lat:32.79,lng:34.99},
+    'באר שבע':{lat:31.24,lng:34.79}, 'נתניה':{lat:32.33,lng:34.86}
+  };
+  const coords = locationCoords[location] || {lat:32.07,lng:34.78};
+  const cid = 'CO_' + name.replace(/\s+/g,'_').toUpperCase() + '_' + Date.now();
+
+  const company = {
+    id: cid, name, location,
+    lat: coords.lat, lng: coords.lng,
+    size, work_style: style,
+    tech_stack: techStack,
+    open_positions: positions,
+    urgency_score: 75.0,
+    willing_station_b: true,
+    placement_fee_paid: false,
+    registered_via: 'portal',
+  };
+
+  const result = document.getElementById('creg-result');
+  try {
+    await fetch(MAOF_API + '/companies', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(company)
+    });
+
+    if (result) result.innerHTML = `
+      <div style="text-align:center">
+        <div style="font-size:52px;margin-bottom:10px">🎉</div>
+        <div style="font-size:16px;font-weight:900;color:#60a5fa;margin-bottom:6px">${name} נרשמה בהצלחה!</div>
+        <div style="font-size:12px;color:#64748b;margin-bottom:20px">החברה מחוברת למערכת מעוף</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+          <div style="background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);border-radius:10px;padding:14px">
+            <div style="font-size:22px;font-weight:900;color:#60a5fa">${positions}</div>
+            <div style="font-size:10px;color:#64748b">משרות פתוחות</div>
+          </div>
+          <div style="background:rgba(5,150,105,0.1);border:1px solid rgba(5,150,105,0.25);border-radius:10px;padding:14px">
+            <div style="font-size:22px;font-weight:900;color:#34d399">35K₪</div>
+            <div style="font-size:10px;color:#64748b">עמלת השמה</div>
+          </div>
+        </div>
+        <button onclick="nav('candidates')" style="padding:10px 20px;background:#2563eb;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">
+          👥 צפה במועמדים →
+        </button>
+      </div>`;
+
+    showCompanyToast(`${name} נרשמה — ${positions} משרות פתוחות 🎯`);
+  } catch (e) {
+    if (result) result.innerHTML = `<div style="color:#f87171;font-size:13px">שגיאה בהרשמה — נסה שוב</div>`;
+    if (btn) { btn.disabled = false; btn.textContent = 'הצטרף למערכת מעוף →'; }
+  }
+}
 
 </script>
 <script>

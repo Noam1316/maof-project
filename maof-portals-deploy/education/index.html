@@ -793,6 +793,14 @@ body{max-width:100vw;}  * {box-sizing:border-box;}
       <div class="logo-sub">פורטל ניהול מחזור 2025</div>
     </div>
 
+    <div style="padding:0 12px 14px">
+      <button onclick="showScreen('register')"
+        style="width:100%;padding:11px 14px;background:linear-gradient(135deg,var(--teal),#00a884);border:none;border-radius:10px;color:var(--navy);font-size:12px;font-weight:900;cursor:pointer;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;justify-content:center;gap:8px">
+        🏫 רשום בית ספר חדש
+        <span style="background:rgba(0,0,0,0.2);font-size:9px;padding:2px 6px;border-radius:4px;font-weight:900">חדש</span>
+      </button>
+    </div>
+
     <div class="nav-section">
       <div class="nav-label">ניהול</div>
       <div class="nav-item active" onclick="showScreen('overview')">
@@ -2770,6 +2778,74 @@ body{max-width:100vw;}  * {box-sizing:border-box;}
 
 
 
+<!-- ══ SCREEN: REGISTER SCHOOL ══════════════════════════════════════ -->
+<div id="screen-register" class="screen">
+  <div class="topbar" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+      <div class="page-title">רישום <span style="color:var(--teal)">בית ספר חדש</span></div>
+      <div class="page-sub">צרף בית ספר למאגר → המנוע ישבץ מורי STEM מתאימים לפי הצרכים שלך</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:820px">
+    <div class="card" style="padding:24px">
+      <div style="font-size:12px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px">פרטי בית הספר</div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:5px">שם בית הספר</label>
+          <input id="sreg-name" type="text" placeholder='תיכון טכנולוגי...' oninput="sregChanged()"
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;box-sizing:border-box"
+            onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='rgba(0,201,167,0.2)'">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:5px">עיר</label>
+          <input id="sreg-city" type="text" placeholder="שדרות, דימונה, ירוחם..."
+            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;box-sizing:border-box"
+            onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='rgba(0,201,167,0.2)'">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:5px">מקצוע STEM נדרש</label>
+          <select id="sreg-subject"
+            style="width:100%;background:#0d1a2d;border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;box-sizing:border-box">
+            <option>סייבר</option><option>פייתון</option><option>מדעי מחשב</option>
+            <option>מתמטיקה</option><option>פיזיקה</option><option>אלקטרוניקה</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:5px">דירוג סוציו-אקונומי (1-10)</label>
+            <input id="sreg-rank" type="number" value="4" min="1" max="10"
+              style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:5px">חודשים ללא מורה</label>
+            <input id="sreg-months" type="number" value="6" min="0" max="36"
+              style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;box-sizing:border-box">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:5px">קיבולת מורים</label>
+          <select id="sreg-capacity"
+            style="width:100%;background:#0d1a2d;border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;box-sizing:border-box">
+            <option value="1">1 מורה</option><option value="2" selected>2 מורים</option>
+            <option value="3">3 מורים</option><option value="5">5 מורים</option>
+          </select>
+        </div>
+        <button id="sreg-btn" onclick="registerSchool()"
+          style="width:100%;padding:13px;background:linear-gradient(135deg,var(--teal),#00a884);border:none;border-radius:10px;color:var(--navy);font-size:13px;font-weight:900;cursor:pointer;font-family:'IBM Plex Mono',monospace;margin-top:4px">
+          רשום בית ספר →
+        </button>
+      </div>
+    </div>
+
+    <div id="sreg-result" class="card" style="padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">🏫</div>
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">מלא פרטים לרישום</div>
+      <div style="font-size:12px;color:var(--text-dim)">לאחר הרישום המנוע ישבץ מורי STEM מתאימים לפי הצרכים שלך — בתוך 47 ימים בממוצע</div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════════════
      SCREEN 7: TRENDS & RISK FACTORS — SVG inline, no CDN
 ═══════════════════════════════════════════════════════════ -->
@@ -2858,7 +2934,7 @@ body{max-width:100vw;}  * {box-sizing:border-box;}
   </div>
 
 <script>
-const navMap={overview:0,placements:1,needs:2,insights:3,companies:4,matching:5,trends:6,approvals:7,feedback:8};
+const navMap={overview:0,placements:1,needs:2,insights:3,companies:4,matching:5,trends:6,approvals:7,feedback:8,register:9};
 let chartsInitialized={companies:false,matching:false,trends:false};
 let radarChart=null;
 
@@ -4147,6 +4223,84 @@ function showEduToast(msg) {
 }
 
 window.addEventListener('load', () => setTimeout(checkEduEngine, 500));
+
+// ══ REGISTER SCHOOL ══════════════════════════════════════════
+function sregChanged() {
+  const name = document.getElementById('sreg-name')?.value?.trim();
+  const btn  = document.getElementById('sreg-btn');
+  if (btn) btn.disabled = !name;
+}
+
+async function registerSchool() {
+  const name     = document.getElementById('sreg-name')?.value?.trim();
+  const city     = document.getElementById('sreg-city')?.value?.trim() || 'ישראל';
+  const subject  = document.getElementById('sreg-subject')?.value || 'סייבר';
+  const rank     = parseInt(document.getElementById('sreg-rank')?.value || '4');
+  const months   = parseInt(document.getElementById('sreg-months')?.value || '6');
+  const capacity = parseInt(document.getElementById('sreg-capacity')?.value || '2');
+
+  if (!name) { showEduToast('נא להזין שם בית הספר'); return; }
+
+  const btn = document.getElementById('sreg-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'רושם...'; }
+
+  const periphery = ['שדרות','דימונה','ירוחם','אופקים','רהט','קריית שמונה','נתיבות','אשקלון'];
+  const sid = 'SCH_' + name.replace(/\s+/g,'_') + '_' + Date.now();
+  const school = {
+    id: sid, name,
+    location: city,
+    lat: 31.5, lng: 34.8,
+    required_subjects: [subject],
+    grade_levels: ['י','יא','יב'],
+    socioeconomic_rank: rank,
+    nurturing_index: Math.max(1, 10 - rank),
+    months_without_teacher: months,
+    budget_available: true,
+    capacity,
+    is_periphery: periphery.includes(city),
+    registered_via: 'portal',
+  };
+
+  const result = document.getElementById('sreg-result');
+  try {
+    await fetch(MAOF_API + '/schools', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(school)
+    });
+
+    const urgency = months >= 6 ? '🔴 דחוף' : months >= 3 ? '🟡 בינוני' : '🟢 רגיל';
+    if (result) result.innerHTML = `
+      <div style="text-align:center">
+        <div style="font-size:52px;margin-bottom:10px">🏫</div>
+        <div style="font-size:16px;font-weight:900;color:var(--teal);margin-bottom:6px">${name} נרשם!</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:20px">בית הספר מחובר למאגר מעוף</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+          <div style="background:rgba(0,201,167,0.08);border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:12px">
+            <div style="font-size:22px;font-weight:900;color:var(--teal)">${rank}</div>
+            <div style="font-size:9px;color:var(--text-dim)">דירוג סוציו</div>
+          </div>
+          <div style="background:rgba(0,201,167,0.08);border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:12px">
+            <div style="font-size:22px;font-weight:900;color:var(--teal)">${months}</div>
+            <div style="font-size:9px;color:var(--text-dim)">חודשים ללא מורה</div>
+          </div>
+          <div style="background:rgba(0,201,167,0.08);border:1px solid rgba(0,201,167,0.2);border-radius:8px;padding:12px">
+            <div style="font-size:22px;font-weight:900;color:var(--teal)">${capacity}</div>
+            <div style="font-size:9px;color:var(--text-dim)">קיבולת</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#aaa;margin-bottom:14px">דחיפות: ${urgency}</div>
+        <button onclick="showScreen('needs')" style="padding:10px 18px;background:var(--teal);border:none;border-radius:8px;color:var(--navy);font-size:12px;font-weight:700;cursor:pointer">
+          📋 לצרכי בתי ספר →
+        </button>
+      </div>`;
+
+    showEduToast(`${name} נרשם — ${months} חודשים ללא מורה · ${urgency}`);
+  } catch (e) {
+    if (result) result.innerHTML = `<div style="color:#f87171;font-size:13px">שגיאה בהרשמה — נסה שוב</div>`;
+    if (btn) { btn.disabled = false; btn.textContent = 'רשום בית ספר →'; }
+  }
+}
 
 </script>
 </div><!-- close app wrapper -->
