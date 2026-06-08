@@ -2091,6 +2091,39 @@ async function finishTest() {
   goToScreen('results', 5);
   setTimeout(() => animateResults(scores), 500);
   setTimeout(() => renderGroqBadge(scores), 1200);
+
+  // ── Save to Supabase (also updates candidate eli5_score) ──
+  saveEli5ToSupabase(scores);
+}
+
+async function saveEli5ToSupabase(scores) {
+  // candidate_id from URL param or localStorage
+  const params  = new URLSearchParams(window.location.search);
+  const cid     = params.get('candidate_id') || localStorage.getItem('maof_candidate_id') || 'PORTAL_USER_' + Date.now();
+  const topic   = state.topic || state.selectedTopic || 'כללי';
+  const payload = {
+    candidate_id: cid,
+    topic,
+    result: {
+      total_score:  scores.total,
+      simplicity:   scores.simplicity,
+      accuracy:     scores.accuracy,
+      analogies:    scores.analogies,
+      engagement:   scores.engagement,
+      structure:    scores.structure,
+      scoring_method: scores.scoringMethod || 'keyword',
+    },
+  };
+  try {
+    await fetch(MAOF_API + '/eli5/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    console.log('[ELI5] score saved to Supabase:', scores.total);
+  } catch (e) {
+    console.warn('[ELI5] save failed (offline?):', e);
+  }
 }
 
 function calculateScores() {

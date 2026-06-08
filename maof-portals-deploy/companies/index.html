@@ -1008,6 +1008,18 @@ select.sf-input { cursor: pointer; -webkit-appearance: none; }
   </div>
 </div>
 
+<!-- Live placements from Supabase -->
+<div id="live-placements-container" style="margin-top:20px;display:none">
+  <div class="card card-p">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="card-title">⚡ שיבוצים חיים — Supabase</div>
+      <button onclick="loadLivePlacements()" style="font-size:11px;padding:4px 10px;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);color:#7ab8ff;border-radius:6px;cursor:pointer">רענן</button>
+    </div>
+    <div id="live-placements-list"></div>
+  </div>
+</div>
+</div>
+
 <!-- ─── FINANCE ──────────────────────────────────────────────── -->
 <div id="s-finance" class="screen">
   <div class="topbar">
@@ -1486,8 +1498,13 @@ function nav(name) {
 }
 
 function initScreen(n) {
-  if (n === 'dashboard') initDash();
-  if (n === 'finance')   initFinance();
+  if (n === 'dashboard')  initDash();
+  if (n === 'finance')    initFinance();
+  if (n === 'placements') {
+    const c = document.getElementById('live-placements-container');
+    if (c) c.style.display = 'block';
+    loadLivePlacements();
+  }
 }
 
 /* ── Charts ───────────────────────────────────── */
@@ -2435,26 +2452,129 @@ async function loadLiveCandidates() {
   const tbody = document.getElementById('cand-tbody');
   if (!tbody) return;
   tbody.innerHTML = data.candidates.map((c, i) => {
-    const score = Math.round((c.eli5_score || 70) * 0.4 + (c.tech_test_score || 70) * 0.6);
-    const techMatch = Math.round(60 + Math.random() * 30);
-    const retention = Math.round(70 + Math.random() * 25);
+    const scoreB = Math.round((c.eli5_score || 70) * 0.4 + (c.tech_test_score || 70) * 0.6);
+    const scoreA = Math.round((c.eli5_score || 70) * 0.7 + 20);
     const skills = (c.tech_stack || ['Python']).slice(0, 2).join(', ');
-    const statusColor = i < 3 ? '#22c55e' : '#94a3b8';
-    const statusText = i < 3 ? 'זמין' : 'בתהליך';
+    const already = placedCandidates[c.id];
+    const btn = already
+      ? `<span style="color:#22c55e;font-size:11px;font-weight:700">✅ שובץ</span>`
+      : `<button onclick="openLivePlacementModal('${c.id}','${(c.name||c.id).replace(/'/g,"\\'")}',${scoreA},${scoreB})"
+           style="padding:5px 12px;background:#2563eb;border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">
+           + שבץ
+         </button>`;
     return `<tr>
       <td><div style="display:flex;align-items:center;gap:10px">
-        <div style="width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.12);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue)">${score}</div>
-        <div><div style="font-weight:600;font-size:13px">${c.name || c.id}</div>
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.12);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue)">${scoreB}</div>
+        <div><div style="font-weight:600;font-size:13px">${c.name||c.id}</div>
         <div style="font-size:11px;color:var(--slate)">${skills}</div></div>
       </div></td>
-      <td><div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--blue)">${score}</div></td>
-      <td><div style="font-size:13px">${techMatch}%</div></td>
-      <td><div style="font-size:13px">${retention}%</div></td>
+      <td><div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--blue)">${scoreB}</div></td>
+      <td><div style="font-size:13px">${scoreA}%</div></td>
+      <td><div style="font-size:13px">${c.willing_periphery ? '96%' : '74%'}</div></td>
       <td><div style="font-size:12px;color:var(--slate)">+18 חודש</div></td>
       <td><div style="font-size:13px;font-weight:600">35K₪</div></td>
-      <td><span style="padding:3px 10px;border-radius:20px;font-size:11px;background:${statusColor}22;color:${statusColor};font-weight:600">${statusText}</span></td>
+      <td>${btn}</td>
     </tr>`;
   }).join('');
+}
+
+let placedCandidates = {};
+
+function openLivePlacementModal(cid, cname, scoreA, scoreB) {
+  const final = Math.round(scoreA * 0.45 + scoreB * 0.55);
+  const overlay = document.createElement('div');
+  overlay.className = 'preq-overlay';
+  overlay.innerHTML = `<div class="preq-box">
+    <div style="height:3px;background:linear-gradient(90deg,#2563eb,#059669)"></div>
+    <div class="preq-head">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:#f1f5f9">שיבוץ — ${cname}</div>
+        <div style="font-size:11px;color:#64748b;margin-top:3px">השיבוץ יירשם ב-Supabase ויופיע בכל הפורטלים</div>
+      </div>
+      <button onclick="this.closest('.preq-overlay').remove()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;color:#94a3b8;padding:6px 12px;cursor:pointer">✕</button>
+    </div>
+    <div class="preq-body">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+        ${[['ציון הוראה',scoreA+'','#00c9a7'],['ציון הייטק',scoreB+'','#2563eb'],['ציון סופי',final+'','#f5c842']].map(([l,v,c])=>`
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:${c}">${v}</div>
+          <div style="font-size:10px;color:#64748b;margin-top:3px">${l}</div>
+        </div>`).join('')}
+      </div>
+      <div style="background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);border-radius:10px;padding:12px;font-size:12px;color:#7ab8ff;margin-bottom:12px">
+        ✅ לחיצה על "אשר שיבוץ" תיצור רשומה חיה ב-Supabase — המועמד יעבור לסטטוס "משובץ" בכל הפורטלים.
+      </div>
+    </div>
+    <div class="preq-foot">
+      <button onclick="this.closest('.preq-overlay').remove()" class="btn btn-ghost">ביטול</button>
+      <button onclick="saveLivePlacement('${cid}','${cname}',${scoreA},${scoreB},${final});this.closest('.preq-overlay').remove()" class="btn btn-green">✅ אשר שיבוץ</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+}
+
+async function saveLivePlacement(cid, cname, scoreA, scoreB, finalScore) {
+  const pid = 'PL_' + cid + '__' + Date.now();
+  const body = {
+    id: pid,
+    candidate_id:   cid,
+    candidate_name: cname,
+    school_id:      'S_PORTAL',
+    school_name:    'בית ספר (ממתין לשיבוץ)',
+    company_id:     'CO_MOBILEYE',
+    company_name:   'Mobileye',
+    score_a:        scoreA,
+    score_b:        scoreB,
+    final_score:    finalScore,
+    status:         'active',
+    created_at:     new Date().toISOString(),
+  };
+  try {
+    await fetch(MAOF_API + '/placements', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    placedCandidates[cid] = true;
+    showCompanyToast(`✅ ${cname} שובצה! — נרשם ב-Supabase`);
+    loadLiveCandidates();      // refresh table
+    loadLivePlacements();      // refresh placements tab
+    COMPANY_MESSAGES.unshift({
+      id:'cm_pl_'+Date.now(), unread:true, tag:'placement',
+      icon:'✅', iconBg:'rgba(5,150,105,.15)',
+      title:`שיבוץ אושר — ${cname}`,
+      body:`${cname} שובצה בהצלחה. הרשומה נשמרה ב-Supabase ומופיעה בפורטל החינוך.`,
+      time:'עכשיו', action:{label:'ראה שיבוצים', fn:'placements'}
+    });
+    updateNotifBadge();
+  } catch {
+    showCompanyToast('שגיאה בשמירת השיבוץ — נסה שוב');
+  }
+}
+
+async function loadLivePlacements() {
+  if (!engineOnline) return;
+  try {
+    const r = await fetch(MAOF_API + '/placements', { signal: AbortSignal.timeout(8000) });
+    const data = await r.json();
+    const placements = data.placements || [];
+    if (!placements.length) return;
+    const container = document.getElementById('live-placements-list');
+    if (!container) return;
+    container.innerHTML = placements.slice(0, 10).map(p => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:13px">${p.candidate_name || p.candidate_id}</div>
+          <div style="font-size:11px;color:var(--slate);margin-top:2px">${p.company_name||'—'} · ${p.school_name||'—'}</div>
+        </div>
+        <div style="text-align:center;margin:0 16px">
+          <div style="font-size:18px;font-weight:900;color:#f5c842;font-family:'DM Mono',monospace">${Math.round(p.final_score||0)}</div>
+          <div style="font-size:9px;color:var(--slate)">ציון</div>
+        </div>
+        <span style="padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(34,197,94,0.12);color:#22c55e">${p.status||'active'}</span>
+      </div>`).join('');
+  } catch {}
 }
 
 async function fetchEngineCompanies() {

@@ -246,6 +246,29 @@ def list_placements(limit: int = 50):
     return {"placements": db.list_placements(limit)}
 
 
+@router.post("/placements")
+def create_placement(body: dict):
+    """צור שיבוץ חדש — חייל + בית ספר + חברה"""
+    import time
+    pid = body.get("id") or f"PL_{body.get('candidate_id','?')}__{int(time.time())}"
+    record = {
+        "id": pid,
+        "candidate_id":  body.get("candidate_id", ""),
+        "candidate_name": body.get("candidate_name", ""),
+        "school_id":     body.get("school_id", ""),
+        "school_name":   body.get("school_name", ""),
+        "company_id":    body.get("company_id", ""),
+        "company_name":  body.get("company_name", ""),
+        "score_a":       float(body.get("score_a", 0)),
+        "score_b":       float(body.get("score_b", 0)),
+        "final_score":   float(body.get("final_score", 0)),
+        "status":        body.get("status", "pending"),   # pending | active | completed
+        "created_at":    body.get("created_at", ""),
+    }
+    saved = db.save_placement(record)
+    return {"status": "ok", "placement": saved, "placement_id": pid}
+
+
 @router.get("/stats")
 def global_stats():
     """סטטיסטיקות מסד הנתונים"""
@@ -254,13 +277,21 @@ def global_stats():
 
 @router.post("/eli5/save")
 def save_eli5(body: dict):
-    """שמור תוצאת ELI5 למסד הנתונים"""
+    """שמור תוצאת ELI5 ועדכן ציון המועמד"""
     candidate_id = body.get("candidate_id", "")
-    topic = body.get("topic", "")
-    result = body.get("result", {})
+    topic        = body.get("topic", "")
+    result       = body.get("result", {})
     if not candidate_id:
         raise HTTPException(status_code=400, detail="חסר 'candidate_id'")
-    return db.save_eli5_result(candidate_id, topic, result)
+    saved = db.save_eli5_result(candidate_id, topic, result)
+    # Update candidate eli5_score if candidate exists
+    eli5_score = result.get("total_score") or result.get("score")
+    if eli5_score and candidate_id:
+        existing = db.get_candidate(candidate_id)
+        if existing:
+            existing["eli5_score"] = float(eli5_score)
+            db.upsert_candidate(existing)
+    return saved
 
 
 @router.get("/eli5/history/{candidate_id}")

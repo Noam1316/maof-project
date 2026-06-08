@@ -589,6 +589,18 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
   </div>
 </div>
 
+<!-- Live placements from Supabase -->
+<div id="live-placements-dash" style="display:none;margin-top:20px">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">⚡ שיבוצים חיים — Supabase</div>
+      <div class="panel-action" onclick="loadLiveSoldierPlacements()">רענן ←</div>
+    </div>
+    <div id="live-placements-dash-list" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+</div>
+
 <!-- ══ SCREEN 2: JOURNEY ══════════════════════════════════════════ -->
 <div id="screen-journey" class="screen">
   <div class="topbar">
@@ -2439,7 +2451,32 @@ async function onEngineReady() {
     if (total > 0) {
       showSoldierToast(`מנוע מעוף מחובר — ${stats.candidates || 0} מועמדים, ${stats.schools || 0} בתי ספר`);
     }
+    // update KPI counters on dashboard
+    const kCand = document.getElementById('kpi-live-candidates');
+    const kPlac = document.getElementById('kpi-live-placements');
+    if (kCand) kCand.textContent = stats.candidates || 0;
+    if (kPlac) kPlac.textContent = stats.placements || 0;
   }
+  loadLiveSoldierPlacements();
+}
+
+async function loadLiveSoldierPlacements() {
+  const data = await fetchEngine('/placements');
+  if (!data || !data.placements || !data.placements.length) return;
+  const container = document.getElementById('live-placements-dash');
+  if (!container) return;
+  container.style.display = 'block';
+  const list = document.getElementById('live-placements-dash-list');
+  if (!list) return;
+  list.innerHTML = data.placements.slice(0, 4).map(p => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,200,66,0.04);border:1px solid rgba(245,200,66,0.1);border-radius:8px">
+      <div style="width:32px;height:32px;background:rgba(245,200,66,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--gold);flex-shrink:0">${Math.round(p.final_score||0)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.candidate_name||p.candidate_id}</div>
+        <div style="font-size:10px;color:var(--text-dim)">${p.company_name||'חברה'} · ${p.school_name||'בית ספר'}</div>
+      </div>
+      <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.12);color:#22c55e;font-weight:700;white-space:nowrap">${p.status||'active'}</span>
+    </div>`).join('');
 }
 
 async function runLiveScore() {
