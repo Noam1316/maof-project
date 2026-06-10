@@ -6,6 +6,13 @@
       "runtimeExecutable": "py",
       "runtimeArgs": ["-m", "http.server", "8081"],
       "port": 8081
+    },
+    {
+      "name": "signal-news",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev"],
+      "cwd": "signal-news-demo",
+      "port": 3000
     }
   ]
 }

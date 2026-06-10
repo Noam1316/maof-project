@@ -8,7 +8,12 @@ from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
+from pptx.oxml.ns import qn
 import os
+
+def set_para_rtl(paragraph):
+    pPr = paragraph._p.get_or_add_pPr()
+    pPr.set(qn('a:rtl'), '1')
 
 # ─── Color Palette ───
 NAVY      = RGBColor(0x1E, 0x27, 0x61)
@@ -46,6 +51,7 @@ def add_text_box(slide, x, y, w, h, text, font_size=18, color=WHITE, bold=False,
     tf.word_wrap = True
     p = tf.paragraphs[0]
     p.alignment = alignment
+    set_para_rtl(p)
     run = p.add_run()
     run.text = text
     run.font.size = Pt(font_size)
@@ -64,6 +70,7 @@ def add_multiline_box(slide, x, y, w, h, lines, font_size=14, color=WHITE, align
         else:
             p = tf.add_paragraph()
         p.alignment = alignment
+        set_para_rtl(p)
         p.space_after = Pt(font_size * 0.4)
 
         if isinstance(line_data, dict):

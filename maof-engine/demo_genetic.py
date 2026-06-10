@@ -128,7 +128,7 @@ def run_demo(fast: bool = False):
     for entry in history:
         if entry["generation"] % 5 == 0 or entry["generation"] == 1:
             b = entry["best_fitness"]
-            print(f"    gen {entry['generation']:>3}  best={b:.3f}  {bar(b * 100)}")
+            print(f"    gen {entry['generation']:>3}  best={b:.3f}  {bar(b)}")
 
     print()
     print("=" * 72)

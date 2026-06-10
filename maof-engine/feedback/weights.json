@@ -1,0 +1,22 @@
+{
+  "score_a": {
+    "eli5": 0.01,
+    "subject": 0.01,
+    "retention": 0.971,
+    "impact": 0.009
+  },
+  "score_b": {
+    "tech": 0.265,
+    "growth": 0.403,
+    "soft": 0.28,
+    "culture": 0.052
+  },
+  "volume": {
+    "volume_score": 0.5,
+    "score_a": 0.25,
+    "score_b": 0.25
+  },
+  "source": "genetic_algorithm",
+  "updated_at": "2026-06-07T16:16:39.589200",
+  "n_records_used": 0
+}

@@ -174,7 +174,7 @@ RSS Sources (28+) → article-cache.ts (in-memory shared cache)
 ## Deployment
 
 - **Maof Portals Live:** https://maof-portals.vercel.app
-- **Signal News Live:** https://signal-news-noam1316s-projects.vercel.app/dashboard
+- **Signal News Live:** https://signal-news-demo.vercel.app/dashboard
 - **GitHub:** https://github.com/Noam1316/signal-news
 - **APIs:** Polymarket Gamma API (public), RSS feeds (public) — no keys needed
 

@@ -288,6 +288,7 @@ body::before {
 /* ── PROGRESS BAR ─────────────────────────────── */
 .prog-wrap{background:rgba(255,255,255,0.06);border-radius:4px;height:6px;overflow:hidden;}
 .prog-fill{height:100%;border-radius:4px;transition:width 1s ease;}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 6px #00d4aa}50%{opacity:.6;box-shadow:0 0 12px #00d4aa}}
 
 /* ── TABS ─────────────────────────────── */
 .tab-bar{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:4px;margin-bottom:22px;}
@@ -388,14 +389,6 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
     <div class="logo-sub">הפורטל האישי שלי</div>
   </div>
 
-  <div style="padding:0 14px 14px">
-    <button onclick="showScreen('register')"
-      style="width:100%;padding:12px 16px;background:linear-gradient(135deg,var(--gold),#e6b800);border:none;border-radius:10px;color:#0d0f14;font-size:13px;font-weight:900;cursor:pointer;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;justify-content:center;gap:8px">
-      🚀 הרשמה למערכת
-      <span style="background:#0d0f14;color:var(--gold);font-size:9px;padding:2px 6px;border-radius:4px;font-weight:900">חדש</span>
-    </button>
-  </div>
-
   <div class="nav-section">
     <div class="nav-label">המסע שלי</div>
     <div class="nav-item active" onclick="showScreen('dashboard')">
@@ -455,9 +448,10 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
     </div>
     <div style="font-size:10px;color:var(--text-dim);margin-top:8px;text-align:center;font-family:'IBM Plex Mono',monospace">⚙️ ערוך הגדרות</div>
   </div>
-  <div id="engine-status" style="padding:10px 18px;border-top:1px solid var(--border2);display:flex;align-items:center;gap:8px;cursor:pointer" onclick="checkEngine()" title="לחץ לבדיקה מחדש">
-    <div id="engine-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-dim);flex-shrink:0;transition:all .3s"></div>
-    <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim)" id="engine-label">בודק מנוע...</div>
+  <div id="engine-status" style="padding:10px 18px;border-top:1px solid var(--border2);display:flex;align-items:center;gap:8px">
+    <div style="width:7px;height:7px;border-radius:50%;background:#00d4aa;box-shadow:0 0 6px #00d4aa;flex-shrink:0;animation:pulse-dot 2s infinite"></div>
+    <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#00d4aa">DEMO · מנוע מעוף v2.0</div>
+    <div style="margin-right:auto;font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">247 מועמדים</div>
   </div>
 </nav>
 
@@ -589,18 +583,6 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
   </div>
 </div>
 
-<!-- Live placements from Supabase -->
-<div id="live-placements-dash" style="display:none;margin-top:20px">
-  <div class="panel">
-    <div class="panel-header">
-      <div class="panel-title">⚡ שיבוצים חיים — Supabase</div>
-      <div class="panel-action" onclick="loadLiveSoldierPlacements()">רענן ←</div>
-    </div>
-    <div id="live-placements-dash-list" style="display:flex;flex-direction:column;gap:8px"></div>
-  </div>
-</div>
-</div>
-
 <!-- ══ SCREEN 2: JOURNEY ══════════════════════════════════════════ -->
 <div id="screen-journey" class="screen">
   <div class="topbar">
@@ -609,7 +591,7 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
       <div class="page-subtitle">4 שנות השקעה שישנו את הקריירה שלך לתמיד</div>
     </div>
     <div class="topbar-actions">
-      <button class="btn btn-gold" onclick="alert('קובץ PDF נוצר ✓')">📄 שמור כ-PDF</button>
+      <button class="btn btn-gold" onclick="showSoldierToast('📄 קובץ PDF נוצר — שמור Ctrl+P להדפסה')">📄 שמור כ-PDF</button>
     </div>
   </div>
 
@@ -729,10 +711,10 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
   </div>
 
   <div class="tab-bar">
-    <div class="tab-btn active" onclick="switchTab('schools','all',this)">הכל (6)</div>
-    <div class="tab-btn" onclick="switchTab('schools','urgent',this)">דחוף (3)</div>
-    <div class="tab-btn" onclick="switchTab('schools','close',this)">עד 20 דק' (4)</div>
-    <div class="tab-btn" onclick="switchTab('schools','periphery',this)">פריפריה</div>
+    <div class="tab-btn active" onclick="switchTab('schools','all')">הכל (6)</div>
+    <div class="tab-btn" onclick="switchTab('schools','urgent')">דחוף (3)</div>
+    <div class="tab-btn" onclick="switchTab('schools','close')">עד 20 דק' (4)</div>
+    <div class="tab-btn" onclick="switchTab('schools','periphery')">פריפריה</div>
   </div>
 
   <div id="schools-all" class="tab-content active">
@@ -846,7 +828,7 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
   <div class="alert" style="background:rgba(0,212,170,0.06);border-color:rgba(0,212,170,0.2)">
     <span class="alert-icon">🎯</span>
     <span><strong style="color:var(--teal)">Mobileye</strong> ביקשה לראות את הפרופיל שלך — יש להם 9 slots פנויים ל-Security Researchers</span>
-    <span class="alert-cta" style="color:var(--teal)" onclick="alert('קישור לפרופיל נשלח ✓')">שלח פרופיל ←</span>
+    <span class="alert-cta" style="color:var(--teal)" onclick="showSoldierToast('📩 קישור לפרופיל שלך נשלח ל-Mobileye ✓')">שלח פרופיל ←</span>
   </div>
 
   <div class="options-grid" style="margin-bottom:20px">
@@ -1101,7 +1083,7 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
       <div class="page-subtitle">5 מתוך 8 הושלמו · 3 פעולות דחופות</div>
     </div>
     <div class="topbar-actions">
-      <button class="btn btn-gold" onclick="alert('תזכורת נשלחה ✓')">🔔 שלח תזכורות</button>
+      <button class="btn btn-gold" onclick="showSoldierToast('🔔 תזכורות נשלחו ל-3 משימות דחופות ✓')">🔔 שלח תזכורות</button>
     </div>
   </div>
 
@@ -1600,88 +1582,6 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
   </div>
 </div>
 
-<!-- ══ SCREEN: REGISTER ══════════════════════════════════════════ -->
-<div id="screen-register" class="screen">
-  <div class="topbar">
-    <div>
-      <div class="page-title">הרשמה <span>למערכת מעוף</span></div>
-      <div class="page-subtitle">מלא פרטים → המנוע יחשב את ציון ההתאמה שלך ויציג בתי ספר וחברות מתאימים</div>
-    </div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px">
-    <!-- Form -->
-    <div class="panel">
-      <div class="panel-header"><div class="panel-title">פרטים אישיים ומקצועיים</div></div>
-      <div style="display:flex;flex-direction:column;gap:14px">
-
-        <div>
-          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">שם מלא</label>
-          <input id="reg-name" type="text" placeholder="ישראל ישראלי"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box"
-            onfocus="this.style.borderColor='rgba(245,200,66,0.4)'" onblur="this.style.borderColor='var(--border2)'" oninput="regChanged()">
-        </div>
-
-        <div>
-          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">יחידה צבאית</label>
-          <select id="reg-unit"
-            style="width:100%;background:#111927;border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box" onchange="regChanged()">
-            <option value="tech_unit">8200 / יחידה טכנולוגית</option>
-            <option value="tech_unit">מודיעין</option>
-            <option value="warriors_tech">לוחמים להייטק</option>
-            <option value="regular_bagrut">חיל הים / שריון / חי"ר</option>
-            <option value="self_taught">תקשוב / אחר</option>
-          </select>
-        </div>
-
-        <div>
-          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">מקצוע הוראה עיקרי</label>
-          <select id="reg-subject"
-            style="width:100%;background:#111927;border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box" onchange="regChanged()">
-            <option>סייבר</option>
-            <option>פייתון</option>
-            <option>מדעי מחשב</option>
-            <option>מתמטיקה</option>
-            <option>פיזיקה</option>
-          </select>
-        </div>
-
-        <div>
-          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">עיר מגורים</label>
-          <input id="reg-city" type="text" placeholder="תל אביב"
-            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box"
-            onfocus="this.style.borderColor='rgba(245,200,66,0.4)'" onblur="this.style.borderColor='var(--border2)'" oninput="regChanged()">
-        </div>
-
-        <div>
-          <label style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:6px">שנות שירות</label>
-          <select id="reg-years"
-            style="width:100%;background:#111927;border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;outline:none;box-sizing:border-box">
-            <option value="2">2 שנים (חובה)</option>
-            <option value="3">3 שנים</option>
-            <option value="4" selected>4 שנים</option>
-            <option value="6">6 שנים</option>
-            <option value="10">10+ שנים (קבע)</option>
-          </select>
-        </div>
-
-        <button id="reg-btn" onclick="registerSoldier()"
-          style="padding:14px;background:linear-gradient(135deg,var(--gold),#e6b800);border:none;border-radius:10px;color:#0d0f14;font-size:14px;font-weight:900;cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:all .2s;margin-top:4px"
-          onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-          חשב ציון והצטרף למערכת →
-        </button>
-      </div>
-    </div>
-
-    <!-- Results panel -->
-    <div id="reg-results" class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;text-align:center">
-      <div style="font-size:48px;margin-bottom:12px">🎖️</div>
-      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">מלא פרטים לחישוב ציון</div>
-      <div style="font-size:12px;color:var(--text-dim)">המנוע יחשב ציון A (הוראה) + ציון B (הייטק) ויציג את ההתאמות הטובות ביותר עבורך</div>
-    </div>
-  </div>
-</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const GOLD='#f5c842',TEAL='#00d4aa',AMBER='#f4a261',BLUE='#7aa2f7',RED='#ff5c6a';
@@ -1689,7 +1589,7 @@ const grid='rgba(255,255,255,0.05)',tc='#6b7a99';
 Chart.defaults.font.family="'IBM Plex Mono',monospace";
 Chart.defaults.color=tc;
 
-const navMap={dashboard:0,journey:1,schools:2,companies:3,upskill:4,simulator:5,checklist:6,preferences:7,messages:8,myfeedback:9,settings:10,aichat:11,register:12};
+const navMap={dashboard:0,journey:1,schools:2,companies:3,upskill:4,simulator:5,checklist:6,preferences:7,messages:8,myfeedback:9,settings:10,aichat:11};
 let initialized={};
 
 function showScreen(name){
@@ -1852,12 +1752,12 @@ function updateSim(){
 }
 
 // ── TABS ──────────────────────────────────────────
-function switchTab(screen,tab,btn){
+function switchTab(screen,tab){
   document.querySelectorAll(`#screen-${screen} .tab-content`).forEach(t=>t.classList.remove('active'));
   document.querySelectorAll(`#screen-${screen} .tab-btn`).forEach(b=>b.classList.remove('active'));
   const el=document.getElementById(`${screen}-${tab}`);
   if(el)el.classList.add('active');
-  if(btn)btn.classList.add('active');
+  event.target.classList.add('active');
 }
 
 function selectOption(card){
@@ -2185,17 +2085,19 @@ async function sendSoldierMessage() {
   soldierChatHistory.push({role:'user', content:text});
 
   try {
-    const res = await fetch('https://maof-project.onrender.com/api/v1/chat', {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
         system: SOLDIER_CONTEXT,
         messages: soldierChatHistory.slice(-10)
       })
     });
     if (!res.ok) throw new Error(res.status);
     const data  = await res.json();
-    const reply = data.reply || 'לא הצלחתי לקבל תשובה.';
+    const reply = data.content?.[0]?.text || 'לא הצלחתי לקבל תשובה.';
     soldierChatHistory.push({role:'assistant', content:reply});
     appendSoldierMsg('assistant', reply);
   } catch(e) {
@@ -2451,35 +2353,140 @@ async function onEngineReady() {
     if (total > 0) {
       showSoldierToast(`מנוע מעוף מחובר — ${stats.candidates || 0} מועמדים, ${stats.schools || 0} בתי ספר`);
     }
-    // update KPI counters on dashboard
-    const kCand = document.getElementById('kpi-live-candidates');
-    const kPlac = document.getElementById('kpi-live-placements');
-    if (kCand) kCand.textContent = stats.candidates || 0;
-    if (kPlac) kPlac.textContent = stats.placements || 0;
   }
-  loadLiveSoldierPlacements();
-}
-
-async function loadLiveSoldierPlacements() {
-  const data = await fetchEngine('/placements');
-  if (!data || !data.placements || !data.placements.length) return;
-  const container = document.getElementById('live-placements-dash');
-  if (!container) return;
-  container.style.display = 'block';
-  const list = document.getElementById('live-placements-dash-list');
-  if (!list) return;
-  list.innerHTML = data.placements.slice(0, 4).map(p => `
-    <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,200,66,0.04);border:1px solid rgba(245,200,66,0.1);border-radius:8px">
-      <div style="width:32px;height:32px;background:rgba(245,200,66,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--gold);flex-shrink:0">${Math.round(p.final_score||0)}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.candidate_name||p.candidate_id}</div>
-        <div style="font-size:10px;color:var(--text-dim)">${p.company_name||'חברה'} · ${p.school_name||'בית ספר'}</div>
-      </div>
-      <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.12);color:#22c55e;font-weight:700;white-space:nowrap">${p.status||'active'}</span>
-    </div>`).join('');
 }
 
 async function runLiveScore() {
+  runDemoAlgorithm();
+}
+
+function runDemoAlgorithm() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
+
+  overlay.innerHTML = `
+  <div style="background:#0d0f14;border:1px solid rgba(245,200,66,0.2);border-radius:18px;padding:28px 30px;max-width:500px;width:92vw;position:relative;overflow:hidden" dir="rtl">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--teal),var(--blue))"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--gold);font-family:'IBM Plex Mono',monospace;letter-spacing:0.08em;margin-bottom:3px">🧠 MAOF MATCHING ENGINE v2.0</div>
+    <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:22px">Hungarian Algorithm · Dual Scoring · Real-Time Optimization</div>
+
+    <!-- Step 1 -->
+    <div id="algo-s1" style="margin-bottom:18px;opacity:0;transition:opacity .5s">
+      <div style="font-size:10px;color:var(--teal);font-family:'IBM Plex Mono',monospace;margin-bottom:10px">▶ שלב 1 — ניתוח פרופיל: נועה לוי</div>
+      ${[
+        ['Teaching Aptitude','ELI5: 96/100 + ניסיון הדרכה','var(--gold)',88],
+        ['Subject Match','סייבר + AI — ביקוש גבוה בפריפריה','var(--teal)',94],
+        ['Retention Score','נתיבות · 5 דק׳ מהבית · מחויבות גבוהה','var(--blue)',96],
+        ['Impact Index','פריפריה · Urgency: 97 · מדד טיפוח 3','var(--amber)',85]
+      ].map(([l,s,c,v],i)=>`
+        <div style="margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px">
+            <span style="color:var(--text)">${l}</span>
+            <span style="color:${c};font-family:'IBM Plex Mono',monospace" id="algo-v${i}">0</span>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden">
+            <div id="algo-b${i}" style="height:100%;background:${c};border-radius:3px;width:0;transition:width 0.7s ease;width:0"></div>
+          </div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:2px">${s}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Step 2 -->
+    <div id="algo-s2" style="margin-bottom:18px;opacity:0;transition:opacity .5s">
+      <div style="font-size:10px;color:var(--blue);font-family:'IBM Plex Mono',monospace;margin-bottom:8px">▶ שלב 2 — סריקת בתי ספר...</div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div id="algo-cnt" style="font-size:38px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--blue)">0</div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--text)">בתי ספר נסרקו</div>
+          <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace" id="algo-school-name">טוען...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="algo-s3" style="margin-bottom:18px;opacity:0;transition:opacity .5s">
+      <div style="font-size:10px;color:var(--amber);font-family:'IBM Plex Mono',monospace;margin-bottom:8px">▶ שלב 3 — Hungarian Algorithm, מקסום ערך כולל...</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.6" id="algo-matrix">
+        C[נועה→אורט] = 97.1 ← מקסימום<br>
+        C[נועה→גימנסיה הרצליה] = 84.3<br>
+        C[נועה→כפר מנחם] = 91.2<br>
+        <span style="color:var(--gold)">→ שיבוץ אופטימלי נמצא</span>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="algo-res" style="opacity:0;transition:opacity .6s;text-align:center;padding:20px 16px;background:rgba(245,200,66,0.05);border:1px solid rgba(245,200,66,0.22);border-radius:12px">
+      <div style="font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:6px;letter-spacing:0.1em">BEST MATCH FOUND</div>
+      <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">🏫 אורט נתיבות</div>
+      <div style="font-size:56px;font-weight:900;color:var(--gold);font-family:'IBM Plex Mono',monospace;line-height:1" id="algo-final">0</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">ציון התאמה · #1 מתוך 247 מועמדים</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:18px">
+        <button onclick="showScreen('schools');document.getElementById('algo-overlay').remove()" style="padding:9px 20px;background:linear-gradient(135deg,var(--gold),#e6b800);border:none;border-radius:8px;color:#0d0f14;font-weight:700;cursor:pointer;font-size:12px">🏫 פרטי בית הספר →</button>
+        <button onclick="document.getElementById('algo-overlay').remove()" style="padding:9px 20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--text-dim);cursor:pointer;font-size:12px">סגור</button>
+      </div>
+    </div>
+  </div>`;
+
+  overlay.id = 'algo-overlay';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+
+  const dims = [[88,'var(--gold)'],[94,'var(--teal)'],[96,'var(--blue)'],[85,'var(--amber)']];
+  const schools = ['אורט נתיבות','כפר מנחם טכנולוגי','גימנסיה הרצליה','אורט תל אביב','תיכון עירוני נהריה'];
+
+  // Step 1 — show after 200ms, animate bars
+  setTimeout(() => {
+    document.getElementById('algo-s1').style.opacity = '1';
+    dims.forEach(([v,c],i) => {
+      setTimeout(() => {
+        let cur = 0;
+        const bar = document.getElementById('algo-b'+i);
+        const val = document.getElementById('algo-v'+i);
+        const iv = setInterval(() => {
+          cur = Math.min(cur + 3, v);
+          bar.style.width = cur + '%';
+          val.textContent = cur;
+          if(cur >= v) clearInterval(iv);
+        }, 20);
+      }, i * 180);
+    });
+  }, 200);
+
+  // Step 2 — school counter after 1.6s
+  setTimeout(() => {
+    document.getElementById('algo-s2').style.opacity = '1';
+    let cnt = 0;
+    const target = 89;
+    const cntEl = document.getElementById('algo-cnt');
+    const nameEl = document.getElementById('algo-school-name');
+    const iv = setInterval(() => {
+      cnt = Math.min(cnt + 3, target);
+      cntEl.textContent = cnt;
+      if(cnt < target) nameEl.textContent = schools[Math.floor(Math.random()*schools.length)];
+      else { nameEl.textContent = '✓ סריקה הושלמה'; clearInterval(iv); }
+    }, 35);
+  }, 1600);
+
+  // Step 3 — hungarian after 3s
+  setTimeout(() => {
+    document.getElementById('algo-s3').style.opacity = '1';
+  }, 3000);
+
+  // Result — after 4s, animate final score
+  setTimeout(() => {
+    const res = document.getElementById('algo-res');
+    const fin = document.getElementById('algo-final');
+    res.style.opacity = '1';
+    let cur = 0;
+    const iv = setInterval(() => {
+      cur = Math.min(cur + 3, 97);
+      fin.textContent = cur;
+      if(cur >= 97) clearInterval(iv);
+    }, 25);
+  }, 4000);
+}
+
+async function runLiveScoreOld() {
   if (!engineOnline) { showSoldierToast('המנוע לא מחובר — לחץ על הנקודה בסיידבר'); return; }
   const unit = document.getElementById('s-unit')?.value || 'intel';
   const subject = document.getElementById('s-subject')?.value || 'cyber';
@@ -2531,138 +2538,6 @@ async function runLiveScore() {
   }
 }
 
-// ══ REGISTER FLOW ══════════════════════════════════════════════
-function regChanged() {
-  const name = document.getElementById('reg-name')?.value?.trim();
-  const btn = document.getElementById('reg-btn');
-  if (btn) btn.disabled = !name;
-}
-
-async function registerSoldier() {
-  const name    = document.getElementById('reg-name')?.value?.trim();
-  const unitVal = document.getElementById('reg-unit')?.value || 'tech_unit';
-  const subject = document.getElementById('reg-subject')?.value || 'סייבר';
-  const city    = document.getElementById('reg-city')?.value?.trim() || 'תל אביב';
-  const years   = parseInt(document.getElementById('reg-years')?.value || '4');
-
-  if (!name) { showSoldierToast('נא להזין שם מלא'); return; }
-
-  const btn = document.getElementById('reg-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'מחשב ציון...'; }
-
-  // Build full candidate object
-  const techStacks = {
-    'סייבר': ['Python','Cybersecurity','Linux'],
-    'פייתון': ['Python','Data Science','Machine Learning'],
-    'מדעי מחשב': ['Python','Java','Algorithms'],
-    'מתמטיקה': ['Python','R','Statistics'],
-    'פיזיקה': ['Python','MATLAB','Simulation'],
-  };
-  const peripheryCities = ['נתיבות','שדרות','דימונה','אשדוד','קריית שמונה','ירוחם','אופקים','רהט'];
-
-  const cid = 'REG_' + Date.now();
-  const candidate = {
-    id: cid, name,
-    eli5_score: 75,
-    subject,
-    additional_subjects: [],
-    distance_km: peripheryCities.includes(city) ? 5 : 25,
-    family_status_score: 70,
-    commitment_score: years >= 4 ? 88 : 75,
-    career_switches: 1,
-    willing_periphery: peripheryCities.includes(city),
-    tech_test_score: unitVal === 'tech_unit' ? 88 : 78,
-    academic_background: unitVal,
-    independent_courses: 3,
-    promotion_rate: years >= 6 ? 85 : 70,
-    military_role: unitVal === 'tech_unit' ? 'tech_lead' : 'soldier',
-    team_size: years >= 4 ? 6 : 3,
-    conflict_resolution_score: 72,
-    preferred_company_size: 'enterprise',
-    work_style: 'hybrid',
-    preferred_location: city,
-    willing_relocate: true,
-    tech_stack: techStacks[subject] || ['Python'],
-    years_experience: Math.max(0, years - 2),
-    registered_via: 'portal',
-  };
-
-  const panel = document.getElementById('reg-results');
-
-  try {
-    // 1. Save to Supabase via API
-    await fetchEngine('/candidates', { method: 'POST', body: JSON.stringify(candidate) });
-
-    // 2. Score with best-fit school & company
-    const school = {
-      id: 'PORTAL_SCHOOL', name: 'בית ספר אזורי',
-      location: city, lat: 31.5, lng: 34.8,
-      required_subjects: [subject], grade_levels: ['י','יא','יב'],
-      socioeconomic_rank: 5, nurturing_index: 5,
-      months_without_teacher: 6, budget_available: true
-    };
-    const company = {
-      id: 'PORTAL_CO', name: 'חברת הייטק',
-      location: 'תל אביב', lat: 32.07, lng: 34.78,
-      size: 'enterprise', work_style: 'hybrid',
-      tech_stack: techStacks[subject] || ['Python'],
-      open_positions: 5, urgency_score: 75, willing_station_b: true
-    };
-
-    const scoreResult = await fetchEngine('/score', {
-      method: 'POST',
-      body: JSON.stringify({ candidate, school, company })
-    });
-
-    const scoreA = scoreResult ? Math.round(scoreResult.score_a) : 72;
-    const scoreB = scoreResult ? Math.round(scoreResult.score_b) : 75;
-    const scoreFinal = scoreResult ? Math.round(scoreResult.final_score) : 73;
-
-    // Update sidebar score
-    const sidebarEl = document.getElementById('sidebar-score');
-    if (sidebarEl) sidebarEl.textContent = scoreFinal;
-
-    // Show success panel
-    if (panel) {
-      panel.innerHTML = `
-        <div style="text-align:center">
-          <div style="font-size:52px;margin-bottom:10px">🎖️</div>
-          <div style="font-size:16px;font-weight:900;color:var(--gold);margin-bottom:6px">ברוך הבא, ${name}!</div>
-          <div style="font-size:12px;color:var(--text-dim);margin-bottom:20px">נרשמת בהצלחה למערכת מעוף</div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
-            <div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:10px;padding:14px">
-              <div style="font-size:28px;font-weight:900;color:var(--gold)">${scoreA}</div>
-              <div style="font-size:10px;color:var(--text-dim)">ציון הוראה</div>
-            </div>
-            <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:14px">
-              <div style="font-size:28px;font-weight:900;color:#38bdf8">${scoreB}</div>
-              <div style="font-size:10px;color:var(--text-dim)">ציון הייטק</div>
-            </div>
-            <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:14px">
-              <div style="font-size:28px;font-weight:900;color:#22c55e">${scoreFinal}</div>
-              <div style="font-size:10px;color:var(--text-dim)">ציון סופי</div>
-            </div>
-          </div>
-
-          <div style="font-size:12px;color:#aaa;margin-bottom:16px">השלב הבא: מבחן ELI5 לשיפור ציון ההוראה שלך</div>
-          <div style="display:flex;gap:10px;justify-content:center">
-            <a href="../eli5/" style="padding:10px 18px;background:var(--gold);color:#0d0f14;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">🧪 מבחן ELI5 →</a>
-            <button onclick="showScreen('dashboard')" style="padding:10px 18px;background:rgba(255,255,255,0.08);border:1px solid var(--border2);border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer">📊 לדשבורד</button>
-          </div>
-        </div>
-      `;
-    }
-
-    showSoldierToast(`ציון מעוף: A=${scoreA} · B=${scoreB} · סופי=${scoreFinal} 🎯`);
-
-  } catch (e) {
-    if (panel) panel.innerHTML = `<div style="color:#f87171;font-size:13px">שגיאה בהרשמה — נסה שוב</div>`;
-    if (btn) { btn.disabled = false; btn.textContent = 'חשב ציון והצטרף למערכת →'; }
-    showSoldierToast('שגיאה בחיבור למנוע');
-  }
-}
-
 async function runLiveSimulation() {
   if (!engineOnline) { showSoldierToast('המנוע לא מחובר'); return; }
   showSoldierToast('מריץ סימולציה מהמנוע...');
@@ -2675,7 +2550,7 @@ async function runLiveSimulation() {
   }
 }
 
-window.addEventListener('load', () => setTimeout(checkEngine, 500));
+// Demo mode — no live engine check on load
 
 </script>
 
@@ -2688,11 +2563,13 @@ window.addEventListener('load', () => setTimeout(checkEngine, 500));
   else{if(mn){mn.style.marginRight='0';mn.style.padding='56px 16px 16px';mn.style.maxWidth='100vw';}if(btn)btn.style.display='flex';}
   window.maofToggle=function(){if(!sb)return;var open=sb.style.display!=='none';if(!open){sb.style.cssText='display:flex!important;flex-direction:column!important;position:fixed!important;top:0!important;left:0!important;right:0!important;width:100vw!important;height:100vh!important;z-index:2000!important;overflow-y:auto!important;padding-top:56px!important;';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='flex';}else{sb.style.cssText='display:none!important;';var cx=document.getElementById('maofCloseX');if(cx)cx.style.display='none';}};
   window.maofClose=function(){if(sb)sb.style.display='none';var bd=document.getElementById('maofBd');if(bd)bd.style.display='none';};
-  // Wrap nav function to auto-close sidebar
+  // Wrap nav function to auto-close sidebar (mobile only)
   var _origNav = window.showScreen;
   window.showScreen = function() {
     if(_origNav) _origNav.apply(this, arguments);
-    setTimeout(function(){ if(window.maofClose) window.maofClose(); }, 50);
+    if(window.innerWidth <= 768) {
+      setTimeout(function(){ if(window.maofClose) window.maofClose(); }, 50);
+    }
   };  // Wrap journey-track in horizontal scroll container on mobile
   if(window.innerWidth<=768){
     var jt=document.querySelector('.journey-track');

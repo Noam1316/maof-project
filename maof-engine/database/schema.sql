@@ -28,15 +28,27 @@ CREATE TABLE IF NOT EXISTS companies (
 CREATE TABLE IF NOT EXISTS placements (
   id              TEXT PRIMARY KEY,
   candidate_id    TEXT NOT NULL,
+  candidate_name  TEXT DEFAULT '',
   school_id       TEXT NOT NULL,
+  school_name     TEXT DEFAULT '',
   company_id      TEXT NOT NULL,
-  score_a         FLOAT,
-  score_b         FLOAT,
-  score_c         FLOAT,
-  volume_score    FLOAT,
+  company_name    TEXT DEFAULT '',
+  score_a         FLOAT DEFAULT 0,
+  score_b         FLOAT DEFAULT 0,
+  score_c         FLOAT DEFAULT 0,
+  volume_score    FLOAT DEFAULT 0,
   final_score     FLOAT NOT NULL DEFAULT 0,
+  status          TEXT DEFAULT 'pending',
+  created_at      TEXT DEFAULT '',
   placement_date  TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ─── Migration: add missing columns if table already exists ───
+ALTER TABLE placements ADD COLUMN IF NOT EXISTS candidate_name TEXT DEFAULT '';
+ALTER TABLE placements ADD COLUMN IF NOT EXISTS school_name    TEXT DEFAULT '';
+ALTER TABLE placements ADD COLUMN IF NOT EXISTS company_name   TEXT DEFAULT '';
+ALTER TABLE placements ADD COLUMN IF NOT EXISTS status         TEXT DEFAULT 'pending';
+ALTER TABLE placements ADD COLUMN IF NOT EXISTS created_at     TEXT DEFAULT '';
 
 -- ─── Assessment results ────────────────────────────────────────
 

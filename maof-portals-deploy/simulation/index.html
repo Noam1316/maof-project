@@ -525,6 +525,7 @@
       0%, 100% { box-shadow: 0 0 0 0 rgba(20,184,166,.3); }
       50%       { box-shadow: 0 0 0 12px rgba(20,184,166,.0); }
     }
+    @keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 6px #00d4aa}50%{opacity:.6;box-shadow:0 0 12px #00d4aa}}
     @keyframes count-up {
       from { opacity: 0; transform: scale(.8); }
       to   { opacity: 1; transform: scale(1); }
@@ -615,8 +616,8 @@
       🔗 הרץ מהמנוע (API)
     </button>
     <div id="sim-engine-status" style="display:flex;align-items:center;gap:6px;margin-top:10px;justify-content:center">
-      <div id="sim-engine-dot" style="width:6px;height:6px;border-radius:50%;background:var(--text-muted);transition:all .3s"></div>
-      <span id="sim-engine-label" style="font-size:10px;color:var(--text-muted)">בודק מנוע...</span>
+      <div style="width:6px;height:6px;border-radius:50%;background:#00d4aa;box-shadow:0 0 6px #00d4aa;animation:pulse-dot 2s infinite"></div>
+      <span style="font-size:10px;color:#00d4aa">DEMO · מנוע מעוף v2.0</span>
     </div>
   </div>
 
@@ -1665,7 +1666,7 @@ async function runEngineSimulation() {
   }
 }
 
-window.addEventListener('load', () => setTimeout(checkSimEngine, 500));
+// Demo mode — no live engine check on load
 </script>
 </body>
 </html>
