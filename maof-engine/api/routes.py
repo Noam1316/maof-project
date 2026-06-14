@@ -387,6 +387,7 @@ def _safe_candidate(d: dict) -> Candidate:
         willing_relocate=bool(d.get("willing_relocate", False)),
         systemic_score=float(d.get("systemic_score") or 0),
         code_score=float(d.get("code_score") or 0),
+        logic_score=float(d.get("logic_score") or 0),
         tech_stack=d.get("tech_stack") or [],
         years_experience=float(d.get("years_experience") or 0),
     )

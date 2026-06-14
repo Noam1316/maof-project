@@ -50,12 +50,18 @@ def tech_stack_match(candidate: Candidate, company: Company) -> float:
 
 # --- מיומנות טכנית (35%) ---
 def tech_skills_score(candidate: Candidate, company: Company) -> float:
-    tech_test = candidate.tech_test_score
+    # עומק טכני מהמבחן בן-3-השכבות: קוד (שכבה 2) + ארכיטקטורה (שכבה 3).
+    # fallback ל-tech_test_score המשולב / legacy אם השכבות לא נמדדו.
+    if candidate.code_score > 0 or candidate.systemic_score > 0:
+        tech_proficiency = candidate.code_score * 0.6 + candidate.systemic_score * 0.4
+    else:
+        tech_proficiency = candidate.tech_test_score
+
     stack_match = tech_stack_match(candidate, company)
     academic = ACADEMIC_SCORES[candidate.academic_background]
 
     return (
-        tech_test * 0.50 +
+        tech_proficiency * 0.50 +
         stack_match * 0.30 +
         academic * 0.20
     )
@@ -70,6 +76,17 @@ def growth_potential_score(candidate: Candidate) -> float:
     courses = min(100, candidate.independent_courses * 15)
     promotion = candidate.promotion_rate
     learning_agility = min(100, candidate.independent_courses * 20 + candidate.career_switches * 15)
+
+    # שכבה 1 (הגיון בשפה זרה) = מדידה ישירה של מהירות למידה — לב פוטנציאל הצמיחה.
+    # אם נמדד, הוא דומיננטי על ה-proxies; אחרת נשארים בנוסחה המקורית.
+    if candidate.logic_score > 0:
+        return (
+            candidate.logic_score * 0.30 +
+            academic * 0.20 +
+            courses * 0.15 +
+            promotion * 0.20 +
+            learning_agility * 0.15
+        )
 
     return (
         academic * 0.25 +

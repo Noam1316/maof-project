@@ -56,9 +56,11 @@ class Candidate(BaseModel):
 
     # --- ציוני מבחנים גולמיים (מוזנים ע"י complete-assessment) ---
     systemic_score: float = Field(ge=0, le=100, default=0.0,
-                                  description="מבחן חשיבה מערכתית (Score B component)")
+                                  description="מבחן חשיבה מערכתית / ארכיטקטורה (שכבה 3)")
     code_score: float     = Field(ge=0, le=100, default=0.0,
-                                  description="מבחן קוד — ELI5 סבב 4")
+                                  description="מבחן קוד אדפטיבי (שכבה 2)")
+    logic_score: float    = Field(ge=0, le=100, default=0.0,
+                                  description="מבחן הגיון בשפה זרה (שכבה 1) — מהירות למידה")
 
     # --- מטא ---
     tech_stack: List[str] = Field(default=[], description="טכנולוגיות")
