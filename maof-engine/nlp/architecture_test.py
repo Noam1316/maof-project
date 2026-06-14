@@ -143,7 +143,7 @@ def _call_groq_arch(scenario: Dict, answer: str) -> Optional[Dict]:
                 {"role": "system", "content": _ARCH_SYSTEM},
                 {"role": "user",   "content": user_msg},
             ],
-            "max_tokens": 200,
+            "max_tokens": 400,
             "temperature": 0.1,
             "response_format": {"type": "json_object"},
         }
