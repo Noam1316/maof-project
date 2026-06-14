@@ -151,7 +151,7 @@ def _call_groq_arch(scenario: Dict, answer: str) -> Optional[Dict]:
             GROQ_URL,
             headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
             json=payload,
-            timeout=10.0,
+            timeout=15.0,
         )
         if resp.status_code != 200:
             return None
