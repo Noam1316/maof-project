@@ -350,6 +350,100 @@ def score_breakdown(req: ScoreRequest):
     }
 
 
+# ─── Score B on a stored candidate (real engine, by id) ──────
+
+def _safe_candidate(d: dict) -> Candidate:
+    """Build a valid Candidate from a stored dict, coercing bad enums to defaults."""
+    from models.candidate import MilitaryRole, AcademicBackground
+    valid_roles = {r.value for r in MilitaryRole}
+    valid_acad  = {a.value for a in AcademicBackground}
+    role = d.get("military_role")
+    if role not in valid_roles:
+        role = "soldier"
+    acad = d.get("academic_background")
+    if acad not in valid_acad:
+        acad = "self_taught"
+    return Candidate(
+        id=d.get("id", "?"),
+        name=d.get("name", "?"),
+        eli5_score=float(d.get("eli5_score") or 0),
+        subject=d.get("subject") or "general",
+        additional_subjects=d.get("additional_subjects") or [],
+        distance_km=float(d.get("distance_km") or 10),
+        family_status_score=float(d.get("family_status_score") or 60),
+        commitment_score=float(d.get("commitment_score") or 70),
+        career_switches=int(d.get("career_switches") or 0),
+        willing_periphery=bool(d.get("willing_periphery", False)),
+        tech_test_score=float(d.get("tech_test_score") or 0),
+        academic_background=acad,
+        independent_courses=int(d.get("independent_courses") or 0),
+        promotion_rate=float(d.get("promotion_rate") or 70),
+        military_role=role,
+        team_size=int(d.get("team_size") or 1),
+        conflict_resolution_score=float(d.get("conflict_resolution_score") or 70),
+        preferred_company_size=d.get("preferred_company_size") or "any",
+        work_style=d.get("work_style") or "agile",
+        preferred_location=d.get("preferred_location") or "",
+        willing_relocate=bool(d.get("willing_relocate", False)),
+        systemic_score=float(d.get("systemic_score") or 0),
+        code_score=float(d.get("code_score") or 0),
+        tech_stack=d.get("tech_stack") or [],
+        years_experience=float(d.get("years_experience") or 0),
+    )
+
+
+def _safe_company(d: dict) -> Company:
+    """Build a valid Company from a stored dict, filling required fields."""
+    return Company(
+        id=d.get("id", "CO"),
+        name=d.get("name", "חברה"),
+        location=d.get("location", "תל אביב"),
+        lat=float(d.get("lat") or 32.07),
+        lng=float(d.get("lng") or 34.78),
+        size=d.get("size") or "enterprise",
+        work_style=d.get("work_style") or "agile",
+        tech_stack=d.get("tech_stack") or ["Python"],
+        open_positions=int(d.get("open_positions") or 5),
+        urgency_score=float(d.get("urgency_score") or 70),
+    )
+
+
+@router.post("/score/company")
+def score_company(body: dict):
+    """ציון B אמיתי על מועמד שמור — טוען מועמד + חברה מ-DB ומריץ את המנוע."""
+    cid  = body.get("candidate_id", "")
+    coid = body.get("company_id", "")
+    if not cid:
+        raise HTTPException(status_code=400, detail="חסר candidate_id")
+
+    cand = db.get_candidate(cid)
+    if not cand:
+        raise HTTPException(status_code=404, detail="מועמד לא נמצא")
+
+    comp = db.get_company(coid) if coid else None
+    if not comp:
+        comps = db.list_companies(1)
+        comp = comps[0] if comps else None
+    if not comp:
+        raise HTTPException(status_code=404, detail="לא נמצאה חברה לחישוב")
+
+    try:
+        candidate = _safe_candidate(cand)
+        company   = _safe_company(comp)
+        detail    = calculate_score_b_detailed(candidate, company)
+        return {
+            "candidate_id":   cid,
+            "candidate_name": cand.get("name", ""),
+            "company_id":     comp.get("id", ""),
+            "company_name":   comp.get("name", ""),
+            "score_b":        detail["total"],
+            "components":     detail["components"],
+            "explanation":    detail["explanation"],
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"שגיאת חישוב score_b: {e}")
+
+
 @router.post("/score/whatif")
 def score_whatif(req: WhatIfRequest):
     """What-If — שנה פרמטר אחד וראה before/after"""
