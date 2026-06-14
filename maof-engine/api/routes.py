@@ -713,6 +713,34 @@ def systemic_code_review(body: dict):
     return score_code_answer(question, answer)
 
 
+# ══════════════════════════════════════════════
+#  Logic Test (Layer 1) — foreign-language reasoning
+# ══════════════════════════════════════════════
+
+@router.get("/tech/logic/question")
+def tech_logic_question(level: int = 1):
+    """שאלת הגיון בשפה מומצאת (חוקים inline) — ללא התשובה."""
+    from nlp.logic_test import get_logic_question
+    return get_logic_question(level)
+
+
+@router.post("/tech/logic/score")
+def tech_logic_score(body: dict):
+    """
+    מדרג תשובת הגיון open-ended.
+    body: { "question_id": str, "answer": str }
+    מחזיר: score (correctness×0.6 + reasoning×0.4), method (groq|heuristic).
+    """
+    from nlp.logic_test import score_logic_answer
+    qid    = body.get("question_id", "")
+    answer = body.get("answer", "")
+    if not qid:
+        raise HTTPException(status_code=400, detail="חסר 'question_id'")
+    if not answer.strip():
+        raise HTTPException(status_code=400, detail="חסרת תשובה")
+    return score_logic_answer(qid, answer)
+
+
 @router.post("/semantic/match")
 def semantic_match(body: dict):
     """השוואה סמנטית בין שתי רשימות מונחים"""
