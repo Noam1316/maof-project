@@ -1590,6 +1590,17 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
         <button class="btn btn-gold" style="white-space:nowrap">⚡ התחל מבחן ELI5 ←</button>
       </a>
     </div>
+
+    <!-- Tech-test CTA — shown after save -->
+    <div id="tech-cta" style="display:none;margin-top:12px;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.25);border-radius:14px;padding:18px 20px;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#a855f7;margin-bottom:4px">השלב הבא: מבחן טכני (3 שכבות)</div>
+        <div style="font-size:11px;color:var(--text-dim)">הגיון · קוד אדפטיבי · ארכיטקטורה — מחשב את ציון ה-Tech Skills שלך (35% מהתאמה לחברה)</div>
+      </div>
+      <a id="tech-link" href="../tech-test/" style="text-decoration:none;flex-shrink:0">
+        <button class="btn" style="white-space:nowrap;background:linear-gradient(135deg,#a855f7,#7aa2f7);color:#fff">⚙️ התחל מבחן טכני ←</button>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -1732,12 +1743,19 @@ function saveSettings(){
   fetchEngine('/candidates', { method:'POST', body: JSON.stringify(candidatePayload) })
     .then(res => {
       if(res) {
-        showSoldierToast('✅ הפרופיל נשמר — עבור למבחן ELI5 לקבל ציון');
+        showSoldierToast('✅ הפרופיל נשמר — עבור למבחנים לקבלת ציון');
+        const cid = encodeURIComponent(candidateId);
         const cta = document.getElementById('eli5-cta');
         const link = document.getElementById('eli5-link');
         if(cta && link) {
-          link.href = `../eli5/?candidate_id=${encodeURIComponent(candidateId)}`;
+          link.href = `../eli5/?candidate_id=${cid}`;
           cta.style.display = 'flex';
+        }
+        const tcta = document.getElementById('tech-cta');
+        const tlink = document.getElementById('tech-link');
+        if(tcta && tlink) {
+          tlink.href = `../tech-test/?candidate_id=${cid}`;
+          tcta.style.display = 'flex';
         }
       }
     });
