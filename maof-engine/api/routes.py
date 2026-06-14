@@ -741,6 +741,33 @@ def tech_logic_score(body: dict):
     return score_logic_answer(qid, answer)
 
 
+# ══════════════════════════════════════════════
+#  Architecture Test (Layer 3) — system design, rubric coverage
+# ══════════════════════════════════════════════
+
+@router.get("/tech/architecture/question")
+def tech_architecture_question(level: int = 1):
+    """תרחיש תכנון מערכת + הממדים שייבדקו (רובריקה שקופה)."""
+    from nlp.architecture_test import get_architecture_question
+    return get_architecture_question(level)
+
+
+@router.post("/tech/architecture/score")
+def tech_architecture_score(body: dict):
+    """
+    מדרג תוכנית ארכיטקטורה לפי כיסוי 5 ממדים (לא דמיון ל-AI).
+    body: { "question_id": str, "answer": str }
+    """
+    from nlp.architecture_test import score_architecture_answer
+    qid    = body.get("question_id", "")
+    answer = body.get("answer", "")
+    if not qid:
+        raise HTTPException(status_code=400, detail="חסר 'question_id'")
+    if not answer.strip():
+        raise HTTPException(status_code=400, detail="חסרת תשובה")
+    return score_architecture_answer(qid, answer)
+
+
 @router.post("/semantic/match")
 def semantic_match(body: dict):
     """השוואה סמנטית בין שתי רשימות מונחים"""
