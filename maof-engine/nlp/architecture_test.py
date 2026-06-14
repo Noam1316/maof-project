@@ -154,15 +154,16 @@ def _call_groq_arch(scenario: Dict, answer: str) -> Optional[Dict]:
             timeout=15.0,
         )
         if resp.status_code != 200:
-            return None
-        parsed = json.loads(resp.json()["choices"][0]["message"]["content"])
+            return {"_error": f"status {resp.status_code}: {resp.text[:200]}"}
+        raw = resp.json()["choices"][0]["message"]["content"]
+        parsed = json.loads(raw)
         if not all(k in parsed for k in _DIM_KEYS):
-            return None
+            return {"_error": f"missing keys, got: {list(parsed.keys())}"}
         dims = {k: max(0.0, min(100.0, float(parsed[k]))) for k in _DIM_KEYS}
         total = round(sum(dims[k] * _DIM_WEIGHT[k] for k in _DIM_KEYS), 2)
         return {"dimensions": dims, "total": total, "feedback": parsed.get("feedback", "")}
-    except Exception:
-        return None
+    except Exception as e:
+        return {"_error": f"{type(e).__name__}: {str(e)[:200]}"}
 
 
 # Keyword cues per dimension — fallback only
@@ -204,7 +205,9 @@ def score_architecture_answer(question_id: str, answer: str) -> Dict:
 
     result = _call_groq_arch(s, answer)
     method = "groq"
-    if not result:
+    debug = None
+    if not result or "_error" in result:
+        debug = result.get("_error") if result else "no result"
         result = _heuristic_arch(s, answer)
         method = "heuristic"
 
@@ -214,13 +217,16 @@ def score_architecture_answer(question_id: str, answer: str) -> Dict:
          "score": round(result["dimensions"][k], 1), "weight": _DIM_WEIGHT[k]}
         for k in _DIM_KEYS
     ]
-    return {
+    out = {
         "score":     result["total"],
         "breakdown": breakdown,
         "feedback":  result.get("feedback", ""),
         "passes":    result["total"] >= 55,
         "method":    method,
     }
+    if debug:
+        out["_debug"] = debug
+    return out
 
 
 # ──────────────────────────────────────────────
