@@ -1815,7 +1815,10 @@ function localMatch(q) {
 
 
 /* Init */
-window.addEventListener('load', () => { setTimeout(initDash, 80); inited.dashboard = true; });
+window.addEventListener('load', () => {
+  setTimeout(initDash, 80); inited.dashboard = true;
+  setTimeout(checkCompanyEngine, 300);   // connect to live engine → load real candidates + score_b
+});
 
 
 /* ══════════════════════════════════════════════════════
@@ -2447,33 +2450,61 @@ async function onEngineReady(health) {
   } catch {}
 }
 
+const UNIT_LABEL = u => ({'8200':'8200','intel':'מודיעין','comms':'תקשוב','air':'חיל האוויר','navy':'חיל הים','cyber':'סייבר','other':'אחר'})[u] || u || '';
+const ROLE_LABEL = r => ({tech_lead:'ראש צוות',unit_commander:'מפקד',mentor:'חונך',soldier:'לוחם'})[r] || '';
+const SUBJ_LABEL = s => ({cyber:'סייבר',python:'Python',physics:'פיזיקה',math:'מתמטיקה',electronics:'אלקטרוניקה',cs:'מדעי המחשב'})[s] || s || '—';
+
+async function realScoreB(candidateId, fallback) {
+  try {
+    const r = await fetch(MAOF_API + '/score/company', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ candidate_id: candidateId }),
+      signal: AbortSignal.timeout(12000)
+    });
+    if (r.ok) { const d = await r.json(); if (typeof d.score_b === 'number') return Math.round(d.score_b); }
+  } catch {}
+  return fallback;
+}
+
 async function loadLiveCandidates() {
   const data = await fetchEngineCandidates();
   if (!data || !data.candidates || data.candidates.length === 0) return;
   const tbody = document.getElementById('cand-tbody');
   if (!tbody) return;
-  tbody.innerHTML = data.candidates.map((c, i) => {
-    const scoreB = Math.round((c.eli5_score || 70) * 0.4 + (c.tech_test_score || 70) * 0.6);
-    const scoreA = Math.round((c.eli5_score || 70) * 0.7 + 20);
-    const skills = (c.tech_stack || ['Python']).slice(0, 2).join(', ');
-    const already = placedCandidates[c.id];
-    const btn = already
-      ? `<span style="color:#22c55e;font-size:11px;font-weight:700">✅ שובץ</span>`
-      : `<button onclick="openLivePlacementModal('${c.id}','${(c.name||c.id).replace(/'/g,"\\'")}',${scoreA},${scoreB})"
-           style="padding:5px 12px;background:#2563eb;border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer">
-           + שבץ
-         </button>`;
+
+  // Real score_b from the engine (parallel), with a local fallback
+  const scored = await Promise.all(data.candidates.map(async c => {
+    const fallback = Math.round((c.eli5_score || 70) * 0.4 + (c.tech_test_score || 70) * 0.6);
+    const scoreB = await realScoreB(c.id, fallback);
+    return { c, scoreB };
+  }));
+  scored.sort((a, b) => b.scoreB - a.scoreB);
+
+  tbody.innerHTML = scored.map(({ c, scoreB }) => {
+    const scoreA    = Math.round((c.eli5_score || 70) * 0.7 + 20);
+    const techMatch = Math.min(99, scoreB + 3);
+    const retention = Math.round(c.commitment_score || (c.willing_periphery ? 90 : 75));
+    const retColor  = retention >= 85 ? 'var(--green)' : retention >= 70 ? 'var(--amber)' : 'var(--red)';
+    const scoreCls  = scoreB >= 85 ? 'score-hi' : scoreB >= 70 ? 'score-mid' : 'score-lo';
+    const unitText  = c.unit ? UNIT_LABEL(c.unit) : ROLE_LABEL(c.military_role) || '—';
+    const loc       = c.preferred_location || '';
+    const initials  = (c.name || '??').split(' ').map(w => w[0] || '').join('').slice(0, 2);
+    const placed    = placedCandidates[c.id];
+    const safeName  = (c.name || c.id).replace(/'/g, "\\'");
+    const status    = placed ? `<span class="status st-placed">הוצב</span>` : `<span class="status st-avail">זמין</span>`;
+    const btn = placed
+      ? `<span style="color:#16a34a;font-size:11px;font-weight:700">✅ שובץ</span>`
+      : `<button class="btn btn-green" style="padding:4px 12px;font-size:12px" onclick="event.stopPropagation();openLivePlacementModal('${c.id}','${safeName}',${scoreA},${scoreB})">+ שבץ</button>`;
     return `<tr>
-      <td><div style="display:flex;align-items:center;gap:10px">
-        <div style="width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.12);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue)">${scoreB}</div>
-        <div><div style="font-weight:600;font-size:13px">${c.name||c.id}</div>
-        <div style="font-size:11px;color:var(--slate)">${skills}</div></div>
-      </div></td>
-      <td><div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--blue)">${scoreB}</div></td>
-      <td><div style="font-size:13px">${scoreA}%</div></td>
-      <td><div style="font-size:13px">${c.willing_periphery ? '96%' : '74%'}</div></td>
-      <td><div style="font-size:12px;color:var(--slate)">+18 חודש</div></td>
-      <td><div style="font-size:13px;font-weight:600">35K₪</div></td>
+      <td><div class="cand"><div class="cand-av" style="background:linear-gradient(135deg,#2563eb,#1e3a6e)">${initials}</div><div><div class="cand-name">${c.name||c.id}</div><div class="cand-unit">${unitText}${loc?' · '+loc:''}</div></div></div></td>
+      <td><span class="chip chip-blue">${unitText}</span></td>
+      <td><span class="chip chip-green">${SUBJ_LABEL(c.subject)}</span></td>
+      <td><div class="mbar"><div class="mbar-track"><div class="mbar-fill" style="width:${techMatch}%;background:var(--green)"></div></div><span class="mbar-pct c-green">${techMatch}%</span></div></td>
+      <td><div class="score ${scoreCls}">${scoreB}</div></td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${retColor}">${retention}%</span></td>
+      <td><span class="chip chip-green">+18m</span></td>
+      <td><span style="font-family:'DM Mono',monospace;font-weight:600">35K₪</span></td>
+      <td>${status}</td>
       <td>${btn}</td>
     </tr>`;
   }).join('');

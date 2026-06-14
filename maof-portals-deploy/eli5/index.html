@@ -1077,7 +1077,8 @@ body {
 
     <div class="btn-center" style="margin-top:20px">
       <button class="btn btn-secondary" onclick="location.reload()">🔄 נסה שוב (תרגול)</button>
-      <button class="btn btn-primary" onclick="window.close()">✅ סיים</button>
+      <button class="btn btn-primary" id="btn-back-to-profile" onclick="goBackToProfile()" style="display:none">🏠 חזור לפרופיל מעוף ←</button>
+      <button class="btn btn-primary" id="btn-finish-default" onclick="window.close()">✅ סיים</button>
     </div>
   </div>
 
@@ -2092,8 +2093,27 @@ async function finishTest() {
   setTimeout(() => animateResults(scores), 500);
   setTimeout(() => renderGroqBadge(scores), 1200);
 
+  // ── Show back-to-profile button if came from soldiers portal ──
+  const _params = new URLSearchParams(window.location.search);
+  const _cid = _params.get('candidate_id') || localStorage.getItem('maof_candidate_id');
+  if (_cid) {
+    const btnBack = document.getElementById('btn-back-to-profile');
+    const btnDefault = document.getElementById('btn-finish-default');
+    if (btnBack) btnBack.style.display = 'inline-flex';
+    if (btnDefault) btnDefault.style.display = 'none';
+  }
+
   // ── Save to Supabase (also updates candidate eli5_score) ──
   saveEli5ToSupabase(scores);
+}
+
+function goBackToProfile() {
+  const params = new URLSearchParams(window.location.search);
+  const cid = params.get('candidate_id') || localStorage.getItem('maof_candidate_id');
+  // Navigate to soldiers portal — score already saved to Supabase
+  window.location.href = cid
+    ? `../soldiers/?candidate_id=${encodeURIComponent(cid)}`
+    : '../soldiers/';
 }
 
 async function saveEli5ToSupabase(scores) {

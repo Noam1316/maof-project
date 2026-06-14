@@ -462,7 +462,7 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
 <div id="screen-dashboard" class="screen active">
   <div class="topbar">
     <div>
-      <div class="page-title">שלום נועה, <span>ברוכה הבאה</span> 👋</div>
+      <div class="page-title">שלום <span id="dash-greet-name">נועה</span>, <span>ברוך הבא</span> 👋</div>
       <div class="page-subtitle">המסלול שלך מוכן — 2 שנות הוראה + 2 שנות הייטק. בוא נתחיל.</div>
     </div>
     <div class="topbar-actions">
@@ -481,7 +481,7 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
   <div class="kpi-row">
     <div class="kpi-card gold">
       <div class="kpi-label">ציון ההתאמה שלך</div>
-      <div class="kpi-val gold">97</div>
+      <div class="kpi-val gold" id="dash-hero-score">97</div>
       <div class="kpi-sub">מתוך 100 — מקום 1 במאגר</div>
     </div>
     <div class="kpi-card teal">
@@ -1579,6 +1579,17 @@ select.settings-input{cursor:pointer;-webkit-appearance:none;}
       <div style="font-size:13px;color:var(--gold)">⚠️ יש שינויים שלא נשמרו</div>
       <button class="btn btn-gold" onclick="saveSettings()">💾 שמור עכשיו</button>
     </div>
+
+    <!-- ELI5 CTA — shown after save -->
+    <div id="eli5-cta" style="display:none;margin-top:20px;background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.25);border-radius:14px;padding:18px 20px;display:none;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#00d4aa;margin-bottom:4px">השלב הבא: מבחן ELI5</div>
+        <div style="font-size:11px;color:var(--text-dim)">מבחן 5 שלבים שמחשב את ציון ה-Teaching Aptitude שלך (35% מהציון הכולל)</div>
+      </div>
+      <a id="eli5-link" href="../eli5/" style="text-decoration:none;flex-shrink:0">
+        <button class="btn btn-gold" style="white-space:nowrap">⚡ התחל מבחן ELI5 ←</button>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -1690,13 +1701,53 @@ function saveSettings(){
   // Flash confirmation
   const btn = event?.target;
   if(btn){ const orig=btn.textContent; btn.textContent='✓ נשמר!'; btn.style.background='#00d4aa'; setTimeout(()=>{btn.textContent=orig;btn.style.background='';},2000); }
+
+  // Save to Maof Engine API
+  // military_role must be a valid MilitaryRole enum: unit_commander|tech_lead|mentor|soldier
+  const unitRoleMap = {
+    '8200':'tech_lead','intel':'tech_lead','comms':'tech_lead',
+    'air':'mentor','navy':'mentor','cyber':'tech_lead','other':'soldier'
+  };
+  // Keep Hebrew/Latin letters + digits (\p{L}\p{N}, unicode flag) — strip only punctuation.
+  // Using [^\w] here would delete all Hebrew chars and collapse every name to "CAND__".
+  const slug = name.trim().replace(/\s+/g,'_').replace(/[^\p{L}\p{N}_]/gu,'');
+  const candidateId = 'CAND_' + (slug || ('USER_' + Date.now()));
+  const candidatePayload = {
+    id: candidateId,
+    name, subject,
+    unit,                                   // raw dropdown value — for display
+    preferred_location: city,
+    military_role: unitRoleMap[unit] || 'soldier',
+    eli5_score: 0, tech_test_score: 0, code_score: 0, systemic_score: 0,
+    tech_stack: [subject],
+    distance_km: 10, willing_periphery: false, willing_relocate: false,
+    years_experience: 2, team_size: 5,
+    academic_background: 'warriors_tech',
+    family_status_score: 70, commitment_score: 80,
+    career_switches: 0, independent_courses: 0,
+    promotion_rate: 75, conflict_resolution_score: 75,
+    work_style: 'agile', preferred_company_size: 'any',
+  };
+  localStorage.setItem('maof_candidate_id', candidateId);
+  fetchEngine('/candidates', { method:'POST', body: JSON.stringify(candidatePayload) })
+    .then(res => {
+      if(res) {
+        showSoldierToast('✅ הפרופיל נשמר — עבור למבחן ELI5 לקבל ציון');
+        const cta = document.getElementById('eli5-cta');
+        const link = document.getElementById('eli5-link');
+        if(cta && link) {
+          link.href = `../eli5/?candidate_id=${encodeURIComponent(candidateId)}`;
+          cta.style.display = 'flex';
+        }
+      }
+    });
 }
 
 function toggleChip(el){ el.classList.toggle('selected'); }
 
 // ── DASHBOARD ──────────────────────────────────────
 function initDashboard(){
-  new Chart(document.getElementById('canvas-radar-dash'),{
+  window._dashRadar = new Chart(document.getElementById('canvas-radar-dash'),{
     type:'radar',
     data:{
       labels:['Talent','Retention','ELI5','Tech Match','Urgency'],
@@ -1765,7 +1816,67 @@ function selectOption(card){
   card.classList.add('selected');
 }
 
-window.addEventListener('load',()=>{ setTimeout(initDashboard,100); initialized.dashboard=true; });
+/* ══════════════════════════════════════════════════════
+   LOAD REAL PROFILE — falls back to נועה לוי (demo default)
+══════════════════════════════════════════════════════ */
+async function loadProfile(){
+  const params = new URLSearchParams(window.location.search);
+  const cid = params.get('candidate_id') || localStorage.getItem('maof_candidate_id');
+  if(!cid) return;                       // no candidate → keep נועה לוי demo default
+
+  const data = await fetchEngine('/candidates/' + encodeURIComponent(cid));
+  if(!data || !data.name) return;        // not found → keep demo default
+
+  localStorage.setItem('maof_candidate_id', cid);
+
+  // Fallback map for candidates saved before `unit` was stored (military_role → unit)
+  const roleToUnit = { tech_lead:'8200', unit_commander:'8200', mentor:'air', soldier:'other' };
+  const subjectOptions = ['cyber','python','physics','math','electronics','cs'];
+
+  // Populate settings form
+  const nameEl = document.getElementById('s-name');
+  if(nameEl) nameEl.value = data.name;
+  const cityEl = document.getElementById('s-city');
+  if(cityEl && data.preferred_location){
+    const opt = [...cityEl.options].find(o => o.value===data.preferred_location || o.text===data.preferred_location);
+    if(opt) cityEl.value = opt.value;
+  }
+  const unitVal = data.unit || roleToUnit[data.military_role];   // prefer stored unit
+  const unitEl = document.getElementById('s-unit');
+  if(unitEl && unitVal) unitEl.value = unitVal;
+  const subjEl = document.getElementById('s-subject');
+  if(subjEl && subjectOptions.includes(data.subject)) subjEl.value = data.subject;
+
+  // Recompute score + sync sidebar from the loaded fields
+  if(window.liveRecalc) liveRecalc();
+
+  // Sync sidebar unit/subject line (liveRecalc doesn't touch it)
+  const unitLabel = unitEl?.selectedOptions[0]?.text || '';
+  const subjLabel = subjEl?.selectedOptions[0]?.text || '';
+  const sbUnit = document.getElementById('sidebar-unit');
+  if(sbUnit && (unitLabel || subjLabel)) sbUnit.textContent = `${unitLabel} | ${subjLabel}`;
+
+  // Sync dashboard body to the logged-in user
+  const firstName = data.name.trim().split(' ')[0];
+  const score = document.getElementById('sidebar-score')?.textContent || '';
+  const greetEl = document.getElementById('dash-greet-name');
+  if(greetEl) greetEl.textContent = firstName;
+  const heroEl = document.getElementById('dash-hero-score');
+  if(heroEl && score) heroEl.textContent = score;
+  // Update radar chart legend label to the real candidate's name
+  if(window._dashRadar?.data?.datasets?.[0]){
+    window._dashRadar.data.datasets[0].label = data.name;
+    window._dashRadar.update();
+  }
+
+  // Surface the real assessment if it exists
+  const msg = data.eli5_score > 0
+    ? `מחובר כ-${data.name} · ציון ELI5: ${Math.round(data.eli5_score)}`
+    : `מחובר כ-${data.name} — השלם מבחן ELI5 לקבלת ציון מלא`;
+  if(window.showSoldierToast) showSoldierToast('👤 ' + msg);
+}
+
+window.addEventListener('load',()=>{ setTimeout(initDashboard,100); initialized.dashboard=true; setTimeout(loadProfile,300); });
 
 /* ══════════════════════════════════════════════════════
    PREFERENCES SCREEN

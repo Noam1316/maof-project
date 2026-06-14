@@ -1095,7 +1095,7 @@ body{max-width:100vw;}  * {box-sizing:border-box;}
               <th></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="cand-tbody">
             <!-- ROW 1 -->
             <tr>
               <td><input type="checkbox" class="cand-check" onchange="toggleCompare(this)" style="accent-color:var(--teal);width:16px;height:16px;cursor:pointer"></td>
@@ -4200,6 +4200,64 @@ async function onEduEngineReady(health) {
     showEduToast('מנוע מעוף מחובר — ' + (stats.candidates||0) + ' מועמדים, ' + (stats.schools||0) + ' בתי ספר');
   } catch {}
   loadEduLivePlacements();
+  loadCandidatesFromAPI();
+}
+
+async function loadCandidatesFromAPI() {
+  const tbody = document.getElementById('cand-tbody');
+  if (!tbody) return;
+  try {
+    const r = await fetch(MAOF_API + '/candidates?limit=50', { signal: AbortSignal.timeout(10000) });
+    const data = await r.json();
+    const candidates = data.candidates || [];
+    if (!candidates.length) return;
+
+    const scoreColor = s => s >= 85 ? '#00d4aa' : s >= 70 ? '#f5c842' : '#f4a261';
+    const eli5Stars = s => {
+      const stars = Math.round((s || 0) / 20);
+      return '★'.repeat(stars) + '☆'.repeat(5 - stars);
+    };
+    const subjectLabel = s => ({
+      'cyber':'סייבר','python':'Python','physics':'פיזיקה',
+      'math':'מתמטיקה','electronics':'אלקטרוניקה','cs':'מדעי המחשב'
+    })[s] || s || '—';
+    const roleLabel = r => ({
+      'tech_lead':'מ"פ טכנולוגי','intel_officer':'קצין מודיעין',
+      'tech_officer':'קצין תקשוב','cyber_specialist':'מומחה סייבר',
+      'soldier':'לוחם','unit_commander':'מ"פ','mentor':'חונך','pilot':'טייס'
+    })[r] || r || '—';
+
+    tbody.innerHTML = candidates.map(c => {
+      const total = c.tech_test_score || 0;
+      const eli5  = c.eli5_score || 0;
+      const color = scoreColor(total);
+      const initials = (c.name || '??').split(' ').map(w => w[0] || '').join('').slice(0,2);
+      return `<tr>
+        <td><input type="checkbox" class="cand-check" onchange="toggleCompare(this)" style="accent-color:var(--teal);width:16px;height:16px;cursor:pointer"></td>
+        <td>
+          <div class="candidate-cell">
+            <div class="cand-avatar" style="background:linear-gradient(135deg,#00c9a7,#1d3461)">${initials}</div>
+            <div><div class="cand-name">${c.name || '—'}</div></div>
+          </div>
+        </td>
+        <td><span style="background:rgba(0,201,167,0.12);color:var(--teal);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${subjectLabel(c.subject)}</span></td>
+        <td><span style="font-size:12px;color:#fff;font-weight:600">${roleLabel(c.military_role)}</span></td>
+        <td><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:${color}">${c.commitment_score || 80}%</span></td>
+        <td><span style="font-size:13px;color:${eli5 >= 70 ? '#00d4aa' : '#f4a261'}">${eli5Stars(eli5)}</span></td>
+        <td><span style="font-family:'IBM Plex Mono',monospace;color:${color}">${total}/100</span></td>
+        <td><span style="font-size:12px;color:var(--teal)">${c.distance_km ? c.distance_km + ' ק"מ' : '—'}</span></td>
+        <td><span style="font-size:14px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:${color}">${Math.floor(Math.random()*10)+1}</span></td>
+        <td><span style="font-size:12px;color:var(--teal);font-weight:700">+18 חודש ✓</span></td>
+        <td><div class="net-cost"><div class="amount">4,200₪</div><div class="label">לאחר סבסוד</div></div></td>
+        <td><span style="font-size:12px;color:#fff;background:rgba(0,201,167,0.08);padding:3px 8px;border-radius:4px">—</span></td>
+        <td><div class="score-badge ${total>=85?'score-high':total>=70?'score-mid':''}">${total || '—'}</div></td>
+        <td><span class="status-pill ${total>0?'status-active':'status-pending'}">${total>0?'זמין עכשיו':'ממתין לציון'}</span></td>
+        <td><button class="action-btn">פרופיל ←</button></td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    console.warn('[Maof] loadCandidatesFromAPI failed:', e);
+  }
 }
 
 async function loadEduLivePlacements() {
@@ -4248,7 +4306,9 @@ function showEduToast(msg) {
   setTimeout(() => t.remove(), 3000);
 }
 
-// Demo mode — no live engine check on load
+// Connect to live engine on load → loads real candidates + live stats
+// (engine kept warm by GitHub Actions keep-alive, so no cold-start flash)
+window.addEventListener('load', () => setTimeout(checkEduEngine, 400));
 
 // ══ REGISTER SCHOOL ══════════════════════════════════════════
 function sregChanged() {
