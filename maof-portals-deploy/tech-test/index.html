@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מעוף · מבחן טכני</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f172a;--surface:#1e293b;--surface2:#334155;--border:#475569;
+  --text:#f1f5f9;--text2:#94a3b8;--teal:#14b8a6;--blue:#3b82f6;--orange:#f97316;
+  --red:#ef4444;--green:#22c55e;--purple:#a855f7;--yellow:#eab308;
+  --radius:16px;--shadow:0 4px 24px rgba(0,0,0,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.progress-bar-top{position:fixed;top:0;left:0;right:0;height:4px;background:var(--surface2);z-index:100}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));transition:width .6s ease;width:0%}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header-logo{display:flex;align-items:center;gap:12px}
+.header-logo .icon{font-size:28px}
+.header-logo h1{font-size:20px;font-weight:700}
+.header-logo span{color:var(--text2);font-size:14px}
+.header-steps{display:flex;gap:8px;align-items:center}
+.step-dot{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--text2);transition:all .3s ease}
+.step-dot.active{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:0 0 16px rgba(168,85,247,.4)}
+.step-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.step-line{width:28px;height:2px;background:var(--border)}
+.step-line.done{background:var(--green)}
+.container{max-width:900px;margin:0 auto;padding:32px 24px}
+.screen{display:none;animation:fadeIn .5s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero{text-align:center;padding:40px 0 24px}
+.hero .emoji{font-size:64px;margin-bottom:12px}
+.hero h2{font-size:34px;font-weight:900;margin-bottom:8px}
+.hero p{color:var(--text2);font-size:17px;max-width:620px;margin:0 auto;line-height:1.6}
+.layers-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:32px 0}
+.layer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;text-align:center;transition:all .3s ease}
+.layer-card:hover{border-color:var(--purple);transform:translateY(-4px);box-shadow:var(--shadow)}
+.layer-card .lc-icon{font-size:36px;margin-bottom:10px}
+.layer-card h3{font-size:17px;margin-bottom:4px}
+.layer-card .lc-feeds{color:var(--purple);font-weight:600;font-size:12px;margin-top:6px}
+.layer-card p{color:var(--text2);font-size:13px;margin-top:8px;line-height:1.5}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.card-label{display:inline-block;font-size:12px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.q-title{font-size:22px;font-weight:700;margin-bottom:16px;line-height:1.4}
+.code-block{background:#0b1120;border:1px solid var(--border);border-radius:12px;padding:18px;font-family:'Courier New',monospace;font-size:15px;color:var(--teal);white-space:pre-wrap;line-height:1.7;margin:14px 0;direction:ltr;text-align:left}
+.rules-block{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.25);border-radius:12px;padding:16px;font-size:14px;line-height:1.8;white-space:pre-wrap;margin:14px 0}
+.dims-list{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.dim-chip{font-size:12px;padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;color:var(--text2)}
+textarea{width:100%;background:#0b1120;border:1px solid var(--border);border-radius:12px;padding:16px;color:var(--text);font-family:'Heebo',sans-serif;font-size:15px;line-height:1.6;resize:vertical;min-height:130px}
+textarea:focus{outline:none;border-color:var(--purple)}
+.btn{padding:13px 28px;border:none;border-radius:12px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s ease}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;filter:none}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px}
+.hint{font-size:13px;color:var(--text2);margin-top:10px}
+.scoring-note{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);margin-top:14px}
+.dot-live{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+/* results */
+.result-hero{text-align:center;padding:24px 0}
+.score-ring{width:160px;height:160px;margin:0 auto 16px;position:relative}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-ring .num b{font-size:46px;font-weight:900}
+.score-ring .num small{font-size:13px;color:var(--text2)}
+.layer-result{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.layer-result .lr-icon{font-size:26px;flex-shrink:0}
+.layer-result .lr-body{flex:1}
+.layer-result .lr-name{font-size:15px;font-weight:600}
+.layer-result .lr-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.layer-result .lr-score{font-size:24px;font-weight:900;font-family:'Courier New',monospace}
+.bd-row{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px}
+.bd-bar{flex:1;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.bd-fill{height:100%;background:var(--purple)}
+.loading{text-align:center;padding:30px;color:var(--text2)}
+.spinner{width:32px;height:32px;border:3px solid var(--surface2);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--surface);border:1px solid var(--purple);color:var(--text);padding:12px 22px;border-radius:12px;font-size:14px;box-shadow:var(--shadow);animation:fadeIn .3s ease}
+@media(max-width:640px){.layers-preview{grid-template-columns:1fr}.hero h2{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="progress-bar-top"><div class="progress-bar-fill" id="progFill"></div></div>
+
+<div class="header">
+  <div class="header-logo">
+    <span class="icon">⚙️</span>
+    <div><h1>מבחן טכני · מעוף</h1><span>3 שכבות → ציון Tech Skills</span></div>
+  </div>
+  <div class="header-steps" id="steps">
+    <div class="step-dot active" id="dot0">1</div>
+    <div class="step-line" id="line0"></div>
+    <div class="step-dot" id="dot1">2</div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" id="dot2">3</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- WELCOME -->
+  <div class="screen active" id="screen-welcome">
+    <div class="hero">
+      <div class="emoji">⚙️</div>
+      <h2>מבחן הכישורים הטכניים</h2>
+      <p>שלוש שכבות שמודדות שלושה דברים שונים — לא אותו דבר שלוש פעמים. התוצאה מזינה את ציון ההתאמה לחברה.</p>
+    </div>
+    <div class="layers-preview">
+      <div class="layer-card">
+        <div class="lc-icon">🧠</div>
+        <h3>שכבה 1 · הגיון</h3>
+        <p>קוד בשפה שלא תכיר — נמדדת מהירות ההסקה, לא ידע קודם.</p>
+        <div class="lc-feeds">→ Growth Potential</div>
+      </div>
+      <div class="layer-card">
+        <div class="lc-icon">💻</div>
+        <h3>שכבה 2 · קוד</h3>
+        <p>מבחן אדפטיבי שמתקדם לפי הביצוע שלך — עומק טכני.</p>
+        <div class="lc-feeds">→ Tech Skills</div>
+      </div>
+      <div class="layer-card">
+        <div class="lc-icon">🏗️</div>
+        <h3>שכבה 3 · ארכיטקטורה</h3>
+        <p>תכנון מערכת במילים — נמדד כיסוי ממדים, לא דמיון.</p>
+        <div class="lc-feeds">→ Systemic Thinking</div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <button class="btn btn-primary" onclick="startTest()">התחל מבחן ←</button>
+      <div class="scoring-note" style="justify-content:center"><span class="dot-live"></span> מנוע מעוף · דירוג חי</div>
+    </div>
+  </div>
+
+  <!-- LAYER 1 — LOGIC -->
+  <div class="screen" id="screen-l1">
+    <div class="card">
+      <span class="card-label">שכבה 1 · הגיון בשפה זרה</span>
+      <div class="q-title" id="l1-lang">טוען…</div>
+      <div class="rules-block" id="l1-rules"></div>
+      <div class="code-block" id="l1-code"></div>
+      <div id="l1-prompt" style="font-size:15px;margin:10px 0 6px"></div>
+      <textarea id="l1-answer" placeholder="הסבר שלב-אחר-שלב מה הקוד עושה ומה הפלט…"></textarea>
+      <div class="btn-row">
+        <span class="hint">אין צורך בידע קודם — רק היגיון.</span>
+        <button class="btn btn-primary" id="l1-submit" onclick="submitL1()">המשך ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 2 — CODE (adaptive) -->
+  <div class="screen" id="screen-l2">
+    <div class="card">
+      <span class="card-label" id="l2-label">שכבה 2 · קוד · שאלה 1</span>
+      <div class="q-title" id="l2-question">טוען…</div>
+      <textarea id="l2-answer" placeholder="ענה בצורה מפורטת — הסבר את הלוגיקה…"></textarea>
+      <div class="btn-row">
+        <span class="hint" id="l2-hint">תשובה שעוברת סף → שאלה קשה יותר.</span>
+        <button class="btn btn-primary" id="l2-submit" onclick="submitL2()">המשך ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 3 — ARCHITECTURE -->
+  <div class="screen" id="screen-l3">
+    <div class="card">
+      <span class="card-label">שכבה 3 · תכנון ארכיטקטורה</span>
+      <div class="q-title" id="l3-title">טוען…</div>
+      <div id="l3-prompt" style="font-size:15px;line-height:1.6;margin-bottom:12px;white-space:pre-wrap"></div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">תידרג לפי כיסוי הממדים:</div>
+      <div class="dims-list" id="l3-dims"></div>
+      <textarea id="l3-answer" placeholder="תאר את הארכיטקטורה במילים — רכיבים, זרימה, עומס, כשלים, אבטחה, trade-offs. בלי קוד."></textarea>
+      <div class="btn-row">
+        <span class="hint">פתרון מקורי שמכסה את הממד = ציון מלא.</span>
+        <button class="btn btn-primary" id="l3-submit" onclick="submitL3()">סיים מבחן ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <div id="results-loading" class="loading"><div class="spinner"></div>מחשב ציון טכני…</div>
+    <div id="results-body" style="display:none">
+      <div class="result-hero">
+        <div class="score-ring">
+          <svg width="160" height="160"><circle cx="80" cy="80" r="70" fill="none" stroke="#334155" stroke-width="12"></circle>
+            <circle id="ring" cx="80" cy="80" r="70" fill="none" stroke="#a855f7" stroke-width="12" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440"></circle></svg>
+          <div class="num"><b id="res-total">0</b><small>tech_test_score</small></div>
+        </div>
+        <h2 id="res-headline" style="font-size:24px">—</h2>
+        <p style="color:var(--text2);font-size:14px" id="res-sub"></p>
+      </div>
+      <div id="res-layers"></div>
+      <div class="btn-row" style="margin-top:20px">
+        <button class="btn btn-ghost" onclick="location.reload()">↻ התחל מחדש</button>
+        <button class="btn btn-primary" id="res-back" style="display:none" onclick="backToProfile()">🏠 חזור לפרופיל ←</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+const MAOF_API='https://maof-project.onrender.com/api/v1';
+const params=new URLSearchParams(location.search);
+const CID=params.get('candidate_id')||localStorage.getItem('maof_candidate_id')||null;
+let candidate=null;
+const scores={l1:null,l2:null,l3:null};
+const state={l1q:null,l3q:null,l2first:null,l2answers:[],l2stack:[],l2done:false,l2result:null};
+
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.getElementById('toasts').appendChild(t);setTimeout(()=>t.remove(),3200);}
+function setProgress(p){document.getElementById('progFill').style.width=p+'%';}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function setStep(i){for(let k=0;k<3;k++){const d=document.getElementById('dot'+k);const l=document.getElementById('line'+(k));d.classList.toggle('active',k===i);d.classList.toggle('done',k<i);if(k<3-1){const ln=document.getElementById('line'+k);if(ln)ln.classList.toggle('done',k<i);}}}
+
+async function api(path,opts){try{const r=await fetch(MAOF_API+path,{...opts,headers:{'Content-Type':'application/json',...(opts&&opts.headers||{})}});if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){return null;}}
+
+async function loadCandidate(){if(!CID)return;candidate=await api('/candidates/'+encodeURIComponent(CID));if(candidate&&candidate.tech_stack)state.l2stack=candidate.tech_stack;else if(candidate&&candidate.subject)state.l2stack=[candidate.subject];}
+
+async function startTest(){show('screen-l1');setStep(0);setProgress(10);await loadL1();}
+
+/* ---- LAYER 1 ---- */
+async function loadL1(){const q=await api('/tech/logic/question?level=1');if(!q){document.getElementById('l1-lang').textContent='המנוע לא זמין כרגע';return;}state.l1q=q;document.getElementById('l1-lang').textContent='שפת '+q.language+' — מה יודפס?';document.getElementById('l1-rules').textContent=q.rules;document.getElementById('l1-code').textContent=q.code;document.getElementById('l1-prompt').textContent=q.prompt;}
+async function submitL1(){const ans=document.getElementById('l1-answer').value.trim();if(ans.length<8){toast('כתוב הסבר מלא יותר');return;}const btn=document.getElementById('l1-submit');btn.disabled=true;btn.textContent='בודק…';const r=await api('/tech/logic/score',{method:'POST',body:JSON.stringify({question_id:state.l1q.id,answer:ans})});scores.l1=r?Math.round(r.score):0;btn.disabled=false;btn.textContent='המשך ←';show('screen-l2');setStep(1);setProgress(40);await loadL2();}
+
+/* ---- LAYER 2 (adaptive) ---- */
+async function loadL2(){const stack=state.l2stack.join(',');const q=await api('/code/test/first'+(stack?'?tech_stack='+encodeURIComponent(stack):''));if(!q){document.getElementById('l2-question').textContent='המנוע לא זמין כרגע';return;}state.l2first=q;document.getElementById('l2-question').textContent=q.question;document.getElementById('l2-label').textContent='שכבה 2 · קוד · שאלה 1 (רמה '+q.level+')';}
+async function submitL2(){const ans=document.getElementById('l2-answer').value.trim();if(ans.length<10){toast('ענה בצורה מפורטת יותר');return;}state.l2answers.push(ans);const btn=document.getElementById('l2-submit');btn.disabled=true;btn.textContent='בודק…';const r=await api('/code/test',{method:'POST',body:JSON.stringify({answers:state.l2answers,tech_stack:state.l2stack})});btn.disabled=false;if(!r){scores.l2=50;return goL3();}state.l2result=r;scores.l2=Math.round(r.adaptive_score);if(r.next_question&&state.l2answers.length<5){document.getElementById('l2-answer').value='';document.getElementById('l2-question').textContent=r.next_question;document.getElementById('l2-label').textContent='שכבה 2 · קוד · שאלה '+(state.l2answers.length+1);document.getElementById('l2-hint').textContent='עברת רמה '+r.final_level+' — שאלה קשה יותר.';btn.textContent='המשך ←';}else{btn.textContent='המשך ←';goL3();}}
+async function goL3(){show('screen-l3');setStep(2);setProgress(70);await loadL3();}
+
+/* ---- LAYER 3 ---- */
+async function loadL3(){const q=await api('/tech/architecture/question?level=1');if(!q){document.getElementById('l3-title').textContent='המנוע לא זמין כרגע';return;}state.l3q=q;document.getElementById('l3-title').textContent=q.title;document.getElementById('l3-prompt').textContent=q.prompt;document.getElementById('l3-dims').innerHTML=q.dimensions.map(d=>'<span class="dim-chip">'+d.he+' · '+Math.round(d.weight*100)+'%</span>').join('');}
+async function submitL3(){const ans=document.getElementById('l3-answer').value.trim();if(ans.length<20){toast('תאר את התוכנית בפירוט רב יותר');return;}const btn=document.getElementById('l3-submit');btn.disabled=true;btn.textContent='בודק…';const r=await api('/tech/architecture/score',{method:'POST',body:JSON.stringify({question_id:state.l3q.id,answer:ans})});scores.l3={score:r?Math.round(r.score):0,breakdown:r?r.breakdown:[],feedback:r?r.feedback:''};setProgress(100);show('screen-results');finishResults();}
+
+/* ---- RESULTS ---- */
+function finishResults(){
+  const l1=scores.l1||0,l2=scores.l2||0,l3=scores.l3?scores.l3.score:0;
+  const total=Math.round(l2*0.45+l3*0.30+l1*0.25);
+  setTimeout(()=>{
+    document.getElementById('results-loading').style.display='none';
+    document.getElementById('results-body').style.display='block';
+    animateRing(total);
+    document.getElementById('res-total').textContent=total;
+    const headline=total>=80?'מצוין':total>=65?'טוב מאוד':total>=50?'בינוני':'דורש חיזוק';
+    document.getElementById('res-headline').textContent=headline+' · '+total+'/100';
+    document.getElementById('res-sub').textContent='שילוב: קוד 45% · ארכיטקטורה 30% · הגיון 25%';
+    const bd=(scores.l3&&scores.l3.breakdown||[]).map(b=>'<div class="bd-row"><span style="width:90px;color:var(--text2)">'+b.he+'</span><div class="bd-bar"><div class="bd-fill" style="width:'+b.score+'%"></div></div><span style="width:34px;text-align:left">'+Math.round(b.score)+'</span></div>').join('');
+    document.getElementById('res-layers').innerHTML=
+      layerRow('🧠','שכבה 1 · הגיון','מהירות למידה',l1)+
+      layerRow('💻','שכבה 2 · קוד','עומק טכני · רמה '+(state.l2result?state.l2result.final_level:'-')+'/5',l2)+
+      layerRow('🏗️','שכבה 3 · ארכיטקטורה',(scores.l3&&scores.l3.feedback)||'חשיבה מערכתית',l3)+
+      (bd?'<div class="card" style="margin-top:4px"><div style="font-size:13px;color:var(--text2);margin-bottom:8px">פירוט שכבה 3 — כיסוי ממדים</div>'+bd+'</div>':'');
+    saveResults(total);
+  },900);
+}
+function layerRow(icon,name,sub,score){const col=score>=80?'var(--green)':score>=60?'var(--teal)':score>=45?'var(--yellow)':'var(--orange)';return '<div class="layer-result"><div class="lr-icon">'+icon+'</div><div class="lr-body"><div class="lr-name">'+name+'</div><div class="lr-sub">'+sub+'</div></div><div class="lr-score" style="color:'+col+'">'+score+'</div></div>';}
+function animateRing(v){const c=document.getElementById('ring');const off=440-(440*v/100);setTimeout(()=>{c.style.transition='stroke-dashoffset 1.1s ease';c.style.strokeDashoffset=off;},100);}
+
+async function saveResults(total){
+  if(!CID){toast('הציון חושב (לא מחובר למועמד)');return;}
+  const existing=candidate||await api('/candidates/'+encodeURIComponent(CID));
+  if(existing){
+    existing.logic_score=scores.l1||0;
+    existing.code_score=scores.l2||0;
+    existing.systemic_score=scores.l3?scores.l3.score:0;
+    existing.tech_test_score=total;
+    await api('/candidates',{method:'POST',body:JSON.stringify(existing)});
+    toast('✅ הציון הטכני נשמר למועמד');
+    document.getElementById('res-back').style.display='inline-block';
+  }
+}
+function backToProfile(){location.href='../soldiers/?candidate_id='+encodeURIComponent(CID);}
+
+loadCandidate();
+</script>
+</body>
+</html>
