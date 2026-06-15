@@ -277,6 +277,20 @@ async function saveResults(total){
 }
 function backToProfile(){location.href='../soldiers/?candidate_id='+encodeURIComponent(CID);}
 
+// Demo fast-path — fills realistic scores and jumps to results (only used by the guided tour)
+window.__demoSkip=function(){
+  scores.l1=92; scores.l2=88;
+  scores.l3={score:81,feedback:'כיסוי טוב של רוב הממדים',breakdown:[
+    {key:'scalability',he:'סקלביליות',score:85,weight:0.25},
+    {key:'data_flow',he:'זרימת נתונים',score:78,weight:0.20},
+    {key:'failure_handling',he:'טיפול בכשלים',score:82,weight:0.20},
+    {key:'security',he:'אבטחה',score:80,weight:0.20},
+    {key:'tradeoffs',he:'Trade-offs',score:80,weight:0.15}
+  ]};
+  state.l2result={final_level:5};
+  setProgress(100); show('screen-results'); finishResults();
+};
+
 loadCandidate();
 </script>
 <script src="/demo-guide.js"></script>

@@ -2563,6 +2563,16 @@ async function checkEli5Engine() {
 
 window.addEventListener('load', () => setTimeout(checkEli5Engine, 300));
 
+// Demo fast-path — shows a realistic result + saves, skipping the 5 rounds (guided tour only)
+window.__demoSkip = function(){
+  const scores = { total:88, round1:86, round2:90, round3:87, round4:null,
+    simplicity:90, accuracy:85, analogies:88, engagement:86, structure:84,
+    schoolImpact: Math.round(88*0.35), companyImpact: Math.round(88*0.25), scoringMethod:'demo' };
+  goToScreen('results', 5);
+  setTimeout(() => animateResults(scores), 300);
+  try { saveEli5ToSupabase(scores); } catch(e){}
+};
+
 </script>
 <script src="/demo-guide.js"></script>
 </body>

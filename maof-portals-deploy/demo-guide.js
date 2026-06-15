@@ -78,6 +78,13 @@
       '<div style="font-size:12px;color:#94a3b8;line-height:1.4">' + cur.text + '</div>' +
       '</div>';
 
+    // Optional skip button — only on portals that expose window.__demoSkip (ELI5, tech-test)
+    var skipBtn = (typeof window.__demoSkip === 'function')
+      ? '<button id="maof-demo-skip" style="flex-shrink:0;background:transparent;border:1px solid #a855f7;' +
+        'border-radius:10px;color:#a855f7;font-family:Heebo,system-ui,Arial;font-size:13px;font-weight:600;' +
+        'padding:9px 16px;cursor:pointer;white-space:nowrap">⏩ דלג (דמו)</button>'
+      : '';
+
     var nextBtn = '<button id="maof-demo-next" style="flex-shrink:0;background:linear-gradient(135deg,#a855f7,#7aa2f7);' +
       'border:none;border-radius:10px;color:#fff;font-family:Heebo,system-ui,Arial;font-size:14px;font-weight:600;' +
       'padding:10px 22px;cursor:pointer;white-space:nowrap">' + cur.next + '</button>';
@@ -93,12 +100,14 @@
     }
     dots += '</div>';
 
-    bar.innerHTML = chip + body + dots + nextBtn + exitBtn;
+    bar.innerHTML = chip + body + dots + skipBtn + nextBtn + exitBtn;
     document.body.appendChild(bar);
     document.body.style.paddingBottom = (bar.offsetHeight + 8) + 'px';
 
     document.getElementById('maof-demo-next').onclick = function () { go(step + 1); };
     document.getElementById('maof-demo-exit').onclick = exitTour;
+    var sk = document.getElementById('maof-demo-skip');
+    if (sk) sk.onclick = function () { try { window.__demoSkip(); } catch (e) {} };
 
     if (typeof cur.onShow === 'function') { setTimeout(cur.onShow, 400); }
   }
