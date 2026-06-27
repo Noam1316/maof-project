@@ -2,13 +2,23 @@ name: Keep Maof Engine Warm
 
 # Render free tier spins the server down after ~15 min of inactivity,
 # causing a 30-50s cold start on the next request. This pings the health
-# endpoint every 10 minutes so the engine stays warm for live demos.
+# endpoint every 5 minutes so the engine stays warm for live demos.
 #
 # Cost: one short curl per run (~10s runner time). Well within free limits.
+#
+# CAVEAT — do NOT rely on this alone for an in-absentia grant review:
+#   GitHub disables scheduled workflows after ~60 days of repo inactivity, and
+#   Actions cron is frequently delayed. Two more reliable layers are in place:
+#     1. Each portal fires a client-side warm ping on load — opening the link
+#        warms the engine directly (maof-portals-deploy/*/index.html). Most robust.
+#     2. For an always-warm engine, add a free external pinger (more reliable than
+#        Actions cron): cron-job.org or UptimeRobot → GET the /health URL every 5 min.
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # every 10 minutes
+    - cron: "*/5 * * * *"    # every 5 minutes (well inside Render's ~15-min sleep window)
+  push:
+    branches: [main]          # re-activates the schedule after any push (GitHub disables cron after 60d inactivity)
   workflow_dispatch: {}        # allow manual trigger from the Actions tab
 
 jobs:
