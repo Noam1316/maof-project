@@ -102,6 +102,12 @@ class OptimizeRequest(BaseModel):
 @router.get("/health")
 def health():
     connected = is_connected()
+    # Also touch the DB so Supabase free-tier doesn't pause from inactivity
+    if connected:
+        try:
+            db.list_candidates(limit=1)
+        except Exception:
+            pass
     return {
         "status": "ok",
         "engine": "Maof Dual Scoring Engine v1.0",
@@ -180,7 +186,7 @@ def complete_assessment(candidate_id: str, body: dict):
     s = float(systemic if systemic is not None else candidate.get("systemic_score") or 0)
 
     if s > 0 and c > 0:
-        tech_test = round(s * 0.55 + c * 0.45, 2)
+        tech_test = round(c * 0.60 + s * 0.40, 2)
     elif s > 0:
         tech_test = round(s, 2)
     elif c > 0:
@@ -382,7 +388,7 @@ def _safe_candidate(d: dict) -> Candidate:
         team_size=int(d.get("team_size") or 1),
         conflict_resolution_score=float(d.get("conflict_resolution_score") or 70),
         preferred_company_size=d.get("preferred_company_size") or "any",
-        work_style=d.get("work_style") or "agile",
+        work_style=d.get("work_style") or "",
         preferred_location=d.get("preferred_location") or "",
         willing_relocate=bool(d.get("willing_relocate", False)),
         systemic_score=float(d.get("systemic_score") or 0),
@@ -402,7 +408,7 @@ def _safe_company(d: dict) -> Company:
         lat=float(d.get("lat") or 32.07),
         lng=float(d.get("lng") or 34.78),
         size=d.get("size") or "enterprise",
-        work_style=d.get("work_style") or "agile",
+        work_style=d.get("work_style") or "",
         tech_stack=d.get("tech_stack") or ["Python"],
         open_positions=int(d.get("open_positions") or 5),
         urgency_score=float(d.get("urgency_score") or 70),
